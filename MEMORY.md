@@ -74,14 +74,13 @@
 - **项目路径**: `D:\MyFile\AI\ContextStack\workbench\projects\embedded-ai-learning\Source\tflite-micro-main`
 - **技术栈**: TensorFlow Lite Micro, C/C++, 嵌入式开发
 - **学习内容**:
-  - TFLM架构和原理（任务3进度40%）
-  - 嵌入式AI特点（任务2进度50%）
+  - TFLM架构和原理（任务3进度20%）
+  - 嵌入式AI特点（任务2进度30%）
   - 内存管理机制（Tensor Arena、MicroAllocator）
   - 模型量化和部署（待开始）
 - **当前进展**: 
-  - 已完成嵌入式AI第一课，深入学习了TFLM内存管理架构
-  - 掌握了Tensor Arena三个分区（Head/Temporary/Tail）的功能
-  - 理解了离线内存规划的优势和实现原理
+  - 任务2（学习嵌入式AI特点）进度30%
+  - 任务3（理解TFLM架构）进度20%
   - 基于ContextStack四层架构进行系统化学习
 - **工作台**: `workbench/projects/embedded-ai-learning/embedded-ai-learning.md`
 - **项目规则**: `workbench/projects/embedded-ai-learning/PROJECT-RULES.md`

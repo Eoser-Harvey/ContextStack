@@ -7,6 +7,7 @@
 - [[3-month-mastery-plan]] - 3个月精通计划：完整的学习路线图和考核体系
 - [[evaluation-and-optimized-plan]] - 综合评估报告：市场调研 + 计划诊断 + 优化方案 + 检查机制 + 打分体系
 - [[embedded-ai-learning.code-workspace]] - VSCode工作区配置
+- [[courses/index]] - 课程笔记索引：每课积累，持续更新
 
 ## 学习内容
 - **TFLM基础架构**:TensorFlow Lite Micro 核心架构和原理

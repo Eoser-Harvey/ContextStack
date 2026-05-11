@@ -2,7 +2,7 @@
 
 > TensorFlow Lite Micro (TFLM) 深度学习计划
 > 创建时间：2026-04-29
-> 最后更新：2026-05-08（v4.0 市场调研驱动优化）
+> 最后更新：2026-05-11（v4.2 TFLM源码驱动优化）
 > 目标：3个月从零到精通TFLM，具备独立开发和优化嵌入式AI的能力
 > 硬件：ESP32-S3（已就绪）
 > TFLM源码：D:\MyFile\AI\TFLM\tflite-micro-main
@@ -33,93 +33,124 @@
 
 ### Month 1: 基础架构与环境搭建（Week 1-4）
 
-#### Week 1: 深度学习速成 + TFLM架构初识
-**目标**：补齐DL基础，理解神经网络核心概念，建立对TFLM的整体认知
+#### Week 1: TFLM环境搭建与源码初识
+**目标**：建立TFLM开发环境，理解嵌入式AI特点，掌握TFLM核心架构与hello_world示例
 
-**Day 1-2：深度学习基础速成**
-- 感知机 → 多层神经网络 → 激活函数（ReLU/Sigmoid/Softmax）
-- 卷积神经网络（CNN）原理：卷积核、池化层、特征图、全连接层
-- 反向传播与梯度下降（理解思想，不需要手推公式）
-- 损失函数（CrossEntropy/MSE）与优化器（SGD/Adam）
-- 用 PyTorch 训练一个 MNIST 分类器（约10行核心代码）
-- 用 Netron 可视化模型结构
+**Day 1：嵌入式AI特点与TFLM环境搭建**
+- **嵌入式AI四个核心特点**：
+  - 资源约束：内存有限（KB-MB级）、算力有限（MHz级CPU、无GPU）
+  - 功耗限制：电池供电设备需低功耗设计，整数运算比浮点更节能
+  - 实时性：需要确定性的推理延迟，满足硬实时或软实时要求
+  - 成本控制：硬件成本敏感，需要平衡性能与成本
+- **TFLM环境搭建**：
+  - 获取源码：`git clone https://github.com/tensorflow/tflite-micro.git`
+  - 编译系统：Bazel 或 CMake 选择
+  - hello_world编译：`bazel build //tensorflow/lite/micro/examples/hello_world:hello_world_test`
+  - 运行验证：确保环境配置正确
 
-**Day 3-5：TFLM架构理解**
-- TFLM的核心概念和设计哲学
-- 与标准TensorFlow Lite的区别
-- 嵌入式AI的特点和挑战（资源约束、功耗、实时性）
-- 模型量化的原理和方法（为什么嵌入式需要量化）
+**Day 2-3：TFLM架构核心四组件**
+- **内核(Kernel)**：核心推理引擎，包括MicroInterpreter
+- **算子(Operators)**：神经网络层实现，支持量化整数运算
+- **内存管理**：Tensor Arena分块管理（Head/Temporary/Tail），支持离线内存规划
+- **解释器(Interpreter)**：MicroInterpreter负责模型加载、图执行和内存分配
+- **TFLM与标准TensorFlow Lite的区别**：轻量化、无动态内存分配、专注推理
+
+**Day 4-5：hello_world示例深度剖析**
+- **TFLM推理6步流程**（阅读`hello_world_test.cc`）：
+  1. 注册算子：告诉TFLM需要哪些运算
+  2. 创建解释器：初始化推理引擎
+  3. 分配内存：在Tensor Arena分配张量空间
+  4. 设置输入：填充输入数据
+  5. 执行推理：调用Invoke()运行模型
+  6. 读取输出：获取推理结果
+- **模型即数组**：理解`model.cc`中的`unsigned char`数组
+- **全连接层实现**：阅读`fully_connected.cc`，理解矩阵乘法核心循环
 
 **实践任务**：
-1. PyTorch 训练 MNIST 模型，准确率 > 95%（2小时）
-2. 用 Netron 可视化模型结构（0.5小时）
-3. 阅读TFLM官方README（1小时）
-4. 浏览TFLM源代码结构，理解关键组件（Interpreter, Kernel, Tensor）（2小时）
-5. 学习FlatBuffer模型格式（1小时）
+1. 成功编译并运行hello_world示例（2小时）
+2. 阅读`hello_world_test.cc`，理解6步推理流程（1小时）
+3. 找到`model.cc`，感受"模型就是大数组"的概念（0.5小时）
+4. 打开`fully_connected.cc`，找到矩阵乘法核心循环（1小时）
+5. 绘制TFLM四组件架构图（1小时）
+6. 总结嵌入式AI四个特点的具体表现（0.5小时）
 
 **考核标准**：
-- [ ] 能解释 CNN 的卷积、池化、全连接三层各自的作用
-- [ ] 独立用 PyTorch 训练 MNIST 模型，准确率 > 95%
-- [ ] 能说出量化为什么对嵌入式重要（算力、内存、功耗三个维度）
-- [ ] 能准确描述TFLM核心架构
-- [ ] 理解关键组件（Interpreter, MicroAllocator, OpResolver）的作用
+- [ ] 能说出嵌入式AI的四个核心特点及具体表现
+- [ ] 能描述TFLM四组件（内核、算子、内存管理、解释器）的作用
+- [ ] 能解释TFLM推理6步流程每一步的作用
+- [ ] 理解"模型即数组"的概念，知道模型文件在代码中的存在形式
+- [ ] 能说出全连接层在C代码中的实现方式（两层for循环）
 
 **常见陷阱与经验**：
-- 陷阱1：不理解内存限制，导致模型过大
-  - 解决方案：先学习嵌入式设备的资源限制
-- 陷阱2：量化精度损失过大
-  - 解决方案：理解量化方法，选择适当的量化策略
-- 陷阱3：架构理解不深入，遇到问题无法分析
-  - 解决方案：多看源代码，理解底层实现
-- 陷阱4：DL基础跳过直接啃TFLM，后面看不懂算子实现
-  - 解决方案：Day 1-2 必须动手跑通 PyTorch MNIST，建立体感
+- 陷阱1：Bazel版本不兼容导致编译失败
+  - 解决方案：参考官方文档，使用指定版本，或切换到CMake
+- 陷阱2：不理解内存限制，导致后续模型过大无法部署
+  - 解决方案：先学习嵌入式设备的资源限制，建立内存敏感意识
+- 陷阱3：跳过源码阅读，只看文档，导致理解不深入
+  - 解决方案：必须亲手打开源码文件，跟踪代码执行流程
+- 陷阱4：混淆训练与推理，试图在嵌入式设备上训练模型
+  - 解决方案：明确TFLM只做推理，训练在PC/服务器完成
 
 ---
 
-#### Week 2: 环境搭建 + 模型转换全流程 + Embedded Linux 概念了解
-**目标**：配置完整开发环境，掌握 PyTorch → ONNX → TFLite 转换链，了解 Linux 系统概念
+#### Week 2: 模型转换全流程与PyTorch工具入门
+**目标**：掌握PyTorch作为训练工具的基本使用，完成模型训练→转换→部署全流程，验证TFLM端到端能力
+
+> **重要说明**：PyTorch在此作为**工具**学习，不是深度学习入口。核心仍是TFLM，PyTorch用于生成可供TFLM部署的模型。
 
 **学习内容**：
-- 开发工具链配置（Python, Bazel, GCC/Clang）
-- TFLM项目编译与运行
-- ONNX 中间表示：模型交换格式，算子标准
-- TFLite 转换器原理：算子映射、图优化
-- FlatBuffer 格式深入
-- **Embedded Linux 概念了解**：交叉编译概念、工具链（arm-none-eabi-gcc）、Makefile/CMake
-- **设备树（Device Tree）**：基本概念，为什么嵌入式 Linux 需要它
+- **PyTorch基础（工具视角）**：
+  - 张量操作、自动求导、神经网络模块
+  - 训练循环：前向传播、损失计算、反向传播、优化器更新
+  - MNIST数据集加载与预处理
+- **模型转换链原理**：
+  - ONNX作为中间表示：算子标准化、图优化
+  - TFLite转换器：算子映射、量化支持、图优化
+  - FlatBuffer格式深入：序列化原理、内存布局优势
+- **部署验证**：
+  - 将转换后的TFLite模型集成到TFLM项目
+  - 验证PC端与嵌入式端推理结果一致性
+- **Embedded Linux概念了解**：
+  - 交叉编译概念：host与target区别
+  - 工具链选择：arm-none-eabi-gcc
+  - 设备树基本概念：硬件资源描述
 
 **实践任务**：
-1. 确认 Python 环境（PyTorch + onnx + tf-nightly）（0.5小时）
-2. 将 Week 1 的 MNIST 模型转换：.pth → .onnx → .tflite（2小时）
-3. 对比三个格式的文件大小，用 Netron 对比模型图（1小时）
-4. 编译 TFLM 项目（Bazel/CMake）（2小时）
-5. 编译并运行 hello_world 示例（2小时）
-6. 配置调试环境（0.5小时）
-7. **（可选）用交叉编译链编译一个 C 程序，生成 ARM 可执行文件（1小时）**
-8. **（可选）阅读 ESP32-S3 的设备树文件，理解外设描述方式（0.5小时）**
+1. PyTorch环境配置，训练MNIST分类模型（准确率 > 95%）（3小时）
+2. 模型转换：.pth → .onnx → .tflite（2小时）
+3. 使用Netron可视化三个格式的模型结构，对比差异（1小时）
+4. 将转换后的TFLite模型集成到TFLM自定义示例（2小时）
+5. 编译并运行自定义示例，验证推理结果与PyTorch一致（2小时）
+6. 学习交叉编译概念，了解arm-none-eabi-gcc工具链（0.5小时）
+7. **（可选）** 阅读ESP32-S3设备树文件，理解外设描述方式（0.5小时）
 
 **考核标准**：
-- [ ] 完成 .pth → .onnx → .tflite 全流程转换
-- [ ] TFLM 编译成功，hello_world 示例运行通过
-- [ ] 能解释 FlatBuffer 相比 JSON/Protobuf 的优势
-- [ ] 能说出 ONNX 在模型部署流程中的作用
-- [ ] **了解交叉编译的概念，能说出 host 和 target 的区别**
-- [ ] **能解释设备树的作用：描述硬件资源，让内核知道有哪些外设**
+- [ ] 独立用PyTorch训练MNIST模型，准确率 > 95%
+- [ ] 完成.pth → .onnx → .tflite全流程转换
+- [ ] 成功将TFLite模型集成到TFLM并运行推理
+- [ ] 能解释FlatBuffer相比JSON/Protobuf的优势（零拷贝、内存高效）
+- [ ] 能说出ONNX在模型部署流程中的作用（跨框架桥梁）
+- [ ] 理解交叉编译概念，能区分host和target
+- [ ] 了解设备树的作用：向内核描述硬件资源
 
 **常见陷阱与经验**：
-- 陷阱1：Bazel版本不兼容
-  - 解决方案：参考官方文档，使用指定版本
-- 陷阱2：编译错误，缺少依赖
-  - 解决方案：仔细阅读BUILD文件，安装所有依赖
-- 陷阱3：.pth → .onnx 导出时算子不支持
-  - 解决方案：使用 torch.onnx.export 的 opset_version=11 参数
-- 陷阱4：.onnx → .tflite 转换失败
-  - 解决方案：先用 onnx2tf 或直接走 PyTorch → TFLite 路径
+- 陷阱1：PyTorch训练时过拟合严重
+  - 解决方案：使用验证集监控，添加Dropout，早停策略
+- 陷阱2：.pth → .onnx导出时算子不支持
+  - 解决方案：使用`torch.onnx.export`的`opset_version=11`参数，或简化模型结构
+- 陷阱3：.onnx → .tflite转换失败
+  - 解决方案：使用TF官方转换器，检查算子支持列表
+- 陷阱4：TFLM推理结果与PyTorch不一致
+  - 解决方案：检查预处理一致性、量化参数、输入输出维度
+- 陷阱5：混淆工具与目标，花太多时间在PyTorch上
+  - 解决方案：明确PyTorch只是工具，够用即可，重点在TFLM部署验证
 
 ---
 
 #### Week 3: 模型训练实战 + 数据准备
-**目标**：掌握 PyTorch 模型训练全流程，理解数据预处理
+**目标**：掌握复杂CNN模型训练与数据预处理，为TFLM部署准备真实任务模型
+
+> **定位说明**：本周聚焦数据工程和复杂模型，目的是生成可用于TFLM部署的CIFAR-10分类模型，验证TFLM处理真实任务的能力。
 
 **学习内容**：
 - 神经网络基础深入（CNN, RNN, LSTM 各自适用场景）
@@ -544,10 +575,11 @@
 
 ---
 
-**工作台版本**：v4.1（MCU优先优化）
+**工作台版本**：v4.2（TFLM源码驱动优化）
 **创建时间**：2026-04-29
-**最后更新**：2026-05-09
+**最后更新**：2026-05-11
 **变更摘要**：
+- v4.2：Week1重写为TFLM环境搭建与源码初识，Week2调整为模型转换全流程与PyTorch工具入门，确保符合项目规则（TFLM源码驱动，禁止PyTorch为入口）
 - v4.1：Week2 Embedded Linux降为概念了解、Week6.5 TensorRT降为概念了解（可选）、Week8传感器数据链路降为基础打通、技能清单优先级调整
 - v4.0：Week2加入Embedded Linux基础、Week4加入剪枝+蒸馏、新增Week6.5 TensorRT入门、Week8替换为传感器数据链路
 - v3.0：Week1加入DL速成、Week2加入ONNX转换链、Month2加入ONNX Runtime多框架对比、Month3精简为KWS主线项目+面试准备、新增日/周检查机制
