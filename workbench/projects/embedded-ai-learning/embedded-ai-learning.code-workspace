@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"workbench.colorTheme": "Quiet Light",
+		"editor.fontSize": 15,
+		"editor.lineHeight": 24,
+		"window.zoomLevel": 0
+	}
+}

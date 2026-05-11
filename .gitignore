@@ -1,0 +1,23 @@
+# TFLM 源码（太大，不纳入版本管理，本地保留即可）
+workbench/projects/embedded-ai-learning/Source/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Backup / History
+Obsidian/system/tool-configurations/history/
+
+# Logs
+*.log
