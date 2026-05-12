@@ -44,8 +44,12 @@
   - 成本控制：硬件成本敏感，需要平衡性能与成本
 - **TFLM环境搭建**：
   - 获取源码：`git clone https://github.com/tensorflow/tflite-micro.git`
-  - 编译系统：Bazel 或 CMake 选择
-  - hello_world编译：`bazel build //tensorflow/lite/micro/examples/hello_world:hello_world_test`
+  - 编译系统：**Bazel（官方首选）** 或 **Make（传统嵌入式构建）**
+    - **Bazel**：Google构建系统，TFLM原生支持，使用MODULE.bazel（新模块系统）
+    - **Make**：传统Makefile构建，用于交叉编译到嵌入式平台（Cortex-M, Xtensa等）
+  - hello_world编译：
+    - Bazel：`bazel build //tensorflow/lite/micro/examples/hello_world:hello_world_test`
+    - Make：`make -f tensorflow/lite/micro/tools/make/Makefile test_hello_world_test`
   - 运行验证：确保环境配置正确
 
 **Day 2-3：TFLM架构核心四组件**
