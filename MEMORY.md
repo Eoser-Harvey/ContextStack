@@ -70,21 +70,18 @@
 ### 当前活跃项目
 
 #### 嵌入式AI学习
-- **状态**: 学习阶段（理论学习进行中）
-- **项目路径**: `D:\MyFile\AI\ContextStack\workbench\projects\embedded-ai-learning\Source\tflite-micro-main`
+- **状态**: 学习阶段（Week 1 Day 1 进行中，恢复未完成任务）
+- **项目路径**: `D:\MyFile\AI\ContextStack\workbench\projects\embedded-ai-learning/`
+- **TFLM源码**: `D:\MyFile\AI\ContextStack\workbench\projects\embedded-ai-learning\Source\tflite-micro-main`
 - **技术栈**: TensorFlow Lite Micro, C/C++, 嵌入式开发
-- **学习内容**:
-  - TFLM架构和原理（任务3进度20%）
-  - 嵌入式AI特点（任务2进度30%）
-  - 内存管理机制（Tensor Arena、MicroAllocator）
-  - 模型量化和部署（待开始）
-- **当前进展**: 
-  - 任务2（学习嵌入式AI特点）进度30%
-  - 任务3（理解TFLM架构）进度20%
-  - 基于ContextStack四层架构进行系统化学习
+- **学习原则**: TFLM为主，PyTorch为辅（仅作模型训练工具，够用即可）
+- **课程结构**: `courses/` 一课一文件（课程内容 + 答题区 + 心得区 + AI反馈区）
+- **学习计划**: `3-month-mastery-plan.md`（v4.2 TFLM源码驱动优化）
+- **当前进展**: Week 1 Day 1 - 恢复未完成任务，完成思考题和实践任务；任务2（嵌入式AI特点）进度30%；任务3（TFLM架构）进度20%
 - **工作台**: `workbench/projects/embedded-ai-learning/embedded-ai-learning.md`
 - **项目规则**: `workbench/projects/embedded-ai-learning/PROJECT-RULES.md`
-- **备注**: 这是新的学习方向，结合之前嵌入式开发经验，采用ContextStack框架进行系统化知识积累
+- **GitHub**: https://github.com/Eoser-Harvey/ContextStack（每日00:00自动推送）
+- **备注**: 传统嵌入式工程师转型嵌入式AI，基于ContextStack四层架构系统化学习。2026-05-13恢复未完成任务，继续Week 1 Day 1学习。
 
 #### 网络设备调试
 - **状态**: 进行中
@@ -147,7 +144,18 @@
 - **重要性**: 高 - 这是后续所有协作、问题解决和决策的基础框架。
 - **记忆ID**: 16459216 (通过update_memory创建)
 
+### 端侧AI投资研究
+- **文件**: `Obsidian/investment-research/端侧AI龙头股深度分析_DeepSeekV4分析-2026Q1.md`
+- **内容**: 2026年Q1端侧AI产业链10家核心标的四维度分析（规模、盈利、潜力、估值），筛选出3只埋伏价值股：瑞芯微(603893)、乐鑫科技(688018)、地平线(9660.HK)；v1.1新增三份AI报告交叉验证
+- **重要性**: 中 - 端侧AI产业链投资参考，需每季度更新财报数据
+- **关联**: 与 `workbench/projects/embedded-ai-learning/端侧AI产业链龙头企业图谱-2026.md` 产业链分析互补
+
+### TRAE热门Skills参考
+- **文件**: `Obsidian/system/trae-skills-reference.md`
+- **内容**: TRAE官方基于真实调用数据发布的11个热门Skills详解，含分类体系（流程类/实施类/约束类/工具类/设计类）、调用优先级规则、对ContextStack的启示
+- **重要性**: 中 - AI编码工具Skills生态参考，可借鉴补充ContextStack体系
+
 ---
 
-**最后更新**: 2026-05-11
-**更新内容**: 添加Knowledge记忆部分，记录ContextStack四层架构框架知识，创建详细说明文件
+**最后更新**: 2026-05-13
+**更新内容**: 新增端侧AI投资研究知识，创建 Obsidian/investment-research/ 目录及深度分析文档

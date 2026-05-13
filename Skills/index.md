@@ -13,6 +13,19 @@
 - [[vscode-config-management/index|VSCode配置管理]] — 配置备份、恢复与同步
   - `#skill` `#vscode` `#tool-config` `#backup`
 
+### AI 编码与治理 Skills（2026-05-13 新增）
+
+- [[karpathy-guidelines/karpathy-guidelines使用说明|Karpathy编码准则]] — 四原则约束AI编码：先思考再编码、简洁优先、手术式修改、目标驱动（always规则）
+  - `#skill` `#coding` `#guidelines` `#always`
+- [[brainstorming/brainstorming使用说明|Brainstorming]] — 强制前置设计与需求分析，禁止直接编码（manual规则）
+  - `#skill` `#design` `#planning` `#manual`
+- [[writing-plans/writing-plans使用说明|Writing Plans]] — 将设计输出转化为零上下文可执行的分步计划（manual规则）
+  - `#skill` `#planning` `#execution` `#manual`
+- [[systematic-debugging/systematic-debugging使用说明|Systematic Debugging]] — 四阶段系统化调试，3次失败触发架构质疑（manual规则）
+  - `#skill` `#debugging` `#methodology` `#manual`
+- [[pua-governance/pua-governance使用说明|PUA Governance]] — 高能动性治理，三种方法论（RCA/Musk五步法/Jobs减法）+强制检查清单+压力升级机制（manual规则）
+  - `#skill` `#governance` `#quality` `#manual`
+
 ## 相关
 
 - [[../Obsidian/system/methodology/index|调试方法论]] — Skills 的理论基础

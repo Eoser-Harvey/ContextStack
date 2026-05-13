@@ -6,9 +6,11 @@
 - [[embedded-ai-learning]] - 项目主工作台：项目状态、任务跟踪、学习计划
 - [[3-month-mastery-plan]] - 3个月精通计划：完整的学习路线图和考核体系
 - [[evaluation-and-optimized-plan]] - 综合评估报告：市场调研 + 计划诊断 + 优化方案 + 检查机制 + 打分体系
+- [[market-research-2026]] - 嵌入式AI岗位市场调研报告（2026年5月）：岗位需求、技能要求、薪资分布
+- [[端侧AI产业链龙头企业图谱-2026]] - 端侧AI全产业链龙头企业图谱：上下游企业、上市情况、职业建议
+- [[../../Obsidian/career-development/个人职业发展分析-端侧AI企业定制攻略|个人职业发展分析-端侧AI企业定制攻略]] - 个人职业发展分析：定制简历、面试攻略、谈薪策略（位于Obsidian职业发展库）
 - [[embedded-ai-learning.code-workspace]] - VSCode工作区配置
-- [[courses/index]] - 课程笔记索引：每课积累，持续更新
-- [[journal/index]] - 学习日志索引：每日答题、实验结果、心得体会
+- [[courses/index]] - 课程笔记索引：每课积累，持续更新（含答题区+心得区）
 
 ## 学习内容
 - **TFLM基础架构**:TensorFlow Lite Micro 核心架构和原理

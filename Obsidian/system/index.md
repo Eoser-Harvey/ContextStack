@@ -13,6 +13,7 @@
 ## 关键文件
 
 - [[knowledge-sharing|项目间知识共享机制]] — 跨项目知识关联与复用指南
+- [[trae-skills-reference|TRAE热门Skills参考]] — 基于真实调用数据的11个高频Skills详解与分类
 
 ## 触发机制
 

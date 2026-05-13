@@ -5,7 +5,7 @@
 > 最后更新：2026-05-11（v4.2 TFLM源码驱动优化）
 > 目标：3个月从零到精通TFLM，具备独立开发和优化嵌入式AI的能力
 > 硬件：ESP32-S3（已就绪）
-> TFLM源码：D:\MyFile\AI\TFLM\tflite-micro-main
+> TFLM源码：`Source/tflite-micro-main`（项目内）
 
 ## 🎯 总体目标
 
