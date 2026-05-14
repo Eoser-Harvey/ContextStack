@@ -25,6 +25,8 @@
   - `#skill` `#debugging` `#methodology` `#manual`
 - [[pua-governance/pua-governance使用说明|PUA Governance]] — 高能动性治理，三种方法论（RCA/Musk五步法/Jobs减法）+强制检查清单+压力升级机制（manual规则）
   - `#skill` `#governance` `#quality` `#manual`
+- [[find-skills/Skill|Find Skills]] — 技能发现与推荐工具，帮助定位适合当前任务的技能，包含 OCR 工具推荐（manual规则）
+  - `#skill` `#tool` `#discovery` `#ocr`
 
 ## 相关
 
