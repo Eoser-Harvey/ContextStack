@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大饼大周期温度计</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">大饼助手</div>
+            <h1>大饼 大周期温度计</h1>
+            <p class="subtitle"><span id="date" class="date"></span> · 市场估值仪表盘</p>
+        </header>
+
+        <section class="decision-card">
+            <h2>💡 今日决策结论</h2>
+            <div class="decision-content">
+                <div id="temperature-label"></div>
+                <p id="decision-text"></p>
+            </div>
+        </section>
+
+        <section class="price-section">
+            <div class="price-item">
+                <p>今日价格</p>
+                <p class="price-value">$<span id="price">79,564</span></p>
+            </div>
+            <div class="price-item">
+                <p>距顶已过</p>
+                <p class="price-value"><span id="months-since-ath">7.2</span> 个月</p>
+            </div>
+        </section>
+        <p class="note">历史参考：上两轮均约 12 个月见底</p>
+
+        <section class="temperature-section">
+            <h3>📊 综合市场温度</h3>
+            <div class="temperature-bar">
+                <div class="temp-label cold">💙 极度低估</div>
+                <div class="temp-label low">🟢 低估</div>
+                <div class="temp-label normal current">🟡 正常</div>
+                <div class="temp-label high">🟠 高估</div>
+                <div class="temp-label extreme">🔴 极度高估</div>
+            </div>
+            <div class="temperature-result">
+                <span id="temp-icon">🟡</span> 
+                <span id="temp-text">正常</span> · 
+                <span id="temp-score">3.00</span> 分
+            </div>
+        </section>
+
+        <section class="metrics-section">
+            <h3>📐 六大估值指标</h3>
+            <div class="metrics-grid" id="metrics-grid"></div>
+        </section>
+
+        <section class="ma120-section">
+            <h3>📈 MA120 右侧信号</h3>
+            <div class="ma120-content">
+                <div class="ma120-price">MA120 $<span id="ma120-price">74,569</span> · 已突破 6.3%</div>
+                <p id="ma120-comment"></p>
+            </div>
+        </section>
+
+        <section class="strategy-note">
+            <h3>📌 策略说明</h3>
+            <p>本策略以「本轮周期预期 3 倍以上收益」为出手门槛——宁可等不到完美入场点而错过，也不在低赔率时重仓。这是策略的纪律，也是代价‼️</p>
+        </section>
+
+        <footer class="footer">
+            <div class="author-info">
+                <div class="author-name">Harvey</div>
+                <p>Web3 开发者 · 大饼大周期温度计 出品人</p>
+            </div>
+            <div class="qrcode-placeholder">数据实时更新 · Powered by Binance</div>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

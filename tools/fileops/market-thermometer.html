@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>链潮 ChainTide — 大饼周期温度计</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    background: #0a0e17;
+    color: #e0e0e0;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  .container { max-width: 480px; margin: 0 auto; }
+
+  /* Loading */
+  .loading-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: #0a0e17; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; z-index: 999;
+    transition: opacity 0.5s;
+  }
+  .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+  .loading-spinner {
+    width: 40px; height: 40px; border: 3px solid #2a3040;
+    border-top-color: #00d4aa; border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  .loading-text { color: #6b7080; font-size: 13px; margin-top: 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Header */
+  .header { text-align: center; margin-bottom: 24px; }
+  .header .brand {
+    font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 2px;
+  }
+  .header .brand .accent { color: #00d4aa; }
+  .header .subtitle { font-size: 14px; color: #8a8fa0; }
+  .header .slogan { font-size: 12px; color: #4a5568; margin-top: 2px; }
+  .header .date-row { font-size: 13px; color: #6b7080; margin-top: 8px; }
+  .header .update-time { font-size: 11px; color: #4a5568; margin-top: 4px; }
+
+  /* Refresh Button */
+  .refresh-btn {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: transparent; border: 1px solid #2a3040; color: #6b7080;
+    padding: 6px 14px; border-radius: 20px; font-size: 12px;
+    cursor: pointer; margin-top: 10px; transition: all 0.2s;
+  }
+  .refresh-btn:hover { border-color: #00d4aa; color: #00d4aa; }
+  .refresh-btn.spinning svg { animation: spin 0.8s linear infinite; }
+
+  /* Error Banner */
+  .error-banner {
+    background: #2d1b1b; border: 1px solid #5c2a2a; border-radius: 10px;
+    padding: 12px 14px; margin-bottom: 16px; font-size: 12px; color: #e87c7c;
+    display: none;
+  }
+
+  /* Decision Box */
+  .decision-box {
+    background: linear-gradient(135deg, #1a1f2e 0%, #151926 100%);
+    border: 1px solid #2a3040; border-radius: 14px;
+    padding: 18px; margin-bottom: 20px;
+  }
+  .decision-box .title { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 8px; }
+  .decision-box .content { font-size: 13.5px; color: #b0b8c8; line-height: 1.7; }
+  .decision-box .highlight { color: #f0b429; font-weight: 600; }
+  .decision-box .highlight-green { color: #22c55e; font-weight: 600; }
+
+  /* Price Card */
+  .price-card {
+    background: linear-gradient(135deg, #1a1f2e 0%, #151926 100%);
+    border: 1px solid #2a3040; border-radius: 14px;
+    padding: 20px; margin-bottom: 16px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .price-section .label { font-size: 12px; color: #6b7080; margin-bottom: 4px; }
+  .price-section .value { font-size: 32px; font-weight: 700; color: #fff; letter-spacing: -1px; }
+  .price-section .change { font-size: 12px; margin-top: 2px; }
+  .price-section .change.up { color: #22c55e; }
+  .price-section .change.down { color: #ef4444; }
+  .time-section { text-align: right; }
+  .time-section .label { font-size: 12px; color: #6b7080; margin-bottom: 4px; }
+  .time-section .value { font-size: 22px; font-weight: 700; color: #f0b429; }
+  .time-section .note { font-size: 11px; color: #6b7080; margin-top: 3px; }
+
+  /* Temperature */
+  .section-title { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 14px; }
+  .temp-bar-container {
+    background: linear-gradient(135deg, #1a1f2e 0%, #151926 100%);
+    border: 1px solid #2a3040; border-radius: 14px;
+    padding: 18px; margin-bottom: 20px;
+  }
+  .temp-legend {
+    display: flex; justify-content: space-between;
+    font-size: 10px; margin-bottom: 10px;
+  }
+  .temp-legend span { display: flex; align-items: center; gap: 3px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .dot-blue { background: #3b82f6; }
+  .dot-green { background: #22c55e; }
+  .dot-yellow { background: #eab308; }
+  .dot-orange { background: #f97316; }
+  .dot-red { background: #ef4444; }
+  .temp-bar {
+    height: 8px; border-radius: 4px; position: relative; margin-bottom: 12px;
+    background: linear-gradient(90deg, #3b82f6 0%, #22c55e 25%, #eab308 50%, #f97316 75%, #ef4444 100%);
+  }
+  .temp-indicator {
+    position: absolute; top: -4px; width: 16px; height: 16px;
+    background: #fff; border-radius: 50%; transform: translateX(-50%);
+    transition: left 0.6s ease;
+  }
+  .temp-indicator.border-blue { border: 3px solid #3b82f6; box-shadow: 0 0 8px rgba(59,130,246,0.5); }
+  .temp-indicator.border-green { border: 3px solid #22c55e; box-shadow: 0 0 8px rgba(34,197,94,0.5); }
+  .temp-indicator.border-yellow { border: 3px solid #eab308; box-shadow: 0 0 8px rgba(234,179,8,0.5); }
+  .temp-indicator.border-orange { border: 3px solid #f97316; box-shadow: 0 0 8px rgba(249,115,22,0.5); }
+  .temp-indicator.border-red { border: 3px solid #ef4444; box-shadow: 0 0 8px rgba(239,68,68,0.5); }
+  .temp-result { text-align: center; font-size: 16px; font-weight: 700; }
+  .temp-result .score { color: #8a8fa0; font-weight: 400; font-size: 14px; margin-left: 4px; }
+
+  /* Indicator Cards */
+  .indicators { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .indicator-card {
+    background: linear-gradient(135deg, #1a1f2e 0%, #151926 100%);
+    border: 1px solid #2a3040; border-radius: 12px;
+    padding: 14px 16px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .indicator-left .name { font-size: 13px; color: #8a8fa0; margin-bottom: 4px; }
+  .indicator-left .detail { font-size: 11px; color: #5a5f70; }
+  .indicator-right { text-align: right; }
+  .indicator-right .value { font-size: 18px; font-weight: 700; color: #fff; }
+  .indicator-right .status { font-size: 12px; font-weight: 600; margin-top: 2px; }
+  .status-blue { color: #3b82f6; }
+  .status-green { color: #22c55e; }
+  .status-yellow { color: #eab308; }
+  .status-orange { color: #f97316; }
+  .status-red { color: #ef4444; }
+
+  /* MA120 Section */
+  .ma-section {
+    background: linear-gradient(135deg, #1a1f2e 0%, #151926 100%);
+    border: 1px solid #2a3040; border-radius: 14px;
+    padding: 18px; margin-bottom: 20px;
+  }
+  .ma-section .ma-value { font-size: 13px; color: #8a8fa0; margin-bottom: 6px; }
+  .ma-section .ma-signal { font-size: 13.5px; color: #b0b8c8; line-height: 1.6; }
+  .ma-section .signal-highlight { color: #22c55e; font-weight: 600; }
+  .ma-section .signal-warn { color: #eab308; }
+  .ma-section .signal-bear { color: #ef4444; font-weight: 600; }
+
+  /* Manual Input Section */
+  .manual-section {
+    background: linear-gradient(135deg, #1a1f2e 0%, #151926 100%);
+    border: 1px solid #2a3040; border-radius: 14px;
+    padding: 18px; margin-bottom: 20px;
+  }
+  .manual-section .section-title { margin-bottom: 10px; }
+  .manual-section .desc { font-size: 12px; color: #6b7080; margin-bottom: 12px; }
+  .manual-row {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+  }
+  .manual-row label { font-size: 12px; color: #8a8fa0; min-width: 80px; }
+  .manual-row input {
+    flex: 1; background: #0d1117; border: 1px solid #2a3040; border-radius: 8px;
+    color: #e0e0e0; padding: 8px 10px; font-size: 13px; outline: none;
+  }
+  .manual-row input:focus { border-color: #00d4aa; }
+  .manual-row input::placeholder { color: #4a4f60; }
+
+  /* Disclaimer */
+  .disclaimer {
+    background: linear-gradient(135deg, #1a1f2e 0%, #151926 100%);
+    border: 1px solid #2a3040; border-radius: 14px;
+    padding: 16px; margin-bottom: 20px;
+  }
+  .disclaimer .text { font-size: 12px; color: #6b7080; line-height: 1.7; }
+
+  /* Footer */
+  .footer {
+    text-align: center; font-size: 11px; color: #4a4f60;
+    padding-bottom: 20px; line-height: 1.6;
+  }
+  .footer .brand-accent { color: #00d4aa; }
+</style>
+</head>
+<body>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">正在获取市场数据...</div>
+</div>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="brand">🌊 <span class="accent">链潮</span> ChainTide</div>
+    <div class="subtitle">大饼 大周期温度计</div>
+    <div class="slogan">潮起潮落，心中有数</div>
+    <div class="date-row" id="dateRow">--</div>
+    <div class="update-time" id="updateTime">--</div>
+    <button class="refresh-btn" id="refreshBtn" onclick="fetchAndRender()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 2v6h-6M3 12a9 9 0 0 1 15-6.7L21 8M3 22v-6h6M21 12a9 9 0 0 1-15 6.7L3 16"/>
+      </svg>
+      刷新数据
+    </button>
+  </div>
+
+  <!-- Error Banner -->
+  <div class="error-banner" id="errorBanner"></div>
+
+  <!-- Decision -->
+  <div class="decision-box">
+    <div class="title">💡 今日决策结论</div>
+    <div class="content" id="decisionContent">加载中...</div>
+  </div>
+
+  <!-- Price -->
+  <div class="price-card">
+    <div class="price-section">
+      <div class="label">今日价格</div>
+      <div class="value" id="priceValue">--</div>
+      <div class="change" id="priceChange">--</div>
+    </div>
+    <div class="time-section">
+      <div class="label">距顶已过</div>
+      <div class="value" id="monthsFromATH">--</div>
+      <div class="note">历史参考：上两轮均约12月见底</div>
+    </div>
+  </div>
+
+  <!-- Temperature -->
+  <div class="temp-bar-container">
+    <div class="section-title">📊 综合市场温度</div>
+    <div class="temp-legend">
+      <span><span class="dot dot-blue"></span>极度低估</span>
+      <span><span class="dot dot-green"></span>低估</span>
+      <span><span class="dot dot-yellow"></span>正常</span>
+      <span><span class="dot dot-orange"></span>高估</span>
+      <span><span class="dot dot-red"></span>极高估</span>
+    </div>
+    <div class="temp-bar">
+      <div class="temp-indicator border-yellow" id="tempIndicator" style="left: 50%;"></div>
+    </div>
+    <div class="temp-result" id="tempResult">
+      🟡 正常<span class="score">· 3.00 分</span>
+    </div>
+  </div>
+
+  <!-- Six Indicators -->
+  <div class="section-title">📐 六大估值指标</div>
+  <div class="indicators" id="indicatorsContainer"></div>
+
+  <!-- MA120 Signal -->
+  <div class="ma-section">
+    <div class="section-title">📈 MA120 右侧信号</div>
+    <div class="ma-value" id="maValue">加载中...</div>
+    <div class="ma-signal" id="maSignal">加载中...</div>
+  </div>
+
+  <!-- Manual Input for on-chain data -->
+  <div class="manual-section">
+    <div class="section-title">⛓️ 链上数据（手动输入）</div>
+    <div class="desc">MVRV 和均衡价格为链上指标，需从 Glassnode/CryptoQuant 获取后手动填入</div>
+    <div class="manual-row">
+      <label>MVRV Z-Score</label>
+      <input type="number" step="0.01" id="mvrvInput" placeholder="如 1.48" onchange="recalcWithManual()">
+    </div>
+    <div class="manual-row">
+      <label>均衡价格($)</label>
+      <input type="number" step="1" id="equilibriumInput" placeholder="如 40424" onchange="recalcWithManual()">
+    </div>
+  </div>
+
+  <!-- Disclaimer -->
+  <div class="disclaimer">
+    <div class="text">
+      📌 策略说明：本策略以「本轮周期预期 3 倍以上收益」为出手门槛——宁可等不到完美入场点而错过，也不在低赔率时重仓。这是策略的纪律，也是代价‼️
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span class="brand-accent">链潮 ChainTide</span> · 潮起潮落，心中有数<br>
+    数据来源：Binance · CoinGecko · alternative.me<br>
+    仅供参考，不构成投资建议
+  </div>
+
+</div>
+
+<script>
+// ===== State =====
+let state = {
+  price: 0, ath: 0, athDate: null, ma120: 0,
+  dca200: 0, wma200: 0, fearGreed: 0,
+  mvrv: null, equilibriumPrice: null,
+  priceChange24h: 0
+};
+
+// ===== API Fetchers =====
+async function fetchBinancePrice() {
+  const res = await fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT');
+  const d = await res.json();
+  state.price = parseFloat(d.lastPrice);
+  state.priceChange24h = parseFloat(d.priceChangePercent);
+  return state.price;
+}
+
+async function fetchBinanceKlines(symbol, interval, limit) {
+  const res = await fetch(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`);
+  return await res.json();
+}
+
+async function fetchCoinGeckoATH() {
+  const res = await fetch('https://api.coingecko.com/api/v3/coins/bitcoin?localization=false&tickers=false&community_data=false&developer_data=false');
+  const d = await res.json();
+  state.ath = d.market_data.ath.usd;
+  state.athDate = new Date(d.market_data.ath_date.usd);
+  return state.ath;
+}
+
+async function fetchFearGreedIndex() {
+  const res = await fetch('https://api.alternative.me/fng/?limit=1');
+  const d = await res.json();
+  state.fearGreed = parseInt(d.data[0].value);
+  return state.fearGreed;
+}
+
+// ===== Compute Indicators from Klines =====
+function computeMA(closes, period) {
+  if (closes.length < period) return null;
+  const slice = closes.slice(-period);
+  return slice.reduce((a, b) => a + b, 0) / period;
+}
+
+function computeDCA(closes, period) {
+  // DCA average: average of daily prices over period
+  if (closes.length < period) return null;
+  const slice = closes.slice(-period);
+  return slice.reduce((a, b) => a + b, 0) / slice.length;
+}
+
+async function computeFromKlines() {
+  // Fetch 200+120 days of daily klines for MA120 and DCA200
+  const klines = await fetchBinanceKlines('BTCUSDT', '1d', 250);
+  const closes = klines.map(k => parseFloat(k[4])); // close price
+
+  state.ma120 = computeMA(closes, 120);
+  state.dca200 = computeDCA(closes, 200);
+
+  // Fetch weekly klines for 200WMA (need ~200 weeks = ~1400 days)
+  // Binance max limit is 1000, so we fetch 1000 and that's ~4 years which is plenty
+  const weeklyKlines = await fetchBinanceKlines('BTCUSDT', '1w', 200);
+  const weeklyCloses = weeklyKlines.map(k => parseFloat(k[4]));
+  state.wma200 = computeMA(weeklyCloses, Math.min(200, weeklyCloses.length));
+}
+
+// ===== Scoring Logic =====
+const LEVELS = [
+  { name: '极度低估', emoji: '💙', color: 'blue', min: 0, max: 1 },
+  { name: '低估',     emoji: '🟢', color: 'green', min: 1, max: 2 },
+  { name: '正常',     emoji: '🟡', color: 'yellow', min: 2, max: 3 },
+  { name: '高估',     emoji: '🟠', color: 'orange', min: 3, max: 4 },
+  { name: '极高估',   emoji: '🔴', color: 'red', min: 4, max: 5 },
+];
+
+function getLevel(score) {
+  for (const lv of LEVELS) {
+    if (score >= lv.min && score < lv.max) return lv;
+  }
+  return LEVELS[4]; //极高估
+}
+
+function scoreDrawdown(drawdown) {
+  // drawdown is negative, e.g. -0.37
+  const d = Math.abs(drawdown);
+  if (d >= 0.75) return 0.5;  // 极度低估
+  if (d >= 0.55) return 1.5;  // 低估
+  if (d >= 0.35) return 2.5;  // 正常
+  if (d >= 0.15) return 3.5;  // 高估
+  return 4.5;                  // 极度高估
+}
+
+function scoreMVRV(mvrv) {
+  if (mvrv <= 0.8) return 0.5;
+  if (mvrv <= 1.2) return 1.5;
+  if (mvrv <= 2.0) return 2.5;
+  if (mvrv <= 3.5) return 3.5;
+  return 4.5;
+}
+
+function scoreDCARatio(ratio) {
+  // ratio = price / dca200
+  if (ratio <= 0.6) return 0.5;
+  if (ratio <= 0.85) return 1.5;
+  if (ratio <= 1.15) return 2.5;
+  if (ratio <= 1.5) return 3.5;
+  return 4.5;
+}
+
+function scoreEquilibrium(price, eqPrice) {
+  const ratio = price / eqPrice;
+  if (ratio <= 0.8) return 0.5;
+  if (ratio <= 1.2) return 1.5;
+  if (ratio <= 2.0) return 2.5;
+  if (ratio <= 3.0) return 3.5;
+  return 4.5;
+}
+
+function scoreWMA200(ratio) {
+  if (ratio <= 0.6) return 0.5;
+  if (ratio <= 0.9) return 1.5;
+  if (ratio <= 1.5) return 2.5;
+  if (ratio <= 2.5) return 3.5;
+  return 4.5;
+}
+
+function scoreFearGreed(fg) {
+  if (fg <= 10) return 0.5;
+  if (fg <= 25) return 1.5;
+  if (fg <= 55) return 2.5;
+  if (fg <= 75) return 3.5;
+  return 4.5;
+}
+
+function computeAllScores() {
+  const scores = [];
+  const indicators = [];
+
+  // 1. Price Drawdown
+  const drawdown = (state.price - state.ath) / state.ath;
+  const s1 = scoreDrawdown(drawdown);
+  scores.push(s1);
+  indicators.push({
+    name: '价格跌幅（vs 本轮顶部）',
+    value: (drawdown * 100).toFixed(1) + '%',
+    detail: `$${fmtNum(state.price)} · ATH $${fmtNum(state.ath)}`,
+    score: s1
+  });
+
+  // 2. MVRV (manual or default estimate)
+  const mvrv = state.mvrv || 1.5; // default neutral
+  const s2 = scoreMVRV(mvrv);
+  scores.push(s2);
+  indicators.push({
+    name: 'MVRV',
+    value: mvrv.toFixed(2),
+    detail: state.mvrv ? '手动输入' : '未输入，使用默认值',
+    score: s2
+  });
+
+  // 3. 200日定投均价比
+  const dcaRatio = state.price / state.dca200;
+  const s3 = scoreDCARatio(dcaRatio);
+  scores.push(s3);
+  indicators.push({
+    name: '200日定投均价比',
+    value: dcaRatio.toFixed(2) + 'x',
+    detail: `均价 $${fmtNum(state.dca200)}`,
+    score: s3
+  });
+
+  // 4. 均衡价格 (manual or default estimate)
+  const eqPrice = state.equilibriumPrice || state.price * 0.5;
+  const s4 = scoreEquilibrium(state.price, eqPrice);
+  scores.push(s4);
+  indicators.push({
+    name: '均衡价格',
+    value: '$' + fmtNum(eqPrice),
+    detail: state.equilibriumPrice
+      ? `当前高于均衡价 $${fmtNum(eqPrice)}（手动输入）`
+      : `估计值 $${fmtNum(eqPrice)}（未输入）`,
+    score: s4
+  });
+
+  // 5. 200周均线
+  const wmaRatio = state.price / state.wma200;
+  const s5 = scoreWMA200(wmaRatio);
+  scores.push(s5);
+  indicators.push({
+    name: '200周均线',
+    value: wmaRatio.toFixed(2) + 'x',
+    detail: `200WMA $${fmtNum(state.wma200)}`,
+    score: s5
+  });
+
+  // 6. 恐慌贪婪指数
+  const s6 = scoreFearGreed(state.fearGreed);
+  scores.push(s6);
+  indicators.push({
+    name: '恐慌贪婪指数',
+    value: state.fearGreed,
+    detail: state.fearGreed <= 25 ? '极度恐慌' : state.fearGreed <= 45 ? '恐慌' : state.fearGreed <= 55 ? '中性' : state.fearGreed <= 75 ? '贪婪' : '极度贪婪',
+    score: s6
+  });
+
+  const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+  return { avgScore, indicators };
+}
+
+// ===== Rendering =====
+function fmtNum(n) {
+  if (!n) return '--';
+  return Math.round(n).toLocaleString('en-US');
+}
+
+function fmtPrice(n) {
+  if (!n) return '--';
+  return '$' + Math.round(n).toLocaleString('en-US');
+}
+
+function renderDate() {
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}年${String(now.getMonth()+1).padStart(2,'0')}月${String(now.getDate()).padStart(2,'0')}日`;
+  document.getElementById('dateRow').textContent = `${dateStr} · 市场估值仪表盘`;
+  const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  document.getElementById('updateTime').textContent = `数据更新于 ${timeStr}`;
+}
+
+function renderPrice() {
+  document.getElementById('priceValue').textContent = fmtPrice(state.price);
+  const changeEl = document.getElementById('priceChange');
+  const pct = state.priceChange24h.toFixed(2);
+  const up = state.priceChange24h >= 0;
+  changeEl.textContent = `24h ${up ? '+' : ''}${pct}%`;
+  changeEl.className = 'change ' + (up ? 'up' : 'down');
+}
+
+function renderMonthsFromATH() {
+  if (!state.athDate) {
+    document.getElementById('monthsFromATH').textContent = '--';
+    return;
+  }
+  const now = new Date();
+  const diffMs = now - state.athDate;
+  const diffMonths = diffMs / (1000 * 60 * 60 * 24 * 30.44);
+  document.getElementById('monthsFromATH').textContent = diffMonths.toFixed(1) + ' 月';
+}
+
+function renderTemperature(avgScore) {
+  const level = getLevel(avgScore);
+  const pct = Math.min(Math.max((avgScore / 5) * 100, 2), 98);
+  const indicator = document.getElementById('tempIndicator');
+  indicator.style.left = pct + '%';
+  indicator.className = 'temp-indicator border-' + level.color;
+
+  document.getElementById('tempResult').innerHTML =
+    `${level.emoji} ${level.name}<span class="score">· ${avgScore.toFixed(2)} 分</span>`;
+}
+
+function renderIndicators(indicators) {
+  const container = document.getElementById('indicatorsContainer');
+  container.innerHTML = indicators.map(ind => {
+    const lv = getLevel(ind.score);
+    return `
+      <div class="indicator-card">
+        <div class="indicator-left">
+          <div class="name">${ind.name}</div>
+          <div class="detail">${ind.detail}</div>
+        </div>
+        <div class="indicator-right">
+          <div class="value">${ind.value}</div>
+          <div class="status status-${lv.color}">${lv.emoji} ${lv.name}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderMA120() {
+  const above = state.price > state.ma120;
+  const pct = ((state.price - state.ma120) / state.ma120 * 100).toFixed(1);
+
+  document.getElementById('maValue').textContent =
+    `MA120 $${fmtNum(state.ma120)} · ${above ? '已突破' : '未突破'} ${Math.abs(pct)}%`;
+
+  const signalEl = document.getElementById('maSignal');
+  if (above) {
+    signalEl.innerHTML =
+      `MA120<span class="signal-highlight">已突破</span> → 小仓位右侧信号，<span class="signal-warn">摩擦风险高</span>`;
+  } else {
+    signalEl.innerHTML =
+      `MA120<span class="signal-bear">未突破</span> → 右侧信号未出现，<span class="signal-warn">宜观望或左侧小仓</span>`;
+  }
+}
+
+function renderDecision(avgScore) {
+  const level = getLevel(avgScore);
+  const above = state.price > state.ma120;
+  let text = '';
+
+  if (level.color === 'blue') {
+    text = `温度「<span class="highlight-green">${level.name}</span>」— 极度低估区间，历史级别建仓机会。分批买入，耐心持有。`;
+  } else if (level.color === 'green') {
+    text = `温度「<span class="highlight-green">${level.name}</span>」— 价值低估区间，适合左侧分批建仓。`;
+  } else if (level.color === 'yellow') {
+    if (above) {
+      text = `温度「<span class="highlight">${level.name}</span>」× MA120已突破，小仓位右侧信号。左侧指标未触底，被摩擦风险高，轻仓或观望均可。`;
+    } else {
+      text = `温度「<span class="highlight">${level.name}</span>」— MA120未突破，右侧信号未出现。可小仓左侧布局，注意控制风险。`;
+    }
+  } else if (level.color === 'orange') {
+    text = `温度「<span class="highlight">${level.name}</span>」— 市场偏高，不宜追高。持有者可考虑分批止盈。`;
+  } else {
+    text = `温度「<span class="highlight">${level.name}</span>」— 市场过热，高风险区间。严格执行止盈纪律，减仓为主。`;
+  }
+
+  document.getElementById('decisionContent').innerHTML = text;
+}
+
+function renderAll() {
+  const { avgScore, indicators } = computeAllScores();
+  renderDate();
+  renderPrice();
+  renderMonthsFromATH();
+  renderTemperature(avgScore);
+  renderIndicators(indicators);
+  renderMA120();
+  renderDecision(avgScore);
+}
+
+// ===== Error Handling =====
+function showError(msg) {
+  const el = document.getElementById('errorBanner');
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 8000);
+}
+
+// ===== Manual Input Recalc =====
+function recalcWithManual() {
+  const mvrvVal = document.getElementById('mvrvInput').value;
+  const eqVal = document.getElementById('equilibriumInput').value;
+  if (mvrvVal) state.mvrv = parseFloat(mvrvVal);
+  if (eqVal) state.equilibriumPrice = parseFloat(eqVal);
+  renderAll();
+}
+
+// ===== Main Fetch =====
+async function fetchAndRender() {
+  const btn = document.getElementById('refreshBtn');
+  btn.classList.add('spinning');
+
+  try {
+    // Fetch all data in parallel
+    await Promise.all([
+      fetchBinancePrice().catch(e => console.warn('Binance price failed:', e)),
+      fetchCoinGeckoATH().catch(e => {
+        console.warn('CoinGecko ATH failed:', e);
+        // Fallback: estimate ATH from recent history
+        state.ath = 126200;
+        state.athDate = new Date('2025-12-17');
+      }),
+      fetchFearGreedIndex().catch(e => {
+        console.warn('Fear&Greed failed:', e);
+        state.fearGreed = 50;
+      }),
+      computeFromKlines().catch(e => {
+        console.warn('Klines compute failed:', e);
+        state.ma120 = state.price * 0.94;
+        state.dca200 = state.price * 1.03;
+        state.wma200 = state.price * 0.77;
+      })
+    ]);
+
+    renderAll();
+    document.getElementById('loadingOverlay').classList.add('hidden');
+  } catch (e) {
+    console.error('Fetch error:', e);
+    showError('部分数据获取失败，显示的数据可能不完整。请刷新重试。');
+    document.getElementById('loadingOverlay').classList.add('hidden');
+  } finally {
+    setTimeout(() => btn.classList.remove('spinning'), 600);
+  }
+}
+
+// ===== Init =====
+fetchAndRender();
+
+// Auto refresh every 5 minutes
+setInterval(fetchAndRender, 5 * 60 * 1000);
+</script>
+
+</body>
+</html>

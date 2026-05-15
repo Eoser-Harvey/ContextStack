@@ -1,0 +1,281 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #e2e8f0;
+    line-height: 1.6;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.header {
+    text-align: center;
+    padding: 30px 0;
+    border-bottom: 1px solid #334155;
+    margin-bottom: 30px;
+}
+
+.logo {
+    font-size: 18px;
+    color: #94a3b8;
+    margin-bottom: 10px;
+}
+
+.header h1 {
+    font-size: 28px;
+    color: #fff;
+    font-weight: 700;
+}
+
+.subtitle {
+    color: #94a3b8;
+    margin-top: 8px;
+}
+
+.date {
+    font-weight: 600;
+}
+
+.decision-card {
+    background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+    border: 1px solid #3b82f6;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.decision-card h2 {
+    font-size: 20px;
+    margin-bottom: 16px;
+}
+
+.decision-content {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+}
+
+#temperature-label {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.price-section {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.price-item {
+    flex: 1;
+    background: #1e293b;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+}
+
+.price-item p:first-child {
+    color: #94a3b8;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.price-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.note {
+    color: #94a3b8;
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.temperature-section,
+.metrics-section,
+.ma120-section,
+.strategy-note {
+    background: #1e293b;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.temperature-section h3,
+.metrics-section h3,
+.ma120-section h3,
+.strategy-note h3 {
+    font-size: 18px;
+    margin-bottom: 16px;
+    color: #fff;
+}
+
+.temperature-bar {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.temp-label {
+    flex: 1;
+    text-align: center;
+    font-size: 13px;
+    padding: 8px 4px;
+    border-radius: 8px;
+    background: #334155;
+}
+
+.temp-label.cold {
+    background: #1e40af;
+}
+
+.temp-label.low {
+    background: #166534;
+}
+
+.temp-label.normal {
+    background: #854d0e;
+}
+
+.temp-label.high {
+    background: #9a3412;
+}
+
+.temp-label.extreme {
+    background: #991b1b;
+}
+
+.temp-label.current {
+    border: 2px solid #fbbf24;
+    transform: scale(1.05);
+}
+
+.temperature-result {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+.metric-card {
+    background: #334155;
+    border-radius: 12px;
+    padding: 20px;
+    border-left: 4px solid #fbbf24;
+}
+
+.metric-card h4 {
+    font-size: 16px;
+    margin-bottom: 12px;
+    color: #cbd5e1;
+}
+
+.metric-value {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.metric-status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.metric-status.normal {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+}
+
+.metric-status.low {
+    background: rgba(34, 197, 94, 0.2);
+    color: #22c55e;
+}
+
+.metric-status.high {
+    background: rgba(248, 113, 113, 0.2);
+    color: #f87171;
+}
+
+.metric-detail {
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.ma120-section {
+    border: 1px solid #22c55e;
+}
+
+.ma120-price {
+    font-size: 22px;
+    font-weight: 700;
+    color: #22c55e;
+    margin-bottom: 12px;
+}
+
+.strategy-note {
+    background: linear-gradient(135deg, #451a03 0%, #1e293b 100%);
+    border: 1px solid #ea580c;
+}
+
+.footer {
+    border-top: 1px solid #334155;
+    padding-top: 30px;
+    text-align: center;
+}
+
+.author-name {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.author-info p {
+    color: #94a3b8;
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+
+.qrcode-placeholder {
+    margin-top: 20px;
+    padding: 16px;
+    background: #334155;
+    border-radius: 12px;
+    color: #94a3b8;
+}
+
+@media (max-width: 640px) {
+    .header h1 {
+        font-size: 24px;
+    }
+
+    .price-section {
+        flex-direction: column;
+    }
+
+    .temperature-bar {
+        flex-wrap: wrap;
+    }
+}
