@@ -55,6 +55,12 @@
 - 每创建新的文件夹或者笔记时，自动帮忙添加index.md文件（规范）
 - 没有用的文件要及时删除，保持目录结构清晰（规范）
 
+### 2026-05-19
+- ⛔ **文件操作红线**：只删除/修改自己创建的文件，绝不碰别人项目文件夹下的任何文件
+- ⛔ **删除前必须确认归属**：不确定来源的文件，宁可留着也不删
+- ⛔ **自己开发的模块放在独立文件夹**：不要随便修改或删除别人的文件
+- 🚨 **教训**：误删了 `btc-temperature-gauge/server.py` 和 `server.js`（untracked文件，无法恢复）
+
 ### Feedback记忆记录模板
 **格式**: 日期 + 具体场景 + 纠正/认可 + 结果
 - **场景**: 描述行为或问题模式
@@ -150,6 +156,12 @@
 - **重要性**: 中 - 端侧AI产业链投资参考，需每季度更新财报数据
 - **关联**: 与 `workbench/projects/embedded-ai-learning/端侧AI产业链龙头企业图谱-2026.md` 产业链分析互补
 
+### Crypto数据API知识库
+- **文件**: `memory/knowledge/crypto-api-reference.md`
+- **内容**: 加密货币公开免费API汇总（CryptoCompare/Alternative.me/Binance/CoinGecko），含国内可用性测试、接口参数、响应格式、踩坑记录、指标计算方法、Node.js代理模板
+- **重要性**: 高 - 后续Crypto相关项目可直接复用，避免重复调研API
+- **关联**: 当前用于 `workbench/projects/btc-temperature-gauge/` 项目
+
 ### TRAE热门Skills参考
 - **文件**: `Obsidian/system/trae-skills-reference.md`
 - **内容**: TRAE官方基于真实调用数据发布的11个热门Skills详解，含分类体系（流程类/实施类/约束类/工具类/设计类）、调用优先级规则、对ContextStack的启示
@@ -157,5 +169,5 @@
 
 ---
 
-**最后更新**: 2026-05-13
-**更新内容**: 新增端侧AI投资研究知识，创建 Obsidian/investment-research/ 目录及深度分析文档
+**最后更新**: 2026-05-19
+**更新内容**: 新增Crypto数据API知识库，沉淀btc-temperature-gauge项目API调研成果
