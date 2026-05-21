@@ -156,6 +156,12 @@
 - **重要性**: 中 - 端侧AI产业链投资参考，需每季度更新财报数据
 - **关联**: 与 `workbench/projects/embedded-ai-learning/端侧AI产业链龙头企业图谱-2026.md` 产业链分析互补
 
+### Crypto A8 计划（2026-2028）
+- **文件**: `Obsidian/investment-research/Crypto-A8计划-2026至2028.md`
+- **内容**: Harvey 个人 Crypto 投资路线图：97万→1000万，四阶段执行（风险出清→筹码积累→牛市拿住→分批止盈），五大不可触碰红线，BTC大周期+低风险Alpha双轮驱动
+- **重要性**: 高 - 个人核心投资计划，每季度更新，每月复盘
+- **关联**: 依赖 `workbench/projects/btc-temperature-gauge/` 周期罗盘判断买卖点
+
 ### Crypto数据API知识库
 - **文件**: `memory/knowledge/crypto-api-reference.md`
 - **内容**: 加密货币公开免费API汇总（CryptoCompare/Alternative.me/Binance/CoinGecko），含国内可用性测试、接口参数、响应格式、踩坑记录、指标计算方法、Node.js代理模板
