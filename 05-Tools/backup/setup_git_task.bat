@@ -28,11 +28,11 @@ echo.
 echo 正在创建新任务...
 echo 任务名称: ContextStack_GitAutoPush
 echo 执行时间: 每日 22:00
-echo 脚本路径: D:\MyFile\AI\ContextStack\05-Tools\backup\auto_push.ps1
+echo 脚本路径: %~dp0auto_push.ps1
 echo.
 
 REM 尝试创建任务（使用当前用户）
-schtasks /create /tn ContextStack_GitAutoPush /tr "powershell.exe -ExecutionPolicy Bypass -File \"D:\MyFile\AI\ContextStack\05-Tools\backup\auto_push.ps1\"" /sc DAILY /st 22:00 /ru "%USERNAME%" /rl HIGHEST /f
+schtasks /create /tn ContextStack_GitAutoPush /tr "powershell.exe -ExecutionPolicy Bypass -File \"%~dp0auto_push.ps1\"" /sc DAILY /st 22:00 /ru "%USERNAME%" /rl HIGHEST /f
 
 if %errorlevel% equ 0 (
     echo.
@@ -49,7 +49,7 @@ if %errorlevel% equ 0 (
     echo.
     echo 请尝试:
     echo 1. 以管理员身份运行此脚本
-    echo 2. 手动检查脚本文件路径: D:\MyFile\AI\ContextStack\05-Tools\backup\auto_push.ps1
+    echo 2. 手动检查脚本文件路径: %~dp0auto_push.ps1
 )
 
 echo.
