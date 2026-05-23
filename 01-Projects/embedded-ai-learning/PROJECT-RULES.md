@@ -25,7 +25,7 @@
 
 | 层级 | 内容 | 学习方式 |
 |------|------|----------|
-| **主线（必须）** | TFLM 源码阅读、示例运行、算子分析 | 直接操作本地 TFLM 源码 `本地 TFLM 源码目录` |
+| **主线（必须）** | TFLM 源码阅读、示例运行、算子分析 | 直接操作本地 TFLM 源码 `./source/tflite-micro-main` |
 | **辅线（够用就行）** | DL 基础概念（CNN、反向传播、损失函数等） | 围绕 TFLM 源码讲解，不另起 PyTorch 项目 |
 | **工具（按需）** | PyTorch 训练、模型导出 .tflite | 仅在需要生成测试模型时使用，不展开教学 |
 
@@ -46,7 +46,7 @@
 ## 目录结构规范
 
 ### 项目代码路径
-- **TFLM源码**: `本地 TFLM 源码目录`
+- **TFLM源码**: `./source/tflite-micro-main`
 - **核心代码**: `tensorflow/lite/micro/`
 - **示例代码**: `tensorflow/lite/micro/examples/`
 - **工具脚本**: `tools/`, `python/`

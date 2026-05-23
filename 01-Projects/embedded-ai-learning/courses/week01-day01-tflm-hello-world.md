@@ -4,7 +4,7 @@
 > **状态**：进行中
 > **主线**：TFLM 源码阅读
 > **辅线**：DL 基础概念（围绕 TFLM 讲解）
-> **源码根目录**：`Source/tflite-micro-main/`
+> **源码根目录**：`source/tflite-micro-main/`
 
 ---
 

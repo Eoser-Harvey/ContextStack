@@ -28,6 +28,6 @@
 - 相关领域：深度学习基础、C/C++ 编程
 
 ## 系统环境 / 依赖
-- TFLM 源码：`本地 TFLM 源码目录`
+- TFLM 源码：`./source/tflite-micro-main`
 - 核心代码：`tensorflow/lite/micro/`
 - 示例代码：`tensorflow/lite/micro/examples/`

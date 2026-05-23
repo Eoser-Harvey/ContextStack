@@ -1,7 +1,7 @@
 # 嵌入式AI学习工作台
 ## 项目信息
 - **项目名称**:嵌入式AI学习
-- **项目路径**:./Source\tflite-micro-main
+- **项目路径**:./source/tflite-micro-main
 - **负责人**:h31280
 - **创建时间**:2026-04-29
 - **最后更新**:2026-05-11
@@ -138,7 +138,7 @@
   - 量化精度损失
 
 ## 相关文件
-- **项目根目录**:本地 TFLM 源码目录
+- **项目根目录**:./source/tflite-micro-main
 - **核心代码**:tensorflow/lite/micro/
 - **示例代码**:tensorflow/lite/micro/examples/
 - **工具脚本**:tools/, python/
