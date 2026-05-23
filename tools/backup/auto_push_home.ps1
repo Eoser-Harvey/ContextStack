@@ -1,9 +1,9 @@
-# 单位自动同步脚本 — 每日 22:00 执行
-# 用法: Windows 任务计划程序 → 每日 22:00 → powershell -File "...\auto_push.ps1"
+# 家里自动同步脚本 — 每日凌晨 3:00 执行
+# 用法: Windows 任务计划程序 → 每日 3:00 → powershell -File "...\auto_push_home.ps1"
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repoPath  = Split-Path -Parent (Split-Path -Parent $scriptDir)
-$logFile   = Join-Path $scriptDir "auto_push.log"
+$logFile   = Join-Path $scriptDir "auto_push_home.log"
 $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 
 Add-Content -Path $logFile -Value "=== $timestamp ==="

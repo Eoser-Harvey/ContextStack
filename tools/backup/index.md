@@ -4,6 +4,10 @@
 
 ## 💾 工具列表
 
+### Git 自动同步
+- [[auto_push.ps1]] — **单位**自动同步：每日 22:00 先 pull 再 push
+- [[auto_push_home.ps1]] — **家里**自动同步：每日 03:00 先 pull 再 push
+
 ### 核心备份工具
 - [[compress_backup.ps1]] - **推荐** 压缩备份脚本 (方案B)
 - [[daily_backup.ps1]] - 原始每日备份脚本 (文件夹复制)
