@@ -7,6 +7,8 @@
 ### Git 自动同步
 - [[auto_push.ps1]] — **单位**自动同步：每日 22:00 先 pull 再 push
 - [[auto_push_home.ps1]] — **家里**自动同步：每日 03:00 先 pull 再 push
+- [[setup_git_task.bat]] — **任务设置工具**：重新设置Windows任务计划程序任务
+- [[README-自动推送任务.md]] — **设置指南**：详细说明和故障排除
 
 ### 核心备份工具
 - [[compress_backup.ps1]] - **推荐** 压缩备份脚本 (方案B)
@@ -36,11 +38,17 @@
 ## 🚀 使用指南
 
 ### 🔄 自动备份 (已配置)
-**系统已配置每日自动备份，无需手动操作**
-- **时间**: 每天 24:00 (00:00)
+**系统已配置Git自动推送，确保代码同步**
+- **时间**: 每天 22:00
 - **方式**: Windows 任务计划程序
-- **任务名**: `ContextStack_Backup`
-- **状态**: ✅ 已启用，每天自动运行
+- **任务名**: `ContextStack_GitAutoPush`
+- **状态**: ⚠️ 需重新设置（路径变更后）
+
+### 🔧 Git自动推送任务设置
+由于框架升级导致路径变更，需要重新设置：
+1. **运行设置脚本**：以管理员身份运行 [[setup_git_task.bat]]
+2. **检查任务状态**：使用 `schtasks /query /tn ContextStack_GitAutoPush`
+3. **手动测试**：运行 `schtasks /run /tn ContextStack_GitAutoPush`
 
 ### 手动执行备份
 #### 压缩备份脚本 (推荐方案B)
@@ -183,6 +191,6 @@ powershell -File daily_backup.ps1 -BackupRoot "D:\Backups" -RetentionDays 30
 
 ---
 
-**最后更新**: 2026-05-08  
-**工具版本**: v2.0 (新增压缩备份)  
+**最后更新**: 2026-05-23  
+**工具版本**: v3.0 (适配框架升级，新增任务设置工具)  
 **维护者**: ContextStack 框架
