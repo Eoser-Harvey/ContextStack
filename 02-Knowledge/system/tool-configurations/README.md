@@ -130,5 +130,4 @@ updated: 2026-05-07
 ## 相关资源
 
 - VSCode配置文档: https://code.visualstudio.com/docs/getstarted/settings
-- 配置模板位置: `D:/Ai/Skills/Code Skill/VS 工程构建/template/`
-- 配置工具: `D:/Ai/Tools/`
+

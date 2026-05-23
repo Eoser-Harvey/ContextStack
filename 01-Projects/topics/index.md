@@ -29,7 +29,7 @@
 ## 相关链接
 
 - 工作台系统: `../index.md`
-- 工作台使用指南: `../workbench-guide.md`
+- 工作台使用指南: 见 [01-Projects/index.md](../index.md)
 - 工作台模板: `../templates/`
 
 ---

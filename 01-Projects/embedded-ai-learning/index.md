@@ -8,7 +8,7 @@
 - [[evaluation-and-optimized-plan]] - 综合评估报告：市场调研 + 计划诊断 + 优化方案 + 检查机制 + 打分体系
 - [[market-research-2026]] - 嵌入式AI岗位市场调研报告（2026年5月）：岗位需求、技能要求、薪资分布
 - [[端侧AI产业链龙头企业图谱-2026]] - 端侧AI全产业链龙头企业图谱：上下游企业、上市情况、职业建议
-- [[../../02-Knowledge/career-development/个人职业发展分析-端侧AI企业定制攻略|个人职业发展分析-端侧AI企业定制攻略]] - 个人职业发展分析：定制简历、面试攻略、谈薪策略（位于Obsidian职业发展库）
+- [[../../02-Knowledge/career-development/个人职业发展分析-端侧AI企业定制攻略|个人职业发展分析-端侧AI企业定制攻略]] - 个人职业发展分析：定制简历、面试攻略、谈薪策略（位于02-Knowledge职业发展库）
 - [[embedded-ai-learning.code-workspace]] - VSCode工作区配置
 - [[courses/index]] - 课程笔记索引：每课积累，持续更新（含答题区+心得区）
 

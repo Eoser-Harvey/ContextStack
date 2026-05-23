@@ -43,7 +43,7 @@ updated: 2026-05-07
 ## 目录结构
 
 ```
-D:\MyFile\AI\ContextStack\Skills\vscode-config-management\
+02-Knowledge/skills/vscode-config-management/
 ├── vscode-config-management-guide.md          # 本文件
 ├── scripts/                           # 脚本目录
 │   ├── backup_vscode_config.bat      # 配置备份脚本

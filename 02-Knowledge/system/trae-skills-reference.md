@@ -13,7 +13,7 @@ integration: 与ContextStack四层架构中的Skills体系互补参考
 
 ## 关联文档
 
-- **ContextStack Skills目录**：[[../../../Skills/index|已有Skills]] — 对比参考，补充新Skill
+- **ContextStack Skills目录**：[[../../skills/index|已有Skills]] — 对比参考，补充新Skill
 - **系统规范文档**：[[../index|系统规范文档库]] — 四层架构第三层
 
 ---

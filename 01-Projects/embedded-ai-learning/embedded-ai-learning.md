@@ -1,7 +1,7 @@
 # 嵌入式AI学习工作台
 ## 项目信息
 - **项目名称**:嵌入式AI学习
-- **项目路径**:D:\MyFile\AI\ContextStack\workbench\projects\embedded-ai-learning\Source\tflite-micro-main
+- **项目路径**:./Source\tflite-micro-main
 - **负责人**:h31280
 - **创建时间**:2026-04-29
 - **最后更新**:2026-05-11

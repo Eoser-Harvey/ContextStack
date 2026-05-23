@@ -21,7 +21,7 @@
 ## 目录结构规范
 
 ### 工作台路径
-- **项目工作台**: `D:\MyFile\AI\ContextStack\workbench\projects\tencent-cloud-training\`
+- **项目工作台**: `./`
 
 ### 资料组织
 - 培训截图和资料存放在工作台目录下

@@ -157,8 +157,8 @@ powershell -File daily_backup.ps1 -BackupRoot "D:\Backups" -RetentionDays 30
 
 ## 🔗 相关链接
 
-- [[tools/index|工具库索引]]
-- [[tools/README|工具库详细说明]]
+- [[05-Tools/index|工具库索引]]
+- [[05-Tools/README|工具库详细说明]]
 - [[encoding/index|编码处理工具]]
 - [[02-Knowledge/system/tool-configurations/index|工具配置管理]]（VSCode备份）
 

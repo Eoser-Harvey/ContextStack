@@ -4,6 +4,7 @@
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repoPath  = Split-Path -Parent (Split-Path -Parent $scriptDir)
 $logFile   = Join-Path $scriptDir "auto_push.log"
+$env:GIT_TERMINAL_PROMPT = 0
 $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 
 Add-Content -Path $logFile -Value "=== $timestamp ==="

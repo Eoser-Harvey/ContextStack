@@ -21,8 +21,8 @@
 ## 目录结构规范
 
 ### 工作台路径
-- **项目工作台**: `D:\MyFile\AI\ContextStack\workbench\projects\network-device-debug\network-device-debug.md`
-- **设备问题文件**: `D:\MyFile\AI\ContextStack\workbench\projects\network-device-debug\IE4120U-18TP-issue.md`
+- **项目工作台**: `./network-device-debug.md`
+- **设备问题文件**: `./IE4120U-18TP-issue.md`
 
 ### 设备问题文件命名
 - 格式: `{设备型号}-issue.md`
@@ -103,9 +103,9 @@
 - 技术调研框架: `02-Knowledge/system/research-frameworks/tech-research-framework.md`
 
 ### Skills
-- 设备调试Skill: `Skills/device-debugging/`
-- 网络抓包分析Skill: `Skills/network-packet-analysis/`
-- TSN协议Skill: `Skills/tsn-protocol/`
+- 设备调试Skill: `02-Knowledge/skills/device-debugging/`
+- 网络抓包分析Skill: `02-Knowledge/skills/network-packet-analysis/`
+- TSN协议Skill: `02-Knowledge/skills/tsn-protocol/`
 
 ---
 

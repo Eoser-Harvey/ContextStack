@@ -30,7 +30,7 @@ ContextStack 是一个独立于特定AI模型、基于分层Context和持久化M
 - **特点**: 属于“知识”而非“规则”，主动加载，不常驻内存。
 
 ### 第四层：持久化Memory (MEMORY.md索引)
-- **位置**: `D:\MyFile\AI\ContextStack\MEMORY.md` (索引) + `memory/` (详细文件)
+- **位置**: `./MEMORY.md` (索引) + `03-Memory/` (详细文件)
 - **作用**: 记录“在做什么”——user、feedback、project、reference四类记忆。
 - **触发**: 持续更新（开始/完成/切换时）。
 - **特点**: 索引式管理，详细信息在工作台，跨session持久化。

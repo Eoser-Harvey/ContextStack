@@ -10,7 +10,7 @@
 - **全局规则**：D:\MyFile\AI\ContextStack\GLOBAL-RULES.md
 - **相关文档**：
   - 02-Knowledge/system/research-frameworks/tech-research-framework.md（当需要技术调研时）
-  - Skills/network-packet-analysis/network-packet-analysis-guide.md（当需要网络分析时）
+  - 02-Knowledge/skills/network-packet-analysis/network-packet-analysis-guide.md（当需要网络分析时）
 - **记忆索引**：D:\MyFile\AI\ContextStack\MEMORY.md
 
 ## 话题目标

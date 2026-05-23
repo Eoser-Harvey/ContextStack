@@ -16,7 +16,7 @@ Layer 1: Global Rules (GLOBAL-RULES.md)
     • Trigger: When AI assistant starts
 Layer 2: Project Rules (project_directory/PROJECT-RULES.md)
     • Trigger: When switching to project/topic workbench
-Layer 3: Specification Documents (Obsidian Library/6-System/)
+Layer 3: Specification Documents (02-Knowledge/system/)
     • Trigger: When executing specific tasks requiring methodology
 Layer 4: Persistent Memory (Structured Memory Database)
     • Trigger: Continuous updates (start/complete/switch)
@@ -40,7 +40,7 @@ Switch Topics        Load Workbench            Update Status
 
 ##  我是谁
 ### 角色定位
-- **角色**: H3C专业AI编程助手
+- **角色**: ContextStack 框架 AI 协作助手
 - **专长领域**:
   - 网络设备（交换机路由器）
   - 嵌入式系统开发
@@ -120,21 +120,32 @@ Switch Topics        Load Workbench            Update Status
 
 ## 📁 目录结构规范
 
-### Skills目录
-- **路径**: `02-Knowledge/skills`
-- **组织方式**: 每个skill单独文件夹
-- **必需文件**: 每个skill文件夹内必须包含使用说明
-- **命名格式**: `xxx使用说明.md`
+> 详见 [FRAMEWORK-README.md](./FRAMEWORK-README.md)
 
-### VSCode配置
-- **配置路径**: `05-Tools/vscode-config/`
-- **自动备份**: 配置编辑后自动备份到history目录
-- **历史保留**: 保留30天的备份
+### 一级目录
+| 目录 | 用途 |
+|------|------|
+| `01-Projects/` | 项目工作台（五文件 + topics/tasks/history） |
+| `02-Knowledge/` | 知识库（skills / system / career-development / investment-research / inbox） |
+| `03-Memory/` | 结构化记忆文件 |
+| `04-Templates/` | 模板库（project / task / topic） |
+| `05-Tools/` | 维护工具（backup / encoding / vscode-config） |
+
+### Skills 目录
+- **路径**: `02-Knowledge/skills`
+- **组织方式**: 每个 skill 单独文件夹
+- **必需文件**: 每个 skill 文件夹内必须包含使用说明
+- **命名格式**: `xxx使用说明.md`
 
 ### 项目目录
 - 每个项目独立目录，位于 `01-Projects/`
 - 项目根目录包含 `PROJECT-RULES.md` 规则文件
 - 每个项目包含标准五文件结构（WORKSPACE / STATE / ACTIONS / CONTEXT / REFERENCES）
+
+### VSCode 配置
+- **配置路径**: `05-Tools/vscode-config/`
+- **自动备份**: 配置编辑后自动备份到 history 目录
+- **历史保留**: 保留 30 天的备份
 
 ## 🔧 工具使用优先级
 1. **已配置工具优先**
@@ -247,7 +258,7 @@ Switch Topics        Load Workbench            Update Status
 #### 第一层（全局规则）
 - **触发**: AI 助手启动
 - **内容**: 角色、沟通风格、安全红线
-- **路径**: `D:\MyFile\AI\ContextStack\GLOBAL-RULES.md`
+- **路径**: `./GLOBAL-RULES.md`
 - **优先级**: 高，不可覆盖
 
 #### 第二层（项目规则）
@@ -323,6 +334,6 @@ Switch Topics        Load Workbench            Update Status
 
 ---
 
-**最后更新**: 2026-05-08
-**版本**: v2.3
-**变更**: 修复编码乱码、增加文件整理规则（删除无用路径）、索引规则（须创建index.md）和用户授权的免操作规则
+**最后更新**: 2026-05-23
+**版本**: v3.0
+**变更**: 目录 v3.0 重构（workbench/→01-Projects/，Obsidian/→02-Knowledge/ 等），新增 inbox 每日收件箱，路径全部改为相对路径，角色更名为 ContextStack 框架 AI 协作助手

@@ -52,8 +52,8 @@
 - **工具脚本**: `tools/`, `python/`
 
 ### 工作台路径
-- **工作台文件**: `D:\MyFile\AI\ContextStack\workbench\projects\embedded-ai-learning\embedded-ai-learning.md`
-- **学习计划**: `D:\MyFile\AI\ContextStack\workbench\projects\embedded-ai-learning\3-month-mastery-plan.md`
+- **工作台文件**: `./embedded-ai-learning.md`
+- **学习计划**: `./3-month-mastery-plan.md`
 
 ## 代码规范
 
