@@ -14,6 +14,7 @@
 | **Feedback** | 新文件自动加 index.md | 目录结构规范 | 全部 | 2026-05-07 |
 | **Feedback** | 文件操作红线 | 不碰别人项目文件 | 全部 | 2026-05-19 |
 | **Feedback** | 及时清理无用文件 | debug.log/.uploads等临时文件即查即删 | 全部 | 2026-05-23 |
+| **Feedback** | .codebuddy/ 不同步 | IDE本地治理规则，.gitignore忽略 | 全部 | 2026-05-23 |
 | **Project** | 嵌入式AI学习 | TFLM 源码驱动学习 | 01-Projects/embedded-ai-learning | 2026-05-13 |
 | **Project** | 网络设备调试 | 工业交换机问题排查 | 01-Projects/network-device-debug | 2026-05-07 |
 | **Project** | 腾讯云AI编程培训 | 培训资料归档 | 01-Projects/tencent-cloud-training | 2026-05-07 |

@@ -112,7 +112,6 @@ ContextStack/
 │   ├── diagnostics/
 │   ├── fileops/
 │   └── vscode-config/           # VSCode 配置管理
-└── .codebuddy/                  # IDE AI 治理规则
 ```
 
 ## 快速接入指南
