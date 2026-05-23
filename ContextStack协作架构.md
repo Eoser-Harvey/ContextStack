@@ -59,7 +59,7 @@
 
 ### 第三层: 规范文档库
 
-**文件位置**: `D:\MyFile\AI\ContextStack\Obsidian/system/`
+**文件位置**: `D:\MyFile\AI\ContextStack\02-Knowledge/system/`
 
 **内容**:
 - 方法论: 调试方法论、问题解决框架
@@ -72,7 +72,7 @@
 
 ### 第四层: 持久化Memory
 
-**文件位置**: `D:\MyFile\AI\ContextStack\MEMORY.md` (索引) + `memory/` (详细)
+**文件位置**: `D:\MyFile\AI\ContextStack\MEMORY.md` (索引) + `03-Memory/` (详细)
 
 **内容**:
 - User记忆: 用户信息、技能、习惯、偏好
@@ -90,9 +90,9 @@
 - 状态管理: 记录任务进度、待办事项
 
 ### 工作台类型
-1. **项目工作台** (`workbench/projects/`): 长期项目跟踪
-2. **话题工作台** (`workbench/topics/`): 特定技术话题讨论
-3. **任务工作台** (`workbench/tasks/`): 具体任务执行跟踪
+1. **项目工作台** (`01-Projects/`): 长期项目跟踪
+2. **话题工作台** (`01-Projects/topics/`): 特定技术话题讨论
+3. **任务工作台** (`01-Projects/tasks/`): 具体任务执行跟踪
 
 ### 切换命令
 - `切换到[项目/话题名称]`
@@ -119,13 +119,14 @@
 ### 目录结构
 ```
 ContextStack/
-├── GLOBAL-RULES.md           # 第一层
-├── MEMORY.md                 # 第四层索引
+├── GLOBAL-RULES.md           # 第一层 + 自动标注规则
+├── MEMORY.md                 # 第四层表格索引
 ├── FRAMEWORK-README.md       # 框架总览
-├── workbench/                # 工作台系统
-├── Skills/                   # 技能库
-├── Obsidian/                 # 规范文档库
-└── memory/                   # 结构化记忆
+├── 01-Projects/              # 项目工作台（含 topics/tasks/history）
+├── 02-Knowledge/             # 知识库（system/skills/career/investment/inbox）
+├── 03-Memory/                # 结构化记忆
+├── 04-Templates/             # 模板库（含 project/ 五文件模板）
+└── 05-Tools/                 # 工具集（backup/encoding/diagnostics/vscode-config）
 ```
 
 ---

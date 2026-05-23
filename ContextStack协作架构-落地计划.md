@@ -14,7 +14,7 @@
 - [x] 创建 GLOBAL-RULES.md (第一层)
 - [x] 创建 MEMORY.md 索引 (第四层)
 - [x] 创建 FRAMEWORK-README.md 框架说明
-- [x] 建立目录结构 (workbench/, Skills/, Obsidian/, memory/)
+- [x] 建立目录结构 (01-Projects/, 02-Knowledge/, 03-Memory/, 04-Templates/, 05-Tools/)
 - [x] 创建各目录的 index.md 索引文件
 
 **完成标准**:

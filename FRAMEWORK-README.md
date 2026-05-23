@@ -20,7 +20,7 @@
 ## 四层架构详解
 
 ### 第一层：全局规则 (`GLOBAL-RULES.md`)
-- **路径**: `D:\MyFile\AI\ContextStack\GLOBAL-RULES.md`
+- **路径**: `GLOBAL-RULES.md`
 - **作用**: 定义"我是谁" - 身份、沟通风格、铁律、安全红线、操作授权范围
 - **触发**: AI助手启动时自动加载
 - **特点**: 常驻内存，最高优先级，不可覆盖
@@ -31,29 +31,36 @@
 - **触发**: 切换到项目/话题工作台时动态加载
 - **特点**: 受全局规则约束，支持多项目上下文切换
 
-### 第三层：规范文档库 (`Obsidian/system/`)
-- **路径**: `D:\MyFile\AI\ContextStack\Obsidian/system/`
+### 第三层：规范文档库 (`02-Knowledge/system/`)
+- **路径**: `02-Knowledge/system/`
 - **作用**: 提供"如何做"的知识 - 方法论、SOP、模板、调研框架
 - **触发**: 执行具体任务需要方法论时按需读取
 - **特点**: 属于"知识"而非"规则"，主动加载，不常驻内存
 
-### 第四层：持久化Memory (`MEMORY.md`索引)
-- **路径**: `D:\MyFile\AI\ContextStack\MEMORY.md`
+### 第四层：持久化Memory (`MEMORY.md`表格索引)
+- **路径**: `MEMORY.md`
 - **作用**: 记录"在做什么" - user、feedback、project、reference四类记忆
 - **触发**: 持续更新（开始/完成/切换时）
 - **特点**: 索引式管理，详细信息在工作台，跨session持久化
 
-## 工作台系统 (`workbench/`)
+## 工作台系统 (`01-Projects/`)
 
 ### 核心功能
 - **Session持久化**: 记录"做到哪了"，支持跨会话恢复
 - **话题切换**: 通过工作台暂存和恢复实现不同话题/项目间快速切换
 - **状态管理**: 记录项目状态、任务进度、讨论历史、决策记录
 
+### 项目标准文件
+1. **WORKSPACE.md** — 工作台入口 + 导航
+2. **STATE.md** — 最新状态 (✅⚠️📌❓)
+3. **ACTIONS.md** — 任务清单与进度
+4. **CONTEXT.md** — 稳定背景与约束
+5. **REFERENCES.md** — 资料链接
+
 ### 工作台类型
-1. **项目工作台** (`workbench/projects/`): 长期项目跟踪
-2. **话题工作台** (`workbench/topics/`): 特定技术话题讨论
-3. **任务工作台** (`workbench/tasks/`): 具体任务执行跟踪
+1. **项目工作台** (`01-Projects/`): 长期项目跟踪
+2. **话题工作台** (`01-Projects/topics/`): 特定技术话题讨论
+3. **任务工作台** (`01-Projects/tasks/`): 具体任务执行跟踪
 
 ### 切换命令
 - `切换到[项目/话题名称]` / `Switch to [project/topic name]`
@@ -64,38 +71,48 @@
 ## 目录结构
 
 ```
-D:\MyFile\AI\ContextStack\
+ContextStack/
 ├── GLOBAL-RULES.md              # 第一层：全局规则
-├── MEMORY.md                    # 第四层：Memory索引
+├── MEMORY.md                    # 第四层：Memory表格索引
 ├── FRAMEWORK-README.md          # 本文档：框架总览
-├── workbench/                   # 工作台系统
-│   ├── README.md
-│   ├── workbench-guide.md
-│   ├── templates/
-│   ├── projects/
-│   │   ├── embedded-ai-learning/
-│   │   ├── network-device-debug/
-│   │   └── tencent-cloud-training/
+├── 01-Projects/                 # 项目工作台（5标准文件/项目）
+│   ├── embedded-ai-learning/
+│   │   ├── WORKSPACE.md         # 工作台入口
+│   │   ├── STATE.md             # 最新状态 ✅⚠️📌❓
+│   │   ├── ACTIONS.md           # 任务清单
+│   │   ├── CONTEXT.md           # 稳定上下文
+│   │   ├── REFERENCES.md        # 参考资料
+│   │   └── PROJECT-RULES.md     # 第二层：项目规则
+│   ├── network-device-debug/
+│   ├── btc-temperature-gauge/
+│   ├── tencent-cloud-training/
 │   ├── topics/
 │   ├── tasks/
 │   └── history/
-├── Skills/                      # Skill库
-│   ├── device-debugging/
-│   ├── network-packet-analysis/
-│   ├── tsn-protocol/
-│   └── vscode-config-management/
-├── Obsidian/                    # 规范文档库
-│   └── system/
-│       ├── methodology/
-│       ├── SOP/
-│       ├── templates/
-│       ├── research-frameworks/
-│       └── tool-configurations/
-├── memory/                      # 结构化记忆文件
-│   ├── projects/
-│   ├── sessions/
+├── 02-Knowledge/                # 知识库（原第三层规范文档 + Skills）
+│   ├── system/
+│   │   ├── methodology/
+│   │   ├── sop/
+│   │   ├── templates/
+│   │   ├── research-frameworks/
+│   │   └── tool-configurations/
+│   ├── career-development/
+│   ├── investment-research/
+│   └── Skills/
+├── 03-Memory/                   # 结构化记忆文件
 │   └── knowledge/
-└── tools/                       # 维护工具脚本
+├── 04-Templates/                # 模板库
+│   ├── Project/                 # 项目标准文件模板
+│   ├── project-template.md
+│   ├── task-template.md
+│   └── topic-template.md
+├── 05-Tools/                    # 维护工具脚本
+│   ├── backup/                  # 备份 & 自动同步
+│   ├── encoding/                # 编码处理
+│   ├── diagnostics/
+│   ├── fileops/
+│   └── vscode-config/           # VSCode 配置管理
+└── .codebuddy/                  # IDE AI 治理规则
 ```
 
 ## 快速接入指南
@@ -137,20 +154,20 @@ D:\MyFile\AI\ContextStack\
 - **命名格式**: 小写字母、数字、连字符，避免空格
 
 ### 示例
-- ✅ `workbench/projects/embedded-ai-learning.md`
-- ✅ `Obsidian/system/methodology/debug-methodology.md`
-- ✅ `Skills/vscode-config-management/vscode-config-management-guide.md`
+- ✅ `01-Projects/embedded-ai-learning/`
+- ✅ `02-Knowledge/system/methodology/debug-methodology.md`
+- ✅ `02-Knowledge/skills/vscode-config-management/vscode-config-management-guide.md`
 
 ## 关键配置项
 
 ### 路径配置（必须保持一致）
 ```markdown
 # 在GLOBAL-RULES.md中定义
-- Skill保存路径: `D:\MyFile\AI\ContextStack\Skills`
-- VSCode配置路径: `D:\MyFile\AI\ContextStack\VSCode Config`
-- 工作台路径: `D:\MyFile\AI\ContextStack\workbench/`
-- Obsidian知识库路径: `D:\MyFile\AI\ContextStack\Obsidian/`
-- Memory索引路径: `D:\MyFile\AI\ContextStack\MEMORY.md`
+- Skill保存路径: `02-Knowledge/skills/`
+- VSCode配置路径: `05-Tools/vscode-config/`
+- 项目路径: `01-Projects/`
+- 知识库路径: `02-Knowledge/`
+- Memory索引路径: `MEMORY.md`
 ```
 
 ## 协作角色定位

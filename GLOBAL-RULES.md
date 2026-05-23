@@ -121,20 +121,20 @@ Switch Topics        Load Workbench            Update Status
 ## 📁 目录结构规范
 
 ### Skills目录
-- **路径**: `D:\My File\AI\ContextStack\Skills`
+- **路径**: `02-Knowledge/skills`
 - **组织方式**: 每个skill单独文件夹
 - **必需文件**: 每个skill文件夹内必须包含使用说明
 - **命名格式**: `xxx使用说明.md`
 
 ### VSCode配置
-- **配置路径**: `D:\My File\AI\ContextStack\VSCode Config`
+- **配置路径**: `05-Tools/vscode-config/`
 - **自动备份**: 配置编辑后自动备份到history目录
 - **历史保留**: 保留30天的备份
 
 ### 项目目录
-- 每个项目独立目录
+- 每个项目独立目录，位于 `01-Projects/`
 - 项目根目录包含 `PROJECT-RULES.md` 规则文件
-- 工作台存放在Obsidian知识库
+- 每个项目包含标准五文件结构（WORKSPACE / STATE / ACTIONS / CONTEXT / REFERENCES）
 
 ## 🔧 工具使用优先级
 1. **已配置工具优先**
@@ -198,10 +198,35 @@ Switch Topics        Load Workbench            Update Status
 - 项目状态变更
 - 新的资源路径
 
+## 🏷️ 自动标注规则（Auto-Tagging）
+
+### 新建文件时
+1. **index.md 更新**：在所属目录的 index.md 中添加条目（文件名 + 一句话描述）
+2. **分类归档**：将文件放在正确的分类目录下（01-Projects / 02-Knowledge / 03-Memory / 04-Templates / 05-Tools）
+3. **命名规范**：使用有意义的中文或英文文件名，避免临时名称
+
+### 新建项目时
+1. **标准文件**：从 `04-Templates/project/` 复制五个标准文件：
+   - `WORKSPACE.md` — 工作台入口 + 导航
+   - `STATE.md` — 最新状态 (✅⚠️📌❓)
+   - `ACTIONS.md` — 任务清单
+   - `CONTEXT.md` — 稳定背景和约束
+   - `REFERENCES.md` — 资料链接
+2. **MEMORY.md 更新**：在索引总表中添加新项目行
+3. **index.md 更新**：在 `01-Projects/index.md` 中添加项目条目
+
+### 状态更新时
+- 修改 `STATE.md` 使用结构化标记：
+  - ✅ 已完成
+  - ⚠️ 阻塞点
+  - 📌 下一步
+  - ❓ 待确认
+- 更新 `ACTIONS.md` 中的进度和状态
+- 同步更新 `MEMORY.md` 索引总表中的摘要和日期
+
 ### Memory索引
-- 主索引文件 `D:\My File\AI\ContextStack\MEMORY.md`
-- 定期整理和更新
-- 保持索引的准确和完整
+- 主索引文件 `MEMORY.md`
+- 表格化格式：分类 / 文件条目 / 摘要 / 关联项目 / 更新时间
 
 ## 🚨 应急处理
 ### 遇到问题
@@ -234,7 +259,7 @@ Switch Topics        Load Workbench            Update Status
 #### 第三层（规范文档）
 - **触发**: 执行具体任务需要方法论时
 - **内容**: SOP、模板、调研框架
-- **路径**: `Obsidian/system/`
+- **路径**: `02-Knowledge/system/`
 - **优先级**: 低，按需加载
 
 #### 第四层（持久化 Memory）
