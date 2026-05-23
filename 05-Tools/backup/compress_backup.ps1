@@ -1,4 +1,4 @@
-﻿# ContextStack 压缩备份脚本 (方案B)
+# ContextStack 压缩备份脚本 (方案B)
 # 功能: 直接压缩整个 ContextStack 目录为 ZIP 文件，文件名包含日期，保留7天备份
 #
 # 使用方式:
@@ -6,8 +6,8 @@
 # powershell -File compress_backup.ps1 -BackupRoot "D:\Backups" -RetentionDays 30
 
 param(
-    [string]$BackupRoot = "D:\MyFile\AI\ContextStack_backups_compressed",
-    [string]$SourceDir = "D:\MyFile\AI\ContextStack",
+    [string]$BackupRoot = (Join-Path $PSScriptRoot "..\..\backups_compressed"),
+    [string]$SourceDir = (Join-Path $PSScriptRoot "..\.."),
     [int]$RetentionDays = 7
 )
 

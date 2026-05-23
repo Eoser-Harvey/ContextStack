@@ -73,7 +73,7 @@
 
 #### 嵌入式AI学习
 - 状态: 学习阶段
-- TFLM源码: `D:\MyFile\AI\TFLM\tflite-micro-main`
+- TFLM源码: `本地 TFLM 源码目录`
 - 技术栈: TensorFlow Lite Micro, C/C++, 嵌入式开发
 - 学习原则: TFLM为主，PyTorch为辅
 - 课程结构: `courses/` 一课一文件

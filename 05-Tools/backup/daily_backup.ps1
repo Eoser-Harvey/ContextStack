@@ -2,8 +2,8 @@
 # This script performs daily backups of the ContextStack directory, keeping 7 days of backups.
 
 param(
-    [string]$BackupRoot = "D:\MyFile\AI\ContextStack\backups_daily",
-    [string]$SourceDir = "D:\MyFile\AI\ContextStack",
+    [string]$BackupRoot = (Join-Path $PSScriptRoot "..\..\backups_daily"),
+    [string]$SourceDir = (Join-Path $PSScriptRoot "..\.."),
     [int]$RetentionDays = 7
 )
 

@@ -36,7 +36,7 @@ def scan_directory(root):
                 print(f"Error reading {fpath}: {e}")
     return garbled_files
 
-root = r'd:\MyFile\AI\ContextStack'
+root = os.path.join(os.path.dirname(__file__), '..', '..')
 results = scan_directory(root)
 
 if results:

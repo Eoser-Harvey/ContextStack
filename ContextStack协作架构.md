@@ -33,7 +33,7 @@
 
 ### 第一层: 全局规则
 
-**文件位置**: `D:\MyFile\AI\ContextStack\GLOBAL-RULES.md`
+**文件位置**: `./GLOBAL-RULES.md`
 
 **内容**:
 - 角色定位: H3C专业AI编程助手
@@ -59,7 +59,7 @@
 
 ### 第三层: 规范文档库
 
-**文件位置**: `D:\MyFile\AI\ContextStack\02-Knowledge/system/`
+**文件位置**: `./02-Knowledge/system/`
 
 **内容**:
 - 方法论: 调试方法论、问题解决框架
@@ -72,7 +72,7 @@
 
 ### 第四层: 持久化Memory
 
-**文件位置**: `D:\MyFile\AI\ContextStack\MEMORY.md` (索引) + `03-Memory/` (详细)
+**文件位置**: `./MEMORY.md` (索引) + `03-Memory/` (详细)
 
 **内容**:
 - User记忆: 用户信息、技能、习惯、偏好

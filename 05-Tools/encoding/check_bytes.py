@@ -1,4 +1,5 @@
-with open(r'd:\MyFile\AI\ContextStack\ContextStack协作架构.md', 'rb') as f:
+import os
+with open(os.path.join(os.path.dirname(__file__), '..', '..', 'ContextStack协作架构.md'), 'rb') as f:
     data = f.read()
 
 idx = data.find('架构'.encode('utf-8'))

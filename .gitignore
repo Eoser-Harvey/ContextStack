@@ -17,8 +17,6 @@ venv/
 Thumbs.db
 .DS_Store
 
-# Backup / History
-Obsidian/system/tool-configurations/history/
 
 # Logs
 *.log

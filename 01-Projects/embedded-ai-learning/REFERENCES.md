@@ -12,5 +12,5 @@
 - ARM Cortex-M 开发者指南
 
 ## 工具 & 环境
-- TFLM 源码：`D:\MyFile\AI\TFLM\tflite-micro-main\`
+- TFLM 源码：`本地 TFLM 源码目录`
 - 工具脚本：`tools/`、`python/`

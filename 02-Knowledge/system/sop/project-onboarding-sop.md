@@ -117,12 +117,12 @@ updated: 2026-05-07
 - **当前状态**: 
 
 ## 自动上下文加载
-- **全局规则**: D:\MyFile\AI\ContextStack\GLOBAL-RULES.md
+- **全局规则**: ./GLOBAL-RULES.md
 - **项目规则**: {项目路径}/PROJECT-RULES.md（如果存在）
 - **相关规范**:
   - 02-Knowledge/system/methodology/debug-methodology.md（需要调试时）
   - 02-Knowledge/system/sop/project-onboarding-sop.md（需要代码审查时）
-- **记忆索引**: D:\MyFile\AI\ContextStack\MEMORY.md
+- **记忆索引**: ./MEMORY.md
 
 ## 项目目标
 项目的主要目标是什么？
@@ -258,4 +258,4 @@ updated: 2026-05-07
 **相关文档**: 
 - `02-Knowledge/system/methodology/debug-methodology.md`
 - `04-Templates/project-template.md`
-- `D:\MyFile\AI\ContextStack\GLOBAL-RULES.md`
+- `./GLOBAL-RULES.md`

@@ -20,6 +20,6 @@ def analyze_file(path):
     except:
         print('(decode failed)')
 
-analyze_file(r'd:\MyFile\AI\ContextStack\Obsidian\system\index.md')
+analyze_file(os.path.join(os.path.dirname(__file__), '..', '..', '02-Knowledge', 'system', 'index.md'))
 print('\n' + '='*60 + '\n')
-analyze_file(r'd:\MyFile\AI\ContextStack\FRAMEWORK-README.md')
+analyze_file(os.path.join(os.path.dirname(__file__), '..', '..', 'FRAMEWORK-README.md'))

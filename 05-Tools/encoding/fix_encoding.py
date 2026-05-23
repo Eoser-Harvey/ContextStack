@@ -1,7 +1,7 @@
 import os
 import re
 
-ROOT = r'd:\MyFile\AI\ContextStack'
+ROOT = os.path.join(os.path.dirname(__file__), '..', '..')
 
 SKIP_DIRS = {'backup_archive', 'backup_before_restore', '.git', '__pycache__', 'node_modules', 'history'}
 SKIP_SUFFIXES = {'.png', '.jpg', '.json', '.code-workspace', '.bat', '.ps1', '.exe', '.dll', '.py', '.pyc'}

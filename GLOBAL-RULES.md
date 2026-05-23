@@ -276,7 +276,7 @@ Switch Topics        Load Workbench            Update Status
 #### 第四层（持久化 Memory）
 - **触发**: 开始/完成/切换时
 - **内容**: user、feedback、project、reference 四类
-- **路径**: `D:\MyFile\AI\ContextStack\MEMORY.md` (索引)
+- **路径**: `./MEMORY.md` (索引)
 - **优先级**: 持续更新，提供上下文
 
 ### 层与层的交互

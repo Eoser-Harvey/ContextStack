@@ -8,13 +8,13 @@
 - **当前状态**:学习阶段
 
 ## 自动上下文加载
-- **全局规则**:D:\MyFile\AI\ContextStack\GLOBAL-RULES.md
+- **全局规则**:./GLOBAL-RULES.md
 - **项目规则**:{项目路径}/PROJECT-RULES.md(如果存在)
 - **相关文档**:
   - 02-Knowledge/system/research-frameworks/tech-research-framework.md(当需要技术调研时)
   - 02-Knowledge/system/methodology/debug-methodology.md(当需要调试问题时)
   - 02-Knowledge/system/sop/project-onboarding-sop.md(当需要项目入门时)
-- **记忆索引**:D:\MyFile\AI\ContextStack\MEMORY.md
+- **记忆索引**:./MEMORY.md
 
 ## 目标与里程碑
 - [x] 创建详细的学习阶段
@@ -138,7 +138,7 @@
   - 量化精度损失
 
 ## 相关文件
-- **项目根目录**:D:\MyFile\AI\TFLM\tflite-micro-main\tflite-micro-main
+- **项目根目录**:本地 TFLM 源码目录
 - **核心代码**:tensorflow/lite/micro/
 - **示例代码**:tensorflow/lite/micro/examples/
 - **工具脚本**:tools/, python/

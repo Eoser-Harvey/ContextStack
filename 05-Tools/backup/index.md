@@ -52,7 +52,7 @@ powershell -File compress_backup.ps1
 powershell -File compress_backup.ps1 -BackupRoot "D:\Backups" -RetentionDays 30
 
 # 指定源目录
-powershell -File compress_backup.ps1 -SourceDir "D:\MyFile\AI\ContextStack" -RetentionDays 14
+powershell -File compress_backup.ps1 -SourceDir "." -RetentionDays 14
 ```
 
 ### 原始每日备份脚本
@@ -66,9 +66,9 @@ powershell -File daily_backup.ps1 -BackupRoot "D:\Backups" -RetentionDays 30
 
 ### 参数说明
 - `-BackupRoot`：备份根目录
-  - 压缩备份默认：`D:\MyFile\AI\ContextStack_backups_compressed`
-  - 原始备份默认：`D:\MyFile\AI\ContextStack\backups_daily`
-- `-SourceDir`：源目录（默认：`D:\MyFile\AI\ContextStack`）
+  - 压缩备份默认：`../backups_compressed`
+  - 原始备份默认：`../backups_daily`
+- `-SourceDir`：源目录（默认：`.`）
 - `-RetentionDays`：保留天数（默认：7天）
 
 ## 📋 备份策略

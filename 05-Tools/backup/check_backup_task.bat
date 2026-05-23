@@ -12,11 +12,11 @@ schtasks /query /tn "ContextStack_Backup" /fo list
 echo.
 
 echo [2] 检查备份目录是否存在...
-if exist "D:\MyFile\AI\ContextStack\backups_compressed\" (
-    echo ✅ 备份目录存在: D:\MyFile\AI\ContextStack\backups_compressed\
+if exist "%~dp0..\..\backups_compressed\" (
+    echo ✅ 备份目录存在: %~dp0..\..\backups_compressed\
     echo.
     echo [3] 列出最近的备份文件...
-    powershell -Command "Get-ChildItem 'D:\MyFile\AI\ContextStack\backups_compressed' -Filter 'ContextStack_*.zip' | Sort-Object LastWriteTime -Descending | Select-Object -First 5 | Format-Table Name, LastWriteTime, @{Name='SizeMB';Expression={[math]::Round($_.Length/1MB,2)}} -AutoSize"
+    powershell -Command "Get-ChildItem '%~dp0..\..\backups_compressed' -Filter 'ContextStack_*.zip' | Sort-Object LastWriteTime -Descending | Select-Object -First 5 | Format-Table Name, LastWriteTime, @{Name='SizeMB';Expression={[math]::Round($_.Length/1MB,2)}} -AutoSize"
 ) else (
     echo ❌ 备份目录不存在
     echo 提示: 备份任务将在今晚24:00首次运行
@@ -47,7 +47,7 @@ echo.
 echo ========================================
 echo 操作说明:
 echo 1. 备份任务已配置为每天 24:00 自动运行
-echo 2. 备份文件保存在: D:\MyFile\AI\ContextStack\backups_compressed\
+echo 2. 备份文件保存在: %~dp0..\..\backups_compressed\
 echo 3. 备份格式: ContextStack_yyyy-MM-dd.zip
 echo 4. 保留策略: 7天自动清理
 echo ========================================

@@ -24,7 +24,7 @@
 - **学习模式**:学习计划→任务布置→分步执行→成果反馈→考核打分→持续完善
 
 ## 资源链接
-- **项目路径**: `D:\MyFile\AI\TFLM\tflite-micro-main\tflite-micro-main`
+- **项目路径**: `本地 TFLM 源码目录`
 - **工作台路径**: `01-Projects/embedded-ai-learning/`
 
 ## 使用说明

@@ -52,7 +52,7 @@ $garbledPatterns = @(
 
 $foundFiles = @()
 
-Get-ChildItem -Path "D:\MyFile\AI\ContextStack" -Recurse -Include "*.md","*.ps1","*.bat","*.py","*.txt" | ForEach-Object {
+Get-ChildItem -Path $PSScriptRoot\..\.. -Recurse -Include "*.md","*.ps1","*.bat","*.py","*.txt" | ForEach-Object {
     $content = Get-Content $_.FullName -Raw -Encoding UTF8 -ErrorAction SilentlyContinue
     if ($content) {
         foreach ($pattern in $garbledPatterns) {

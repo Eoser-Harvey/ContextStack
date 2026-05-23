@@ -9,11 +9,11 @@
 - **当前状态**：待分析
 
 ## 自动上下文加载
-- **全局规则**：D:\MyFile\AI\ContextStack\GLOBAL-RULES.md
+- **全局规则**：./GLOBAL-RULES.md
 - **项目规则**：{项目路径}/PROJECT-RULES.md（如果存在）
 - **相关文档**：
   - 02-Knowledge/system/methodology/debug-methodology.md（当需要网络调试时）
-- **记忆索引**：D:\MyFile\AI\ContextStack\MEMORY.md
+- **记忆索引**：./MEMORY.md
 
 ## 目标与里程碑
 - [ ] 确认问题现象

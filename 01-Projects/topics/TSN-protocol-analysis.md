@@ -7,11 +7,11 @@
 - **当前状态**：活跃
 
 ## 自动上下文加载
-- **全局规则**：D:\MyFile\AI\ContextStack\GLOBAL-RULES.md
+- **全局规则**：./GLOBAL-RULES.md
 - **相关文档**：
   - 02-Knowledge/system/research-frameworks/tech-research-framework.md（当需要技术调研时）
   - 02-Knowledge/system/sop/project-onboarding-sop.md（当需要项目入门时）
-- **记忆索引**：D:\MyFile\AI\ContextStack\MEMORY.md
+- **记忆索引**：./MEMORY.md
 
 ## 话题目标
 深入理解TSN协议，特别是与丢包问题相关的部分，为问题定位提供理论支撑。

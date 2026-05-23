@@ -8,7 +8,7 @@
 param(
     [string]$BackupFile,      # ZIP备份文件路径
     [string]$BackupDir,       # 原始备份目录路径
-    [string]$RestoreTo = "D:\MyFile\AI\ContextStack_Restored",  # 恢复目标目录
+    [string]$RestoreTo = (Join-Path $PSScriptRoot "..\..\ContextStack_Restored"),  # 恢复目标目录
     [switch]$ListBackups,     # 列出可用备份
     [switch]$Force            # 强制覆盖目标目录
 )
@@ -25,7 +25,7 @@ function List-AvailableBackups {
     Write-Log "可用的备份文件:" "Cyan"
     
     # 检查压缩备份目录
-    $compressedBackupRoot = "D:\MyFile\AI\ContextStack\backups_compressed"
+    $compressedBackupRoot = (Join-Path $PSScriptRoot "..\..\backups_compressed")
     if (Test-Path $compressedBackupRoot) {
         Write-Log "压缩备份 (ZIP):" "Yellow"
         $zipFiles = Get-ChildItem -Path $compressedBackupRoot -Filter "ContextStack_*.zip" | Sort-Object LastWriteTime -Descending
@@ -41,7 +41,7 @@ function List-AvailableBackups {
     }
     
     # 检查原始备份目录
-    $dailyBackupRoot = "D:\MyFile\AI\ContextStack\backups_daily"
+    $dailyBackupRoot = (Join-Path $PSScriptRoot "..\..\backups_daily")
     if (Test-Path $dailyBackupRoot) {
         Write-Log "原始备份 (文件夹):" "Yellow"
         $dirs = Get-ChildItem -Path $dailyBackupRoot -Directory -Filter "ContextStack_*" | Sort-Object LastWriteTime -Descending

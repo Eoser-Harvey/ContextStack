@@ -27,8 +27,8 @@ echo 快速测试模式 - 显示命令但不执行
 echo.
 echo 命令: powershell -File compress_backup.ps1
 echo 参数说明:
-echo   -BackupRoot: 备份根目录 (默认: D:\MyFile\AI\ContextStack\backups_compressed)
-echo   -SourceDir: 源目录 (默认: D:\MyFile\AI\ContextStack)
+echo   -BackupRoot: 备份根目录 (默认: %~dp0..\..\backups_compressed)
+echo   -SourceDir: 源目录 (默认: %~dp0..\..)
 echo   -RetentionDays: 保留天数 (默认: 7)
 echo.
 echo 要实际运行，请执行:
@@ -43,7 +43,7 @@ echo 正在运行 compress_backup.ps1...
 powershell -ExecutionPolicy Bypass -File "compress_backup.ps1"
 echo.
 echo 测试完成!
-echo 备份文件保存在: D:\MyFile\AI\ContextStack\backups_compressed\
+echo 备份文件保存在: %~dp0..\..\backups_compressed\
 echo.
 pause
 goto :eof
@@ -59,7 +59,7 @@ echo 正在运行 compress_backup.ps1 -RetentionDays %retention%...
 powershell -ExecutionPolicy Bypass -File "compress_backup.ps1" -RetentionDays %retention%
 echo.
 echo 测试完成!
-echo 备份文件保存在: D:\MyFile\AI\ContextStack\backups_compressed\
+echo 备份文件保存在: %~dp0..\..\backups_compressed\
 echo 保留策略: %retention% 天
 echo.
 pause

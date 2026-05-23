@@ -7,11 +7,11 @@
 - **当前状态**：活跃
 
 ## 自动上下文加载
-- **全局规则**：D:\MyFile\AI\ContextStack\GLOBAL-RULES.md
+- **全局规则**：./GLOBAL-RULES.md
 - **相关文档**：
   - 02-Knowledge/system/research-frameworks/tech-research-framework.md（当需要技术调研时）
   - 02-Knowledge/skills/network-packet-analysis/network-packet-analysis-guide.md（当需要网络分析时）
-- **记忆索引**：D:\MyFile\AI\ContextStack\MEMORY.md
+- **记忆索引**：./MEMORY.md
 
 ## 话题目标
 深入理解交换机PBR（Policy-Based Routing）策略路由功能，包括其工作原理、应用场景，以及在IPv4、IPv6及双栈环境下的具体实现和配置差异。

@@ -17,7 +17,7 @@ updated: 2026-05-07
 
 1. 将此模板复制到项目根目录，重命名为 `PROJECT-RULES.md`
 2. 根据项目实际情况填写各部分内容
-3. 确保规则符合全局规则 (`D:\MyFile\AI\ContextStack\GLOBAL-RULES.md`)
+3. 确保规则符合全局规则 (`./GLOBAL-RULES.md`)
 4. 将编写好的规则文件路径更新到项目工作台的"自动上下文加载"部分
 
 ---
