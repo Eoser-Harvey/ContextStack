@@ -1,7 +1,7 @@
 # 每日收件箱 (Inbox)
 
 > 每天从微信、公众号、网页等渠道收集的未消化内容。
-> 处理后的结构化 MD 移入对应知识分区，原材料移到 archive/。
+> **所有整理产物都保留在此目录**，用户手动要求时才移入对应知识分区。
 
 ## 待处理
 
@@ -11,10 +11,11 @@
 
 ## 处理日志
 
-| 日期 | 原材料 | 产出 | 归档 |
+| 日期 | 原材料 | 产出（均留在 inbox/） | 归档 |
 |------|--------|------|------|
+| 2026-05-24 | GitHub: datawhalechina/Agent-Learning-Hub | `agent-learning-roadmap-datawhale.md` | `archive/2026-05-24-agent-learning-hub.md` |
 | — | — | — | — |
 
 ## 归档
 
-处理完成后的原材料自动移入 [archive/](./archive/)。
+用户手动要求归档时，移入对应知识分区 `02-Knowledge/system/` / `02-Knowledge/skills/` 等。
