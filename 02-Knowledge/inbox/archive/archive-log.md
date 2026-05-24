@@ -36,6 +36,11 @@
 - **来源**: https://github.com/datawhalechina/Agent-Learning-Hub
 - **整理产物**: `../agent-learning-roadmap-datawhale.md`
 
+### 2026-05-24: Easy-Vibe 从零开始的 AI 编程指南
+- **来源**: https://datawhalechina.github.io/easy-vibe/zh-cn/
+- **GitHub**: https://github.com/datawhalechina/easy-vibe (14.1k stars)
+- **整理产物**: `../easy-vibe-coding-guide.md`
+
 ---
 
 ## 生活工具

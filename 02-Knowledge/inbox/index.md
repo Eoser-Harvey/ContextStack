@@ -20,6 +20,7 @@
 | 2026-05-24 | 用户分享: 嘉信&第一证券下户+建仓计划 | `personal-broker-accounts-plan.md` | 投资理财 |
 | 2026-05-24 | X: @Nicole_yang88 嘉信入金全攻略 | `schwab-deposit-guide-nicole.md` | 投资理财 |
 | 2026-05-24 | YouTube: Club Sim 香港手机号申请攻略 | `hongkong-sim-card-club-sim-guide.md` | 生活工具 |
+| 2026-05-24 | GitHub: datawhalechina/easy-vibe | `easy-vibe-coding-guide.md` | AI/技术 |
 | — | — | — | — |
 
 ## 归档
