@@ -1,5 +1,6 @@
 # 家里自动同步脚本 — 每日凌晨 3:00 执行
 # 用法: Windows 任务计划程序 → 每日 3:00 → powershell -File "...\auto_push_home.ps1"
+# 网络容错: 3次重试 + 指数退避 + VPN代理清理
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repoPath  = Split-Path -Parent (Split-Path -Parent $scriptDir)
@@ -13,21 +14,72 @@ $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";"
 
 Set-Location $repoPath
 
-# === Step 1: Pull ============================================================
-Add-Content -Path $logFile -Value "Step 1: git pull..."
-$pullOutput = git pull origin master 2>&1
+# === Step 0: Network Cleanup =================================================
+$env:HTTP_PROXY = $null
+$env:HTTPS_PROXY = $null
+$env:http_proxy = $null
+$env:https_proxy = $null
+$env:ALL_PROXY  = $null
+$env:all_proxy  = $null
 
-if ($LASTEXITCODE -ne 0) {
-    Add-Content -Path $logFile -Value "PULL FAILED (conflict or error): $pullOutput"
+try {
+    $proxyReg = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings" -Name ProxyServer -ErrorAction SilentlyContinue
+    if ($proxyReg.ProxyServer -match '^127\.0\.0\.1:\d+') {
+        Add-Content -Path $logFile -Value "Step 0: Detected VPN proxy residual (ProxyEnable=0, ProxyServer=$($proxyReg.ProxyServer)), clearing..."
+        Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings" -Name ProxyServer -ErrorAction SilentlyContinue
+    }
+} catch {
+    Add-Content -Path $logFile -Value "Step 0: Proxy cleanup skipped (no access or not needed)"
+}
+
+function Test-GitHubReachable {
+    try {
+        $response = Invoke-WebRequest -Uri "https://github.com" -TimeoutSec 10 -UseBasicParsing -ErrorAction Stop
+        return ($response.StatusCode -eq 200)
+    } catch {
+        return $false
+    }
+}
+
+# === Step 1: Pull with Retry =================================================
+function Invoke-GitPull {
+    $maxRetries = 3
+    $retryDelays = @(30, 60, 120)
+    
+    for ($i = 0; $i -lt $maxRetries; $i++) {
+        if ($i -gt 0) {
+            Add-Content -Path $logFile -Value "Step 1: Retry $i after $($retryDelays[$i-1])s..."
+            Start-Sleep -Seconds $retryDelays[$i-1]
+        }
+        
+        # Ensure network is reachable before git
+        if (-not (Test-GitHubReachable)) {
+            Add-Content -Path $logFile -Value "Step 1: GitHub unreachable (attempt $($i+1)/$maxRetries)"
+            continue
+        }
+        
+        Add-Content -Path $logFile -Value "Step 1: git pull..."
+        $pullOutput = git -c http.proxy= -c https.proxy= -c http.lowSpeedLimit=0 -c http.lowSpeedTime=60 pull origin master 2>&1
+        $ec = $LASTEXITCODE
+        
+        if ($ec -eq 0) {
+            if ($pullOutput -match "Already up to date") {
+                Add-Content -Path $logFile -Value "Pull: Already up to date."
+            } else {
+                Add-Content -Path $logFile -Value "Pull: $pullOutput"
+            }
+            return $true
+        }
+        
+        Add-Content -Path $logFile -Value "Pull failed (attempt $($i+1)/$maxRetries): $pullOutput"
+    }
+    
+    Add-Content -Path $logFile -Value "PULL FAILED after $maxRetries retries"
     Add-Content -Path $logFile -Value ""
-    exit 1
+    return $false
 }
 
-if ($pullOutput -match "Already up to date") {
-    Add-Content -Path $logFile -Value "Pull: Already up to date."
-} else {
-    Add-Content -Path $logFile -Value "Pull: $pullOutput"
-}
+if (-not (Invoke-GitPull)) { exit 1 }
 
 # === Step 2: Check for local changes =========================================
 $status = git status --porcelain
@@ -59,13 +111,36 @@ $commitMsg   = "auto: [$fileCount files] $dirSummary ($extSummary)"
 git add -A
 git commit -m $commitMsg 2>&1 | Out-Null
 
-# === Step 4: Push ============================================================
-try {
-    $pushOutput = git push origin master 2>&1
-    Add-Content -Path $logFile -Value "Commit: $commitMsg"
-    Add-Content -Path $logFile -Value "Push OK: $pushOutput"
-} catch {
-    Add-Content -Path $logFile -Value "Push FAILED: $_"
+# === Step 4: Push with Retry =================================================
+$maxPushRetries = 3
+$pushRetryDelays = @(20, 60, 120)
+
+for ($i = 0; $i -lt $maxPushRetries; $i++) {
+    if ($i -gt 0) {
+        Add-Content -Path $logFile -Value "Step 4: Retry $i after $($pushRetryDelays[$i-1])s..."
+        Start-Sleep -Seconds $pushRetryDelays[$i-1]
+    }
+    
+    if (-not (Test-GitHubReachable)) {
+        Add-Content -Path $logFile -Value "Step 4: GitHub unreachable (attempt $($i+1)/$maxPushRetries)"
+        continue
+    }
+    
+    try {
+        $pushOutput = git -c http.proxy= -c https.proxy= -c http.lowSpeedLimit=0 -c http.lowSpeedTime=60 push origin master 2>&1
+        if ($LASTEXITCODE -eq 0) {
+            Add-Content -Path $logFile -Value "Commit: $commitMsg"
+            Add-Content -Path $logFile -Value "Push OK: $pushOutput"
+            Add-Content -Path $logFile -Value ""
+            exit 0
+        } else {
+            Add-Content -Path $logFile -Value "Push failed (attempt $($i+1)/$maxPushRetries): $pushOutput"
+        }
+    } catch {
+        Add-Content -Path $logFile -Value "Push failed (attempt $($i+1)/$maxPushRetries): $_"
+    }
 }
 
+Add-Content -Path $logFile -Value "PUSH FAILED after $maxPushRetries retries"
 Add-Content -Path $logFile -Value ""
+exit 1
