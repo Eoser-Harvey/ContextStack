@@ -268,6 +268,7 @@ if (-not $httpsPushed) {
                 if ($LASTEXITCODE -eq 0) {
                     Add-Content -Path $logFile -Value "Commit: $commitMsg"
                     Add-Content -Path $logFile -Value "Push OK (SSH): $pushOutput"
+                    git fetch origin-ssh master:refs/remotes/origin/master 2>&1 | Out-Null
                     Add-Content -Path $logFile -Value ""
                     $httpsPushed = $true
                     break
