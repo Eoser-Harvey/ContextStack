@@ -27,14 +27,18 @@ $env:all_proxy  = $null
 $proxyPorts = @(7890, 10809, 1080)
 foreach ($port in $proxyPorts) {
     try {
-        $test = Test-NetConnection -ComputerName 127.0.0.1 -Port $port -WarningAction SilentlyContinue -ErrorAction SilentlyContinue
-        if ($test.TcpTestSucceeded) {
+        $tcp = New-Object System.Net.Sockets.TcpClient
+        $async = $tcp.BeginConnect("127.0.0.1", $port, $null, $null)
+        if ($async.AsyncWaitHandle.WaitOne(1000)) {
+            $tcp.EndConnect($async)
+            $tcp.Close()
             $vpnProxy = "127.0.0.1:$port"
             Add-Content -Path $logFile -Value "Step 0: VPN proxy alive at $vpnProxy"
             $env:HTTPS_PROXY = "http://$vpnProxy"
             $env:HTTP_PROXY  = "http://$vpnProxy"
             break
         }
+        $tcp.Close()
     } catch {}
 }
 
