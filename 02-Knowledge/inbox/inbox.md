@@ -57,6 +57,11 @@
 - **内容**: 复制即保存的AI知识管理工具，七维注意力分析
 - **状态**: ✅ 已整理 → `openwiki-knowledge-tool.md`
 
+### [微信公众号] Agent Harness最小结构解析
+- **链接**: https://mp.weixin.qq.com/s/yVFQej3dFk9KHv6J2u6Lew
+- **内容**: Datawhale陈思州，Agent=model+harness，五模块最小结构
+- **状态**: ✅ 已整理 → `agent-harness-mini-structure.md`
+
 ---
 
 ## 2026-05-23

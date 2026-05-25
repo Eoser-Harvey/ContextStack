@@ -14,7 +14,8 @@ $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";"
 
 Set-Location $repoPath
 
-# === Step 0: Network Cleanup =================================================
+# === Step 0: Proxy Detection & Cleanup =======================================
+$vpnProxy = $null
 $env:HTTP_PROXY = $null
 $env:HTTPS_PROXY = $null
 $env:http_proxy = $null
@@ -22,14 +23,34 @@ $env:https_proxy = $null
 $env:ALL_PROXY  = $null
 $env:all_proxy  = $null
 
+# Check if VPN proxy is alive (common ports: 7890 Clash, 10809 V2Ray, 1080 SSR)
+$proxyPorts = @(7890, 10809, 1080)
+foreach ($port in $proxyPorts) {
+    try {
+        $test = Test-NetConnection -ComputerName 127.0.0.1 -Port $port -WarningAction SilentlyContinue -ErrorAction SilentlyContinue
+        if ($test.TcpTestSucceeded) {
+            $vpnProxy = "127.0.0.1:$port"
+            Add-Content -Path $logFile -Value "Step 0: VPN proxy alive at $vpnProxy"
+            $env:HTTPS_PROXY = "http://$vpnProxy"
+            $env:HTTP_PROXY  = "http://$vpnProxy"
+            break
+        }
+    } catch {}
+}
+
+# Clean registry proxy residual if proxy is dead
 try {
     $proxyReg = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings" -Name ProxyServer -ErrorAction SilentlyContinue
-    if ($proxyReg.ProxyServer -match '^127\.0\.0\.1:\d+') {
-        Add-Content -Path $logFile -Value "Step 0: Detected VPN proxy residual (ProxyEnable=0, ProxyServer=$($proxyReg.ProxyServer)), clearing..."
+    if ($proxyReg.ProxyServer -match '^127\.0\.0\.1:\d+' -and -not $vpnProxy) {
+        Add-Content -Path $logFile -Value "Step 0: Clearing dead VPN proxy residual ($($proxyReg.ProxyServer))"
         Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings" -Name ProxyServer -ErrorAction SilentlyContinue
     }
-} catch {
-    Add-Content -Path $logFile -Value "Step 0: Proxy cleanup skipped (no access or not needed)"
+} catch {}
+
+if ($vpnProxy) {
+    Add-Content -Path $logFile -Value "Step 0: Will use VPN proxy for git"
+} else {
+    Add-Content -Path $logFile -Value "Step 0: No VPN proxy detected, using direct connection"
 }
 
 function Test-GitHubReachable {
@@ -46,20 +67,25 @@ function Invoke-GitPull {
     $maxRetries = 3
     $retryDelays = @(30, 60, 120)
     
+    # Build git args: use proxy if VPN is alive, else disable
+    $gitExtraArgs = @()
+    if (-not $script:vpnProxy) {
+        $gitExtraArgs = @("-c", "http.proxy=", "-c", "https.proxy=")
+    }
+    
     for ($i = 0; $i -lt $maxRetries; $i++) {
         if ($i -gt 0) {
             Add-Content -Path $logFile -Value "Step 1: Retry $i after $($retryDelays[$i-1])s..."
             Start-Sleep -Seconds $retryDelays[$i-1]
         }
         
-        # Ensure network is reachable before git
         if (-not (Test-GitHubReachable)) {
             Add-Content -Path $logFile -Value "Step 1: GitHub unreachable (attempt $($i+1)/$maxRetries)"
             continue
         }
         
         Add-Content -Path $logFile -Value "Step 1: git pull..."
-        $pullOutput = git -c http.proxy= -c https.proxy= -c http.lowSpeedLimit=0 -c http.lowSpeedTime=60 pull origin master 2>&1
+        $pullOutput = & git @gitExtraArgs -c http.lowSpeedLimit=0 -c http.lowSpeedTime=60 pull origin master 2>&1
         $ec = $LASTEXITCODE
         
         if ($ec -eq 0) {
@@ -115,6 +141,12 @@ git commit -m $commitMsg 2>&1 | Out-Null
 $maxPushRetries = 3
 $pushRetryDelays = @(20, 60, 120)
 
+# Build git args: use proxy if VPN is alive, else disable
+$gitExtraArgs = @()
+if (-not $script:vpnProxy) {
+    $gitExtraArgs = @("-c", "http.proxy=", "-c", "https.proxy=")
+}
+
 for ($i = 0; $i -lt $maxPushRetries; $i++) {
     if ($i -gt 0) {
         Add-Content -Path $logFile -Value "Step 4: Retry $i after $($pushRetryDelays[$i-1])s..."
@@ -127,7 +159,7 @@ for ($i = 0; $i -lt $maxPushRetries; $i++) {
     }
     
     try {
-        $pushOutput = git -c http.proxy= -c https.proxy= -c http.lowSpeedLimit=0 -c http.lowSpeedTime=60 push origin master 2>&1
+        $pushOutput = & git @gitExtraArgs -c http.lowSpeedLimit=0 -c http.lowSpeedTime=60 push origin master 2>&1
         if ($LASTEXITCODE -eq 0) {
             Add-Content -Path $logFile -Value "Commit: $commitMsg"
             Add-Content -Path $logFile -Value "Push OK: $pushOutput"

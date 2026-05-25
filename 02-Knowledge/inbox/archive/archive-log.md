@@ -51,6 +51,11 @@
 - **GitHub**: https://github.com/kdsz001/OpenWiki
 - **整理产物**: `../openwiki-knowledge-tool.md`
 
+### 2026-05-24: Agent Harness 最小结构解析
+- **来源**: https://mp.weixin.qq.com/s/yVFQej3dFk9KHv6J2u6Lew
+- **作者**: 陈思州（Datawhale）
+- **整理产物**: `../agent-harness-mini-structure.md`
+
 ---
 
 ## 生活工具

@@ -26,6 +26,7 @@ ContextStack 的知识管理中心，存放规范文档、技能模块和知识�
 | `easy-vibe-coding-guide.md` | AI/技术 | GitHub: Datawhale |
 | `ppt-skills-collection.md` | AI/技术 | 用户分享 |
 | `openwiki-knowledge-tool.md` | AI/技术 | 微信公众号 |
+| `agent-harness-mini-structure.md` | AI/技术 | 微信公众号 |
 
 ## 相关入口
 

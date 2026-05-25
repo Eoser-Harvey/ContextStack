@@ -23,6 +23,7 @@
 | 2026-05-24 | GitHub: datawhalechina/easy-vibe | `easy-vibe-coding-guide.md` | AI/技术 |
 | 2026-05-24 | 用户分享: 6个PPT制作Skills汇总 | `ppt-skills-collection.md` | AI/技术 |
 | 2026-05-24 | 微信公众号: OpenWiki知识管理工具 | `openwiki-knowledge-tool.md` | AI/技术 |
+| 2026-05-24 | 微信公众号: Agent Harness最小结构解析 | `agent-harness-mini-structure.md` | AI/技术 |
 | — | — | — | — |
 
 ## 归档
