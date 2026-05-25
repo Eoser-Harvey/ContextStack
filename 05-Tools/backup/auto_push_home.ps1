@@ -207,7 +207,7 @@ foreach ($line in $rawFiles) {
         elseif ($stFlag -match 'D') { $action = 'delete' }
         else                        { $action = 'modify' }
 
-        $topDir = if ($filePath -match '^([^/\\]+)') { $matches[1] } else { '(root)' }
+        $topDir = if ($filePath -match '^([^/\\]+)[/\\]') { $matches[1] } else { '(root)' }
         $key = "$action|$topDir"
         if (-not $groups.ContainsKey($key)) { $groups[$key] = 0 }
         $groups[$key]++
