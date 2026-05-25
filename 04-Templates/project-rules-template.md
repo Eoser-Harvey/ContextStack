@@ -6,7 +6,7 @@ tags:
   - project-management
 summary: 创建项目级协作规则的标准模板，定义项目规范、领域知识、目录结构和产品红线
 created: 2026-04-29
-updated: 2026-05-07
+updated: 2026-05-23
 ---
 
 # PROJECT-RULES.md 项目规则模板
@@ -161,6 +161,6 @@ updated: 2026-05-07
 
 ---
 
-**版本**: v1.1
+**版本**: v1.2
 **创建时间**: {YYYY-MM-DD}
-**基于模板**: `02-Knowledge/system/templates/project-rules-template.md`
+**移至**: `04-Templates/project-rules-template.md`（原`02-Knowledge/system/templates/`已合并）

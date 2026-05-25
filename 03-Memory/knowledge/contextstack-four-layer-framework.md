@@ -15,7 +15,7 @@ ContextStack 是一个独立于特定AI模型、基于分层Context和持久化M
 - **位置**: `./GLOBAL-RULES.md`
 - **作用**: 定义“我是谁”——AI助手的角色定位、专长领域、沟通风格、安全铁律、操作授权范围。
 - **触发**: AI助手启动时自动加载，常驻内存，优先级最高，不可覆盖。
-- **内容**: H3C专业AI编程助手、网络设备/嵌入式/TSN/TFLM专长、简洁直接沟通风格、安全第一/代码质量/文档同步/记忆管理四大铁律。
+- **内容**: ContextStack 框架 AI 协作助手、网络设备/嵌入式/TSN/TFLM专长、简洁直接沟通风格、安全第一/代码质量/文档同步/记忆管理四大铁律。
 
 ### 第二层：项目规则 (PROJECT-RULES.md)
 - **位置**: 各项目根目录下的 `PROJECT-RULES.md`
@@ -75,7 +75,7 @@ AI助手启动
     → 报告结果
 ```
 
-## 工作台系统 (workbench/)
+## 工作台系统 (01-Projects/)
 
 ### 核心功能
 - **Session持久化**: 记录“做到哪了”，支持跨会话恢复。
@@ -126,7 +126,7 @@ ContextStack/
 └── 05-Tools/                    # 维护工具脚本（backup/encoding/vscode-config）
 ```
 
-> **演进说明**: 2026-05-23 目录结构从 v2.0 (`workbench/Skills/Obsidian/memory/tools/`) 重构为 v3.0 数字前缀 + 首字母大写命名 (`01-Projects/02-Knowledge/03-Memory/04-Templates/05-Tools/`)，详见 FRAMEWORK-README.md。`VSCode Config/` 移入 `05-Tools/vscode-config/`。
+> **演进说明**: 2026-05-23 目录结构从 v2.0 (`workbench/Skills/Obsidian/memory/tools/`) 重构为 v3.0 数字前缀 + 首字母大写命名 (`01-Projects/02-Knowledge/03-Memory/04-Templates/05-Tools/`)，详见 FRAMEWORK-README.md。
 
 ## 框架核心价值
 

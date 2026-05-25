@@ -1,6 +1,6 @@
 # 模板库 (04-Templates)
 
-标准化模板文件，用于快速创建新项目、任务、话题。
+标准化模板文件，用于快速创建新项目、任务、话题、项目规则。
 
 ## 模板分类
 
@@ -10,11 +10,15 @@
 | [project-template.md](./project-template.md) | 旧版项目工作台模板 |
 | [task-template.md](./task-template.md) | 任务工作台模板 |
 | [topic-template.md](./topic-template.md) | 话题工作台模板 |
+| [project-rules-template.md](./project-rules-template.md) | **PROJECT-RULES.md 项目规则模板**（从 02-Knowledge/system/templates/ 合并至此） |
 
 ## 使用方式
 
 ### 新建项目
-从 `Project/` 目录复制五个标准文件到新项目目录，按实际修改。
+从 `project/` 目录复制五个标准文件到新项目目录，按实际修改。
+
+### 新建项目规则
+复制 `project-rules-template.md` 到项目根目录，重命名为 `PROJECT-RULES.md`，按实际填写。
 
 ### 新建任务/话题
 使用对应模板文件创建。
@@ -22,3 +26,4 @@
 ---
 
 **最后更新**: 2026-05-23
+**变更**: 合并 `02-Knowledge/system/templates/project-rules-template.md`，消除冗余
