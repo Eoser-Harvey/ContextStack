@@ -24,7 +24,7 @@
 ### 任务详情
 - **任务名称**: `ContextStack_GitAutoPush`
 - **执行时间**: 每日22:00
-- **执行命令**: `powershell.exe -ExecutionPolicy Bypass -File "D:\MyFile\AI\ContextStack\05-Tools\backup\auto_push.ps1"`
+- **执行命令**: `powershell.exe -ExecutionPolicy Bypass -File "./05-Tools/backup/auto_push.ps1"`
 - **日志文件**: `05-Tools/backup/auto_push.log`
 
 ## 手动检查任务状态
@@ -41,7 +41,7 @@ schtasks /delete /tn ContextStack_GitAutoPush /f
 
 ## 注意事项
 1. **需要管理员权限**：设置任务计划需要管理员权限
-2. **脚本路径正确性**：确保路径 `D:\MyFile\AI\ContextStack\05-Tools\backup\auto_push.ps1` 存在
+2. **脚本路径正确性**：确保路径 `./05-Tools/backup/auto_push.ps1` 存在
 3. **Git配置**：确保Git已正确配置用户名和邮箱
 4. **网络连接**：推送需要网络连接
 
@@ -52,7 +52,7 @@ schtasks /delete /tn ContextStack_GitAutoPush /f
 3. 检查Git是否已安装并配置
 4. 手动使用以下命令创建：
    ```cmd
-   schtasks /create /tn ContextStack_GitAutoPush /tr "powershell.exe -ExecutionPolicy Bypass -File \"D:\MyFile\AI\ContextStack\05-Tools\backup\auto_push.ps1\"" /sc DAILY /st 22:00 /ru "%USERNAME%" /rl HIGHEST /f
+   schtasks /create /tn ContextStack_GitAutoPush /tr "powershell.exe -ExecutionPolicy Bypass -File \"./05-Tools/backup/auto_push.ps1\"" /sc DAILY /st 22:00 /ru "%USERNAME%" /rl HIGHEST /f
    ```
 
 ## 更新历史
