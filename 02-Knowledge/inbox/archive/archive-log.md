@@ -41,6 +41,16 @@
 - **GitHub**: https://github.com/datawhalechina/easy-vibe (14.1k stars)
 - **整理产物**: `../easy-vibe-coding-guide.md`
 
+### 2026-05-24: PPT 制作 Skills 汇总（6个）
+- **来源**: 用户分享（GitHub 链接汇总）
+- **项目**: guizang-ppt-skill / frontend-slides / magic-slide / huashu-design / html-ppt-skill / ppt-master
+- **整理产物**: `../ppt-skills-collection.md`
+
+### 2026-05-24: OpenWiki 知识管理工具
+- **来源**: https://mp.weixin.qq.com/s/3Lzj3AfeOzB6emKnVTP9bQ
+- **GitHub**: https://github.com/kdsz001/OpenWiki
+- **整理产物**: `../openwiki-knowledge-tool.md`
+
 ---
 
 ## 生活工具

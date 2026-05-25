@@ -21,6 +21,8 @@
 | 2026-05-24 | X: @Nicole_yang88 嘉信入金全攻略 | `schwab-deposit-guide-nicole.md` | 投资理财 |
 | 2026-05-24 | YouTube: Club Sim 香港手机号申请攻略 | `hongkong-sim-card-club-sim-guide.md` | 生活工具 |
 | 2026-05-24 | GitHub: datawhalechina/easy-vibe | `easy-vibe-coding-guide.md` | AI/技术 |
+| 2026-05-24 | 用户分享: 6个PPT制作Skills汇总 | `ppt-skills-collection.md` | AI/技术 |
+| 2026-05-24 | 微信公众号: OpenWiki知识管理工具 | `openwiki-knowledge-tool.md` | AI/技术 |
 | — | — | — | — |
 
 ## 归档
