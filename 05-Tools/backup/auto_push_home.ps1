@@ -192,6 +192,24 @@ if (-not $status) {
     exit 0
 }
 
+# === Step 2.5: Auto-cleanup temp test files ==================================
+$tempCleaned = $false
+Get-ChildItem $repoPath -File -ErrorAction SilentlyContinue | Where-Object {
+    $_.Name -match '^\.(test|verify|tmp|x)\.' -and $_.Length -lt 500
+} | ForEach-Object {
+    Add-Content -Path $logFile -Value "Cleanup: removing temp file '$($_.Name)'"
+    Remove-Item $_.FullName -Force
+    $tempCleaned = $true
+}
+if ($tempCleaned) {
+    $status = git status --porcelain
+    if (-not $status) {
+        Add-Content -Path $logFile -Value "Only temp files existed, cleaned. Nothing to push."
+        Add-Content -Path $logFile -Value ""
+        exit 0
+    }
+}
+
 # === Step 3: Generate commit message =========================================
 $rawFiles = @($status -split "`n" | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne "" })
 
