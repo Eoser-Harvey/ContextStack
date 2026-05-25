@@ -195,7 +195,7 @@ if (-not $status) {
 # === Step 2.5: Auto-cleanup temp test files ==================================
 $tempCleaned = $false
 Get-ChildItem $repoPath -File -ErrorAction SilentlyContinue | Where-Object {
-    $_.Name -match '^\.(test|verify|tmp|x)\.' -and $_.Length -lt 500
+    $_.Name -match '^\.(test|verify|tmp|x)[.\-]' -and $_.Length -lt 500
 } | ForEach-Object {
     Add-Content -Path $logFile -Value "Cleanup: removing temp file '$($_.Name)'"
     Remove-Item $_.FullName -Force
