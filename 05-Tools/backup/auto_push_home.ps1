@@ -193,23 +193,48 @@ if (-not $status) {
 }
 
 # === Step 3: Generate commit message =========================================
-$files = @($status -split "`n" | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne "" })
-$fileCount = $files.Count
+$rawFiles = @($status -split "`n" | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne "" })
 
-$dirs   = @($files | ForEach-Object {
-    $path = $_ -replace '^\S+\s+', ''
-    if ($path -match '^(.+?)/') { $matches[1] } else { '(root)' }
-} | Sort-Object -Unique)
+$added    = @()
+$modified = @()
+$deleted  = @()
 
-$exts   = @($files | ForEach-Object {
-    $path = $_ -replace '^\S+\s+', ''
-    if ($path -match '\.(\w+)$') { ".$($matches[1])" } else { '(no-ext)' }
-} | Sort-Object -Unique)
+foreach ($line in $rawFiles) {
+    if ($line -match '^(.{1,2})\s+(.+)$') {
+        $stFlag = $matches[1].Trim()
+        $filePath = $matches[2]
+        if ($filePath -match '"([^"]+)"') { $filePath = $matches[1] }
 
-$dirSummary  = ($dirs | Select-Object -First 4) -join ", "
-if ($dirs.Count -gt 4) { $dirSummary += ", ..." }
-$extSummary  = ($exts -join " ") -replace '^//', '/'
-$commitMsg   = "auto: [$fileCount files] $dirSummary ($extSummary)"
+        $shortPath = $filePath -replace '^.*?([^/\\]+/[^/\\]+)$', '$1'
+        if ($shortPath -eq $filePath) { $shortPath = $filePath }
+
+        if ($stFlag -match '^\?') { $added += $shortPath }
+        elseif ($stFlag -match '^[AMR]' -or $stFlag -match '^.[AM]') {
+            if ($stFlag -match 'M') { $modified += $shortPath } else { $added += $shortPath }
+        }
+        elseif ($stFlag -match 'D') { $deleted += $shortPath }
+        else { $modified += $shortPath }
+    }
+}
+
+$parts = @()
+if ($modified.Count -gt 0) {
+    $show = ($modified | Select-Object -First 5) -join ", "
+    if ($modified.Count -gt 5) { $show += " ...(+$($modified.Count - 5))" }
+    $parts += "modify $show"
+}
+if ($added.Count -gt 0) {
+    $show = ($added | Select-Object -First 5) -join ", "
+    if ($added.Count -gt 5) { $show += " ...(+$($added.Count - 5))" }
+    $parts += "add $show"
+}
+if ($deleted.Count -gt 0) {
+    $show = ($deleted | Select-Object -First 5) -join ", "
+    if ($deleted.Count -gt 5) { $show += " ...(+$($deleted.Count - 5))" }
+    $parts += "delete $show"
+}
+
+$commitMsg = if ($parts.Count -gt 0) { "auto: " + ($parts -join "; ") } else { "auto: changes" }
 
 git add -A
 git commit -m $commitMsg 2>&1 | Out-Null
