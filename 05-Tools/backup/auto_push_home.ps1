@@ -195,9 +195,7 @@ if (-not $status) {
 # === Step 3: Generate commit message =========================================
 $rawFiles = @($status -split "`n" | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne "" })
 
-$added    = @()
-$modified = @()
-$deleted  = @()
+$groups = @{}
 
 foreach ($line in $rawFiles) {
     if ($line -match '^(.{1,2})\s+(.+)$') {
@@ -205,36 +203,25 @@ foreach ($line in $rawFiles) {
         $filePath = $matches[2]
         if ($filePath -match '"([^"]+)"') { $filePath = $matches[1] }
 
-        $shortPath = $filePath -replace '^.*?([^/\\]+/[^/\\]+)$', '$1'
-        if ($shortPath -eq $filePath) { $shortPath = $filePath }
+        if ($stFlag -match '^\?')  { $action = 'add' }
+        elseif ($stFlag -match 'D') { $action = 'delete' }
+        else                        { $action = 'modify' }
 
-        if ($stFlag -match '^\?') { $added += $shortPath }
-        elseif ($stFlag -match '^[AMR]' -or $stFlag -match '^.[AM]') {
-            if ($stFlag -match 'M') { $modified += $shortPath } else { $added += $shortPath }
-        }
-        elseif ($stFlag -match 'D') { $deleted += $shortPath }
-        else { $modified += $shortPath }
+        $topDir = if ($filePath -match '^([^/\\]+)') { $matches[1] } else { '(root)' }
+        $key = "$action|$topDir"
+        if (-not $groups.ContainsKey($key)) { $groups[$key] = 0 }
+        $groups[$key]++
     }
 }
 
 $parts = @()
-if ($modified.Count -gt 0) {
-    $show = ($modified | Select-Object -First 5) -join ", "
-    if ($modified.Count -gt 5) { $show += " ...(+$($modified.Count - 5))" }
-    $parts += "modify $show"
-}
-if ($added.Count -gt 0) {
-    $show = ($added | Select-Object -First 5) -join ", "
-    if ($added.Count -gt 5) { $show += " ...(+$($added.Count - 5))" }
-    $parts += "add $show"
-}
-if ($deleted.Count -gt 0) {
-    $show = ($deleted | Select-Object -First 5) -join ", "
-    if ($deleted.Count -gt 5) { $show += " ...(+$($deleted.Count - 5))" }
-    $parts += "delete $show"
+foreach ($key in ($groups.Keys | Sort-Object)) {
+    $action, $dir = $key -split '\|'
+    $count = $groups[$key]
+    $parts += "$action $dir ($count)"
 }
 
-$commitMsg = if ($parts.Count -gt 0) { "auto: " + ($parts -join "; ") } else { "auto: changes" }
+$commitMsg = if ($parts.Count -gt 0) { "auto: " + ($parts -join ", ") } else { "auto: changes" }
 
 git add -A
 git commit -m $commitMsg 2>&1 | Out-Null
