@@ -64,6 +64,7 @@ Host github-ssh
     Hostname ssh.github.com
     Port 443
     User git
+    IdentityFile ~/.ssh/id_ed25519_contextstack
     StrictHostKeyChecking accept-new
     ConnectTimeout 10
 
