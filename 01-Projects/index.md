@@ -10,6 +10,7 @@
 | [网络设备调试](./network-device-debug/) | 进行中 | [WORKSPACE.md](./network-device-debug/WORKSPACE.md) |
 | [腾讯云AI编程培训](./tencent-cloud-training/) | 资料整理 | [WORKSPACE.md](./tencent-cloud-training/WORKSPACE.md) |
 | [BTC温度仪表盘](./btc-temperature-gauge/) | 基础完成 | [WORKSPACE.md](./btc-temperature-gauge/WORKSPACE.md) |
+| [WeChat Radar](./wechat-radar/) | 环境就绪 | [README.md](./wechat-radar/README.md) |
 
 ## 项目标准文件结构
 

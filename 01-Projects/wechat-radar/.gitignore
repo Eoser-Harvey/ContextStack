@@ -1,0 +1,10 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+logs/
+state.json
+token.json
+fakeid_cache.json
+article_cache.json
+config.yaml.local
