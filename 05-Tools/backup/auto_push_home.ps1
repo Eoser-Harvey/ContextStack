@@ -192,24 +192,54 @@ if (-not $status) {
     exit 0
 }
 
+# === Step 2.5: Auto-cleanup temp test files ==================================
+$tempCleaned = $false
+Get-ChildItem $repoPath -File -ErrorAction SilentlyContinue | Where-Object {
+    $_.Name -match '^\.(test|verify|tmp|x)[.\-]' -and $_.Length -lt 500
+} | ForEach-Object {
+    Add-Content -Path $logFile -Value "Cleanup: removing temp file '$($_.Name)'"
+    Remove-Item $_.FullName -Force
+    $tempCleaned = $true
+}
+if ($tempCleaned) {
+    $status = git status --porcelain
+    if (-not $status) {
+        Add-Content -Path $logFile -Value "Only temp files existed, cleaned. Nothing to push."
+        Add-Content -Path $logFile -Value ""
+        exit 0
+    }
+}
+
 # === Step 3: Generate commit message =========================================
-$files = @($status -split "`n" | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne "" })
-$fileCount = $files.Count
+$rawFiles = @($status -split "`n" | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne "" })
 
-$dirs   = @($files | ForEach-Object {
-    $path = $_ -replace '^\S+\s+', ''
-    if ($path -match '^(.+?)/') { $matches[1] } else { '(root)' }
-} | Sort-Object -Unique)
+$groups = @{}
 
-$exts   = @($files | ForEach-Object {
-    $path = $_ -replace '^\S+\s+', ''
-    if ($path -match '\.(\w+)$') { ".$($matches[1])" } else { '(no-ext)' }
-} | Sort-Object -Unique)
+foreach ($line in $rawFiles) {
+    if ($line -match '^(.{1,2})\s+(.+)$') {
+        $stFlag = $matches[1].Trim()
+        $filePath = $matches[2]
+        if ($filePath -match '"([^"]+)"') { $filePath = $matches[1] }
 
-$dirSummary  = ($dirs | Select-Object -First 4) -join ", "
-if ($dirs.Count -gt 4) { $dirSummary += ", ..." }
-$extSummary  = ($exts -join " ") -replace '^//', '/'
-$commitMsg   = "auto: [$fileCount files] $dirSummary ($extSummary)"
+        if ($stFlag -match '^\?')  { $action = 'add' }
+        elseif ($stFlag -match 'D') { $action = 'delete' }
+        else                        { $action = 'modify' }
+
+        $topDir = if ($filePath -match '^([^/\\]+)[/\\]') { $matches[1] } else { '(root)' }
+        $key = "$action|$topDir"
+        if (-not $groups.ContainsKey($key)) { $groups[$key] = 0 }
+        $groups[$key]++
+    }
+}
+
+$parts = @()
+foreach ($key in ($groups.Keys | Sort-Object)) {
+    $action, $dir = $key -split '\|'
+    $count = $groups[$key]
+    $parts += "$action $dir ($count)"
+}
+
+$commitMsg = if ($parts.Count -gt 0) { "auto: " + ($parts -join ", ") } else { "auto: changes" }
 
 git add -A
 git commit -m $commitMsg 2>&1 | Out-Null

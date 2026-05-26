@@ -20,3 +20,9 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Test temp files (auto-push script will also auto-cleanup)
+.test*.txt
+.verify*.txt
+.tmp*.txt
+.x.txt
