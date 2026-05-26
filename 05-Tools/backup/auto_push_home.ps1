@@ -1,19 +1,12 @@
 # 家里自动同步脚本 — 每日凌晨 3:00 执行
 # 用法: Windows 任务计划程序 → 每日 3:00 → powershell -File "...\auto_push_home.ps1"
-#       交互快速模式: powershell -File "...\auto_push_home.ps1" -Quick
 # 网络容错: 3次重试 + 指数退避 + VPN代理清理 + HTTPS→SSH回退
-
-param([switch]$Quick)
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repoPath  = Split-Path -Parent (Split-Path -Parent $scriptDir)
 $logFile   = Join-Path $scriptDir "auto_push_home.log"
 $env:GIT_TERMINAL_PROMPT = 0
 $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-
-if ($Quick) {
-    Add-Content -Path $logFile -Value "[Quick mode]"
-}
 
 Add-Content -Path $logFile -Value "=== $timestamp ==="
 
@@ -111,8 +104,8 @@ Initialize-SshFallback
 
 # === Step 1: Pull with Retry + SSH Fallback ==================================
 function Invoke-GitPull {
-    $maxRetries = if ($Quick) { 1 } else { 3 }
-    $retryDelays = if ($Quick) { @(3) } else { @(10, 30, 60) }
+    $maxRetries = 3
+    $retryDelays = @(10, 30, 60)
 
     $gitExtraArgs = @()
     if (-not $script:vpnProxy) {
@@ -252,8 +245,8 @@ git add -A
 git commit -m $commitMsg 2>&1 | Out-Null
 
 # === Step 4: Push with Retry + SSH Fallback ==================================
-$maxPushRetries = if ($Quick) { 1 } else { 3 }
-$pushRetryDelays = if ($Quick) { @(3) } else { @(10, 30, 60) }
+$maxPushRetries = 3
+$pushRetryDelays = @(10, 30, 60)
 
 $gitExtraArgs = @()
 if (-not $script:vpnProxy) {
