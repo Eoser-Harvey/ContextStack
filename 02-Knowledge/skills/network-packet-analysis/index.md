@@ -9,6 +9,6 @@ Wireshark 抓包分析、协议解析和网络问题定位。
 
 ## 相关笔记
 
-- [[../../02-Knowledge/system/methodology/debug-methodology|调试方法论]] — 调试上下文
+- [[../../system/methodology/debug-methodology|调试方法论]] — 调试上下文
 - [[../device-debugging/index|设备调试]] — 抓包在设备调试中的应用
 - [[../tsn-protocol/index|TSN协议]] — TSN 协议抓包

@@ -9,5 +9,5 @@
 
 ## 相关
 
-- [[../templates/index|模板库]] — SOP 中使用的模板
+- [[../../../04-Templates/index|模板库]] — SOP 中使用的模板
 - [[../methodology/index|方法论]] — SOP 的理论基础

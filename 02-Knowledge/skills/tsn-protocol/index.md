@@ -9,6 +9,6 @@
 
 ## 相关笔记
 
-- [[../../02-Knowledge/system/methodology/debug-methodology|调试方法论]] — TSN 调试理论
+- [[../../system/methodology/debug-methodology|调试方法论]] — TSN 调试理论
 - [[../device-debugging/index|设备调试]] — TSN 设备调试
 - [[../network-packet-analysis/index|网络抓包分析]] — TSN 抓包分析

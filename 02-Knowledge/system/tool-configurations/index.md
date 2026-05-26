@@ -17,4 +17,4 @@
 ## 相关
 
 - [[../../skills/vscode-config-management/index|VSCode配置管理 Skill]] — Skill 封装
-- [[../../../05-Tools/README|维护工具]] — 框架维护脚本
+- [[../../../05-Tools/index|维护工具]] — 框架维护脚本

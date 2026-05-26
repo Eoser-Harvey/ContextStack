@@ -162,4 +162,4 @@ courses/week01-day01-xxx.md      ← 一课一文件（课程内容 + 答题区 
 
 **版本**: v1.0
 **创建时间**: 2026-05-07
-**基于模板**: `02-Knowledge/system/templates/project-rules-template.md`
+**基于模板**: `04-Templates/project-rules-template.md`

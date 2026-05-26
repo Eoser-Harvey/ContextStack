@@ -9,4 +9,4 @@ VSCode 开发环境配置的备份、恢复、同步和版本控制。
 
 ## 相关笔记
 
-- [[../../02-Knowledge/system/tool-configurations/README|VSCode 全局配置备份]] — 配置备份详细方案
+- [[../../system/tool-configurations/README|VSCode 全局配置备份]] — 配置备份详细方案

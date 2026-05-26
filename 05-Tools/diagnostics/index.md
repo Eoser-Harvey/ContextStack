@@ -119,7 +119,7 @@
 ## 🔗 相关链接
 
 - [[05-Tools/index|工具库索引]]
-- [[05-Tools/README|工具库详细说明]]
+- [[05-Tools/index|工具库详细说明]]
 - [[encoding/index|编码处理工具]]
 - [[backup/index|备份管理工具]]
 

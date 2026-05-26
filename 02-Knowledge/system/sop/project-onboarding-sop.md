@@ -62,8 +62,8 @@ updated: 2026-05-07
 # 如果涉及多个子话题
 01-Projects/topics/{topic-name}.md   # 话题工作台
 
-# 如果需要任务跟踪
-01-Projects/tasks/{task-name}.md     # 任务工作台
+# 如果需要话题讨论
+01-Projects/topics/{topic-name}.md       # 话题工作台
 ```
 
 #### 2.2 规则文件创建
@@ -209,8 +209,8 @@ updated: 2026-05-07
 ## 模板和工具
 
 ### 模板文件
-- **项目工作台模板**：`04-Templates/project-template.md`
-- **项目规则模板**：`02-Knowledge/system/templates/project-rules-template.md`
+- **项目五文件模板**：`04-Templates/project/`
+- **项目规则模板**：`04-Templates/project-rules-template.md`
 - **项目计划模板**：`02-Knowledge/system/templates/project-plan-template.md`
 
 ### 配置脚本
@@ -257,5 +257,5 @@ updated: 2026-05-07
 **维护者**: ContextStack AI 协作助手  
 **相关文档**: 
 - `02-Knowledge/system/methodology/debug-methodology.md`
-- `04-Templates/project-template.md`
+- `04-Templates/project-rules-template.md`
 - `./GLOBAL-RULES.md`

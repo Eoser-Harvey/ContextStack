@@ -31,8 +31,6 @@
 ## 其他目录
 
 - [topics/](./topics/) — 跨项目话题
-- [tasks/](./tasks/) — 跨项目任务
-- [history/](./history/) — 历史归档
 
 ---
 

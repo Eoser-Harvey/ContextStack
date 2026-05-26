@@ -60,7 +60,6 @@
 ### 工作台类型
 1. **项目工作台** (`01-Projects/`): 长期项目跟踪
 2. **话题工作台** (`01-Projects/topics/`): 特定技术话题讨论
-3. **任务工作台** (`01-Projects/tasks/`): 具体任务执行跟踪
 
 ### 切换命令
 - `切换到[项目/话题名称]` / `Switch to [project/topic name]`
@@ -86,9 +85,7 @@ ContextStack/
 │   ├── network-device-debug/
 │   ├── btc-temperature-gauge/
 │   ├── tencent-cloud-training/
-│   ├── topics/
-│   ├── tasks/
-│   └── history/
+│   └── topics/
 ├── 02-Knowledge/                # 知识库（原第三层规范文档 + Skills）
 │   ├── system/
 │   │   ├── methodology/
@@ -102,10 +99,8 @@ ContextStack/
 ├── 03-Memory/                   # 结构化记忆文件
 │   └── knowledge/
 ├── 04-Templates/                # 模板库
-│   ├── Project/                 # 项目标准文件模板
-│   ├── project-template.md
-│   ├── task-template.md
-│   └── topic-template.md
+│   ├── project/                 # 项目五文件模板
+│   └── project-rules-template.md
 ├── 05-Tools/                    # 维护工具脚本
 │   ├── backup/                  # 备份 & 自动同步
 │   ├── encoding/                # 编码处理

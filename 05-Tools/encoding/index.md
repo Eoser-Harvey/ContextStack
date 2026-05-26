@@ -112,7 +112,7 @@ python analyze_encoding.py 文件路径
 ## 🔗 相关链接
 
 - [[05-Tools/index|工具库索引]]
-- [[05-Tools/README|工具库详细说明]]
+- [[05-Tools/index|工具库详细说明]]
    - [[backup/index|备份管理工具]]
    - [[diagnostics/index|诊断工具]]
 

@@ -6,11 +6,8 @@
 
 | 模板 | 用途 |
 |------|------|
-| [project/](./project/) | 项目标准文件模板（WORKSPACE / STATE / ACTIONS / CONTEXT / REFERENCES） |
-| [project-template.md](./project-template.md) | 旧版项目工作台模板 |
-| [task-template.md](./task-template.md) | 任务工作台模板 |
-| [topic-template.md](./topic-template.md) | 话题工作台模板 |
-| [project-rules-template.md](./project-rules-template.md) | **PROJECT-RULES.md 项目规则模板**（从 02-Knowledge/system/templates/ 合并至此） |
+| [project/](./project/) | 项目五文件模板（WORKSPACE / STATE / ACTIONS / CONTEXT / REFERENCES） |
+| [project-rules-template.md](./project-rules-template.md) | PROJECT-RULES.md 项目规则模板 |
 
 ## 使用方式
 
