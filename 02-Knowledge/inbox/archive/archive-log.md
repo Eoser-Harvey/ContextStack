@@ -36,6 +36,16 @@
 
 ---
 
+## 个人成长 / 商业模式
+
+### 2026-05-27: 对我来说最好的业务 — 个人成长产品化
+- **来源**: https://mp.weixin.qq.com/s/DfJGlyjY1d2y_tC4ElT8RQ
+- **作者**: 奋斗的老薛（老薛的财富之旅）
+- **整理产物**: `../personal-growth-productization-laoxue.md`
+- **概要**: 付费社群作为"个人成长产品化"载体的三大价值（现金流/影响力杠杆/成长倒逼）+ 正向循环飞轮 + 李笑来 Pro 版对标 + 可复用方法论
+
+---
+
 ## AI / 技术
 
 ### 2026-05-24: Datawhale Agent Learning Hub
