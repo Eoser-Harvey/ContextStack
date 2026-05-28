@@ -17,6 +17,7 @@ ContextStack 的知识管理中心，存放规范文档、技能模块和知识�
 | 文件 | 分类 | 来源 |
 |------|------|------|
 | `ruflo-agent-orchestration-research.md` | AI/技术 | GitHub: ruvnet/ruflo |
+| `hy-memory-tencent-research.md` | AI/技术 | memory.hunyuan.tencent.com |
 | `ai-agent-repos-collection.md` | AI/技术 | GitHub: 0xsatoshis/ai-agent-repos-analysis (Forked) |
 | `agent-learning-roadmap-datawhale.md` | AI/技术 | GitHub: Datawhale |
 | `investment-blogger-innomad.md` | 投资理财 | innomad.io |

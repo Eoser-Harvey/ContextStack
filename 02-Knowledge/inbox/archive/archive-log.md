@@ -48,6 +48,12 @@
 
 ## AI / 技术
 
+### 2026-05-28: 腾讯混元 Hy-Memory 记忆框架
+- **来源**: https://memory.hunyuan.tencent.com/
+- **发布日期**: 2026-05-28（今日发布）
+- **整理产物**: `../hy-memory-tencent-research.md`
+- **概要**: 腾讯混元推出的长期记忆框架，六层记忆结构(L1原始痕迹→L6前瞻意图) × 双路径处理(System1实时+System2异步)，核心创新为supersedes演化链（记忆被反复重写而非堆积），LongMemEval 85.20%同类第一。提炼4个ContextStack可借鉴点：Memory分层、记忆演化链、冲突处理、双路径自动化
+
 ### 2026-05-28: Ruflo 多智能体编排框架研究
 - **来源**: https://github.com/ruvnet/ruflo
 - **整理产物**: `../ruflo-agent-orchestration-research.md`
