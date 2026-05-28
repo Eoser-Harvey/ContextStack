@@ -27,6 +27,8 @@
 | 2026-05-26 | 微信公众号: AI红利来了普通人怎么真正上车 | `ai-red-benefit-for-everyone-20260526.md` | AI/技术 |
 | 2026-05-26 | X: @innomad_io 嘉信理财操作手册系列（10篇）+ 开户全流程图文攻略 | `schwab-account-opening-guide-innomad.md` | 投资理财 |
 | 2026-05-27 | 微信公众号: 老薛「对我来说最好的业务」个人成长产品化 | `personal-growth-productization-laoxue.md` | 个人成长 |
+| 2026-05-28 | GitHub: ruvnet/ruflo 多智能体编排框架研究 | `ruflo-agent-orchestration-research.md` | AI/技术 |
+| 2026-05-28 | 框架优化: 设计会话经验沉淀机制 | `session-template.md`, `recent-sessions.md`, `load-session-memory.ps1`, `save-session-memory.ps1` | 系统优化 |
 | — | — | — | — |
 
 ## 归档

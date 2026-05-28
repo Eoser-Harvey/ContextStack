@@ -48,6 +48,11 @@
 
 ## AI / 技术
 
+### 2026-05-28: Ruflo 多智能体编排框架研究
+- **来源**: https://github.com/ruvnet/ruflo
+- **整理产物**: `../ruflo-agent-orchestration-research.md`
+- **概要**: 研究Ruflo(原Claude Flow)的6大核心能力(100+Agent/Swarm协调/自学习/向量记忆/联邦通信/后台工作者)和33个插件生态，提炼5个ContextStack可借鉴点：会话经验沉淀、任务路由、跨设备同步、定时自动化、Skills模块化
+
 ### 2026-05-28: AI/Agent 开源仓库资源合集（165个）
 - **来源**: https://github.com/0xsatoshis/ai-agent-repos-analysis
 - **Forked to**: https://github.com/Eoser-Harvey/ai-agent-repos-analysis
