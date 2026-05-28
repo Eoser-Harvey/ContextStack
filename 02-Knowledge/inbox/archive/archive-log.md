@@ -48,6 +48,12 @@
 
 ## AI / 技术
 
+### 2026-05-28: AI/Agent 开源仓库资源合集（165个）
+- **来源**: https://github.com/0xsatoshis/ai-agent-repos-analysis
+- **Forked to**: https://github.com/Eoser-Harvey/ai-agent-repos-analysis
+- **整理产物**: `../ai-agent-repos-collection.md`
+- **概要**: 165个 GitHub AI/Agent 仓库分类推荐清单，覆盖图片生成(18)、语音合成(12)、视频处理(27)、自媒体采集(17)、金融量化(10)、Agent编程(25)、设计系统(15)七大分类，含 Stars/许可证/更新时间/团队/备注等完整字段
+
 ### 2026-05-24: Datawhale Agent Learning Hub
 - **来源**: https://github.com/datawhalechina/Agent-Learning-Hub
 - **整理产物**: `../agent-learning-roadmap-datawhale.md`

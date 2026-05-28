@@ -12,10 +12,11 @@ ContextStack 的知识管理中心，存放规范文档、技能模块和知识�
 | [career-development/](./career-development/) | 职业发展知识库 |
 | [inbox/](./inbox/) | 每日收件箱 — 未消化内容暂存区 |
 
-## Inbox 今日新增（2026-05-24）
+## Inbox 今日新增（2026-05-28）
 
 | 文件 | 分类 | 来源 |
 |------|------|------|
+| `ai-agent-repos-collection.md` | AI/技术 | GitHub: 0xsatoshis/ai-agent-repos-analysis (Forked) |
 | `agent-learning-roadmap-datawhale.md` | AI/技术 | GitHub: Datawhale |
 | `investment-blogger-innomad.md` | 投资理财 | innomad.io |
 | `us-etf-available-in-china.md` | 投资理财 | 微信截图 |
@@ -36,4 +37,4 @@ ContextStack 的知识管理中心，存放规范文档、技能模块和知识�
 
 ---
 
-**最后更新**: 2026-05-24
+**最后更新**: 2026-05-28
