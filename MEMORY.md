@@ -20,6 +20,7 @@
 | **Project** | 网络设备调试 | 工业交换机问题排查 | 01-Projects/network-device-debug | 2026-05-07 |
 | **Project** | 腾讯云AI编程培训 | 培训资料归档 | 01-Projects/tencent-cloud-training | 2026-05-07 |
 | **Project** | BTC温度仪表盘 | 加密货币市场可视化 | 01-Projects/btc-temperature-gauge | 2026-05-07 |
+| **Project** | 求职面试-今日宜休ISHO | 面试讨论中，已完成全面匹配度分析 | 02-Knowledge/career-development | 2026-05-29 |
 | **Reference** | S5120V8逻辑寄存器手册 | 硬件参考 | network-device-debug | — |
 | **Reference** | Wireshark 抓包 | 网络分析工具 | network-device-debug | — |
 | **Knowledge** | ContextStack四层架构 | 框架说明 | 全部 | 2026-04-29 |
