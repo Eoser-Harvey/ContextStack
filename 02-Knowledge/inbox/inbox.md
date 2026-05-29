@@ -31,6 +31,7 @@
 | 2026-05-28 | GitHub: ruvnet/ruflo 多智能体编排框架研究 | `ruflo-agent-orchestration-research.md` | AI/技术 |
 | 2026-05-28 | 框架优化: 设计会话经验沉淀机制 | `session-template.md`, `recent-sessions.md`, `load-session-memory.ps1`, `save-session-memory.ps1` | 系统优化 |
 | 2026-05-28 | 腾讯混元 Hy-Memory 记忆框架（今日发布） | `hy-memory-tencent-research.md` | AI/技术 |
+| 2026-05-29 | 微信公众号: Codex 国内接入三种方案教程 | `codex-domestic-access-guide.md` | AI/技术 |
 | — | — | — | — |
 
 ## 归档

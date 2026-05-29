@@ -48,6 +48,12 @@
 
 ## AI / 技术
 
+### 2026-05-29: Codex 国内接入三种方案教程
+- **来源**: https://mp.weixin.qq.com/s/Qvfr9LC2wF9ltCEyKFqK3g
+- **作者**: 苍何（第540篇原创）
+- **整理产物**: `../codex-domestic-access-guide.md`
+- **概要**: Codex 国内接入三种方案对比（手动配置/Codex++/CCX+CC Switch），含完整配置步骤、踩坑排错表。推荐方案二 Codex++ 最省心，支持插件功能。
+
 ### 2026-05-28: 腾讯混元 Hy-Memory 记忆框架
 - **来源**: https://memory.hunyuan.tencent.com/
 - **发布日期**: 2026-05-28（今日发布）

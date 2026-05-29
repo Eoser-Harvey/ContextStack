@@ -1,37 +1,30 @@
 # 每日收件箱 (Inbox)
 
 > 每天从微信、公众号、网页等渠道收集的未消化内容。
-> **所有整理产物都保留在此目录**，用户手动要求时才移入对应知识分区。
+> 所有整理产物都保留在此目录，用户手动要求时才移入对应知识分区。
 
-## 待处理
+## 核心文件
 
-| 日期 | 文件 | 来源 | 状态 |
-|------|------|------|------|
-| — | — | — | — |
+| 文件 | 用途 |
+|------|------|
+| [inbox.md](./inbox.md) | 收件箱主文件 — 待处理列表 + 处理日志 |
+| [archive/archive-log.md](./archive/archive-log.md) | 归档记录（按分类分节） |
 
-## 处理日志
+## 内容分类
 
-| 日期 | 原材料 | 产出（均留在 inbox/） | 归档 |
-|------|--------|------|------|
-| 2026-05-24 | GitHub: datawhalechina/Agent-Learning-Hub | `agent-learning-roadmap-datawhale.md` | AI/技术 |
-| 2026-05-24 | https://innomad.io/ (投资博主) | `investment-blogger-innomad.md` | 投资理财 |
-| 2026-05-24 | 微信截图: 大陆可买美股ETF汇总 | `us-etf-available-in-china.md` | 投资理财 |
-| 2026-05-24 | X: @lzrationalnvest 嘉信vs IBKR入金对比 | `broker-comparison-schwab-vs-ibkr.md` | 投资理财 |
-| 2026-05-24 | 用户分享: 嘉信&第一证券下户+建仓计划 | `personal-broker-accounts-plan.md` | 投资理财 |
-| 2026-05-24 | X: @Nicole_yang88 嘉信入金全攻略 | `schwab-deposit-guide-nicole.md` | 投资理财 |
-| 2026-05-24 | YouTube: Club Sim 香港手机号申请攻略 | `hongkong-sim-card-club-sim-guide.md` | 生活工具 |
-| 2026-05-24 | GitHub: datawhalechina/easy-vibe | `easy-vibe-coding-guide.md` | AI/技术 |
-| 2026-05-24 | 用户分享: 6个PPT制作Skills汇总 | `ppt-skills-collection.md` | AI/技术 |
-| 2026-05-24 | 微信公众号: OpenWiki知识管理工具 | `openwiki-knowledge-tool.md` | AI/技术 |
-| 2026-05-24 | 微信公众号: Agent Harness最小结构解析 | `agent-harness-mini-structure.md` | AI/技术 |
-| 2026-05-26 | 微信公众号: AI红利来了普通人怎么真正上车 | `ai-red-benefit-for-everyone-20260526.md` | AI/技术 |
-| 2026-05-26 | X: @innomad_io 嘉信理财操作手册系列（10篇）+ 开户全流程图文攻略 | `schwab-account-opening-guide-innomad.md` | 投资理财 |
-| 2026-05-27 | 微信公众号: 老薛「对我来说最好的业务」个人成长产品化 | `personal-growth-productization-laoxue.md` | 个人成长 |
-| 2026-05-28 | GitHub: ruvnet/ruflo 多智能体编排框架研究 | `ruflo-agent-orchestration-research.md` | AI/技术 |
-| 2026-05-28 | 框架优化: 设计会话经验沉淀机制 | `session-template.md`, `recent-sessions.md`, `load-session-memory.ps1`, `save-session-memory.ps1` | 系统优化 |
-| 2026-05-28 | 腾讯混元 Hy-Memory 记忆框架（今日发布） | `hy-memory-tencent-research.md` | AI/技术 |
-| — | — | — | — |
+| 分类 | 文件数 | 最新更新 |
+|------|--------|----------|
+| AI/技术 | 10 | 2026-05-29 |
+| 投资理财 | 6 | 2026-05-26 |
+| 个人成长 | 1 | 2026-05-27 |
+| 生活工具 | 1 | 2026-05-24 |
+| 系统优化 | 1 | 2026-05-28 |
 
-## 归档
+## 相关入口
 
-原材料处理完成后，在 [archive/archive-log.md](./archive/archive-log.md) 中登记归档记录（按分类分节），不再单独创建归档文件。
+- 知识库总索引：[../index.md](../index.md)
+- 归档记录：[archive/archive-log.md](./archive/archive-log.md)
+
+---
+
+**最后更新**: 2026-05-29
