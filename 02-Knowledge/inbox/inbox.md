@@ -29,9 +29,13 @@
 | 2026-05-27 | 微信公众号: 老薛「对我来说最好的业务」个人成长产品化 | `personal-growth-productization-laoxue.md` | 个人成长 |
 | 2026-05-28 | GitHub: 0xsatoshis/ai-agent-repos-analysis (Forked) | `ai-agent-repos-collection.md` | AI/技术 |
 | 2026-05-28 | GitHub: ruvnet/ruflo 多智能体编排框架研究 | `ruflo-agent-orchestration-research.md` | AI/技术 |
-| 2026-05-28 | 框架优化: 设计会话经验沉淀机制 | `session-template.md`, `recent-sessions.md`, `load-session-memory.ps1`, `save-session-memory.ps1` | 系统优化 |
+| 2026-05-28 | 框架优化: 设计会话经验沉淀机制 | 已移至 `../03-Memory/sessions/` | 系统优化 |
 | 2026-05-28 | 腾讯混元 Hy-Memory 记忆框架（今日发布） | `hy-memory-tencent-research.md` | AI/技术 |
 | 2026-05-29 | 微信公众号: Codex 国内接入三种方案教程 | `codex-domestic-access-guide.md` | AI/技术 |
+| 2026-05-29 | 微信公众号: 不懂经回归第1更 范式转移时代的财富游戏 | `wealth-game-golden-rules-budongjing.md` | 财富认知 |
+| 2026-05-29 | Ruflo 平台架构（续：详细技术文档） | `ruflo-agent-orchestration-platform.md` | AI/技术 |
+| 2026-05-30 | 微信公众号: 半佛仙人 上班族体检指南 | `health-checkup-guide-office-workers.md` | 健康/生活 |
+| 2026-05-30 | 微信公众号: 和菜头×李笑来 阅读方法论 | `reading-methodology-hecaitou-xiaolaituo.md` | 个人成长 |
 | — | — | — | — |
 
 ## 归档

@@ -44,6 +44,21 @@
 - **整理产物**: `../personal-growth-productization-laoxue.md`
 - **概要**: 付费社群作为"个人成长产品化"载体的三大价值（现金流/影响力杠杆/成长倒逼）+ 正向循环飞轮 + 李笑来 Pro 版对标 + 可复用方法论
 
+### 2026-05-30: 和菜头 × 李笑来 — 阅读的两面
+- **来源**: https://mp.weixin.qq.com/s/h1pwnzHOEyeW44ZjI5weRA
+- **整理产物**: `../reading-methodology-hecaitou-xiaolaituo.md`
+- **概要**: 和菜头教会"把书读完"（每天定页数+不懂就重复），李笑来教会"享受阅读"（不需要技巧，想快点读完说明不喜欢阅读）。两者结合：先解决能力，再解决心态
+
+---
+
+## 财富认知 / 个人成长
+
+### 2026-05-29: 不懂经回归第1更 — 范式转移时代的财富游戏
+- **来源**: https://mp.weixin.qq.com/s/BP23rrARkOjaCQO2Lyoi3Q
+- **作者**: 不懂经
+- **整理产物**: `../wealth-game-golden-rules-budongjing.md`
+- **概要**: 三大金律（财富新公式/财富新定义/狩猎游戏）+ 八条金线（工作难找财富易寻/15秒有钱人/科技坎蒂隆效应/每隔一段时间赚大钱/无限杠杆/赚钱摩尔定律/一块钱顶100万/资本不再稀缺）。核心：财富=转换能力，把自己产品化发射到网络。已结合用户个人情况（嵌入式8年→端侧AI转型、ContextStack框架、投资组合）提炼5条成长建议
+
 ---
 
 ## AI / 技术
@@ -70,6 +85,8 @@
 - **Forked to**: https://github.com/Eoser-Harvey/ai-agent-repos-analysis
 - **整理产物**: `../ai-agent-repos-collection.md`
 - **概要**: 165个 GitHub AI/Agent 仓库分类推荐清单，覆盖图片生成(18)、语音合成(12)、视频处理(27)、自媒体采集(17)、金融量化(10)、Agent编程(25)、设计系统(15)七大分类，含 Stars/许可证/更新时间/团队/备注等完整字段
+
+---
 
 ### 2026-05-24: Datawhale Agent Learning Hub
 - **来源**: https://github.com/datawhalechina/Agent-Learning-Hub
@@ -102,3 +119,12 @@
 ### 2026-05-24: Club Sim 香港手机号申请攻略
 - **来源**: https://www.youtube.com/watch?v=2umMJ18aRdY
 - **整理产物**: `../hongkong-sim-card-club-sim-guide.md`
+
+---
+
+## 健康/生活
+
+### 2026-05-30: 上班族体检指南 — 分年龄段体检重点参考
+- **来源**: 微信公众号「半佛仙人」
+- **整理产物**: `../health-checkup-guide-office-workers.md`
+- **概要**: 基于2020年百万人体检数据，分20+/30+/40+年龄段梳理体检重点项目。20岁查代谢+传染病，30岁查结节+心血管萌芽，40岁查心脏+癌症早筛。含体检频率建议、家族史/职业高危加查项目、体检前注意事项
