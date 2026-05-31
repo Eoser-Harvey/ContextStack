@@ -19,6 +19,8 @@ ContextStack 的知识管理中心，存放规范文档、技能模块和知识�
 | `wealth-game-golden-rules-budongjing.md` | 财富认知 | 微信公众号: 不懂经 |
 | `health-checkup-guide-office-workers.md` | 健康/生活 | 微信公众号: 半佛仙人 |
 | `reading-methodology-hecaitou-xiaolaituo.md` | 个人成长 | 微信公众号 |
+| `social-auto-upload-github.md` | AI/技术 | GitHub: dreammis/social-auto-upload |
+| `codex-beginner-tutorial-maynorai.md` | AI/技术 | GitHub: xianyu110/gpt-codex |
 
 ---
 

@@ -36,6 +36,8 @@
 | 2026-05-29 | Ruflo 平台架构（续：详细技术文档） | `ruflo-agent-orchestration-platform.md` | AI/技术 |
 | 2026-05-30 | 微信公众号: 半佛仙人 上班族体检指南 | `health-checkup-guide-office-workers.md` | 健康/生活 |
 | 2026-05-30 | 微信公众号: 和菜头×李笑来 阅读方法论 | `reading-methodology-hecaitou-xiaolaituo.md` | 个人成长 |
+| 2026-05-30 | GitHub: dreammis/social-auto-upload 多平台自动上传 | `social-auto-upload-github.md` | AI/技术 |
+| 2026-05-30 | GitHub: xianyu110/gpt-codex Codex小白详细教程 | `codex-beginner-tutorial-maynorai.md` | AI/技术 |
 | — | — | — | — |
 
 ## 归档

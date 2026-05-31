@@ -26,3 +26,6 @@ Thumbs.db
 .verify*.txt
 .tmp*.txt
 .x.txt
+
+# 家庭投资敏感数据（不提交GitHub）
+02-Knowledge/investment-research/portfolio/

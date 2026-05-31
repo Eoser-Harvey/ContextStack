@@ -128,3 +128,18 @@
 - **来源**: 微信公众号「半佛仙人」
 - **整理产物**: `../health-checkup-guide-office-workers.md`
 - **概要**: 基于2020年百万人体检数据，分20+/30+/40+年龄段梳理体检重点项目。20岁查代谢+传染病，30岁查结节+心血管萌芽，40岁查心脏+癌症早筛。含体检频率建议、家族史/职业高危加查项目、体检前注意事项
+
+---
+
+## AI / 技术
+
+### 2026-05-30: Social Auto Upload — 多平台社交媒体自动上传工具
+- **来源**: https://github.com/dreammis/social-auto-upload
+- **整理产物**: `../social-auto-upload-github.md`
+- **概要**: 9k+ Stars，支持抖音/Bilibili/小红书/快手/视频号/百家号/TikTok 一键上传视频/图文。提供统一 CLI (`sau`) 和 Skill 化接口，支持 OpenClaw/Codex/Claude Code 等 Agent 直接调用。核心理念：上传是高频重复工作，应交给脚本而非每次都让 Agent 重新解析网页
+
+### 2026-05-30: 写给 Codex 小白用户的全网最详细教程
+- **来源**: https://github.com/xianyu110/gpt-codex
+- **作者**: MaynorAI
+- **整理产物**: `../codex-beginner-tutorial-maynorai.md`
+- **概要**: Codex 入门完整教程，覆盖：什么是 Codex（GPT-5.5 vs GPT-5.3-codex）、三种获取方式（官网/第三方中转/cc-switch）、核心概念 Threads（文件夹+Thread 两层结构）、项目文件夹管理建议、定时任务功能。强调 Codex 是"能围绕任务持续推进的 Agent"而非只会聊天的 AI

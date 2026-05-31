@@ -4,6 +4,23 @@
 
 ## 目录
 
+### 投资追踪系统 (新增)
+> 跨平台资产统一追踪、月度/年度报告自动生成、盈亏与成本计算
+
+| 文件 | 说明 |
+|------|------|
+| [[./portfolio/holdings.yaml]] | ⚠️ 持仓数据源(敏感,不提交GitHub) |
+| [[./portfolio/portfolio_history.yaml]] | ⚠️ 历史最值+月度快照(敏感,不提交GitHub) |
+| [[./portfolio/reports/]] | ⚠️ 自动生成报告(敏感,不提交GitHub) |
+| [[../../01-Projects/family-investment/WORKSPACE.md]] | 🟢 项目工作台(L2层) |
+| [[../../05-Tools/portfolio-tracker/generate_report.py]] | 🟢 报告生成器脚本 |
+
+**支持资产**: 加密货币(链上/币安) · 美股(链上CRCL) · 港股(券商) · A股(东方财富) · TS时间代币
+**价格来源**: CryptoCompare · Yahoo Finance · Stooq回退 · Sina回退 · Manual手动
+**关键更新**: 房贷/房产单独说明 · 持仓成本统计 · 年度报告(支持 --annual)
+
+---
+
 - [[Crypto-A8计划-2026至2028]] — Harvey 个人 Crypto 投资计划：97万→1000万，四阶段执行，五大红线，不辞职不杠杆只做 BTC 大周期
 - [[端侧AI龙头股深度分析_DeepSeekV4分析-2026Q1]] — 2026年Q1财报全景对比：10家核心标的四维度分析（规模、盈利、潜力、估值），筛选3只埋伏价值股
 - [[端侧AI龙头企业图谱股票埋伏分析_DeepSeekV3.2分析_2026-05-13]] — 基于产业链图谱的四维度股票筛选分析（规模、盈利、潜力、股价），筛选3只埋伏标的（2026-05-13）
