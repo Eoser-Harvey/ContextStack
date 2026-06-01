@@ -21,6 +21,7 @@ ContextStack 的知识管理中心，存放规范文档、技能模块和知识�
 | `reading-methodology-hecaitou-xiaolaituo.md` | 个人成长 | 微信公众号 |
 | `social-auto-upload-github.md` | AI/技术 | GitHub: dreammis/social-auto-upload |
 | `codex-beginner-tutorial-maynorai.md` | AI/技术 | GitHub: xianyu110/gpt-codex |
+| `insurance-june-ranking-cross-analysis.md` | 投资理财 | 微信公众号: 深蓝保 |
 
 ---
 

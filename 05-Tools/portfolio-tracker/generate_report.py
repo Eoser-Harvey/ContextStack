@@ -24,6 +24,7 @@
 
 import yaml
 import json
+import math
 import requests
 import yfinance as yf
 import os
@@ -822,8 +823,12 @@ def generate_annual_report(history_path, output_dir, year, rates):
 
         lines.append("## 二、年度汇总")
         lines.append("")
+        last_date = year_snaps[-1].get("date", "")
+        last_month = last_date[5:7] if len(last_date) >= 7 else "??"
+        is_year_end = last_month == "12"
+        latest_label = f"{year}年末净值" if is_year_end else f"截至{year}年{int(last_month)}月底净值"
         lines.append(f"- **{year}年初净值**: ¥{first_nw:,.0f}")
-        lines.append(f"- **{year}年末净值**: ¥{last_nw:,.0f}")
+        lines.append(f"- **{latest_label}**: ¥{last_nw:,.0f}")
         lines.append(f"- **年度增值**: {sign}¥{total_gain:,.0f} ({sign}{total_pct:.1f}%)")
         lines.append(f"- **同比{prev_year}**: {yoy_str}")
         lines.append(f"- **月度记录**: {len(year_snaps)} 个月")
@@ -874,17 +879,32 @@ def generate_annual_report(history_path, output_dir, year, rates):
 
     invest_assets = total_mv + total_cash_cny
     crypto_mv = sum(h.get("market_value_cny", 0) for h in cur_holdings if h.get("category") == "crypto")
-    tokenized_stock_mv = sum(h.get("market_value_cny", 0) for h in cur_holdings if h.get("category") == "us_stock_tokenized")
-    stock_mv = sum(h.get("market_value_cny", 0) for h in cur_holdings if h.get("category") in ("us_stock", "a_stock", "hk_stock"))
+    us_stock_mv = sum(h.get("market_value_cny", 0) for h in cur_holdings if h.get("category") in ("us_stock_tokenized", "us_stock"))
+    a_stock_mv = sum(h.get("market_value_cny", 0) for h in cur_holdings if h.get("category") == "a_stock")
+    hk_stock_mv = sum(h.get("market_value_cny", 0) for h in cur_holdings if h.get("category") == "hk_stock")
     ts_mv = sum(h.get("market_value_cny", 0) for h in cur_holdings if h.get("category") == "ts_time_token")
 
     lines.append(f"- **加密货币(BTC/ETH)**: ¥{crypto_mv:,.0f}，占投资资产 {crypto_mv/invest_assets*100:.1f}%")
-    lines.append(f"- **美股(链上代币)**: ¥{tokenized_stock_mv:,.0f}，占投资资产 {tokenized_stock_mv/invest_assets*100:.1f}%")
-    lines.append(f"- **股票/ETF**: ¥{stock_mv:,.0f}，占投资资产 {stock_mv/invest_assets*100:.1f}%")
+    lines.append(f"- **美股**: ¥{us_stock_mv:,.0f}，占投资资产 {us_stock_mv/invest_assets*100:.1f}%")
+    if a_stock_mv > 0:
+        lines.append(f"- **A股**: ¥{a_stock_mv:,.0f}，占投资资产 {a_stock_mv/invest_assets*100:.1f}%")
+    if hk_stock_mv > 0:
+        lines.append(f"- **港股**: ¥{hk_stock_mv:,.0f}，占投资资产 {hk_stock_mv/invest_assets*100:.1f}%")
     lines.append(f"- **TS时间代币**: ¥{ts_mv:,.0f}，占投资资产 {ts_mv/invest_assets*100:.1f}%")
     lines.append(f"- **现金固收**: ¥{total_cash_cny:,.0f}，占投资资产 {total_cash_cny/invest_assets*100:.1f}%")
     invest_net = invest_assets - total_liab
     lines.append(f"- **杠杆率**: 投资负债¥{total_liab:,.0f} / 投资净资产¥{invest_net:,.0f} = {total_liab/invest_net*100:.1f}%")
+
+    # 家庭总资产（含房产）
+    fixed_assets_list = holdings_data.get("fixed_assets", []) if holdings_data else []
+    house_value = sum(fa.get("value_cny", 0) for fa in fixed_assets_list)
+    mortgage_total = sum(li.get("amount_cny", 0) for li in cur_liabilities if li.get("category") == "mortgage")
+    family_total_assets = invest_assets + house_value
+    family_total_liab = total_liab + mortgage_total
+    family_net = family_total_assets - family_total_liab
+    lines.append(f"- **家庭总资产(含房产¥{house_value/10000:.0f}W)**: ¥{family_total_assets:,.0f}")
+    lines.append(f"- **家庭总负债(含房贷¥{mortgage_total/10000:.0f}W)**: ¥{family_total_liab:,.0f}")
+    lines.append(f"- **家庭总净值**: ¥{family_net:,.0f}")
     lines.append("")
 
     # ── 对标KOL策略：我们的仓位vs行业标准 ──
@@ -900,7 +920,7 @@ def generate_annual_report(history_path, output_dir, year, rates):
     eth_in_crypto = sum(h.get("market_value_cny", 0) for h in cur_holdings if "以太坊" in h.get("name", ""))
     btc_pct_of_crypto = btc_in_crypto / crypto_mv * 100 if crypto_mv else 0
     eth_pct_of_crypto = eth_in_crypto / crypto_mv * 100 if crypto_mv else 0
-    lines.append(f"| **核心-卫星(Core-Satellite)** | Techi/XBTO/家族办公室 | BTC 60-80%核心 + ETH 15-25%卫星 + 山寨5-10% | BTC占加密{btc_pct_of_crypto:.0f}%, ETH占{eth_pct_of_crypto:.0f}% | BTC占比OK, 但山寨(CRCL+TS)占投资{tokenized_stock_mv/invest_assets*100:.0f}%偏高 |")
+    lines.append(f"| **核心-卫星(Core-Satellite)** | Techi/XBTO/家族办公室 | BTC 60-80%核心 + ETH 15-25%卫星 + 山寨5-10% | BTC占加密{btc_pct_of_crypto:.0f}%, ETH占{eth_pct_of_crypto:.0f}% | BTC占比OK, 但美股CRCL+TS合计占投资{(us_stock_mv+ts_mv)/invest_assets*100:.0f}%偏高 |")
     lines.append(f"| **三支柱(Three-Pillar)** | Techi 2026 | BTC锚定 + ETH现金流 + AI代币增长 | 缺AI代币敞口 | 可关注AI赛道ETF或头部项目 |")
     lines.append(f"| **标准普尔+ 家庭象限** | 新浪财富汇/雪球 | 10%现金+20%保障+30%增值+40%稳健 | 现金{total_cash_cny/invest_assets*100:.0f}%偏高 | 现金占比在合理区间，但缺少保险保障 |")
     lines.append(f"| **哑铃策略(防守+进攻)** | 头条康波周期 | 一头防守(现金/黄金/债券) + 一头进攻(权益/加密) | 防守端{total_cash_cny/invest_assets*100:.0f}% | 进攻端集中度过高，建议分散 |")
@@ -919,15 +939,38 @@ def generate_annual_report(history_path, output_dir, year, rates):
 
     lines.append("**⚠️ 杠杆风险**")
     lines.append(f"- 币安BTC质押借贷$13,400（≈¥{13400 * rates.get('USD_CNY', 7.114):,.0f}），年化约3.8%")
-    lines.append("- 信用卡循环¥400,000，资金成本较高")
+    card_monthly = 400000 * 0.0035  # 约0.35%月费率
+    lines.append(f"- 信用卡循环¥400,000，月成本约¥{card_monthly:,.0f}（按0.35%月费率估算），年化资金成本约4.2%")
     lines.append(f"- 总投资负债¥{total_liab:,.0f}，占投资净资产{total_liab/invest_net*100:.1f}%")
     lines.append("- **KOL共识**：杠杆率建议控制在30%以内，当前处于偏高区间")
     lines.append("")
 
-    lines.append("**⚠️ 成本盲区**")
-    lines.append("- BTC/ETH链上+币安持仓成本待补充，无法精确计算整体盈亏")
-    lines.append("- 这4个标的合计占投资资产约56%，是盈亏计算的最大盲区")
-    lines.append("")
+    has_unknown_costs = any(
+        h.get("cost_unknown") or (
+            h.get("cost_basis_usd") is None
+            and h.get("cost_basis_cny") is None
+            and h.get("cost_basis_hkd") is None
+            and not h.get("cost_is_total")
+        )
+        for h in cur_holdings_raw
+    )
+    if has_unknown_costs:
+        unknown_names = [
+            h["name"] for h in cur_holdings_raw
+            if h.get("cost_unknown") or (
+                h.get("cost_basis_usd") is None
+                and h.get("cost_basis_cny") is None
+                and h.get("cost_basis_hkd") is None
+                and not h.get("cost_is_total")
+            )
+        ]
+        unknown_mv = sum(h.get("market_value_cny", 0) for h in cur_holdings if h.get("_pnl", {}).get("status") == "⚠️成本未知")
+        unknown_pct = unknown_mv / invest_assets * 100 if invest_assets > 0 else 0
+        lines.append("**⚠️ 成本盲区**")
+        lines.append(f"- 以下标的成本待补充：{'、'.join(unknown_names)}")
+        if unknown_pct > 0:
+            lines.append(f"- 合计占投资资产约{unknown_pct:.0f}%，是盈亏计算的最大盲区")
+        lines.append("")
 
     # ── 优化建议（贴合KOL策略） ──
     lines.append("### 4.4 2026下半年优化建议（融合KOL策略）")
@@ -947,16 +990,72 @@ def generate_annual_report(history_path, output_dir, year, rates):
     lines.append("**2. 实施「利润分层止盈法」**")
     lines.append("")
     lines.append("- 参考多个KOL的止盈框架：浮盈达到50%时卖出25%，达到100%时再卖25%，剩余50%长期持有")
-    lines.append("- CRCL当前浮盈+78.9%，建议立即减持25-30%仓位（约¥84,000-¥101,000），锁定利润")
+    crcl_pnl = next((h["_pnl"] for h in cur_holdings if "Circle" in h.get("name", "")), None)
+    crcl_pct = f"+{crcl_pnl['pnl_pct']:.1f}%" if crcl_pnl and crcl_pnl.get("pnl_pct") is not None else "?"
+    crcl_mv = sum(h.get("market_value_cny", 0) for h in cur_holdings if "Circle" in h.get("name", ""))
+    crcl_sell = crcl_mv * 0.27
+    lines.append(f"- CRCL当前浮盈{crcl_pct}，建议立即减持25-30%仓位（约¥{crcl_sell/10000:.0f}W），锁定利润")
+    lines.append("")
+
+    # 零成本持仓计算表
+    crcl_holdings = [h for h in cur_holdings if "Circle" in h.get("name", "")]
+    total_crcl_shares = sum(h.get("quantity", 0) for h in crcl_holdings)
+    total_crcl_cost_usd = 0
+    for h in crcl_holdings:
+        cb = h.get("cost_basis_usd", 0)
+        qty = h.get("quantity", 0)
+        if h.get("cost_is_total"):
+            total_crcl_cost_usd += cb
+        elif cb:
+            total_crcl_cost_usd += cb * qty
+
+    if total_crcl_cost_usd > 0 and total_crcl_shares > 0:
+        usd_cny = rates.get("USD_CNY", 7.114)
+        cur_price = crcl_holdings[0].get("price_usd") or crcl_holdings[0].get("manual_price_usd", 113)
+        price_levels = [cur_price, 120, 150, 200, 250, 300]
+        lines.append("**📐 CRCL零成本持仓路线图**（卖出股数 = 总成本 ÷ 卖出价）")
+        lines.append("")
+        lines.append(f"> 总持仓: {total_crcl_shares}股 | 总成本: ${total_crcl_cost_usd:,.0f} (≈¥{total_crcl_cost_usd * usd_cny:,.0f}) | 当前价: ${cur_price:.2f}")
+        lines.append("")
+        table_rows = []
+        for price in price_levels:
+            if price <= 0:
+                continue
+            sell_shares = math.ceil(total_crcl_cost_usd / price)
+            remain_shares = total_crcl_shares - sell_shares
+            remain_usd = remain_shares * price
+            remain_cny = remain_usd * usd_cny
+            marker = " ← 当前" if abs(price - cur_price) < 0.5 else ""
+            table_rows.append([
+                f"${price:.2f}{marker}",
+                f"{sell_shares}股 ({sell_shares/total_crcl_shares*100:.0f}%)",
+                f"{remain_shares}股",
+                f"${remain_usd:,.0f}",
+                f"¥{remain_cny:,.0f}",
+            ])
+        headers = ["卖出价(USD)", "需卖出", "剩余零成本持仓", "剩余市值(USD)", "剩余市值(CNY)"]
+        lines.append(build_aligned_table(headers, table_rows))
+        lines.append("")
+
     lines.append("- 特斯拉浮盈+10.5%，可继续持有，设定+30%触发首次止盈")
-    lines.append("- 小安时间浮盈+129.6%，午饭老师时间浮盈+54433%，均建议分批减持锁定")
+    xiaoan = next((h for h in cur_holdings if "小安" in h.get("name", "")), None)
+    wufan = next((h for h in cur_holdings if "午饭" in h.get("name", "")), None)
+    xiaoan_pct = f"+{xiaoan['_pnl']['pnl_pct']:.1f}%" if xiaoan and xiaoan.get("_pnl", {}).get("pnl_pct") is not None else "?"
+    wufan_pct = f"{wufan['_pnl']['pnl_pct']:+.1f}%" if wufan and wufan.get("_pnl", {}).get("pnl_pct") is not None else "?"
+    lines.append(f"- 小安时间浮盈{xiaoan_pct}，午饭老师时间浮盈{wufan_pct}，均建议分批减持锁定")
     lines.append("")
 
     lines.append("**3. 建立「季度再平衡」纪律**")
     lines.append("")
-    lines.append("- **Techi/XBTO研究**：季度再平衡是提升长期收益的最有效手段，利用波动率而非预测方向")
-    lines.append("- 每季度末检查一次仓位比例，偏离目标±5%即触发调仓")
-    lines.append("- 卖高买低：将超额收益资产的部分利润转移到低配资产")
+    lines.append("- **通俗理解**：就像菜市场买菜——白菜涨了卖掉换土豆，土豆跌了多买点。每3个月把各资产比例「拉回」目标线")
+    lines.append("- **为什么有效**：假设你设定BTC=50%、ETH=20%、CRCL=20%、现金=10%。3个月后BTC涨到60%，CRCL跌到15%")
+    lines.append("  → 此时卖出10%的BTC（高位），用这笔钱买入5%的CRCL（低位），自动实现「高卖低买」")
+    lines.append("- **Techi/XBTO研究**：再平衡是利用「波动率」赚钱，而非预测方向。长期坚持可提升年化收益1-3%")
+    lines.append("- **操作步骤**：")
+    lines.append("  1. 每季度末（3/6/9/12月底）打开月度报告，查看各资产占比")
+    lines.append("  2. 对比目标比例，标出偏离超过±5%的资产")
+    lines.append("  3. 卖出超配资产 → 买入低配资产，让比例回到目标线")
+    lines.append("  4. 首次再平衡建议6月底执行，金额不必太大，重在建立习惯")
     lines.append("")
 
     lines.append("**4. 降低杠杆，控制风险**")
@@ -966,12 +1065,13 @@ def generate_annual_report(history_path, output_dir, year, rates):
     lines.append("- 目标杠杆率：2026年底前将杠杆率降至30%以下")
     lines.append("")
 
-    lines.append("**5. 补全成本数据（优先级最高）**")
-    lines.append("")
-    lines.append("- BTC/ETH的链上+币安历史买入价格是计算真实盈亏的基础")
-    lines.append("- 建议整理币安交易记录导出CSV，一次性补全")
-    lines.append("- 补全后，所有标的盈亏将100%可见，无需「⚠️待补」标记")
-    lines.append("")
+    if has_unknown_costs:
+        lines.append("**5. 补全成本数据（优先级最高）**")
+        lines.append("")
+        lines.append("- 以上标的的历史买入价格是计算真实盈亏的基础")
+        lines.append("- 建议整理币安/链上交易记录，一次性补全")
+        lines.append("- 补全后，所有标的盈亏将100%可见，无需「⚠️待补」标记")
+        lines.append("")
 
     # ── 市场周期与展望（深度研究） ──
     lines.append("### 4.5 市场周期定位与2026展望")
@@ -1013,13 +1113,123 @@ def generate_annual_report(history_path, output_dir, year, rates):
     lines.append("")
     lines.append("| 优先级 | 行动项 | 参考策略来源 | 预期时间 |")
     lines.append("|--------|--------|-------------|---------|")
-    lines.append("| 🔴 P0 | 补全BTC/ETH链上+币安历史成本 | — | 本月内 |")
+    if has_unknown_costs:
+        lines.append("| 🔴 P0 | 补全成本数据 | — | 本月内 |")
     lines.append("| 🔴 P0 | CRCL分批止盈25-30%，资金用于偿还信用卡 | 利润分层止盈法(KOL共识) | 本月内 |")
     lines.append("| 🟡 P1 | 建立季度再平衡日历，首次再平衡6月底 | Techi/XBTO季度再平衡 | 6月底 |")
     lines.append("| 🟡 P1 | BTC/ETH启动月度DCA定投 | 雪球极简投资人/新浪财富汇 | 持续 |")
+    lines.append("")
+    lines.append("**📖 DCA定投通俗解释**：")
+    lines.append("")
+    lines.append("- **原理**：每月固定日期、固定金额买入BTC/ETH，不管当时价格高低。比如每月1号买入¥5,000的BTC")
+    lines.append("- **为什么有效**：价格低时同样金额买到更多币，价格高时买到更少，长期下来「自动低买多、高买少」，拉低平均成本")
+    lines.append("- **举例**：BTC=$70K时¥5,000买到0.01个；BTC=$50K时¥5,000买到0.014个 → 平均成本自动低于中间价")
+    lines.append("- **操作**：在币安设置「定投计划」，每月从银行卡自动扣款→自动买入BTC/ETH，完全不用盯盘")
+    lines.append("- **建议金额**：从¥3,000-5,000/月开始试水，养成习惯后再加大")
     lines.append("| 🟢 P2 | 研究AI赛道代币，配置5-10%探索仓位 | Techi三支柱框架 | Q3 |")
     lines.append("| 🟢 P2 | 为家庭配置基础保障保险(重疾+医疗+意外) | 标准普尔+家庭象限 | Q3 |")
     lines.append("| 🟢 P3 | 偿还币安BTC质押借贷，降低杠杆率至30%以下 | 风险控制共识 | Q4 |")
+    lines.append("")
+
+    # ── 家庭保险分析 ──
+    lines.append("### 4.7 家庭保险配置分析")
+    lines.append("")
+    lines.append("> 基于「家庭保险-25年.xlsx」实际保单数据，对标标准普尔家庭象限图分析")
+    lines.append("")
+
+    lines.append("**当前投保总览**（6人 | 年保费合计约 ¥13,235）")
+    lines.append("")
+    lines.append("| 成员 | 百万医疗 | 意外险 | 惠民保 | 重疾险 | 年保费 |")
+    lines.append("|------|---------|--------|--------|--------|--------|")
+    lines.append("| 韩伟 | 蓝医保20年+众民保 | 大护甲7号 ¥288 | 北京普惠 ¥195 | ❌缺失 | ¥1,289 |")
+    lines.append("| 薛燕 | 蓝医保20年+众民保 | 大护甲7号 ¥288 | 北京普惠 ¥195 | ❌未配置 | ¥1,289 |")
+    lines.append("| 薛燕-妈咪 | 心医保(5年) ¥1,828 | 平安孝福康 ¥248 | 惠蒙保 ¥166 | — | ¥2,242 |")
+    lines.append("| 薛燕-爸爸 | 超越保(10年) ¥3,531 | 平安孝福康 ¥332 | 惠蒙保 ¥166 | — | ¥4,029 |")
+    lines.append("| 韩伟-妈咪 | 超越保(10年) ¥1,918 | 专心成人版 ¥109 | 惠蒙保 ¥166 | — | ¥2,193 |")
+    lines.append("| 韩伟-爸爸 | 超越保(10年) ¥1,918 | 专心成人版 ¥109 | 惠蒙保 ¥166 | — | ¥2,193 |")
+    lines.append("")
+
+    lines.append("**✅ 做得好的地方**")
+    lines.append("")
+    lines.append("- 全家6人均配置了百万医疗+意外险+惠民保三层基础保障，覆盖大病住院和意外风险")
+    lines.append("- 韩伟/薛燕的蓝医保为20年保证续保产品，稳定性好，不怕产品下架")
+    lines.append("- 四位老人根据年龄和健康状况差异化配置（心医保5年/超越保10年），设计合理")
+    lines.append("- 意外险注意了地理区域限制和年龄适配（老人版 vs 成人版），细节到位")
+    lines.append("- 保险经验总结非常专业（既往症、健康告知、保证续保、特需部核对），远超普通家庭")
+    lines.append("")
+
+    lines.append("**⚠️ 需要完善的地方**")
+    lines.append("")
+    lines.append("**🔴 优先级最高：韩伟 & 薛燕缺少重疾险**")
+    lines.append("- **风险**：一旦确诊重疾（癌症、心梗等），百万医疗只报销住院费，不补偿收入损失。韩伟是家庭经济支柱，若因病停工，每月家庭开支+房贷从哪里来？")
+    lines.append("- **建议**：韩伟配置50W保额、薛燕配置30-50W保额的重疾险，保至70岁或终身")
+    lines.append("- **预算**：30岁左右，50W保额保至70岁，年保费约¥3,000-5,000/人")
+    lines.append("")
+    lines.append("**📊 重疾险产品对比：达尔文12号 vs 超级玛丽15号**")
+    lines.append("")
+    lines.append("> 以下对比基于深蓝保2026年6月保险榜单及多渠道产品分析，以30岁男性50W保额30年交保终身为例")
+    lines.append("")
+    lines.append("| 对比维度 | 达尔文12号（复星联合） | 超级玛丽15号（君龙人寿） |")
+    lines.append("|----------|----------------------|------------------------|")
+    lines.append("| 年保费(基础) | ¥6,710 | ¥6,875 |")
+    lines.append("| 重疾种类 | 120种 | 110种 |")
+    lines.append("| **重疾后轻中症继续赔** | ✅ 不分组、无间隔期 | ✅ 分组继续赔 |")
+    lines.append("| **意外重疾额外赔** | ✅ 自带+35%（独有） | ❌ 无 |")
+    lines.append("| 45岁前重疾翻倍赔 | ❌ 无 | ✅ 自带2倍 |")
+    lines.append("| 60岁后住院津贴 | ✅ 500元/天（独有） | ❌ 无 |")
+    lines.append("| 顶梁柱关爱金 | ✅ 可选+30%(癌症) | ❌ 无 |")
+    lines.append("| 结节专属保障 | 一般 | ✅ 肺/乳/甲结节 |")
+    lines.append("| 癌症特药金 | ❌ 无 | ✅ 自带50%保额 |")
+    lines.append("| 肺结节核保 | 较友好 | ✅ 非常友好(<8mm有机会标体) |")
+    lines.append("")
+    lines.append("**📍 结论：达尔文12号更适合韩伟**")
+    lines.append("")
+    lines.append("- 意外重疾135%赔付、顶梁柱关爱金（孩子+父母）、重疾后轻中症不分组继续赔，这3项精准匹配韩伟「男性+家庭支柱+有房贷+有孩子+有老人」的身份")
+    lines.append("- **推荐方案**：达尔文12号基础50W（¥6,710/年）+ 顶梁柱关爱金（¥85/年），年保费约¥6,795")
+    lines.append("- 如预算允许，加疾病关爱金（60岁前额外赔80%），年保费约¥8,400，60岁前最高赔付115W")
+    lines.append("- **薛燕建议**：如有肺/乳腺/甲状腺结节，优先考虑超级玛丽15号（核保更宽松+结节专属保障+女性特定癌症优势）")
+    lines.append("")
+    lines.append("💡 **⚠️ 重要：不要加重疾险的身故责任！**")
+    lines.append("")
+    lines.append("- 达尔文12号身故责任需额外加约¥1,800/年，但身故只赔50W，远不够覆盖¥180W房贷")
+    lines.append("- **正确做法**：重疾险不加身故（省¥1,800）+ 单独买定期寿险¥1,500-2,500 = 花费差不多，身故保障从50W→200W")
+    lines.append("")
+    lines.append("**🔴 优先级最高：韩伟缺少定期寿险（房贷保护）**")
+    lines.append("- **风险**：家庭有房贷¥180W（商贷¥40W + 公积金¥140W），万一韩伟发生极端风险，薛燕独自承担房贷+家庭开支")
+    lines.append("- **建议**：韩伟配置定期寿险，保额≥房贷余额（¥180W），保至60岁（退休年龄）")
+    lines.append("- **参考产品**：华贵大麦定期寿险、阳光i保定期寿险等，保额100-200W")
+    lines.append("- **预算**：30岁男性，200W保额保至60岁，年保费约¥1,500-2,500")
+    lines.append("- **这是性价比最高的「家庭兜底」保险**，保费低、保额高，专为有房贷的家庭设计")
+    lines.append("")
+    lines.append("**📖 通俗理解定期寿险**：在约定期限内（如到60岁），人没了/全残，赔一大笔钱（如200W）给家人。")
+    lines.append("- **不是赔给自己的**，是赔给配偶/孩子的。核心作用：家庭支柱倒了，家人能用这笔钱还房贷、养孩子、过日子")
+    lines.append("- **为什么便宜？** 保的是低概率事件（30-40岁身故概率很低），所以¥1,500/年就能买200W保额")
+    lines.append("- **和重疾险身故责任的区别**：重疾险+身故多花¥1,800只赔50W，定寿单独买¥1,500赔200W。合起来花¥1,500-2,500，保额翻4倍")
+    lines.append("- **如果60岁平平安安**：保费花完就花完了，和车险一样，买的是安心。那时候房贷还清了、孩子工作了，也不需要这个保障了")
+    lines.append("")
+    lines.append("**🟡 建议优化：众民保+蓝医保双重覆盖**")
+    lines.append("- 韩伟/薛燕同时持有蓝医保（20年保证续保）和众民保（中高端医疗，1年期）")
+    lines.append("- 众民保每年¥806/人的作用是什么？如果是为了特需部/国际部就医，确认是否真的用得上")
+    lines.append("- 如果实际用不到中高端服务，可考虑停掉众民保，节省¥1,612/年")
+    lines.append("- 众民保为非保证续保产品，有产品下架后重新健康告知的风险")
+    lines.append("")
+    lines.append("**🟢 可考虑补充**")
+    lines.append("- **家财险**：北京海淀住宅估值¥320W，年保费约¥300-500可保火灾、水淹、盗抢等")
+    lines.append("- **韩伟-爸爸意外险**：当前¥109/年（30W版），可考虑升级到50W版（约¥150/年），差距很小但保额翻倍")
+    lines.append("")
+
+    lines.append("**💡 保险配置优先级建议**")
+    lines.append("")
+    lines.append("| 优先级 | 建议 | 预估年保费 | 目的 |")
+    lines.append("|--------|------|-----------|------|")
+    lines.append("| 🔴 1 | 韩伟定期寿险 200W保额×60岁 | ¥1,500-2,500 | 保护房贷和家庭 |")
+    lines.append("| 🔴 2 | 韩伟重疾险 50W保额 | ¥3,000-5,000 | 收入损失补偿 |")
+    lines.append("| 🟡 3 | 薛燕重疾险 30-50W保额 | ¥2,500-4,000 | 收入损失补偿 |")
+    lines.append("| 🟢 4 | 评估是否保留众民保 | -¥1,612/年（节省） | 避免重复覆盖 |")
+    lines.append("| 🟢 5 | 家财险 | ¥300-500 | 房产保障 |")
+    lines.append("")
+
+    lines.append("> 📊 完善后家庭年保费预估：当前¥13,235 + 新增¥7,000~11,500 - 节省¥1,612 ≈ **¥18,600~23,100/年**，占家庭年收入比例合理")
     lines.append("")
 
     report = "\n".join(lines)
@@ -1204,19 +1414,11 @@ def main():
     # 8. 生成报告
     report = build_report(data, hist, rates, args.date)
 
-    # 9. 备份旧报告 + 输出新报告
+    # 9. 输出报告（直接覆盖，不自动备份）
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     filename = f"家庭资产报告-{args.date}.md"
     filepath = output_dir / filename
-
-    if filepath.exists():
-        bak_name = f"家庭资产报告-{args.date}.bak.md"
-        bak_path = output_dir / bak_name
-        if bak_path.exists():
-            bak_path.unlink()
-        filepath.rename(bak_path)
-        print(f"  📦 旧报告已备份: {bak_name}")
 
     with open(filepath, "w", encoding="utf-8") as f:
         f.write(report)
