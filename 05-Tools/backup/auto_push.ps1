@@ -54,9 +54,9 @@ Host github-ssh
     }
 }
 
-Initialize-SshConfig
+# Initialize-SshConfig  ← 已注释：公司电脑用HTTPS不强制切SSH
 
-# === Step 1: Pull (SSH, 2 retries) ==========================================
+# === Step 1: Pull (2 retries) ================================================
 $maxRetries = 2
 $retryDelays = @(10, 30)
 $pullOk = $false
@@ -127,7 +127,7 @@ $pushOk = $false
 
 for ($i = 0; $i -lt $maxRetries; $i++) {
     if ($i -gt 0) {
-        Add-Content -Path $logFile -Value "Step 4: SSH retry $i after $($retryDelays[$i-1])s..."
+        Add-Content -Path $logFile -Value "Step 4: retry $i after $($retryDelays[$i-1])s..."
         Start-Sleep -Seconds $retryDelays[$i-1]
     }
 
