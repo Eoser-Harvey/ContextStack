@@ -139,7 +139,22 @@ for (int i = 0; i < output_dim; i++) {
 2. RTOS 任务调度器如何管理多个任务？`Invoke()` 管理多个算子有什么相似之处？
 3. 嵌入式系统中为什么需要避免动态调度？`Invoke()` 的调用是静态确定的吗？
 
-> （在此作答）
+> **作答（2026-06-09）：**
+> 
+> `Invoke()` 做的事：**按模型图拓扑顺序，逐个调用注册的算子，完成一次完整的前向推理。**
+> 
+> 源码证据：`MicroInterpreter` 内部持有 `MicroInterpreterGraph`（见 `micro_interpreter.h` 第 34 行 `#include`），`Invoke()` 会遍历图的节点列表，对每个节点查 `OpResolver` 找到对应的 `TfLiteRegistration`，然后调用 `registration->invoke()`。
+> 
+> **与 RTOS 任务调度的相似性：**
+> 
+> | 类比维度 | RTOS 任务调度器 | TFLM `Invoke()` |
+> |---------|----------------|----------------|
+> | 管理单元 | Task（任务） | Operator（算子） |
+> | 执行方式 | 按优先级调度，同优先级时分片轮转 | 按模型图拓扑顺序，**严格顺序执行** |
+> | 上下文切换 | 保存/恢复寄存器、栈指针 | 无上下文切换，算子间共享 tensor_arena |
+> | 确定性 | 取决于任务数+优先级配置 | **完全确定性**（编译期就知道执行顺序和耗时） |
+> 
+> **关键差异**：RTOS 是抢占式调度（高优先级任务打断低优先级），`Invoke()` 是**静态固定顺序**——模型加载后执行图就确定了，没有抢占、没有动态调度。这正是嵌入式需要的：可预测的执行时间，适合实时系统。
 
 ### 问题2：为什么 TFLM 需要 `tensor_arena`（预分配内存），而 PC 上的 TensorFlow 不需要？
 
@@ -149,7 +164,23 @@ for (int i = 0; i < output_dim; i++) {
 3. PC 上的 TensorFlow 可以使用虚拟内存，嵌入式设备呢？
 4. 内存碎片对嵌入式系统有什么影响？`tensor_arena` 如何避免这个问题？
 
-> （在此作答）
+> **作答（2026-06-09）：**
+>
+> 核心原因：**MCU 没有 MMU（内存管理单元），无法使用虚拟内存 + 动态分配。**
+>
+> | 维度 | PC TensorFlow | TFLM（MCU） |
+> |------|--------------|------------|
+> | 内存管理 | `malloc/free` 动态分配 | **静态预分配数组** `uint8_t tensor_arena[3000]` |
+> | 虚拟内存 | ✅ 有 MMU，缺页可 swap | ❌ 无 MMU，物理内存即全部 |
+> | 内存碎片 | OS 的 malloc 有碎片管理 | **零碎片风险**（一块连续内存用到底） |
+> | 分配失败处理 | `malloc` 返回 NULL，可重试 | 编译期就知道够不够（arena size 固定） |
+> | 总内存 | GB 级 | **KB 级**（STM32F103 仅 20KB SRAM） |
+>
+> **`tensor_arena` 本质**：`uint8_t tensor_arena[kTensorArenaSize]`（第 80 行）是**栈上的静态数组**。`MicroAllocator` 在这块连续内存里做内部管理——模型图解析时一次性算出所有张量需要的总大小，`AllocateTensors()` 时规划好"这块给输入张量、那块给权重、那块给中间结果"。
+>
+> **为什么是 3000？** 代码注释写得很诚实（第 77 行）："Arena size just a round number"——就是一个**约数**。真实需求可以用 `RecordingMicroInterpreter` 精确测定。3000 字节对 hello_world（1 输入 → 1 全连接层 → 1 输出）绰绰有余。
+>
+> **嵌入式经验类比**：这和你的 RTOS 项目中**预分配任务栈**是同一个道理——"`uint8_t task_stack[512]`" 而不是 "`malloc(512)`"。嵌入式开发者天然就懂这个。
 
 ### 问题3：`OpResolver` 是什么？如果模型有卷积层但没注册 `AddConv2D()`，会发生什么？
 
@@ -159,7 +190,39 @@ for (int i = 0; i < output_dim; i++) {
 3. 如果模型有卷积层但没注册 `AddConv2D()`，解释器会报什么错误？在哪个阶段报错？
 4. 这种设计有什么好处？为什么不像 PC 版 TensorFlow 那样动态加载算子？
 
-> （在此作答）
+> **作答（2026-06-09）：**
+>
+> `OpResolver` 是**算子注册表**——告诉 `MicroInterpreter`："我只会这些运算，其他的不做。"
+>
+> **源码证据**：`hello_world_test.cc` 第 27 行：
+> ```cpp
+> using HelloWorldOpResolver = tflite::MicroMutableOpResolver<1>;
+> ```
+> `1` 表示"我只注册 1 种算子"。`RegisterOps()` 内部：
+> ```cpp
+> op_resolver.AddFullyConnected();  // 只注册全连接层
+> ```
+>
+> **如果模型有 Conv2D 但没注册，会发生什么？**
+>
+> | 阶段 | 行为 |
+> |------|------|
+> | `AllocateTensors()` | **在此阶段报错（不会等到 Invoke）** |
+> | 错误类型 | 返回 `kTfLiteError`，`error_reporter` 输出：`"Didn't find op for builtin opcode 'CONV_2D'"` |
+> | 原因 | 模型图解析时遍历每个算子节点，查 `OpResolver` → 找不到注册 → 立即失败 |
+>
+> **为什么不让错误跑到 Invoke()？** 这是 TFLM 的"**编译期安全 + 初始化期检查**"哲学：
+> - PC TF 可以动态加载 `.so` 算子库
+> - MCU 没有动态链接器 → 算子必须编译进固件 → 初始化时检查完整性 → 提前暴露问题
+>
+> **这种设计的优势**：
+> | 维度 | PC TF 动态加载 | TFLM 静态注册 |
+> |------|-------------|------------|
+> | 二进制体积 | 所有算子都打包 | **只编译你用到的**（hello_world 只需 1 种） |
+> | 安全检查 | 运行时发现缺少算子 | **`AllocateTensors()` 阶段发现** |
+> | 内存开销 | 算子库占用内存 | **0 额外运行时开销**（编译期确定） |
+>
+> **嵌入式类比**：这和你的项目里"**条件编译**"（`#ifdef FEATURE_XXX`）一样——不用的功能不编译进固件，节省 Flash。`OpResolver<1>` 就是 TFLM 的条件编译机制。
 
 ---
 
