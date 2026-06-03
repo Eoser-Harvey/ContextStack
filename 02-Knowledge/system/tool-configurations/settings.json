@@ -1,0 +1,163 @@
+{
+    "editor.renderWhitespace": "all",
+    "search.useIgnoreFiles": false,
+    "files.autoGuessEncoding": true,
+    "C_Cpp.inlayHints.referenceOperator.showSpace": true,
+    "C_Cpp.intelliSenseEngine": "disabled",
+    "C_Cpp.default.configurationProvider": "ms-vscode.cpptools",
+    "C_Cpp.errorSquiggles": "disabled",
+    "local-history.exclude": [
+        "**/.git/**",
+        "**/.svn/**",
+        "**/.log/**",
+        "**/.history/**",
+        "**/.vscode/**",
+        "**/node_modules/**",
+        "**/typings/**",
+        "**/out/**",
+        "**/Code/User/**"
+    ],
+    "editor.rulers": [
+        {"column": 120,"color": "#ff0000"}
+    ],
+    "remote.SSH.remotePlatform": {
+        "h31280-146.4": "linux"
+    },
+    "security.allowedUNCHosts": [
+        "10.114.146.4"
+    ],
+    "codingcopilot.autoRun": true,
+
+    // Eye protection settings for light theme with zone separation
+    "editor.fontFamily": "Consolas, 'Courier New', monospace",
+    "editor.fontSize": 16,
+    "editor.lineHeight": 1.6,
+    "editor.letterSpacing": 0.5,
+    "editor.cursorBlinking": "smooth",
+    "editor.cursorSmoothCaretAnimation": "on",
+    "editor.fontLigatures": true,
+    "workbench.colorCustomizations": {
+        // Code editor area - White eye-protection theme
+        "editor.background": "#FAFAFA",
+        "editor.foreground": "#333333",
+        "editorCursor.foreground": "#FF6B6B",
+        "editor.selectionBackground": "#E8F4F8",
+        "editor.lineHighlightBackground": "#F0F0F0",
+        "editorLineNumber.foreground": "#999999",
+        "editorWhitespace.foreground": "#E0E0E0",
+        "editorGroup.border": "#CCCCCC",
+
+        // Terminal/Console area - Warm dark gray (eye-friendly)
+        "terminal.background": "#2D2D30",
+        "terminal.foreground": "#DCDCAA",
+        "terminal.ansiBlack": "#000000",
+        "terminal.ansiBlue": "#569CD6",
+        "terminal.ansiBrightBlack": "#808080",
+        "terminal.ansiBrightBlue": "#9CDCFE",
+        "terminal.ansiBrightCyan": "#D16969",
+        "terminal.ansiBrightGreen": "#B5CEA8",
+        "terminal.ansiBrightMagenta": "#CE9178",
+        "terminal.ansiBrightRed": "#F44747",
+        "terminal.ansiBrightWhite": "#FFFFFF",
+        "terminal.ansiBrightYellow": "#DCDCAA",
+        "terminal.ansiCyan": "#4EC9B0",
+        "terminal.ansiGreen": "#6A9955",
+        "terminal.ansiMagenta": "#C586C0",
+        "terminal.ansiRed": "#F14C4C",
+        "terminal.ansiWhite": "#FFFFFF",
+        "terminal.ansiYellow": "#DCDCAA",
+
+        // Activity bar (left side) - Dark gray
+        "activityBar.background": "#2D2D2D",
+        "activityBar.foreground": "#FFFFFF",
+        "activityBar.inactiveForeground": "#858585",
+        "activityBarBadge.background": "#007ACC",
+        "activityBarBadge.foreground": "#FFFFFF",
+
+        // Sidebar (explorer, search, etc.) - Light gray
+        "sideBar.background": "#F3F3F3",
+        "sideBar.foreground": "#333333",
+        "sideBarSectionHeader.background": "#E8E8E8",
+        "sideBarSectionHeader.foreground": "#666666",
+
+        // Status bar - Blue
+        "statusBar.background": "#007ACC",
+        "statusBar.foreground": "#FFFFFF",
+        "statusBar.noFolderBackground": "#68217A",
+
+        // Title bar - Light gray
+        "titleBar.activeBackground": "#E8E8E8",
+        "titleBar.activeForeground": "#333333",
+        "titleBar.inactiveBackground": "#F0F0F0",
+        "titleBar.inactiveForeground": "#999999",
+
+        // Tabs - Light with separation
+        "tab.activeBackground": "#E8E8E8",
+        "tab.activeForeground": "#333333",
+        "tab.inactiveBackground": "#F5F5F5",
+        "tab.inactiveForeground": "#666666",
+        "tab.activeBorder": "#007ACC",
+
+        // Panel (bottom area: output, problems, debug console) - Warm dark gray
+        "panel.background": "#2D2D30",
+        "panel.border": "#404040",
+        "panelTitle.activeBorder": "#007ACC",
+        "panelTitle.activeForeground": "#FFFFFF",
+        "panelTitle.inactiveForeground": "#CCCCCC",
+
+        // Output panel - Warm dark gray
+        "outputPanel.background": "#2D2D30",
+        "outputPanel.foreground": "#DCDCAA",
+
+        // Debug console - Warm dark gray
+        "debugConsole.background": "#2D2D30",
+        "debugConsole.foreground": "#DCDCAA",
+
+        // Problems panel - Dark
+        "problemsErrorIcon.foreground": "#F14C4C",
+        "problemsWarningIcon.foreground": "#CCA700",
+        "problemsInfoIcon.foreground": "#75BEFF",
+
+        // Minimap (right side code preview) - Light
+        "minimap.background": "#F5F5F5",
+        "minimap.findMatchHighlight": "#515151",
+
+        // Scrollbar - Light gray
+        "scrollbarSlider.background": "#D4D4D4",
+        "scrollbarSlider.hoverBackground": "#B0B0B0",
+        "scrollbarSlider.activeBackground": "#808080",
+
+        // Line numbers - Gray
+        "editorLineNumber.foreground": "#999999",
+        "editorLineNumber.activeForeground": "#666666",
+
+        // Comments - Greenish
+        "editorComment.foreground": "#6A9955",
+
+        // Strings - Orange
+        "editorString.foreground": "#A31515",
+
+        // Keywords - Blue
+        "editorKeyword.foreground": "#0000FF",
+
+        // Functions - Purple
+        "editorFunction.foreground": "#795E26",
+
+        // Numbers - Teal
+        "editorNumber.foreground": "#098658",
+
+        // Variables - Dark blue
+        "editorVariable.foreground": "#001080",
+
+        // Types - Blue
+        "editorType.foreground": "#267F99",
+
+        // Separators - Light gray
+        "panelSection.border": "#333333",
+        "panelSectionHeader.background": "#2D2D2D",
+        "panelSectionHeader.foreground": "#FFFFFF"
+    },
+    "workbench.colorTheme": "Default Light+",
+    "terminal.integrated.fontSize": 13,
+    "terminal.integrated.fontFamily": "Consolas, 'Courier New', monospace"
+}

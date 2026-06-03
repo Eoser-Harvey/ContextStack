@@ -24,6 +24,7 @@
 | **Reference** | S5120V8逻辑寄存器手册 | 硬件参考 | network-device-debug | — |
 | **Reference** | Wireshark 抓包 | 网络分析工具 | network-device-debug | — |
 | **Knowledge** | ContextStack四层架构 | 框架说明 | 全部 | 2026-04-29 |
+| **Knowledge** | 自主自我改进循环研究 | Agent自我进化：Hermes Agent四层记忆+三层飞轮、Self-Improving Coding Agents | 全部 | 2026-06-03 |
 
 ---
 

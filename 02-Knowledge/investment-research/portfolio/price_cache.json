@@ -1,0 +1,28 @@
+{
+  "date": "2026-06-02",
+  "crypto": {
+    "ETH": 1854.12,
+    "BTC": 66634.74
+  },
+  "stock": {
+    "1810.HK": {
+      "price": 28.58,
+      "currency": "HKD",
+      "source": "Stooq"
+    },
+    "159770.SZ": {
+      "price": 1.168,
+      "currency": "CNY",
+      "source": "Sina"
+    },
+    "TSLA": {
+      "price": 429.72,
+      "currency": "USD",
+      "source": "Stooq"
+    }
+  },
+  "rates": {
+    "USD_CNY": 7.114,
+    "HKD_CNY": 0.9084
+  }
+}

@@ -1,0 +1,94 @@
+holdings_history:
+  btc_onchain:
+    name: 比特币(链上)
+    all_time_high_price: 66768.36
+    all_time_high_date: '2026-06-02'
+    all_time_low_price: 66634.74
+    all_time_low_date: '2026-06-02'
+  eth_onchain:
+    name: 以太坊NFT(链上)
+    all_time_high_price: 1862.06
+    all_time_high_date: '2026-06-02'
+    all_time_low_price: 1854.12
+    all_time_low_date: '2026-06-02'
+  btc_binance:
+    name: 比特币(币安)
+    all_time_high_price: 66768.36
+    all_time_high_date: '2026-06-02'
+    all_time_low_price: 66634.74
+    all_time_low_date: '2026-06-02'
+  eth_binance:
+    name: 以太坊(币安)
+    all_time_high_price: 1862.06
+    all_time_high_date: '2026-06-02'
+    all_time_low_price: 1854.12
+    all_time_low_date: '2026-06-02'
+  crcl_yan:
+    name: Circle(燕蒙古)
+    all_time_high_price: 113.07
+    all_time_high_date: '2026-06-02'
+    all_time_low_price: 113.07
+    all_time_low_date: '2026-06-02'
+  tsla_yan:
+    name: 特斯拉(燕蒙古)
+    all_time_high_price: 429.72
+    all_time_high_date: '2026-06-02'
+    all_time_low_price: 425.8
+    all_time_low_date: '2026-06-02'
+  crcl_han:
+    name: Circle(韩伟蒙古)
+    all_time_high_price: 113.07
+    all_time_high_date: '2026-06-02'
+    all_time_low_price: 113.07
+    all_time_low_date: '2026-06-02'
+  crcl_cb:
+    name: Circle(韩伟长桥)
+    all_time_high_price: 113.07
+    all_time_high_date: '2026-06-02'
+    all_time_low_price: 113.07
+    all_time_low_date: '2026-06-02'
+  crcl_hst:
+    name: Circle(华盛通)
+    all_time_high_price: 113.07
+    all_time_high_date: '2026-06-02'
+    all_time_low_price: 113.07
+    all_time_low_date: '2026-06-02'
+  crcl_hf:
+    name: Circle(韩芳)
+    all_time_high_price: 113.07
+    all_time_high_date: '2026-06-02'
+    all_time_low_price: 113.07
+    all_time_low_date: '2026-06-02'
+  bitgo:
+    name: BitGo(韩伟长桥)
+    all_time_high_price: 6.04
+    all_time_high_date: '2026-06-02'
+    all_time_low_price: 6.04
+    all_time_low_date: '2026-06-02'
+  robot_etf:
+    name: 机器人ETF
+    all_time_high_price: 0.16
+    all_time_high_date: '2026-06-02'
+    all_time_low_price: 0.16
+    all_time_low_date: '2026-06-02'
+  xiaomi_ht:
+    name: 小米集团(港股通)
+    all_time_high_price: 3.65
+    all_time_high_date: '2026-06-02'
+    all_time_low_price: 3.65
+    all_time_low_date: '2026-06-02'
+  ts_xiaoan:
+    name: 小安时间
+    all_time_high_price: 0.02
+    all_time_high_date: '2026-06-02'
+    all_time_low_price: 0.02
+    all_time_low_date: '2026-06-02'
+  ts_wufan:
+    name: 午饭老师时间
+    all_time_high_price: 2.91
+    all_time_high_date: '2026-06-02'
+    all_time_low_price: 2.91
+    all_time_low_date: '2026-06-02'
+net_worth_snapshots:
+- date: '2026-06-02'
+  net_worth_cny: 1361859.46

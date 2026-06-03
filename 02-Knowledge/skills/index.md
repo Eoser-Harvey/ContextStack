@@ -68,15 +68,9 @@
 
 ---
 
-## 外部参考与工具对比
-
-| 文档 | 说明 |
-|------|------|
-| [[codebuddy-builtin-skills-analysis|WorkBuddy Top 10 Skills 适配分析]] | 10 个零成本 Skills 的 CodeBuddy 可行性分析 |
-| [[sdd-tools-comparison|SuperPowers vs Spec Kit vs OpenSpec]] | AI 协作开发三大工具横向对比（217K★/108K★/52K★） |
-
 ## 相关
 
+- [[codebuddy-builtin-skills-analysis|WorkBuddy Top 10 Skills 适配分析]] — 10 个零成本 Skills 的 CodeBuddy 可行性分析
 - [[../system/methodology/index|调试方法论]] — Skills 的理论基础
 - [[../system/tool-configurations/index|工具配置]] — 工具配置文档
 - [[../../../.codebuddy/skills/note-organizer/SKILL|note-organizer SKILL.md]] — 智能笔记整理 Skill 源文件

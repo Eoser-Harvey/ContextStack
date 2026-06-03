@@ -1,0 +1,261 @@
+# ⚠️ 家庭投资持仓 — 私密数据，禁止提交GitHub
+#
+# 路径: 02-Knowledge/investment-research/portfolio/holdings.yaml
+# 价格来源:
+#   cryptocompare = CryptoCompare API (国内直连, BTC/ETH)
+#   yahoo→stooq   = Yahoo Finance → Stooq回退 (美股/港股/A股ETF)
+#   manual        = 预IPO代币/小众平台, 需手动更新当月价格
+
+meta:
+  last_updated: "2026-06-02"
+  usd_cny: 7.114
+  hkd_cny: 0.909
+
+# ============================================================
+# 投资持仓 (每个标的必须含: quantity, cost_basis, price_source)
+# cost_basis 为 null 且 cost_unknown=true 表示成本待补充 ⚠️
+# ============================================================
+
+holdings:
+  # ── 链上资产 ──
+  - id: btc_onchain
+    symbol: BTC
+    name: 比特币(链上)
+    quantity: 0.12980465
+    cost_basis_usd: 0
+    cost_is_total: true
+    category: crypto
+    storage: 链上钱包
+    price_source: cryptocompare
+    note: 上个周期持仓, 成本已归零
+
+  - id: eth_onchain
+    symbol: ETH
+    name: 以太坊NFT(链上)
+    quantity: 1.35
+    cost_basis_usd: 2608
+    category: crypto
+    storage: 链上钱包
+    price_source: cryptocompare
+    note: 地板价，含NFT
+
+  # ── 交易所 · 韩伟蒙古币安 ──
+  - id: btc_binance
+    symbol: BTC
+    name: 比特币(币安)
+    quantity: 0.39257
+    cost_basis_usd: 79703
+    category: crypto
+    storage: 韩伟蒙古币安
+    price_source: cryptocompare
+    note: 2026-06-02 MA120策略卖出0.32463个@$71360，卖出金额$23,166
+
+  - id: eth_binance
+    symbol: ETH
+    name: 以太坊(币安)
+    quantity: 0.0003
+    cost_basis_usd: 2608
+    category: crypto
+    storage: 韩伟蒙古币安
+    price_source: cryptocompare
+    note: 2026-06-02 MA120策略清仓卖出6.9677个@$2008，卖出金额$13,992，剩余0.0003为dust
+
+  # ── 链上证券 · 燕蒙古WEB3 ──
+  # 成本计算: 总CRCL 480股(含代持60), 总盈利22750U, 代持成本83U
+  # 自持420股成本 = 480*113.07-22750-60*83 = 26543.60U, 均价63.20U/股
+  - id: crcl_yan
+    symbol: CRCL
+    name: Circle(燕蒙古)
+    quantity: 195.32
+    cost_basis_usd: 13237.76
+    cost_is_total: true
+    category: us_stock_tokenized
+    storage: 燕蒙古WEB3
+    price_source: manual
+    manual_price_usd: 113.07
+    manual_price_date: "2026-05-31"
+    note: 原169.3股均价$63.20; 06-02两次换仓买入12.68@$99.13+13.34@$96.03, 新均价$67.77
+
+  - id: tsla_yan
+    symbol: TSLA
+    name: 特斯拉(燕蒙古)
+    quantity: 2.45
+    cost_basis_usd: 394.44
+    category: us_stock
+    storage: 燕蒙古WEB3
+    price_source: yahoo
+    yahoo_symbol: TSLA
+    note: 成本均价$394.44/股; 06-02两次卖出3+3股@$419+$427合计$2538换仓CRCL
+
+  # ── 链上证券 · 韩伟蒙古WEB3 ──
+  # 成本计算: 总CRCL 480股(含代持60), 总盈利22750U, 代持成本83U
+  # 自持420股成本 = 480*113.07-22750-60*83 = 26543.60U, 均价63.20U/股
+  - id: crcl_han
+    symbol: CRCL
+    name: Circle(韩伟蒙古)
+    quantity: 250.7
+    cost_basis_usd: 15843.84
+    cost_is_total: true
+    category: us_stock_tokenized
+    storage: 韩伟蒙古WEB3
+    price_source: manual
+    manual_price_usd: 113.07
+    manual_price_date: "2026-05-31"
+    note: 成本均价$63.20/股
+
+  # ── 美股 · HK券商 ──
+  - id: crcl_cb
+    symbol: CRCL
+    name: Circle(韩伟长桥)
+    quantity: 25.5
+    cost_basis_usd: 63.20
+    category: us_stock
+    storage: 韩伟长桥证券
+    price_source: manual
+    manual_price_usd: 113.07
+    manual_price_date: "2026-05-31"
+    note: 成本均价$63.20/股
+
+  - id: crcl_hst
+    symbol: CRCL
+    name: Circle(华盛通)
+    quantity: 45
+    cost_basis_usd: 63.20
+    category: us_stock
+    storage: 华盛通证券
+    price_source: manual
+    manual_price_usd: 113.07
+    manual_price_date: "2026-05-31"
+    note: 成本均价$63.20/股
+
+  - id: crcl_hf
+    symbol: CRCL
+    name: Circle(韩芳)
+    quantity: 80
+    cost_basis_usd: 63.20
+    category: us_stock
+    storage: 韩芳证券账户
+    price_source: manual
+    manual_price_usd: 113.07
+    manual_price_date: "2026-05-31"
+    note: 成本均价$63.20/股
+
+  - id: bitgo
+    symbol: BTGO
+    name: BitGo(韩伟长桥)
+    quantity: 54
+    cost_basis_usd: 18.00
+    category: us_stock
+    storage: 韩伟长桥证券
+    price_source: manual
+    manual_price_usd: 6.04
+    manual_price_date: "2026-05-29"
+    note: ⚠️垃圾股, 后续有机会清仓, IPO价$18/股
+
+  # ── A股 · 东方财富 ──
+  - id: robot_etf
+    symbol: "159770.SZ"
+    name: 机器人ETF
+    quantity: 4000
+    cost_basis_cny: 1.068
+    category: a_stock
+    storage: 东方财富
+    price_source: yahoo
+    yahoo_symbol: "159770.SZ"
+
+  - id: xiaomi_ht
+    symbol: "1810.HK"
+    name: 小米集团(港股通)
+    quantity: 1400
+    cost_basis_hkd: 29.612
+    category: hk_stock
+    storage: 东方财富港股通
+    price_source: yahoo
+    yahoo_symbol: "1810.HK"
+
+  # ── TS平台 · KOL时间代币 ──
+  - id: ts_xiaoan
+    symbol: XIAOAN
+    name: 小安时间
+    quantity: 106499
+    unit: 秒
+    cost_basis_usd: 1000
+    cost_is_total: true
+    category: ts_time_token
+    storage: TS平台
+    price_source: manual
+    manual_price_usd: 0.02156
+    manual_price_date: "2026-05-31"
+    note: 100000秒社群锁定 + 6499秒可交易
+
+  - id: ts_wufan
+    symbol: WUFAN
+    name: 午饭老师时间
+    quantity: 818
+    unit: 秒
+    cost_basis_usd: 4.365
+    category: ts_time_token
+    storage: TS平台
+    price_source: manual
+    manual_price_usd: 2.91
+    manual_price_date: "2026-05-31"
+    note: 全部可交易
+
+# ============================================================
+# 代持资产 (非本人资产, 不计入净资产, 仅追踪)
+# ============================================================
+custody:
+  - symbol: CRCL
+    name: CRCL代持(朋友)
+    quantity: 60
+    cost_basis_usd: 83
+    category: custody
+    storage: 券商+WEB3
+    price_source: manual
+    manual_price_usd: 113.07
+    manual_price_date: "2026-05-31"
+    note: 为朋友代持60股, 成本83U/股, 按$113计算盈利约1800U
+
+# ============================================================
+# 负债
+# ============================================================
+liabilities:
+  - name: 房贷—商贷
+    amount_cny: 400000
+    category: mortgage
+
+  - name: 房贷—公积金
+    amount_cny: 1400000
+    category: mortgage
+
+  - name: 信用卡循环(投资WEB3)
+    amount_cny: 400000
+    category: credit_card
+    note: 循环刷卡用于WEB3投资
+
+  - name: 币安BTC质押借贷
+    amount_usd: 13400
+    category: crypto_loan
+    interest_rate_per_hour: 0.000432
+    note: BTC质押借贷USDT, 时息0.000432%
+
+# ============================================================
+# 现金及固收
+# ============================================================
+cash:
+  - name: 家庭备用金(活期/货基)
+    amount_cny: 630808
+  - name: HK打新资金
+    amount_hkd: 146060
+    note: 含13W家庭内部调配, 其余为打新盈利
+  - name: 币安USDT余额
+    amount_usd: 37157
+    note: 2026-06-02 MA120策略卖出ETH($13,992)+BTC($23,166)所得, 待后续定投/抄底使用
+
+# ============================================================
+# 固定资产
+# ============================================================
+fixed_assets:
+  - name: 北京海淀住宅
+    value_cny: 3200000
+    note: 购入2025年底
