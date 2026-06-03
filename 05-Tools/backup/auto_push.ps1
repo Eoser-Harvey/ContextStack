@@ -120,6 +120,14 @@ $extSummary = ($exts -join " ") -replace '^//', '/'
 $commitMsg  = "auto: [$fileCount files] $dirSummary ($extSummary)"
 
 git add -A
+# 防止误删：取消暂存所有删除操作（多电脑同步场景下删除需手动确认）
+$deletedFiles = & git diff --cached --diff-filter=D --name-only 2>&1
+if ($deletedFiles) {
+    foreach ($f in ($deletedFiles -split "`n" | Where-Object { $_ -ne "" })) {
+        & git reset HEAD -- $f 2>&1 | Out-Null
+    }
+    Add-Content -Path $logFile -Value "Step 3: Skipped auto-commit of deleted files"
+}
 git commit -m $commitMsg 2>&1 | Out-Null
 
 # === Step 4: Push (SSH, 2 retries) ==========================================
