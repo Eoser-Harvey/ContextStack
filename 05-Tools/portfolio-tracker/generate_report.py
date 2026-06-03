@@ -96,7 +96,7 @@ def load_yaml(path):
         return yaml.safe_load(f) or {}
 
 
-PRICE_CACHE_FILE = PORTFOLIO_DIR / "price_cache.json"
+PRICE_CACHE_FILE = SCRIPT_DIR / "price_cache.json"
 
 
 def load_price_cache(cache_path, report_date):
@@ -691,7 +691,7 @@ def generate_annual_report(history_path, output_dir, year, rates):
 
     # 尝试加载价格缓存，否则重新获取
     report_date = datetime.now().strftime("%Y-%m-%d")
-    cache_path = PORTFOLIO_DIR / "price_cache.json"
+    cache_path = PRICE_CACHE_FILE
     price_cache = load_price_cache(cache_path, report_date)
 
     if not price_cache or not price_cache.get("stock"):
@@ -1288,7 +1288,7 @@ def main():
     all_holdings = data.get("holdings", [])
 
     # 1. 汇率（使用缓存）
-    cache_path = PORTFOLIO_DIR / "price_cache.json"
+    cache_path = PRICE_CACHE_FILE
     price_cache = load_price_cache(cache_path, args.date)
     need_fetch = not bool(price_cache)
 

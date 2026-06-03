@@ -14,7 +14,7 @@
    REFERENCES.md                  # 参考资料
 
 02-Knowledge/investment-research/ # 知识库 (L3)
-   portfolio/                     # ⚠️ 敏感数据, 不提交GitHub
+   portfolio/                     # 持仓追踪
       holdings.yaml               # 持仓数据
       portfolio_history.yaml      # 历史追踪
       reports/                    # 自动生成的报告

@@ -1,5 +1,3 @@
-# ⚠️ 家庭投资持仓 — 私密数据，禁止提交GitHub
-#
 # 路径: 02-Knowledge/investment-research/portfolio/holdings.yaml
 # 价格来源:
 #   cryptocompare = CryptoCompare API (国内直连, BTC/ETH)
@@ -7,7 +5,7 @@
 #   manual        = 预IPO代币/小众平台, 需手动更新当月价格
 
 meta:
-  last_updated: "2026-06-02"
+  last_updated: "2026-06-04"
   usd_cny: 7.114
   hkd_cny: 0.909
 
@@ -93,7 +91,7 @@ holdings:
   - id: crcl_han
     symbol: CRCL
     name: Circle(韩伟蒙古)
-    quantity: 250.7
+    quantity: 268.25
     cost_basis_usd: 15843.84
     cost_is_total: true
     category: us_stock_tokenized
@@ -101,7 +99,7 @@ holdings:
     price_source: manual
     manual_price_usd: 113.07
     manual_price_date: "2026-05-31"
-    note: 成本均价$63.20/股
+    note: 成本均价$63.20/股; 2026-06-02用TSLA卖出资金买入12.68股@$99.13; 2026-06-04用BTC卖出资金买入17.55股@$89.80
 
   # ── 美股 · HK券商 ──
   - id: crcl_cb
@@ -249,8 +247,8 @@ cash:
     amount_hkd: 146060
     note: 含13W家庭内部调配, 其余为打新盈利
   - name: 币安USDT余额
-    amount_usd: 37157
-    note: 2026-06-02 MA120策略卖出ETH($13,992)+BTC($23,166)所得, 待后续定投/抄底使用
+    amount_usd: 35581
+    note: 2026-06-02 MA120策略卖出ETH($13,992)+BTC($23,166)所得; 2026-06-04用$1,576买入CRCL 17.55股@$89.80
 
 # ============================================================
 # 固定资产

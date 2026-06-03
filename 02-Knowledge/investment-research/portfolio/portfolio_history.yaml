@@ -3,26 +3,26 @@ holdings_history:
     name: 比特币(链上)
     all_time_high_price: 66768.36
     all_time_high_date: '2026-06-02'
-    all_time_low_price: 66634.74
-    all_time_low_date: '2026-06-02'
+    all_time_low_price: 64797.11
+    all_time_low_date: '2026-06-04'
   eth_onchain:
     name: 以太坊NFT(链上)
     all_time_high_price: 1862.06
     all_time_high_date: '2026-06-02'
-    all_time_low_price: 1854.12
-    all_time_low_date: '2026-06-02'
+    all_time_low_price: 1823.35
+    all_time_low_date: '2026-06-04'
   btc_binance:
     name: 比特币(币安)
     all_time_high_price: 66768.36
     all_time_high_date: '2026-06-02'
-    all_time_low_price: 66634.74
-    all_time_low_date: '2026-06-02'
+    all_time_low_price: 64797.11
+    all_time_low_date: '2026-06-04'
   eth_binance:
     name: 以太坊(币安)
     all_time_high_price: 1862.06
     all_time_high_date: '2026-06-02'
-    all_time_low_price: 1854.12
-    all_time_low_date: '2026-06-02'
+    all_time_low_price: 1823.35
+    all_time_low_date: '2026-06-04'
   crcl_yan:
     name: Circle(燕蒙古)
     all_time_high_price: 113.07
@@ -33,14 +33,22 @@ holdings_history:
     name: 特斯拉(燕蒙古)
     all_time_high_price: 429.72
     all_time_high_date: '2026-06-02'
-    all_time_low_price: 425.8
-    all_time_low_date: '2026-06-02'
+    all_time_low_price: 423.76
+    all_time_low_date: '2026-06-04'
   crcl_han:
     name: Circle(韩伟蒙古)
     all_time_high_price: 113.07
     all_time_high_date: '2026-06-02'
-    all_time_low_price: 113.07
-    all_time_low_date: '2026-06-02'
+    all_time_low_price: 89.8
+    all_time_low_date: '2026-06-04'
+    trades:
+    - date: '2026-06-04'
+      type: buy
+      quantity: 17.55
+      price_usd: 89.8
+      cost_usd: 1576
+      source: BTC等卖出资金(韩伟币安)
+      note: 用BTC卖出资金买入，持仓增至268.25股
   crcl_cb:
     name: Circle(韩伟长桥)
     all_time_high_price: 113.07
@@ -68,7 +76,7 @@ holdings_history:
   robot_etf:
     name: 机器人ETF
     all_time_high_price: 0.16
-    all_time_high_date: '2026-06-02'
+    all_time_high_date: '2026-06-04'
     all_time_low_price: 0.16
     all_time_low_date: '2026-06-02'
   xiaomi_ht:
@@ -80,7 +88,7 @@ holdings_history:
   ts_xiaoan:
     name: 小安时间
     all_time_high_price: 0.02
-    all_time_high_date: '2026-06-02'
+    all_time_high_date: '2026-06-04'
     all_time_low_price: 0.02
     all_time_low_date: '2026-06-02'
   ts_wufan:
@@ -92,3 +100,5 @@ holdings_history:
 net_worth_snapshots:
 - date: '2026-06-02'
   net_worth_cny: 1361859.46
+- date: '2026-06-04'
+  net_worth_cny: 1357498.97

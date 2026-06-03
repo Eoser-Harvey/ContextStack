@@ -9,9 +9,11 @@
 
 | 文件 | 说明 |
 |------|------|
-| [[./portfolio/holdings.yaml]] | ⚠️ 持仓数据源(敏感,不提交GitHub) |
-| [[./portfolio/portfolio_history.yaml]] | ⚠️ 历史最值+月度快照(敏感,不提交GitHub) |
-| [[./portfolio/reports/]] | ⚠️ 自动生成报告(敏感,不提交GitHub) |
+| [[./portfolio/index.md]] | 📁 持仓追踪目录（数据源/报告/交易日志） |
+| [[./portfolio/holdings.yaml]] | ⚠️ 持仓数据源 |
+| [[./portfolio/portfolio_history.yaml]] | ⚠️ 历史最值+月度快照 |
+| [[./portfolio/trade_log.md]] | ⚠️ 交易操作日志 |
+| [[./portfolio/reports/]] | ⚠️ 自动生成报告(月度+年度) |
 | [[../../01-Projects/family-investment/WORKSPACE.md]] | 🟢 项目工作台(L2层) |
 | [[../../05-Tools/portfolio-tracker/generate_report.py]] | 🟢 报告生成器脚本 |
 
