@@ -417,6 +417,8 @@ def build_report(data, history_data, rates, report_date):
         val = c.get("amount_cny", 0)
         if c.get("amount_hkd"):
             val += c["amount_hkd"] * hkd_cny
+        if c.get("amount_usd"):
+            val += c["amount_usd"] * usd_cny
         categories["现金固收"] += val
         total_assets += val
 
@@ -586,6 +588,8 @@ def build_report(data, history_data, rates, report_date):
     for c in data.get("cash", []):
         if c.get("amount_hkd"):
             lines.append(f"| {c['name']} | HK${c['amount_hkd']:,.0f} (≈¥{c['amount_hkd'] * hkd_cny:,.0f}) |")
+        elif c.get("amount_usd"):
+            lines.append(f"| {c['name']} | ${c['amount_usd']:,.0f} (≈¥{c['amount_usd'] * usd_cny:,.0f}) |")
         else:
             lines.append(f"| {c['name']} | ¥{c['amount_cny']:,.0f} |")
         if c.get("note"):
@@ -865,6 +869,8 @@ def generate_annual_report(history_path, output_dir, year, rates):
         v = c.get("amount_cny", 0)
         if c.get("amount_hkd"):
             v += c["amount_hkd"] * rates.get("HKD_CNY", 0.909)
+        if c.get("amount_usd"):
+            v += c["amount_usd"] * rates.get("USD_CNY", 7.114)
         total_cash_cny += v
 
     total_mv = sum(h.get("market_value_cny", 0) for h in cur_holdings)
@@ -1388,6 +1394,8 @@ def main():
         v = c.get("amount_cny", 0)
         if c.get("amount_hkd"):
             v += c["amount_hkd"] * hkd_cny
+        if c.get("amount_usd"):
+            v += c["amount_usd"] * usd_cny
         total_assets_val += v
 
     liab_val = 0
@@ -1417,7 +1425,7 @@ def main():
     # 9. 输出报告（直接覆盖，不自动备份）
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    filename = f"家庭资产报告-{args.date}.md"
+    filename = f"家庭资产报告-{args.date[:7]}.md"
     filepath = output_dir / filename
 
     with open(filepath, "w", encoding="utf-8") as f:
