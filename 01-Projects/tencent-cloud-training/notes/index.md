@@ -13,6 +13,7 @@
 | 5 | **实践案例与数据** | [05-practice-cases.md](./05-practice-cases.md) | 4 | 应用案例、腾讯团队、数据 |
 | 6 | **高效指南与新范式** | [06-best-practices.md](./06-best-practices.md) | 3 | 高效指南、实践思路 |
 | 7 | **完整培训总结** | [07-full-training-summary.md](./07-full-training-summary.md) | 腾讯PPT全文 | SDD五步主链、三层工具、六工种重组、Q&A、职业发展借鉴 |
+| 8 | **其他团队AI实践分享** | [08-team-ai-sharing.md](./08-team-ai-sharing.md) | 团队分享 | 五角色定位、四道栅栏、5条红线、风险防控 |
 
 ## 如何使用
 
