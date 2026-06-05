@@ -5,7 +5,7 @@
 #   manual        = 预IPO代币/小众平台, 需手动更新当月价格
 
 meta:
-  last_updated: "2026-06-04"
+  last_updated: "2026-06-05"
   usd_cny: 7.114
   hkd_cny: 0.909
 
@@ -64,26 +64,26 @@ holdings:
   - id: crcl_yan
     symbol: CRCL
     name: Circle(燕蒙古)
-    quantity: 195.32
-    cost_basis_usd: 13237.76
+    quantity: 207.46
+    cost_basis_usd: 14245.76
     cost_is_total: true
     category: us_stock_tokenized
     storage: 燕蒙古WEB3
     price_source: manual
     manual_price_usd: 113.07
     manual_price_date: "2026-05-31"
-    note: 原169.3股均价$63.20; 06-02两次换仓买入12.68@$99.13+13.34@$96.03, 新均价$67.77
+    note: 原169.3股均价$63.20; 06-02换仓买入+26.02股; 06-05卖TSLA买CRCL+12.14股@$83, 新均价$68.69/股
 
-  - id: tsla_yan
-    symbol: TSLA
-    name: 特斯拉(燕蒙古)
-    quantity: 2.45
-    cost_basis_usd: 394.44
+  - id: mrvl_yan
+    symbol: MRVL
+    name: 迈威尔(燕蒙古)
+    quantity: 6.87
+    cost_basis_usd: 291.00
     category: us_stock
     storage: 燕蒙古WEB3
     price_source: yahoo
-    yahoo_symbol: TSLA
-    note: 成本均价$394.44/股; 06-02两次卖出3+3股@$419+$427合计$2538换仓CRCL
+    yahoo_symbol: MRVL
+    note: 现金买入2000USDT, 约$291/股, 数量待确认
 
   # ── 链上证券 · 韩伟蒙古WEB3 ──
   # 成本计算: 总CRCL 480股(含代持60), 总盈利22750U, 代持成本83U

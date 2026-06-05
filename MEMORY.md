@@ -25,6 +25,7 @@
 | **Reference** | Wireshark 抓包 | 网络分析工具 | network-device-debug | — |
 | **Knowledge** | ContextStack四层架构 | 框架说明 | 全部 | 2026-04-29 |
 | **Knowledge** | 自主自我改进循环研究 | Agent自我进化：Hermes Agent四层记忆+三层飞轮、Self-Improving Coding Agents | 全部 | 2026-06-03 |
+| **Knowledge** | CPO产业链投资标的精选 | 光模块/CPO深度研究，A股+美股值得关注的标的清单 | 全部 | 2026-06-04 |
 
 ---
 
