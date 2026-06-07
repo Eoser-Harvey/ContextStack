@@ -26,6 +26,7 @@
 | **Knowledge** | ContextStack四层架构 | 框架说明 | 全部 | 2026-04-29 |
 | **Knowledge** | 自主自我改进循环研究 | Agent自我进化：Hermes Agent四层记忆+三层飞轮、Self-Improving Coding Agents | 全部 | 2026-06-03 |
 | **Knowledge** | CPO产业链投资标的精选 | 光模块/CPO深度研究，A股+美股值得关注的标的清单 | 全部 | 2026-06-04 |
+| **Knowledge** | 图解Skill—AI提效实战指南 | 宝玉《图解Skill》配套资源：写作工作流技能+baoyu-skills通用技能集+Skill设计方法论 | 全部 | 2026-06-05 |
 
 ---
 

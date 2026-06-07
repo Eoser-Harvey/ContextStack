@@ -1,15 +1,15 @@
-"""年费到期提醒脚本 — 检查 Excel 中年费截止日期，支持邮件/桌面/微信通知
+"""年费到期提醒脚本 — 检查 Excel 中年费截止日期，支持邮件/桌面/微信/电话通知
 
 === 通知方式对比 ===
-  ┌──────────┬──────────┬──────────────────────────────┐
-  │ 方式     │ 成本     │ 说明                         │
-  ├──────────┼──────────┼──────────────────────────────┤
-  │ 桌面弹窗 │ 免费     │ 电脑上弹出通知（无需配置）    │
-  │ 邮件通知 │ 免费     │ QQ邮箱即可，需配置SMTP授权码  │
-  │ 微信通知 │ 免费     │ 通过 PushPlus/Server酱 推送   │
-  │ 短信通知 │ 0.045元/条│ 阿里云短信，需企业认证       │
-  │ 电话通知 │ 不推荐   │ 需要第三方API，成本高         │
-  └──────────┴──────────┴──────────────────────────────┘
+  ┌──────────┬────────────┬──────────────────────────────────┐
+  │ 方式     │ 成本       │ 说明                             │
+  ├──────────┼────────────┼──────────────────────────────────┤
+  │ 桌面弹窗 │ 免费       │ 电脑上弹出通知（无需配置）        │
+  │ 邮件通知 │ 免费       │ QQ邮箱即可，需配置SMTP授权码      │
+  │ 微信通知 │ 免费       │ 通过 PushPlus/Server酱 推送       │
+  │ 电话通知 │ 0.06元/通  │ 腾讯云语音通知，个人可开通        │
+  │ 短信通知 │ 0.045元/条 │ 阿里云短信，需企业认证             │
+  └──────────┴────────────┴──────────────────────────────────┘
 
 === 快速开始 ===
   1. 直接运行: python 年费到期提醒.py
@@ -55,8 +55,19 @@ SMTP_CONFIG = {
 # 微信通知（PushPlus，免费，无需安装App）
 # 注册获取 token: http://www.pushplus.plus/
 PUSHPLUS_CONFIG = {
-    "enabled": False,                                    # 改为 True 启用
-    "token": "你的PushPlus Token",
+    "enabled": True,                                    # 改为 True 启用
+    "token": "6b280503d6df417f87556a366bc4ba61",
+}
+
+# 电话通知（腾讯云语音通知，约0.06元/通，个人可开通）
+# 开通步骤见下方注释
+TENCENT_VOICE_CONFIG = {
+    "enabled": False,                                   # 改为 True 启用
+    "secret_id": "你的腾讯云SecretId",
+    "secret_key": "你的腾讯云SecretKey",
+    "app_id": "你的语音应用ID",                           # 腾讯云语音消息→应用管理→应用ID
+    "template_id": "你的语音模板ID",                      # 语音模板，需审核通过
+    "called_number": "你的手机号",                        # 接收电话的手机号（+86开头）
 }
 
 # 桌面弹窗（Windows 自带，无需配置）
@@ -223,6 +234,86 @@ def send_pushplus(alerts):
     except Exception as e:
         print(f"❌ 微信通知失败: {e}")
 
+def send_voice_call(alerts):
+    """电话通知（腾讯云语音通知 VMS）"""
+    if not TENCENT_VOICE_CONFIG["enabled"]:
+        return
+    try:
+        import hashlib
+        import hmac
+        import time
+        import urllib.request
+
+        cfg = TENCENT_VOICE_CONFIG
+        secret_id = cfg["secret_id"]
+        secret_key = cfg["secret_key"]
+        app_id = cfg["app_id"]
+        template_id = cfg["template_id"]
+        called_number = cfg["called_number"]
+
+        # 语音模板参数：银行名+卡种+剩余天数（模板需提前在腾讯云审核）
+        # 模板示例：您好，您的{1}年费即将到期，剩余{2}天，请及时处理。
+        voice_params = []
+        for a in alerts[:3]:  # 最多播报3条
+            voice_params.append(f"{a['bank']}{a['card']} {a['days_left']}天")
+
+        # 构建请求
+        timestamp = int(time.time())
+        params = {
+            "Action": "SendTtsVoice",
+            "Version": "2020-02-10",
+            "Region": "ap-guangzhou",
+            "Timestamp": timestamp,
+            "Nonce": timestamp,
+            "SecretId": secret_id,
+            "TemplateId": template_id,
+            "CalledNumber": called_number,
+            "VoiceSdkAppid": app_id,
+            "TemplateParamSet": voice_params,
+            "PlayTimes": 2,
+        }
+
+        # 签名（腾讯云 API 3.0 签名）
+        # 注意：实际使用需要完整的签名 V3 实现，此处为简化示例
+        # 推荐安装 tencentcloud-sdk-python: pip install tencentcloud-sdk-python-vms
+        print("💡 电话通知需要安装 tencentcloud-sdk-python-vms")
+        print("   pip install tencentcloud-sdk-python-vms")
+        print("   详细接入文档：https://cloud.tencent.com/document/product/1128")
+
+        # 简化版：使用腾讯云 SDK
+        try:
+            from tencentcloud.common import credential
+            from tencentcloud.common.profile.client_profile import ClientProfile
+            from tencentcloud.common.profile.http_profile import HttpProfile
+            from tencentcloud.vms.v20200902 import vms_client, models
+
+            cred = credential.Credential(secret_id, secret_key)
+            httpProfile = HttpProfile()
+            httpProfile.endpoint = "vms.tencentcloudapi.com"
+            clientProfile = ClientProfile()
+            clientProfile.httpProfile = httpProfile
+            client = vms_client.VmsClient(cred, "ap-guangzhou", clientProfile)
+
+            req = models.SendTtsVoiceRequest()
+            req.TemplateId = template_id
+            req.CalledNumber = called_number
+            req.VoiceSdkAppid = app_id
+            req.TemplateParamSet = [f"{a['bank']}{a['card']} {a['days_left']}天到期" for a in alerts[:3]]
+            req.PlayTimes = 2
+
+            resp = client.SendTtsVoice(req)
+            print(f"✅ 电话通知已发起（腾讯云语音）: {resp.SendStatus}")
+        except ImportError:
+            print("⚠️ 未安装 tencentcloud-sdk-python-vms，电话通知跳过")
+            print("   安装命令: pip install tencentcloud-sdk-python-vms")
+        except Exception as e:
+            # 如果 SDK 不可用，使用原始 HTTP 请求
+            print(f"⚠️ 电话通知 SDK 调用失败: {e}")
+            print("   请确认已安装: pip install tencentcloud-sdk-python-vms")
+
+    except Exception as e:
+        print(f"❌ 电话通知失败: {e}")
+
 # ============================================
 # 主入口
 # ============================================
@@ -264,6 +355,12 @@ def main():
         send_pushplus(alerts)
     else:
         print("💡 微信通知未启用，注册 PushPlus 获取 token 即可推送微信消息")
+
+    # 电话
+    if TENCENT_VOICE_CONFIG["enabled"]:
+        send_voice_call(alerts)
+    else:
+        print("💡 电话通知未启用，需开通腾讯云语音通知服务")
 
 if __name__ == "__main__":
     main()
