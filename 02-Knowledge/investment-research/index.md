@@ -24,6 +24,11 @@
 |------|------|
 | [[./credit-card-management/index.md]] | 📁 信用卡管理目录（20+张卡的年费/权益/账单方案） |
 
+### 端侧AI研究
+| 文件 | 说明 |
+|------|------|
+| [[./embedded-ai-research/index.md]] | 📁 端侧AI研究报告目录 |
+
 **价格来源**: CryptoCompare · Yahoo Finance · Stooq回退 · Sina回退 · Manual手动
 **关键更新**: 房贷/房产单独说明 · 持仓成本统计 · 年度报告(支持 --annual)
 
