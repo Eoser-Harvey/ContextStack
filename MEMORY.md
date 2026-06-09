@@ -27,6 +27,7 @@
 | **Knowledge** | 自主自我改进循环研究 | Agent自我进化：Hermes Agent四层记忆+三层飞轮、Self-Improving Coding Agents | 全部 | 2026-06-03 |
 | **Knowledge** | CPO产业链投资标的精选 | 光模块/CPO深度研究，A股+美股值得关注的标的清单 | 全部 | 2026-06-04 |
 | **Knowledge** | 图解Skill—AI提效实战指南 | 宝玉《图解Skill》配套资源：写作工作流技能+baoyu-skills通用技能集+Skill设计方法论 | 全部 | 2026-06-05 |
+| **Knowledge** | 人生投资自检清单20问 | 知识投资/杠杆运用/个人品牌/目标管理/情绪动力/人际关系/梦想幸福，定期自检模板 | 全部 | 2026-06-05 |
 
 ---
 
