@@ -1,6 +1,6 @@
 # 自动同步脚本 — 每日 22:00 执行
 # 用法: Windows 任务计划程序 → 每日 22:00 → powershell -File "...\auto_push.ps1"
-# 全 SSH 推送，无需 HTTPS/代理，2次重试
+# 公司电脑版：使用当前 origin 协议（HTTPS），不强制切换 SSH
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repoPath  = Split-Path -Parent (Split-Path -Parent $scriptDir)
@@ -128,9 +128,16 @@ if ($deletedFiles) {
     }
     Add-Content -Path $logFile -Value "Step 3: Skipped auto-commit of deleted files"
 }
-git commit -m $commitMsg 2>&1 | Out-Null
+$commitOutput = & git commit -m $commitMsg 2>&1
+if ($LASTEXITCODE -eq 0) {
+    Add-Content -Path $logFile -Value "Commit OK: $commitMsg"
+} else {
+    Add-Content -Path $logFile -Value "Commit FAILED: $commitOutput"
+    Add-Content -Path $logFile -Value ""
+    exit 1
+}
 
-# === Step 4: Push (SSH, 2 retries) ==========================================
+# === Step 4: Push (2 retries) ==========================================
 $pushOk = $false
 
 for ($i = 0; $i -lt $maxRetries; $i++) {
@@ -142,7 +149,6 @@ for ($i = 0; $i -lt $maxRetries; $i++) {
     try {
         $pushOutput = & git push origin master 2>&1
         if ($LASTEXITCODE -eq 0) {
-            Add-Content -Path $logFile -Value "Commit: $commitMsg"
             Add-Content -Path $logFile -Value "Push OK: $pushOutput"
             Add-Content -Path $logFile -Value ""
             $pushOk = $true
@@ -153,9 +159,6 @@ for ($i = 0; $i -lt $maxRetries; $i++) {
     } catch {
         Add-Content -Path $logFile -Value "Push failed ($($i+1)/$maxRetries): $_"
     }
-
-    # Refresh SSH config on failure
-    Initialize-SshConfig
 }
 
 if ($pushOk) {
