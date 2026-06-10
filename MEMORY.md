@@ -2,34 +2,6 @@
 
 > 框架 L4 层：持久化记忆索引。分为两大类 — AI 行为约束（给 AI 读） + 知识与项目状态（给人读）。
 
-## 索引总表
-
-| 分类 | 文件 / 条目 | 摘要 | 关联项目 | 更新时间 |
-|------|------------|------|----------|----------|
-| **User** | 技能和经验 | 网络设备/嵌入式/C/Python/TSN/驱动 | 全部 | 2026-04-27 |
-| **User** | 习惯和偏好 | 简洁直接、自动化脚本、配置备份 | 全部 | 2026-04-27 |
-| **User** | 路径和配置 | 项目关键路径映射 | 全部 | 2026-05-23 |
-| **Feedback** | 不创建不必要的中介文件 | 优先编辑现有文件 | 全部 | 2026-04-27 |
-| **Feedback** | 操作直接执行不确认 | 所有命令行操作（含 Skill 安装/下载/脚本执行）均自动执行，不需确认 | 全部 | 2026-05-27 |
-| **Feedback** | 新文件自动加 index.md | 目录结构规范 | 全部 | 2026-05-07 |
-| **Feedback** | 文件操作红线 | 不碰别人项目文件 | 全部 | 2026-05-19 |
-| **Feedback** | 及时清理无用文件 | debug.log/.uploads等临时文件即查即删 | 全部 | 2026-05-23 |
-| **Feedback** | .codebuddy/ 不同步 | IDE本地治理规则，.gitignore忽略 | 全部 | 2026-05-23 |
-| **Feedback** | inbox归档规则 | 归档统一写入 archive/archive-log.md（按分类分节），不单独建归档文件 | 全部 | 2026-05-24 |
-| **Project** | 嵌入式AI学习 | TFLM 源码驱动学习 | 01-Projects/embedded-ai-learning | 2026-05-13 |
-| **Project** | 网络设备调试 | 工业交换机问题排查 | 01-Projects/network-device-debug | 2026-05-07 |
-| **Project** | 腾讯云AI编程培训 | 培训资料归档 | 01-Projects/tencent-cloud-training | 2026-05-07 |
-| **Project** | BTC温度仪表盘 | 加密货币市场可视化 | 01-Projects/btc-temperature-gauge | 2026-05-07 |
-| **Project** | 求职面试-今日宜休ISHO | 面试讨论中，已完成全面匹配度分析 | 02-Knowledge/career-development | 2026-05-29 |
-| **Reference** | S5120V8逻辑寄存器手册 | 硬件参考 | network-device-debug | — |
-| **Reference** | Wireshark 抓包 | 网络分析工具 | network-device-debug | — |
-| **Knowledge** | ContextStack四层架构 | 框架说明 | 全部 | 2026-04-29 |
-| **Knowledge** | 自主自我改进循环研究 | Agent自我进化：Hermes Agent四层记忆+三层飞轮、Self-Improving Coding Agents | 全部 | 2026-06-03 |
-| **Knowledge** | CPO产业链投资标的精选 | 光模块/CPO深度研究，A股+美股值得关注的标的清单 | 全部 | 2026-06-04 |
-| **Knowledge** | 图解Skill—AI提效实战指南 | 宝玉《图解Skill》配套资源：写作工作流技能+baoyu-skills通用技能集+Skill设计方法论 | 全部 | 2026-06-05 |
-| **Knowledge** | 人生投资自检清单20问 | 知识投资/杠杆运用/个人品牌/目标管理/情绪动力/人际关系/梦想幸福，定期自检模板 | 全部 | 2026-06-05 |
-| **Knowledge** | 非京籍孩子升学路径全解析 | 6条升学路子：积分落户/工居/回老家/国际学校/中职贯通/天津落户，针对北京工作10年无户口情况 | 全部 | 2026-06-05 |
-
 ---
 
 ## 索引总表
@@ -71,6 +43,7 @@
 | **Knowledge** | CPO产业链投资标的精选 | 光模块/CPO深度研究 | 全部 | 2026-06-04 |
 | **Knowledge** | 图解Skill—AI提效实战指南 | 宝玉《图解Skill》配套资源 | 全部 | 2026-06-05 |
 | **Knowledge** | 人生投资自检清单20问 | 定期自检模板 | 全部 | 2026-06-05 |
+| **Knowledge** | 非京籍孩子升学路径全解析 | 6条升学路子：积分落户/工居/回老家/国际学校/中职贯通/天津落户 | 全部 | 2026-06-05 |
 
 ---
 
@@ -185,6 +158,7 @@
 | CPO产业链投资标的精选 | 光模块/CPO深度研究 | `02-Knowledge/inbox/` |
 | 图解Skill—AI提效实战指南 | 宝玉《图解Skill》配套资源 | `02-Knowledge/skills/` |
 | 人生投资自检清单20问 | 定期自检模板 | `02-Knowledge/inbox/` |
+| 非京籍孩子升学路径全解析 | 6条升学路子完整解析 | `02-Knowledge/inbox/` |
 
 ---
 
