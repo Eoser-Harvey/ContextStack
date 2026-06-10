@@ -15,7 +15,7 @@
 | [[network-packet-analysis/index\|网络抓包分析]] | Wireshark 抓包与协议分析 | `#wireshark` `#packet-analysis` `#network` |
 | [[tsn-protocol/index\|TSN协议]] | IEEE 802.1 TSN 协议栈 | `#tsn` `#network` `#protocol` |
 | [[vscode-config-management/index\|VSCode配置管理]] | 配置备份、恢复与同步 | `#vscode` `#tool-config` `#backup` |
-| [[interview-prep/interview-prep使用说明\|面试准备]] | 输入公司名，自动生成面试准备清单 | `#interview` `#career` `#job-search` |
+| [[interview-prep/interview-prep使用说明\|面试准备]] | 输入公司名，自动生成8模块面试准备清单 + 7家公司经验库 | `#interview` `#career` `#job-search` |
 
 ### AI 编码与治理 Skills（2026-05-13）
 

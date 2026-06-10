@@ -74,7 +74,6 @@ ContextStack/
 ├── GLOBAL-RULES.md              # 第一层：全局规则
 ├── MEMORY.md                    # 第四层：Memory表格索引
 ├── FRAMEWORK-README.md          # 本文档：框架总览
-├── images/                      # 框架相关图片资源
 ├── 01-Projects/                 # 项目工作台（6标准文件/项目）
 │   ├── embedded-ai-learning/
 │   │   ├── WORKSPACE.md         # 工作台入口

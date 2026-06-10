@@ -26,6 +26,7 @@
 | **User** | 技能和经验 | 网络设备/嵌入式/C/Python/TSN/驱动/TFLM | 全部 | 2026-04-27 |
 | **User** | 习惯和偏好 | 简洁直接、自动化脚本、配置备份 | 全部 | 2026-04-27 |
 | **User** | 路径和配置 | 项目关键路径映射 | 全部 | 2026-05-23 |
+| **User** | 当前薪资 | 30K×16=53W/年，底线65-70W | 全部 | 2026-06-10 |
 | **Project** | 嵌入式AI学习 | TFLM 源码驱动学习，Week 1 Day 1 完成 | 01-Projects/embedded-ai-learning | 2026-05-13 |
 | **Project** | 网络设备调试 | 工业交换机问题排查（IE4120/IE4300/IE4500） | 01-Projects/network-device-debug | 2026-05-07 |
 | **Project** | 腾讯云AI编程培训 | 培训资料归档 | 01-Projects/tencent-cloud-training | 2026-05-07 |
@@ -44,6 +45,8 @@
 | **Knowledge** | 图解Skill—AI提效实战指南 | 宝玉《图解Skill》配套资源 | 全部 | 2026-06-05 |
 | **Knowledge** | 人生投资自检清单20问 | 定期自检模板 | 全部 | 2026-06-05 |
 | **Knowledge** | 非京籍孩子升学路径全解析 | 6条升学路子：积分落户/工居/回老家/国际学校/中职贯通/天津落户 | 全部 | 2026-06-05 |
+| **Knowledge** | 面试经验总库 | 7家公司完整面试记录+教训+5条红线+赛道P0考点+提问策略 | career-development | 2026-06-10 |
+| **Knowledge** | interview-prep Skill | 输入公司名自动生成8模块面试准备清单 | 全部 | 2026-06-10 |
 
 ---
 
@@ -121,6 +124,11 @@
 - 状态: 面试讨论中
 - 文件: `02-Knowledge/career-development/interview-company-analysis/MS分析-北京今日宜休科技ISHO-20260529.md`
 
+#### 求职面试 — 已面7家公司
+- 状态: 全部结束（蚂蚁/加速进化/昉擎/西门子/思朗/宜休/九号），经验已归档
+- 文件: `02-Knowledge/skills/interview-prep/面试经验库.md`
+- 教训汇总: C底层/启动汇编/英语口语/不问裁员/岗位优先项/笔试编程题
+
 #### wechat-radar
 - 状态: 环境就绪
 - 描述: AI 驱动微信公众号智能日报
@@ -159,6 +167,8 @@
 | 图解Skill—AI提效实战指南 | 宝玉《图解Skill》配套资源 | `02-Knowledge/skills/` |
 | 人生投资自检清单20问 | 定期自检模板 | `02-Knowledge/inbox/` |
 | 非京籍孩子升学路径全解析 | 6条升学路子完整解析 | `02-Knowledge/inbox/` |
+| 面试经验总库 | 7家公司面试记录+教训+话术 | `02-Knowledge/skills/interview-prep/` |
+| interview-prep Skill | 输入公司名自动生成8模块面试准备清单 | `02-Knowledge/skills/interview-prep/` |
 
 ---
 
