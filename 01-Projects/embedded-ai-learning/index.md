@@ -1,4 +1,4 @@
-# 嵌入式AI学习项目
+﻿# 嵌入式AI学习项目
 
 这个文件集中管理 TensorFlow Lite Micro (TFLM) 嵌入式AI学习项目的所有文件和资源。
 
