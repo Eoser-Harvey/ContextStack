@@ -25,3 +25,4 @@ Thumbs.db
 .verify*.txt
 .tmp*.txt
 .x.txt
+`n# CodeBuddy memory (session data)`n.codebuddy/memory/
