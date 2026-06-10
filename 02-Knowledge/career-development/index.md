@@ -5,9 +5,9 @@
 ## 📁 目录结构
 
 - [[个人职业发展分析-端侧AI企业定制攻略]] - 核心职业发展分析：针对中控技术、移远通信等龙头企业的定制化攻略
-- [[interview-prep-skill|面试准备Skill]] - 输入公司名，自动生成面试准备清单（参考框架中所有面试经验）
-- [[interview-company-analysis/]] - 面试公司分析：目标公司记录与面试复盘（ISHO、思朗科技等）
-- [[interview-project-summaries/]] - 面试项目总结：嵌入式/C++/RTOS/DSP等项目经验汇总
+- [[../../.codebuddy/rules/interview-prep.mdc|面试准备Skill]] - 输入公司名，自动生成面试准备清单（`.codebuddy/rules/` 已取消 gitignore）
+- [[interview-project-summaries/]] - 面试资料汇总（含公司面试记录、技术基础、项目设计、通用准备）
+- [[interview-project-summaries/company-interviews/九号-牛客面经题整理-FreeRTOS|九号-FreeRTOS面经]] - 九号公司牛客网面经14题答案整理
 
 ## 🔗 相关资源
 
@@ -24,4 +24,5 @@
 
 ## 📝 更新日志
 
+- 2026-06-10：新增九号公司嵌入式面试题整理（14题，含 FreeRTOS/数据结构/网络/DMA 等）
 - 2026-05-13：创建职业发展知识库，迁移核心分析文档

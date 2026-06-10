@@ -16,6 +16,7 @@
 | **Feedback** | 及时清理无用文件 | debug.log/.uploads等临时文件即查即删 | 全部 | 2026-05-23 |
 | **Feedback** | .codebuddy/ 不同步 | IDE本地治理规则，.gitignore忽略 | 全部 | 2026-05-23 |
 | **Feedback** | inbox归档规则 | 归档统一写入 archive/archive-log.md（按分类分节），不单独建归档文件 | 全部 | 2026-05-24 |
+| **Feedback** | 新文件先探索目录结构再落位 | 新建文件前先 `list_dir` 目标目录的子文件夹，确保放在框架正确位置 | 全部 | 2026-06-10 |
 | **Project** | 嵌入式AI学习 | TFLM 源码驱动学习 | 01-Projects/embedded-ai-learning | 2026-05-13 |
 | **Project** | 网络设备调试 | 工业交换机问题排查 | 01-Projects/network-device-debug | 2026-05-07 |
 | **Project** | 腾讯云AI编程培训 | 培训资料归档 | 01-Projects/tencent-cloud-training | 2026-05-07 |
@@ -24,6 +25,8 @@
 | **Reference** | S5120V8逻辑寄存器手册 | 硬件参考 | network-device-debug | — |
 | **Reference** | Wireshark 抓包 | 网络分析工具 | network-device-debug | — |
 | **Knowledge** | ContextStack四层架构 | 框架说明 | 全部 | 2026-04-29 |
+| **Knowledge** | 九号公司 FreeRTOS 面经 | 牛客网14题完整答案（函数指针/任务调度/链表/上下文切换/拥塞控制/位域/DMA等） | career-development | 2026-06-10 |
+| **Knowledge** | note-organizer Skill | 智能笔记整理，5种内容类型识别，保存到 inbox/ | 全部 | 2026-05-26 |
 | **Knowledge** | 自主自我改进循环研究 | Agent自我进化：Hermes Agent四层记忆+三层飞轮、Self-Improving Coding Agents | 全部 | 2026-06-03 |
 | **Knowledge** | CPO产业链投资标的精选 | 光模块/CPO深度研究，A股+美股值得关注的标的清单 | 全部 | 2026-06-04 |
 | **Knowledge** | 图解Skill—AI提效实战指南 | 宝玉《图解Skill》配套资源：写作工作流技能+baoyu-skills通用技能集+Skill设计方法论 | 全部 | 2026-06-05 |
