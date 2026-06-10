@@ -5,7 +5,7 @@
 
 ---
 
-## 一、ContextStack 自定义 Skills（10 个）
+## 一、ContextStack 自定义 Skills（11 个）
 
 ### 专业领域 Skills
 
@@ -15,6 +15,7 @@
 | [[network-packet-analysis/index\|网络抓包分析]] | Wireshark 抓包与协议分析 | `#wireshark` `#packet-analysis` `#network` |
 | [[tsn-protocol/index\|TSN协议]] | IEEE 802.1 TSN 协议栈 | `#tsn` `#network` `#protocol` |
 | [[vscode-config-management/index\|VSCode配置管理]] | 配置备份、恢复与同步 | `#vscode` `#tool-config` `#backup` |
+| [[interview-prep/interview-prep使用说明\|面试准备]] | 输入公司名，自动生成面试准备清单 | `#interview` `#career` `#job-search` |
 
 ### AI 编码与治理 Skills（2026-05-13）
 
@@ -61,10 +62,10 @@
 
 | 类别 | 数量 | 位置 |
 |------|------|------|
-| ContextStack 自定义 | 10 | `02-Knowledge/skills/` |
+| ContextStack 自定义 | 11 | `02-Knowledge/skills/` |
 | CodeBuddy 内置 | 6 | CodeBuddy 预装 + `.codebuddy/skills/note-organizer/` |
 | 用户级安装 | 1 | `~/.codebuddy/skills/obsidian/` |
-| **合计** | **17** | — |
+| **合计** | **18** | — |
 
 ---
 
