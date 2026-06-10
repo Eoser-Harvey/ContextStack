@@ -5,6 +5,7 @@
 ## 📁 目录结构
 
 - [[个人职业发展分析-端侧AI企业定制攻略]] - 核心职业发展分析：针对中控技术、移远通信等龙头企业的定制化攻略
+- [[interview-prep-skill|面试准备Skill]] - 输入公司名，自动生成面试准备清单（参考框架中所有面试经验）
 - [[interview-company-analysis/]] - 面试公司分析：目标公司记录与面试复盘（ISHO、思朗科技等）
 - [[interview-project-summaries/]] - 面试项目总结：嵌入式/C++/RTOS/DSP等项目经验汇总
 
