@@ -74,7 +74,8 @@ ContextStack/
 ├── GLOBAL-RULES.md              # 第一层：全局规则
 ├── MEMORY.md                    # 第四层：Memory表格索引
 ├── FRAMEWORK-README.md          # 本文档：框架总览
-├── 01-Projects/                 # 项目工作台（5标准文件/项目）
+├── images/                      # 框架相关图片资源
+├── 01-Projects/                 # 项目工作台（6标准文件/项目）
 │   ├── embedded-ai-learning/
 │   │   ├── WORKSPACE.md         # 工作台入口
 │   │   ├── STATE.md             # 最新状态 ✅⚠️📌❓
@@ -85,19 +86,24 @@ ContextStack/
 │   ├── network-device-debug/
 │   ├── btc-temperature-gauge/
 │   ├── tencent-cloud-training/
+│   ├── wechat-radar/
+│   ├── family-investment/
 │   └── topics/
-├── 02-Knowledge/                # 知识库（原第三层规范文档 + Skills）
+├── 02-Knowledge/                # 知识库
 │   ├── system/
 │   │   ├── methodology/
 │   │   ├── sop/
-│   │   ├── templates/
 │   │   ├── research-frameworks/
 │   │   └── tool-configurations/
-│   ├── career-development/
-│   ├── investment-research/
-│   └── skills/
+│   ├── career-development/      # 职业发展（面试/策略/公司分析）
+│   ├── investment-research/     # 投资研究
+│   ├── skills/                  # 可复用 Skills
+│   └── inbox/                   # 每日收件箱
 ├── 03-Memory/                   # 结构化记忆文件
-│   └── knowledge/
+│   ├── knowledge/               # 知识级记忆
+│   ├── personal/                # 个人备忘
+│   ├── projects/                # 项目级记忆
+│   └── sessions/                # 会话级记忆
 ├── 04-Templates/                # 模板库
 │   ├── project/                 # 项目五文件模板
 │   └── project-rules-template.md
@@ -200,8 +206,8 @@ ContextStack/
 
 **框架版本**: v3.0
 **创建时间**: 2026-04-30
-**最后更新**: 2026-05-23
-**变更**: 目录 v3.0 重构 — 数字前缀一级目录（01~05），统一命名规范（非一级目录全小写），新增 inbox 每日收件箱
+**最后更新**: 2026-06-10
+**变更**: 目录树同步实际结构；补全 wechat-radar/family-investment 项目、images/ 目录；移除已合并的 system/templates/；03-Memory/ 子目录完善
 **设计原则**: 独立于AI助手、分层Context、持久化Memory、工作台驱动
 **文件规范**: 英文目录/文件名，中文文件内容
 **核心价值**: 积累您自己的通用协作框架，提升长期协作效率
@@ -211,10 +217,10 @@ ContextStack/
 | 阶段 | 状态 | 要点 |
 |------|------|------|
 | L1 全局规则 | ✅ 完成 | GLOBAL-RULES.md + Skills rules |
-| L2 项目规则 | ✅ 完成 | 4个项目均有 PROJECT-RULES.md |
+| L2 项目规则 | ✅ 完成 | 6个项目均有 PROJECT-RULES.md |
 | L3 规范文档 | 🔄 充实中 | methodology / SOP / 调研框架已具，待深化 |
 | L4 Memory | ✅ 可用 | MEMORY.md 索引 + 03-Memory/ 结构化记忆 |
-| 工作台系统 | ✅ 运行中 | 4个活跃项目、5标准文件模板 |
+| 工作台系统 | ✅ 运行中 | 6个活跃项目、6标准文件模板 |
 | 模板层 | ✅ 完成 | 04-Templates/ 统一管理所有模板 |
 | 工具链 | ✅ 完备 | 备份自动化 / 编码修复 / Git同步 |
 

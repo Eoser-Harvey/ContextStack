@@ -10,7 +10,8 @@
 | [网络设备调试](./network-device-debug/) | 进行中 | [WORKSPACE.md](./network-device-debug/WORKSPACE.md) |
 | [腾讯云AI编程培训](./tencent-cloud-training/) | 资料整理 | [WORKSPACE.md](./tencent-cloud-training/WORKSPACE.md) |
 | [BTC温度仪表盘](./btc-temperature-gauge/) | 基础完成 | [WORKSPACE.md](./btc-temperature-gauge/WORKSPACE.md) |
-| [WeChat Radar](./wechat-radar/) | 环境就绪 | [README.md](./wechat-radar/README.md) |
+| [WeChat Radar](./wechat-radar/) | 环境就绪 | [WORKSPACE.md](./wechat-radar/WORKSPACE.md) |
+| [家庭投资管理](./family-investment/) | 进行中 | [WORKSPACE.md](./family-investment/WORKSPACE.md) |
 
 ## 项目标准文件结构
 
@@ -35,4 +36,4 @@
 
 ---
 
-**最后更新**: 2026-05-23
+**最后更新**: 2026-06-10

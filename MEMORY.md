@@ -30,10 +30,13 @@
 | **Project** | 网络设备调试 | 工业交换机问题排查（IE4120/IE4300/IE4500） | 01-Projects/network-device-debug | 2026-05-07 |
 | **Project** | 腾讯云AI编程培训 | 培训资料归档 | 01-Projects/tencent-cloud-training | 2026-05-07 |
 | **Project** | BTC温度仪表盘 | 加密货币市场可视化 | 01-Projects/btc-temperature-gauge | 2026-05-07 |
+| **Project** | wechat-radar | AI驱动公众号智能日报，环境就绪 | 01-Projects/wechat-radar | 2026-06-10 |
+| **Project** | family-investment | 家庭投资管理项目 | 01-Projects/family-investment | 2026-06-10 |
 | **Project** | 求职面试-今日宜休ISHO | 面试讨论中，已完成全面匹配度分析 | career-development | 2026-05-29 |
 | **Reference** | S5120V8逻辑寄存器手册 | 硬件参考 | network-device-debug | — |
 | **Reference** | Wireshark 抓包 | 网络分析工具 | network-device-debug | — |
 | **Knowledge** | ContextStack四层架构 | 框架说明 | 全部 | 2026-04-29 |
+| **Knowledge** | 框架审计报告 2026-06-10 | 全量审计：3严重+5中等+3轻微问题，附优先级行动清单 | 全部 | 2026-06-10 |
 | **Knowledge** | 九号公司 FreeRTOS 面经 | 牛客网14题完整答案 | career-development | 2026-06-10 |
 | **Knowledge** | note-organizer Skill | 智能笔记整理，5种类型识别 | 全部 | 2026-05-26 |
 | **Knowledge** | 自主自我改进循环研究 | Hermes Agent四层记忆+三层飞轮 | 全部 | 2026-06-03 |
@@ -117,6 +120,16 @@
 - 状态: 面试讨论中
 - 文件: `02-Knowledge/career-development/interview-company-analysis/MS分析-北京今日宜休科技ISHO-20260529.md`
 
+#### wechat-radar
+- 状态: 环境就绪
+- 描述: AI 驱动微信公众号智能日报
+- 文件: `01-Projects/wechat-radar/`
+
+#### family-investment
+- 状态: 进行中
+- 描述: 家庭投资管理项目
+- 文件: `01-Projects/family-investment/`
+
 ---
 
 ### Reference — 参考资料
@@ -137,10 +150,11 @@
 | 条目 | 说明 | 位置 |
 |------|------|------|
 | ContextStack四层架构 | 框架完整说明 | `03-Memory/knowledge/contextstack-four-layer-framework.md` |
+| 框架审计报告 2026-06-10 | 全量审计：3严重+5中等+3轻微 | `03-Memory/knowledge/framework-audit-2026-06-10.md` |
 | 九号公司 FreeRTOS 面经 | 牛客网14题完整答案 | `career-development/interview-project-summaries/company-interviews/` |
 | note-organizer Skill | 智能笔记整理，5种内容类型识别 | `.codebuddy/skills/note-organizer/` |
 | 自主自我改进循环研究 | Hermes Agent四层记忆+三层飞轮 | `02-Knowledge/inbox/` |
-| CPO产业链投资标的精选 | 光模块/CPO深度研究 | `02-Knowledge/investment-research/` |
+| CPO产业链投资标的精选 | 光模块/CPO深度研究 | `02-Knowledge/inbox/` |
 | 图解Skill—AI提效实战指南 | 宝玉《图解Skill》配套资源 | `02-Knowledge/skills/` |
 | 人生投资自检清单20问 | 定期自检模板 | `02-Knowledge/inbox/` |
 
