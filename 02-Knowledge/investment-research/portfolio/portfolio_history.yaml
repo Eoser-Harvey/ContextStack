@@ -1,46 +1,44 @@
+# 持仓历史最值 + 净资产快照
+# 自动生成: _gen_report_temp.py 每次运行自动更新
+# 手动补充: trades 交易记录
+
 holdings_history:
   btc_onchain:
     name: 比特币(链上)
     all_time_high_price: 66768.36
     all_time_high_date: '2026-06-02'
-    all_time_low_price: 64797.11
-    all_time_low_date: '2026-06-04'
+    all_time_low_price: 61196.9
+    all_time_low_date: '2026-06-11'
   eth_onchain:
     name: 以太坊NFT(链上)
     all_time_high_price: 1862.06
     all_time_high_date: '2026-06-02'
-    all_time_low_price: 1823.35
-    all_time_low_date: '2026-06-04'
+    all_time_low_price: 1610.59
+    all_time_low_date: '2026-06-11'
   btc_binance:
     name: 比特币(币安)
     all_time_high_price: 66768.36
     all_time_high_date: '2026-06-02'
-    all_time_low_price: 64797.11
-    all_time_low_date: '2026-06-04'
+    all_time_low_price: 61196.9
+    all_time_low_date: '2026-06-11'
   eth_binance:
     name: 以太坊(币安)
     all_time_high_price: 1862.06
     all_time_high_date: '2026-06-02'
-    all_time_low_price: 1823.35
-    all_time_low_date: '2026-06-04'
+    all_time_low_price: 1610.59
+    all_time_low_date: '2026-06-11'
   crcl_yan:
     name: Circle(燕蒙古)
     all_time_high_price: 113.07
     all_time_high_date: '2026-06-02'
-    all_time_low_price: 113.07
-    all_time_low_date: '2026-06-02'
-  tsla_yan:
-    name: 特斯拉(燕蒙古)
-    all_time_high_price: 429.72
-    all_time_high_date: '2026-06-02'
-    all_time_low_price: 423.76
-    all_time_low_date: '2026-06-04'
+    all_time_low_price: 78.93
+    all_time_low_date: '2026-06-11'
   crcl_han:
     name: Circle(韩伟蒙古)
     all_time_high_price: 113.07
     all_time_high_date: '2026-06-02'
-    all_time_low_price: 89.8
-    all_time_low_date: '2026-06-04'
+    all_time_low_price: 78.93
+    all_time_low_date: '2026-06-11'
     trades:
     - date: '2026-06-04'
       type: buy
@@ -53,43 +51,49 @@ holdings_history:
     name: Circle(韩伟长桥)
     all_time_high_price: 113.07
     all_time_high_date: '2026-06-02'
-    all_time_low_price: 113.07
-    all_time_low_date: '2026-06-02'
+    all_time_low_price: 78.93
+    all_time_low_date: '2026-06-11'
   crcl_hst:
     name: Circle(华盛通)
     all_time_high_price: 113.07
     all_time_high_date: '2026-06-02'
-    all_time_low_price: 113.07
-    all_time_low_date: '2026-06-02'
+    all_time_low_price: 78.93
+    all_time_low_date: '2026-06-11'
   crcl_hf:
     name: Circle(韩芳)
     all_time_high_price: 113.07
     all_time_high_date: '2026-06-02'
-    all_time_low_price: 113.07
-    all_time_low_date: '2026-06-02'
+    all_time_low_price: 78.93
+    all_time_low_date: '2026-06-11'
+  mrvl_han:
+    name: 迈威尔(币安)
+    all_time_high_price: 291.0
+    all_time_high_date: '2026-06-05'
+    all_time_low_price: 252.59
+    all_time_low_date: '2026-06-11'
   bitgo:
     name: BitGo(韩伟长桥)
     all_time_high_price: 6.04
     all_time_high_date: '2026-06-02'
-    all_time_low_price: 6.04
-    all_time_low_date: '2026-06-02'
-  robot_etf:
-    name: 机器人ETF
-    all_time_high_price: 0.16
-    all_time_high_date: '2026-06-04'
-    all_time_low_price: 0.16
-    all_time_low_date: '2026-06-02'
+    all_time_low_price: 5.12
+    all_time_low_date: '2026-06-11'
   xiaomi_ht:
     name: 小米集团(港股通)
-    all_time_high_price: 3.65
+    all_time_high_price_hkd: 28.58
     all_time_high_date: '2026-06-02'
-    all_time_low_price: 3.65
-    all_time_low_date: '2026-06-02'
+    all_time_low_price_hkd: 26.32
+    all_time_low_date: '2026-06-11'
+  ubt_ht:
+    name: 优必选(港股通)
+    all_time_high_price_hkd: 112.4
+    all_time_high_date: '2026-06-11'
+    all_time_low_price_hkd: 112.4
+    all_time_low_date: '2026-06-11'
   ts_xiaoan:
     name: 小安时间
-    all_time_high_price: 0.02
-    all_time_high_date: '2026-06-04'
-    all_time_low_price: 0.02
+    all_time_high_price: 0.02156
+    all_time_high_date: '2026-06-02'
+    all_time_low_price: 0.02156
     all_time_low_date: '2026-06-02'
   ts_wufan:
     name: 午饭老师时间
@@ -100,5 +104,11 @@ holdings_history:
 net_worth_snapshots:
 - date: '2026-06-02'
   net_worth_cny: 1361859.46
+  total_assets_cny: 1857865.69
 - date: '2026-06-04'
   net_worth_cny: 1357498.97
+  total_assets_cny: 1852826.68
+- date: '2026-06-11'
+  net_worth_cny: 1140281
+  total_assets_cny: 1540281
+  note: BTC↓5.3% ETH↓11.4% CRCL↓30.2%(数据源切换至Sina实时价); 清仓机器人ETF换仓优必选; 币安借贷已还清

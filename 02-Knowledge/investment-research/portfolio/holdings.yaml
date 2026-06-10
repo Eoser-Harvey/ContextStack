@@ -5,9 +5,9 @@
 #   manual        = 预IPO代币/小众平台, 需手动更新当月价格
 
 meta:
-  last_updated: "2026-06-05"
-  usd_cny: 7.114
-  hkd_cny: 0.909
+  last_updated: "2026-06-11"
+  usd_cny: 6.790
+  hkd_cny: 0.866
 
 # ============================================================
 # 投资持仓 (每个标的必须含: quantity, cost_basis, price_source)
@@ -69,9 +69,8 @@ holdings:
     cost_is_total: true
     category: us_stock_tokenized
     storage: 燕蒙古WEB3
-    price_source: manual
-    manual_price_usd: 113.07
-    manual_price_date: "2026-05-31"
+    price_source: sina
+    sina_symbol: "gb_crcl"
     note: 原169.3股均价$63.20; 06-02换仓买入+26.02股; 06-05卖TSLA买CRCL+12.14股@$83, 新均价$68.69/股
 
   - id: mrvl_han
@@ -81,9 +80,20 @@ holdings:
     cost_basis_usd: 291.00
     category: us_stock
     storage: 韩伟蒙古币安
-    price_source: yahoo
-    yahoo_symbol: MRVL
+    price_source: sina
+    sina_symbol: "gb_mrvl"
     note: 2026-06-05现金买入2000USDT, 约$291/股, 数量待确认
+
+  - id: nok_han
+    symbol: NOK
+    name: 诺基亚(币安)
+    quantity: 134.41
+    cost_basis_usd: 14.88
+    category: us_stock
+    storage: 韩伟蒙古币安
+    price_source: sina
+    sina_symbol: "gb_nok"
+    note: 2026-06-11 情绪追高买入(英伟达+诺基亚合作传闻), 主观认为非理性操作, 计划择机清仓
 
   # ── 链上证券 · 韩伟蒙古WEB3 ──
   # 成本计算: 总CRCL 480股(含代持60), 总盈利22750U, 代持成本83U
@@ -96,9 +106,8 @@ holdings:
     cost_is_total: true
     category: us_stock_tokenized
     storage: 韩伟蒙古WEB3
-    price_source: manual
-    manual_price_usd: 113.07
-    manual_price_date: "2026-05-31"
+    price_source: sina
+    sina_symbol: "gb_crcl"
     note: 成本均价$63.20/股; 2026-06-02用TSLA卖出资金买入12.68股@$99.13; 2026-06-04用BTC卖出资金买入17.55股@$89.80
 
   # ── 美股 · HK券商 ──
@@ -109,9 +118,8 @@ holdings:
     cost_basis_usd: 63.20
     category: us_stock
     storage: 韩伟长桥证券
-    price_source: manual
-    manual_price_usd: 113.07
-    manual_price_date: "2026-05-31"
+    price_source: sina
+    sina_symbol: "gb_crcl"
     note: 成本均价$63.20/股
 
   - id: crcl_hst
@@ -121,9 +129,8 @@ holdings:
     cost_basis_usd: 63.20
     category: us_stock
     storage: 华盛通证券
-    price_source: manual
-    manual_price_usd: 113.07
-    manual_price_date: "2026-05-31"
+    price_source: sina
+    sina_symbol: "gb_crcl"
     note: 成本均价$63.20/股
 
   - id: crcl_hf
@@ -133,9 +140,8 @@ holdings:
     cost_basis_usd: 63.20
     category: us_stock
     storage: 韩芳证券账户
-    price_source: manual
-    manual_price_usd: 113.07
-    manual_price_date: "2026-05-31"
+    price_source: sina
+    sina_symbol: "gb_crcl"
     note: 成本均价$63.20/股
 
   - id: bitgo
@@ -145,21 +151,23 @@ holdings:
     cost_basis_usd: 18.00
     category: us_stock
     storage: 韩伟长桥证券
-    price_source: manual
-    manual_price_usd: 6.04
-    manual_price_date: "2026-05-29"
+    price_source: sina
+    sina_symbol: "gb_btgo"
     note: ⚠️垃圾股, 后续有机会清仓, IPO价$18/股
 
-  # ── A股 · 东方财富 ──
-  - id: robot_etf
-    symbol: "159770.SZ"
-    name: 机器人ETF
-    quantity: 4000
-    cost_basis_cny: 1.068
-    category: a_stock
-    storage: 东方财富
-    price_source: yahoo
-    yahoo_symbol: "159770.SZ"
+  # ── A股/港股 · 东方财富 ──
+  # robot_etf 2026-06-11 全部清仓卖出 ¥1.203, 换仓至 优必选
+
+  - id: ubt_ht
+    symbol: "9880.HK"
+    name: 优必选(港股通)
+    quantity: 50
+    cost_basis_hkd: 109.00
+    category: hk_stock
+    storage: 东方财富港股通
+    price_source: sina
+    sina_symbol: "hk09880"
+    note: 2026-06-11 卖出机器人ETF换仓买入, 看好港股AI机器人龙头
 
   - id: xiaomi_ht
     symbol: "1810.HK"
@@ -247,8 +255,8 @@ cash:
     amount_hkd: 146060
     note: 含13W家庭内部调配, 其余为打新盈利
   - name: 币安USDT余额
-    amount_usd: 14200
-    note: 2026-06-02 MA120策略卖出ETH($13,992)+BTC($23,166)所得; 2026-06-04用$1,576买入CRCL; 2026-06-05用$2,000买入MRVL; 2026-06-05还清币安借贷$13,400; 2026-06-05抄底买入BTC 0.03409个@$61600($2,100)
+    amount_usd: 10500
+    note: 2026-06-02 MA120策略卖出ETH($13,992)+BTC($23,166)所得; 2026-06-04用$1,576买入CRCL; 2026-06-05用$2,000买入MRVL; 2026-06-05还清币安借贷$13,400; 2026-06-05抄底买入BTC 0.03409个@$61600($2,100); 2026-06-11买入NOK $2,000
 
 # ============================================================
 # 固定资产
