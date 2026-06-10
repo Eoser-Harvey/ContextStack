@@ -1,8 +1,9 @@
 """家庭资产报告生成 — 自动拉取价格版
 数据源: Gate.io(BTC/ETH) + Sina(HK/A股) + Exchangerate(汇率)
 用法: python _gen_report_temp.py
+联动: 每次运行自动同步 月度报告+年度报告+portfolio_history+holdings+index
 """
-import requests, json, time, yaml, io
+import requests, json, time, yaml, io, re
 from pathlib import Path
 from datetime import datetime
 
@@ -361,10 +362,18 @@ print(f"   总资产: ¥{total_assets:,.0f}  |  投资资产: ¥{investment_tota
 print(f"   vs 上期: 净资产 {nw_sign}¥{nw_delta:,.0f} ({nw_sign}{nw_delta/prev_net_worth*100:.1f}%)")
 
 # ============================================================
-# 5. 联动同步: 自动更新关联文档
+# 5. 联动同步: 自动更新所有关联文档
 # ============================================================
 BASE = Path("e:/ProjectGroup/AI/ContextStack/02-Knowledge/investment-research/portfolio")
 today = datetime.now().strftime("%Y-%m-%d")
+today_display = datetime.now().strftime("%Y年%m月%d日")
+
+def chg_str_num(cur, prev):
+    """涨跌字符串"""
+    if prev is None or prev == 0: return "新持仓"
+    chg = (cur - prev) / prev * 100
+    sign = "+" if chg >= 0 else ""
+    return f"{sign}{chg:.1f}%"
 
 # ── 5a. 同步 holdings.yaml meta ──
 hy_path = BASE / "holdings.yaml"
@@ -392,13 +401,12 @@ if ph_path.exists():
         ph = {}
     hh = ph.get("holdings_history", {})
 
-    # 更新价格最值
     pid_map = {
         "btc_onchain": "BTC", "btc_binance": "BTC",
         "eth_onchain": "ETH", "eth_binance": "ETH",
         "crcl_yan": "CRCL", "crcl_han": "CRCL", "crcl_cb": "CRCL",
         "crcl_hst": "CRCL", "crcl_hf": "CRCL",
-        "mrvl_han": "MRVL", "bitgo": "BTGO",
+        "mrvl_han": "MRVL", "bitgo": "BTGO", "nok_han": "NOK",
         "xiaomi_ht": "XIAOMI", "ubt_ht": "UBT",
         "ts_xiaoan": "XIAOAN", "ts_wufan": "WUFAN",
     }
@@ -422,7 +430,6 @@ if ph_path.exists():
             entry[low_key] = round(price, 2)
             entry["all_time_low_date"] = today
 
-    # 更新净资产快照
     snaps = ph.get("net_worth_snapshots", [])
     existing = next((s for s in snaps if s.get("date") == today), None)
     snapshot = {
@@ -438,7 +445,6 @@ if ph_path.exists():
     ph["holdings_history"] = hh
     ph["net_worth_snapshots"] = snaps
 
-    # 写回 (保留注释头)
     buf = io.StringIO()
     yaml.dump(ph, buf, default_flow_style=False, allow_unicode=True, sort_keys=False)
     ph_path.write_text(
@@ -450,13 +456,162 @@ if ph_path.exists():
     )
     print(f"🔄 已同步 portfolio_history.yaml (价格最值+净资产快照)")
 
-# ── 5c. 联动检查清单 ──
-print(f"""
-{'='*60}
-📋 联动检查清单 — 请确认以下文件是否需要同步:
-  [✓] holdings.yaml meta (汇率+日期) — 已自动
-  [✓] portfolio_history.yaml (最值+快照) — 已自动
-  [ ] trade_log.md — 本期如有交易，需手动更新
-  [ ] 家庭资产年度报告-2026.md — 走势表/仓位分析 需手动刷新
-  [ ] index.md — 如有新增报告需更新
-{'='*60}""")
+# ── 5c. 同步 年度报告 ──
+annual_path = BASE / "reports/家庭资产年度报告-2026.md"
+if annual_path.exists():
+    annual = annual_path.read_text(encoding="utf-8")
+
+    # --- 更新报告头 (日期+汇率) ---
+    annual = re.sub(
+        r"> 🤖 自动生成 · .*?\n",
+        f"> 🤖 自动生成 · {today}\n",
+        annual
+    )
+    annual = re.sub(
+        r"> 💱 参考汇率:.*?\n",
+        f"> 💱 参考汇率: USD/CNY={uc:.4f}  HKD/CNY={hc:.4f}\n",
+        annual
+    )
+
+    # --- 5c1. 净资产走势 ---
+    # 从 portfolio_history.yaml 读取全部快照
+    snaps_sorted = sorted(snaps, key=lambda s: s["date"])
+    nw_lines = ["<!-- AUTO_SYNC_START:net_worth -->",
+                "| 日期 | 净资产(CNY) | 月度环比 |",
+                "|------|------------|---------|"]
+    prev = None
+    for s in snaps_sorted:
+        cur_nw = round(s["net_worth_cny"])
+        if prev is None:
+            chg = ""
+        else:
+            delta = cur_nw - prev
+            sign = "+" if delta >= 0 else ""
+            pct = delta/prev*100
+            chg = f"{sign}¥{delta:,.0f} ({sign}{pct:.1f}%)"
+        nw_lines.append(f"| {s['date']} | ¥{cur_nw:,} | {chg} |")
+        prev = cur_nw
+    nw_lines.append("<!-- AUTO_SYNC_END:net_worth -->")
+    annual = re.sub(
+        r"<!-- AUTO_SYNC_START:net_worth -->.*?<!-- AUTO_SYNC_END:net_worth -->",
+        "\n".join(nw_lines),
+        annual, flags=re.DOTALL
+    )
+
+    # --- 5c2. 年度汇总 ---
+    first_nw = round(snaps_sorted[0]["net_worth_cny"])
+    latest_nw = round(snaps_sorted[-1]["net_worth_cny"])
+    delta_annual = latest_nw - first_nw
+    sign_annual = "+" if delta_annual >= 0 else ""
+    pct_annual = delta_annual / first_nw * 100
+    summary_lines = [
+        "<!-- AUTO_SYNC_START:summary -->",
+        f"- **2026年初净值**: ¥{first_nw:,}",
+        f"- **截至{today_display}净值**: ¥{latest_nw:,}",
+        f"- **年度变动**: ¥{delta_annual:,} ({sign_annual}{pct_annual:.1f}%)",
+        f"- **月度记录**: {len(snaps_sorted)} 个快照",
+        "<!-- AUTO_SYNC_END:summary -->",
+    ]
+    annual = re.sub(
+        r"<!-- AUTO_SYNC_START:summary -->.*?<!-- AUTO_SYNC_END:summary -->",
+        "\n".join(summary_lines),
+        annual, flags=re.DOTALL
+    )
+
+    # --- 5c3. 资产历史最值 ---
+    price_holdings = [
+        ("比特币(链上)", "btc_onchain", "usd"),
+        ("以太坊NFT(链上)", "eth_onchain", "usd"),
+        ("比特币(币安)", "btc_binance", "usd"),
+        ("以太坊(币安)", "eth_binance", "usd"),
+        ("Circle(燕蒙古)", "crcl_yan", "usd"),
+        ("Circle(韩伟蒙古)", "crcl_han", "usd"),
+        ("Circle(韩伟长桥)", "crcl_cb", "usd"),
+        ("Circle(华盛通)", "crcl_hst", "usd"),
+        ("Circle(韩芳)", "crcl_hf", "usd"),
+        ("迈威尔(币安)", "mrvl_han", "usd"),
+        ("诺基亚(币安)", "nok_han", "usd"),
+        ("BitGo(韩伟长桥)", "bitgo", "usd"),
+        ("小米集团(港股通)", "xiaomi_ht", "hkd"),
+        ("优必选(港股通)", "ubt_ht", "hkd"),
+        ("小安时间", "ts_xiaoan", "usd"),
+        ("午饭老师时间", "ts_wufan", "usd"),
+    ]
+    ph_lines = ["<!-- AUTO_SYNC_START:price_highlights -->",
+                "| 标的 | 年内最高 | 最高日期 | 年内最低 | 最低日期 |",
+                "|------|---------|---------|---------|---------|"]
+    for label, pid, currency in price_holdings:
+        entry = hh.get(pid, {})
+        if currency == "hkd":
+            hk = f"all_time_high_price_hkd"; lk = f"all_time_low_price_hkd"
+            pf = "HK${:,.2f}"
+        else:
+            hk = "all_time_high_price"; lk = "all_time_low_price"
+            pf = "${:,.2f}"
+        hi = entry.get(hk)
+        lo = entry.get(lk)
+        hi_date = entry.get("all_time_high_date", today) if hi else "-"
+        lo_date = entry.get("all_time_low_date", today) if lo else "-"
+        hi_s = pf.format(hi) if hi else "-"
+        lo_s = pf.format(lo) if lo else "-"
+        ph_lines.append(f"| {label} | {hi_s} | {hi_date} | {lo_s} | {lo_date} |")
+    ph_lines.append("<!-- AUTO_SYNC_END:price_highlights -->")
+    annual = re.sub(
+        r"<!-- AUTO_SYNC_START:price_highlights -->.*?<!-- AUTO_SYNC_END:price_highlights -->",
+        "\n".join(ph_lines),
+        annual, flags=re.DOTALL
+    )
+
+    # --- 5c4. 仓位结构 ---
+    crypto_val = cat_sum.get("crypto", 0)
+    us_stock_tokenized = cat_sum.get("us_stock_tokenized", 0)
+    us_stock_val = cat_sum.get("us_stock", 0)
+    hk_stock_val = cat_sum.get("hk_stock", 0)
+    ts_val = cat_sum.get("ts_time_token", 0)
+    lev_pct = liab_total / net_worth * 100 if net_worth else 0
+    total_with_house = total_assets + 3_200_000
+
+    alloc_lines = [
+        "<!-- AUTO_SYNC_START:allocation -->",
+        f"- **加密货币(BTC/ETH)**: ¥{crypto_val:,.0f}，占投资资产 {crypto_val/investment_total*100:.1f}%，占总投资 {crypto_val/total_assets*100:.1f}%",
+        f"- **美股(链上CRCL)**: ¥{us_stock_tokenized:,.0f}，占投资资产 {us_stock_tokenized/investment_total*100:.1f}%，占总投资 {us_stock_tokenized/total_assets*100:.1f}%",
+        f"- **美股(传统)**: ¥{us_stock_val:,.0f}，占投资资产 {us_stock_val/investment_total*100:.1f}%，占总投资 {us_stock_val/total_assets*100:.1f}%",
+        f"- **港股(小米+优必选+诺基亚)**: ¥{hk_stock_val+PRICES.get('NOK',0)*0:,.0f}，占投资资产 {hk_stock_val/investment_total*100:.1f}%，占总投资 {hk_stock_val/total_assets*100:.1f}%",
+        f"- **TS时间代币**: ¥{ts_val:,.0f}，占投资资产 {ts_val/investment_total*100:.1f}%，占总投资 {ts_val/total_assets*100:.1f}%",
+        f"- **现金固收**: ¥{cash_total:,.0f}，占总投资 {cash_total/total_assets*100:.1f}%",
+        f"- **杠杆率**: 投资负债¥{liab_total:,} / 净资产¥{net_worth:,.0f} = {lev_pct:.1f}%",
+        f"- **家庭总资产(含房产¥320W)**: ¥{total_with_house:,}",
+        "<!-- AUTO_SYNC_END:allocation -->",
+    ]
+    annual = re.sub(
+        r"<!-- AUTO_SYNC_START:allocation -->.*?<!-- AUTO_SYNC_END:allocation -->",
+        "\n".join(alloc_lines),
+        annual, flags=re.DOTALL
+    )
+
+    annual_path.write_text(annual, encoding="utf-8")
+    print(f"🔄 已同步 家庭资产年度报告-2026.md (4个数据节)")
+
+# ── 5d. 同步 index.md ──
+idx_path = BASE / "index.md"
+if idx_path.exists():
+    idx = idx_path.read_text(encoding="utf-8")
+    idx = re.sub(
+        r"（自动拉取.*?每次运行同步更新.*?）",
+        f"（自动拉取 Gate.io + Sina + Exchangerate，每次运行同步更新：月度报告、年度报告、portfolio_history.yaml、holdings.yaml meta，最后更新 {today}）",
+        idx
+    )
+    idx_path.write_text(idx, encoding="utf-8")
+    print(f"🔄 已同步 index.md (更新同步说明)")
+
+# ── 联动检查清单 ──
+print(f"\n{'='*60}")
+print(f"📋 同步结果总览:")
+print(f"  [✓] 月度报告 — {OUT.name}")
+print(f"  [✓] holdings.yaml meta (汇率+日期)")
+print(f"  [✓] portfolio_history.yaml (价格最值+净资产快照)")
+print(f"  [✓] 年度报告 (净资产走势+年度汇总+资产最值+仓位结构)")
+print(f"  [✓] index.md (同步说明)")
+print(f"  ⚠️  trade_log.md — 本期如有交易，需手动记录")
+print(f"  ⚠️  年度报告叙事文本(复盘/建议/行动清单) — 需人工审阅")
+print(f"{'='*60}")

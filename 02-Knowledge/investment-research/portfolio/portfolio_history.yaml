@@ -101,6 +101,12 @@ holdings_history:
     all_time_high_date: '2026-06-02'
     all_time_low_price: 2.91
     all_time_low_date: '2026-06-02'
+  nok_han:
+    name: nok_han
+    all_time_high_price: 13.4
+    all_time_high_date: '2026-06-11'
+    all_time_low_price: 13.4
+    all_time_low_date: '2026-06-11'
 net_worth_snapshots:
 - date: '2026-06-02'
   net_worth_cny: 1361859.46
@@ -109,6 +115,6 @@ net_worth_snapshots:
   net_worth_cny: 1357498.97
   total_assets_cny: 1852826.68
 - date: '2026-06-11'
-  net_worth_cny: 1140281
-  total_assets_cny: 1540281
+  net_worth_cny: 1141741
+  total_assets_cny: 1541741
   note: BTC↓5.3% ETH↓11.4% CRCL↓30.2%(数据源切换至Sina实时价); 清仓机器人ETF换仓优必选; 币安借贷已还清
