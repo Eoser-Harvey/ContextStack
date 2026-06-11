@@ -19,5 +19,5 @@
 
 ## 关联资源
 
-- **报告生成器**：[[../../../05-Tools/portfolio-tracker/_gen_report_temp.py|_gen_report_temp.py]]（自动拉取 Gate.io + Sina + Exchangerate，每次运行同步更新：月度报告、年度报告、portfolio_history.yaml、holdings.yaml meta，最后更新 2026-06-11）
+- **报告生成器**：[[../../../05-Tools/portfolio-tracker/_gen_report_temp.py|_gen_report_temp.py]]（自动拉取 holdings.yaml + Gate.io + Sina + Exchangerate，每次运行同步更新：月度报告+年度报告+A8计划+portfolio_history+index，最后更新 2026-06-11）
 - **项目工作台**：[[../../../01-Projects/family-investment/WORKSPACE.md|family-investment]]

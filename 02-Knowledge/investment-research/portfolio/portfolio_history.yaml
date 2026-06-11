@@ -1,5 +1,5 @@
 # 持仓历史最值 + 净资产快照
-# 自动生成: _gen_report_temp.py 每次运行自动更新
+# 自动生成: _gen_report_v2.py 每次运行自动更新
 # 手动补充: trades 交易记录
 
 holdings_history:
@@ -115,6 +115,6 @@ net_worth_snapshots:
   net_worth_cny: 1357498.97
   total_assets_cny: 1852826.68
 - date: '2026-06-11'
-  net_worth_cny: 1141741
-  total_assets_cny: 1541741
+  net_worth_cny: 1141766
+  total_assets_cny: 1541766
   note: BTC↓5.3% ETH↓11.4% CRCL↓30.2%(数据源切换至Sina实时价); 清仓机器人ETF换仓优必选; 币安借贷已还清
