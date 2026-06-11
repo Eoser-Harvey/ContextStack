@@ -13,7 +13,7 @@ if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8")
     sys.stderr.reconfigure(encoding="utf-8")
 
-BASE = Path("e:/ProjectGroup/AI/ContextStack/01-Projects/family-investment/investment-research/portfolio")
+BASE = Path("e:/ProjectGroup/AI/ContextStack/01-Projects/family-investment/research/portfolio")
 HY_PATH = BASE / "holdings.yaml"
 OUT = BASE / "reports/家庭资产报告-2026-06.md"
 A8_PATH = BASE / "reports/Crypto-A8计划-2026至2028.md"

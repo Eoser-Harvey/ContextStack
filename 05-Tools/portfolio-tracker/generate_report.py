@@ -36,7 +36,7 @@ from collections import defaultdict
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parent.parent  # ContextStack root
-PORTFOLIO_DIR = REPO_ROOT / "02-Knowledge" / "investment-research" / "portfolio"
+PORTFOLIO_DIR = REPO_ROOT / "01-Projects" / "family-investment" / "research" / "portfolio"
 DEFAULT_HOLDINGS = PORTFOLIO_DIR / "holdings.yaml"
 DEFAULT_HISTORY = PORTFOLIO_DIR / "portfolio_history.yaml"
 DEFAULT_OUTPUT_DIR = PORTFOLIO_DIR / "reports"

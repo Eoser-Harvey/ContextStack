@@ -126,7 +126,7 @@ Switch Topics        Load Workbench            Update Status
 | 目录 | 用途 |
 |------|------|
 | `01-Projects/` | 项目工作台（五文件 + topics/tasks/history） |
-| `02-Knowledge/` | 知识库（skills / system / career-development / investment-research / inbox） |
+| `02-Knowledge/` | 知识库（skills / system / career-development / inbox） |
 | `03-Memory/` | 结构化记忆文件 |
 | `04-Templates/` | 模板库（project / task / topic） |
 | `05-Tools/` | 维护工具（backup / encoding / vscode-config） |

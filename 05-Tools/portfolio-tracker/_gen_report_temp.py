@@ -7,7 +7,7 @@ import requests, json, time, yaml, io, re
 from pathlib import Path
 from datetime import datetime
 
-OUT = Path("e:/ProjectGroup/AI/ContextStack/01-Projects/family-investment/investment-research/portfolio/reports/家庭资产报告-2026-06.md")
+OUT = Path("e:/ProjectGroup/AI/ContextStack/01-Projects/family-investment/research/portfolio/reports/家庭资产报告-2026-06.md")
 
 # ============================================================
 # 1. 自动拉取价格
@@ -364,7 +364,7 @@ print(f"   vs 上期: 净资产 {nw_sign}¥{nw_delta:,.0f} ({nw_sign}{nw_delta/p
 # ============================================================
 # 5. 联动同步: 自动更新所有关联文档
 # ============================================================
-BASE = Path("e:/ProjectGroup/AI/ContextStack/01-Projects/family-investment/investment-research/portfolio")
+BASE = Path("e:/ProjectGroup/AI/ContextStack/01-Projects/family-investment/research/portfolio")
 today = datetime.now().strftime("%Y-%m-%d")
 today_display = datetime.now().strftime("%Y年%m月%d日")
 

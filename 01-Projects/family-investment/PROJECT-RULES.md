@@ -12,7 +12,7 @@
    ACTIONS.md                     # 任务清单
    CONTEXT.md                     # 稳定上下文
    REFERENCES.md                  # 参考资料
-   investment-research/           # 投资研究资料 (含敏感数据)
+   research/                      # 投资研究资料 (含敏感数据)
       portfolio/                  # 持仓追踪
          holdings.yaml            # 持仓数据
          portfolio_history.yaml   # 历史追踪
@@ -25,7 +25,7 @@
 
 ## 敏感数据红线
 - 持仓数据 (`holdings.yaml`, `portfolio_history.yaml`, `reports/`)
-  位于 `investment-research/portfolio/`，已在 .gitignore 中忽略
+  位于 `research/portfolio/`，已在 .gitignore 中忽略
 - 工具脚本 (`generate_report.py`) 不含敏感数据，可安全提交
 
 ## 数据来源
