@@ -131,28 +131,33 @@
 
 | 优先级 | 行动 | 预估耗时 |
 |:--:|------|:--:|
-| P0 | 为缺失的 5 个 Skill 补全使用说明 | 中等 |
-| P0 | 为 wechat-radar 创建框架六标准文件 | 快 |
-| P1 | 补全 10 个缺失的 index.md | 快 |
-| P1 | 更新 MEMORY.md 补充缺失项目条目 | 快 |
-| P1 | 执行 inbox 归档清理 | 中等 |
-| P2 | 修正 MEMORY.md 中位置标注不准确的条目 | 快 |
-| P2 | 处理 images/ 目录归属 | 快 |
-| P2 | 更新 FRAMEWORK-README.md 目录树 | 快 |
-| P3 | 清理 04-Templates/ 旧模板重复 | 快 |
-| P3 | 统一中文文件名（或建立对照表） | 需讨论 |
+| P0 | 为缺失的 5 个 Skill 补全使用说明 | 中等 | ✅ 已修复 (2026-06-11) |
+| P0 | 为 wechat-radar 创建框架六标准文件 | 快 | ✅ 已修复 (2026-06-10) |
+| P1 | 补全 10 个缺失的 index.md | 快 | ✅ 已修复 (2026-06-10) |
+| P1 | 更新 MEMORY.md 补充缺失项目条目 | 快 | ✅ 已修复 (2026-06-10) |
+| P1 | 执行 inbox 归档清理 | 中等 | ✅ 已修复 (2026-06-11) |
+| P2 | 修正 MEMORY.md 中位置标注不准确的条目 | 快 | ✅ 已修复 (2026-06-10) |
+| P2 | 处理 images/ 目录归属 | 快 | ✅ 已修复 (2026-06-10) |
+| P2 | 更新 FRAMEWORK-README.md 目录树 | 快 | ✅ 已修复 (2026-06-10) |
+| P3 | 清理 04-Templates/ 旧模板重复 | 快 | ✅ 已修复 (2026-06-10) |
+| P3 | 统一中文文件名（或建立对照表） | 需讨论 | 保持现状 |
 
 ---
 
-## 五、已修复（2026-06-10 当天）
+## 五、已修复（2026-06-10 ~ 2026-06-11）
 
+### 2026-06-10
 | 问题 | 操作 |
 |------|------|
 | ✅ 10个目录缺失 index.md | 批量创建完成 |
-| ✅ wechat-radar 零标准文件 | 创建六标准文件（WORKSPACE/STATE/ACTIONS/CONTEXT/REFERENCES/PROJECT-RULES） |
-| ✅ MEMORY.md 缺失 family-investment / wechat-radar | 已补充索引总表 + 项目详情 |
-| ✅ MEMORY.md CPO位置标注错误 | 已修正为 `02-Knowledge/inbox/` |
-| ✅ FRAMEWORK-README.md 目录树过时 | 已同步实际结构（移除 templates/、新增项目/子目录） |
-| ✅ images/ 目录归属 | 已加入框架目录树 + 创建 index.md |
-| ✅ 04-Templates/ 旧模板检查 | 已确认无残留 |
-| ✅ 01-Projects/index.md | 已新增缺失项目、修正 wechat-radar 入口 |
+| ✅ wechat-radar 零标准文件 | 创建六标准文件 |
+| ✅ MEMORY.md 缺失项目/位置错误 | 补充 + 修正 |
+| ✅ FRAMEWORK-README.md 目录树过时 | 同步实际结构 |
+| ✅ images/ 目录归属 + 04-Templates 检查 | 已纳入框架 |
+
+### 2026-06-11
+| 问题 | 操作 |
+|------|------|
+| ✅ 4个 Skill 缺使用说明 | 重命名 guide → 使用说明.md |
+| ✅ inbox 8条未归档 | 登记到 archive-log.md + 删除冗余 inbox.md |
+| ✅ P3 中文文件名 | 保持现状（面试类文件中文名更实用） |

@@ -148,3 +148,50 @@
 - **作者**: MaynorAI
 - **整理产物**: `../codex-beginner-tutorial-maynorai.md`
 - **概要**: Codex 入门完整教程，覆盖：什么是 Codex（GPT-5.5 vs GPT-5.3-codex）、三种获取方式（官网/第三方中转/cc-switch）、核心概念 Threads（文件夹+Thread 两层结构）、项目文件夹管理建议、定时任务功能。强调 Codex 是"能围绕任务持续推进的 Agent"而非只会聊天的 AI
+
+### 2026-05-26: AI红利来了，普通人怎么真正上车？
+- **来源**: 微信公众号 @gozonghui
+- **整理产物**: `../ai-red-benefit-for-everyone-20260526.md`
+
+### 2026-06-03: 自主自我改进循环研究
+- **来源**: 金马小记 + 网络资料整合
+- **整理产物**: `../autonomous-self-improving-loops-research.md`
+- **概要**: Hermes Agent四层记忆+三层飞轮、Self-Improving Coding Agents 递归进化研究
+
+### 2026-06-05: 图解Skill—AI提效实战指南
+- **来源**: https://github.com/JimLiu/Illustrated-Agent-Skills
+- **作者**: 宝玉（JimLiu）
+- **整理产物**: `../illustrated-agent-skills-book.md`
+
+### 2026-05-28: Ruflo README（原始）
+- **来源**: https://github.com/ruvnet/ruflo
+- **整理产物**: `../ruflo_readme.md`
+
+### 2026-05-28: Ruflo多智能体编排平台
+- **来源**: https://github.com/ruvnet/ruflo
+- **整理产物**: `../ruflo-agent-orchestration-platform.md`
+
+---
+
+## 投资理财
+
+### 2026-06-04: CPO产业链深度研究
+- **来源**: https://mp.weixin.qq.com/s/3YSbpq3fXG1luXtL9O8pCQ
+- **作者**: 小饼/潮向研究
+- **整理产物**: `../cpo-industry-investment-guide.md`
+
+---
+
+## 个人成长
+
+### 2026-06-05: 人生投资自检清单20问
+- **来源**: 投资/生活哲学分享
+- **整理产物**: `../life-philosophy-20-questions.md`
+
+---
+
+## 生活/教育
+
+### 2026-06-05: 非京籍孩子升学路径全解析
+- **来源**: 《从小规划升学》+ 网络资料整合
+- **整理产物**: `../non-beijing-resident-education-paths.md`
