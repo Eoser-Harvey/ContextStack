@@ -95,7 +95,6 @@ ContextStack/
 │   │   ├── research-frameworks/
 │   │   └── tool-configurations/
 │   ├── career-development/      # 职业发展（面试/策略/公司分析）
-│   ├── investment-research/     # 投资研究
 │   ├── skills/                  # 可复用 Skills
 │   └── inbox/                   # 每日收件箱
 ├── 03-Memory/                   # 结构化记忆文件

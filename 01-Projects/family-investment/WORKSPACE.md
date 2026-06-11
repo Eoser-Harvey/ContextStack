@@ -12,5 +12,5 @@
 | [PROJECT-RULES.md](PROJECT-RULES.md) | 项目规则(L2) |
 
 ## 关联路径
-- 持仓数据(敏感): `02-Knowledge/investment-research/portfolio/`
+- 持仓数据(敏感): `investment-research/portfolio/`
 - 工具脚本: `05-Tools/portfolio-tracker/generate_report.py`

@@ -8,7 +8,6 @@ ContextStack 的知识管理中心，存放规范文档、技能模块和知识�
 |------|------|
 | [system/](./system/) | 系统规范文档 — 方法论、SOP、模板、调研框架、工具配置 |
 | [skills/](./skills/) | 可复用技能模块 |
-| [investment-research/](./investment-research/) | 投资研究知识库 |
 | [career-development/](./career-development/) | 职业发展知识库 |
 | [inbox/](./inbox/) | 每日收件箱 — 未消化内容暂存区 |
 
