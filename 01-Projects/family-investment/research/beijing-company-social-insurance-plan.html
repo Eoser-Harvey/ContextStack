@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>beijing-company-social-insurance-plan</title>
+
+<style>
+  @page { margin: 1.5cm 2cm; size: A4; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+    font-size: 14px; line-height: 1.8; color: #333;
+    max-width: 800px; margin: 0 auto; padding: 20px;
+  }
+  h1 { font-size: 26px; border-bottom: 2px solid #1a73e8; padding-bottom: 8px; margin-top: 0; color: #1a73e8; }
+  h2 { font-size: 20px; margin-top: 30px; color: #222; border-left: 4px solid #1a73e8; padding-left: 12px; }
+  h3 { font-size: 17px; margin-top: 24px; color: #444; }
+  h4 { font-size: 15px; margin-top: 20px; color: #555; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+  th { background: #1a73e8; color: white; padding: 8px 10px; text-align: left; font-weight: 600; }
+  td { padding: 6px 10px; border-bottom: 1px solid #e0e0e0; }
+  tr:nth-child(even) td { background: #f8f9fa; }
+  blockquote {
+    margin: 12px 0; padding: 10px 16px;
+    border-left: 4px solid #1a73e8;
+    background: #f0f4ff; color: #444;
+  }
+  blockquote p { margin: 4px 0; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-size: 13px; }
+  pre { background: #f5f5f5; padding: 12px; border-radius: 6px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  hr { border: none; border-top: 1px solid #ddd; margin: 30px 0; }
+  ul { padding-left: 24px; }
+  li { margin: 4px 0; }
+  strong { color: #d93025; }
+  a { color: #1a73e8; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .footer { text-align: center; color: #999; font-size: 12px; margin-top: 40px; border-top: 1px solid #eee; padding-top: 16px; }
+
+  /* 打印优化 */
+  @media print {
+    body { max-width: 100%; font-size: 12px; }
+    h1 { font-size: 22px; }
+    h2 { font-size: 17px; }
+    table { page-break-inside: avoid; }
+    h1, h2, h3, h4 { page-break-after: avoid; }
+    a { color: #333; }
+    .footer { position: fixed; bottom: 0; width: 100%; }
+  }
+</style>
+
+</head>
+<body>
+<h1 id="北京开公司-个体工商户为家人缴纳社保公积金研究">北京开公司/个体工商户为家人缴纳社保公积金研究</h1>
+
+<blockquote><p>整理时间: 2026-06-11</p></blockquote>
+<blockquote><p>核心目标: 为爱人、弟弟缴纳北京社保+公积金+个税 → 满足摇号资格</p></blockquote>
+
+<hr>
+
+<h2 id="一-家庭现状">一、家庭现状</h2>
+
+<table><thead>
+<tr><th>成员</th><th>户口</th><th>北京社保状态</th><th>居住证</th><th>需求</th></tr>
+</thead><tbody>
+<tr><td><strong>你（自己）</strong></td><td>内蒙古</td><td>✅ 在职缴纳（8年连续）</td><td>有</td><td>已有资格</td></tr>
+<tr><td><strong>爱人</strong></td><td>—</td><td>❓ 待确认</td><td>—</td><td><strong>需要连续5年社保+个税</strong></td></tr>
+<tr><td><strong>弟弟</strong></td><td>—</td><td>❓ 待确认</td><td>—</td><td><strong>需要连续5年社保+个税</strong></td></tr>
+</tbody></table>
+
+<h3 id="摇号硬性条件-非京籍">摇号硬性条件（非京籍）</h3>
+<ul>
+<li>持有有效的《北京市居住证》或《北京市工作居住证》</li>
+<li>近<strong>5年（60个月）连续</strong>在北京缴纳社保</li>
+<li><strong>断月</strong>：可以补缴，补缴后视为连续有效</li>
+<li><strong>断年</strong>（整年无记录）：不能补缴，重新计算5年</li>
+<li><strong>三年内断缴</strong>：在60个月窗口内可以补（单位原因）。3个月内断缴线上批量办；超3个月需零星办理+提供劳动合同/工资流水等证明材料</li>
+<li><strong>个人原因断缴</strong>（如离职换工作）：<strong>无法补缴</strong>，只能从下次正常缴纳重新算连续年限</li>
+<li><strong>三年前的断缴</strong>：如果已超出近60个月窗口，无需补缴（不影响当前申请）</li>
+<li>近<strong>5年每年</strong>都有个人所得税纳税记录（非零）</li>
+</ul>
+
+<blockquote><p><strong>结论</strong>: 社保+个税+居住证，缺一不可。必须马上开始缴纳，5年后才能摇号。</p></blockquote>
+
+<hr>
+
+<h2 id="二-方案对比">二、方案对比</h2>
+
+<table><thead>
+<tr><th>维度</th><th>A: 注册有限责任公司</th><th>B: 第三方代缴</th><th>C: 注册个体工商户</th></tr>
+</thead><tbody>
+<tr><td><strong>合法性</strong></td><td>✅ 完全合规</td><td>❌ 违法</td><td>✅ 合规</td></tr>
+<tr><td><strong>可行性</strong></td><td>✅ 可行</td><td>⚠️ 技术上可缴，但审核风险大</td><td>✅ 可行</td></tr>
+<tr><td><strong>法人能否工资薪金个税</strong></td><td>✅ 法人可签劳动合同</td><td>—</td><td>❌ 经营者只能经营所得个税</td></tr>
+<tr><td><strong>摇号资格</strong></td><td>✅ 社保+工资薪金个税</td><td>⚠️ 社保记录有，但审核可能剔除</td><td>❌ 个税类型不对</td></tr>
+<tr><td><strong>风险</strong></td><td>低</td><td>中高（钱财两空+法律+资格取消）</td><td>中等（个税问题）</td></tr>
+<tr><td><strong>年运营成本</strong></td><td>~3700-6600元</td><td>~2000元/月/人（社保费本身）</td><td>~2200-3800元</td></tr>
+</tbody></table>
+
+<blockquote><p><strong>唯一可行方案：有限责任公司。</strong> 个体户法人不能拿工资薪金个税，第三方代缴违法。有限公司比个体户每年多2000-3000元（记账费），但解决了核心的个税类型问题。</p></blockquote>
+
+<hr>
+
+<h2 id="三-方案a--注册有限责任公司-推荐">三、方案A: 注册有限责任公司（推荐）</h2>
+
+<h3 id="3-1-为什么是有限责任公司而不是个体户">3.1 为什么是有限责任公司而不是个体户</h3>
+
+<p><strong>核心区别：法人能不能给自己发工资薪金个税。</strong></p>
+
+<table><thead>
+<tr><th>维度</th><th>个体工商户</th><th>有限责任公司</th></tr>
+</thead><tbody>
+<tr><td><strong>法人给自己发工资</strong></td><td>❌ 经营者只能报<strong>经营所得</strong>个税</td><td>✅ 法人可与公司签劳动合同，拿<strong>工资薪金</strong>个税</td></tr>
+<tr><td><strong>个税类型</strong>（对摇号关键）</td><td>经营所得（无收入则为零）</td><td>工资薪金（正常发薪即有记录）</td></tr>
+<tr><td><strong>注册难度</strong></td><td>低</td><td>中（需法人/监事/章程）</td></tr>
+<tr><td><strong>代理记账</strong></td><td>1200-2000元/年</td><td>2400-4000元/年</td></tr>
+<tr><td><strong>年报</strong></td><td>简单年检</td><td>工商年报+税务汇算清缴</td></tr>
+<tr><td><strong>能否雇工交社保</strong></td><td>✅</td><td>✅</td></tr>
+</tbody></table>
+
+<blockquote><p><strong>为什么个体户不行</strong>：税务局明确规定，个体户业主的"工资"属于经营所得而非工资薪金所得，不能按工资薪金申报个税。摇号需要的是每年有非零的个税记录，经营所得如果没有实际收入就是零→资格不保。</p></blockquote>
+<blockquote><p></p></blockquote>
+<blockquote><p><strong>有限责任公司可以</strong>：法人是独立法律主体，同时也能是公司员工。签劳动合同→发工资→代扣工资薪金个税→满足摇号要求。</p></blockquote>
+
+<h3 id="3-2-正确的人员架构">3.2 正确的人员架构</h3>
+
+<pre><code>
+公司注册人：爱人（法人 + 股东）
+     ↓
+爱人同时作为公司员工 → 签劳动合同 → 每月发工资 → 工资薪金个税 ✅
+弟弟作为公司员工 → 签劳动合同 → 每月发工资 → 工资薪金个税 ✅
+你（自己）→ 不参与公司，H3C在职不受影响
+</code></pre>
+
+<table><thead>
+<tr><th>成员</th><th>角色</th><th>社保来源</th><th>个税类型</th><th>摇号</th></tr>
+</thead><tbody>
+<tr><td><strong>你</strong></td><td>不参与</td><td>H3C在职（主）</td><td>工资薪金（H3C）</td><td>✅ 已满足</td></tr>
+<tr><td><strong>爱人</strong></td><td>法人+员工</td><td>公司代缴</td><td>工资薪金</td><td>✅ 发工资即有</td></tr>
+<tr><td><strong>弟弟</strong></td><td>员工</td><td>公司代缴</td><td>工资薪金</td><td>✅ 发工资即有</td></tr>
+</tbody></table>
+
+<h3 id="3-3-费用明细-北京-2026年">3.3 费用明细（北京 2026年）</h3>
+
+<h4 id="一次性启动成本">一次性启动成本</h4>
+
+<table><thead>
+<tr><th>项目</th><th>费用</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td>营业执照代办</td><td>500-1000元</td><td>含核名、工商注册、刻章</td></tr>
+<tr><td>注册地址（郊区终身）</td><td>1500-3000元</td><td>一次性，无需续费</td></tr>
+<tr><td>税务登记</td><td>免费</td><td>自行或代办</td></tr>
+<tr><td>银行对公账户</td><td>0-500元</td><td>部分银行免费</td></tr>
+<tr><td><strong>首年启动合计</strong></td><td><strong>约2000-4500元</strong></td><td></td></tr>
+</tbody></table>
+
+<h4 id="年度运营成本">年度运营成本</h4>
+
+<table><thead>
+<tr><th>项目</th><th>费用/年</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td>代理记账（有限公司）</td><td>2400-4000元</td><td>含记账+报税+年报</td></tr>
+<tr><td>银行账户管理费</td><td>300-800元</td><td>对公账户年费</td></tr>
+<tr><td><strong>年度固定成本</strong></td><td><strong>约2700-4800元</strong></td><td>不含社保费（地址不用每年续）</td></tr>
+</tbody></table>
+
+<h4 id="社保费用-按月-人-2026年北京">社保费用（按月/人，2026年北京）</h4>
+
+<blockquote><p>官方数据：2026年北京社保最低缴费基数 <strong>6326元</strong>，最高33891元。公积金最低基数同步。</p></blockquote>
+
+<table><thead>
+<tr><th>险种</th><th>公司承担</th><th>个人承担</th><th>合计</th></tr>
+</thead><tbody>
+<tr><td>五险（按最低基数6326）</td><td>~950元</td><td>~360元</td><td>~1310元</td></tr>
+<tr><td>公积金（按5%）</td><td>~172元</td><td>~172元</td><td>~344元</td></tr>
+<tr><td><strong>每人月成本（最低）</strong></td><td><strong>~1122元</strong></td><td><strong>~532元</strong></td><td><strong>~1654元</strong></td></tr>
+<tr><td><strong>每人月成本（按7000实薪）</strong></td><td><strong>~1925元</strong></td><td><strong>~1088元</strong></td><td><strong>~3013元</strong></td></tr>
+</tbody></table>
+
+<blockquote><p>注：如果月薪高于最低基数，社保公积金按实际工资缴纳。7000元是高于6326最低基数的，详见4.5节精确计算。</p></blockquote>
+
+<h4 id="全年总成本">全年总成本</h4>
+
+<table><thead>
+<tr><th>人数</th><th>年社保费</th><th>年运营费</th><th><strong>年度总成本</strong></th></tr>
+</thead><tbody>
+<tr><td>2人（爱人+弟弟）</td><td>~39,696元</td><td>~3,500元</td><td><strong>~43,196元</strong></td></tr>
+<tr><td>3人（+你）</td><td>~59,544元</td><td>~3,500元</td><td><strong>~63,044元</strong></td></tr>
+</tbody></table>
+
+<blockquote><p><strong>按2人计算，月均约3600元，年均约4.3万元。</strong>（你自己不需要通过公司交）</p></blockquote>
+
+<h3 id="3-4-注册地址解决方案">3.4 注册地址解决方案</h3>
+
+<p>北京住宅/公寓不能用于公司注册，必须有商业/办公地址。三种方案：</p>
+
+<table><thead>
+<tr><th>方案</th><th>费用</th><th>续费</th><th>可开户</th><th>推荐</th></tr>
+</thead><tbody>
+<tr><td>集群注册（政府备案）</td><td>免费~几百元/年</td><td>每年</td><td>✅</td><td>✅ 首选</td></tr>
+<tr><td>郊区园区终身地址</td><td>1500-3000元一次性</td><td>不用</td><td>✅</td><td>✅</td></tr>
+<tr><td>商业挂靠地址</td><td>1000-3000元/年</td><td>每年</td><td>✅</td><td>备选</td></tr>
+</tbody></table>
+
+<p><strong>方案一：集群注册地址（政府备案地址）</strong> — 就是你查到的那种</p>
+
+<p>北京各区政府、中关村园区、经济开发区提供的合法备案地址。2025年11月新规《北京市经营主体经营场所登记管理若干规定》正式落地，海淀已发出全市首份集群注册营业执照。</p>
+
+<table><thead>
+<tr><th>优势</th><th>注意事项</th></tr>
+</thead><tbody>
+<tr><td>政府备案，100%合法</td><td>部分园区有名额限制或行业要求</td></tr>
+<tr><td>费用极低，甚至免费</td><td>需要托管机构作为"集群注册管理方"</td></tr>
+<tr><td>可开对公账户、办税控</td><td>托管机构通常也提供代理记账，打包价更优</td></tr>
+<tr><td>海淀、昌平、朝阳等各区都有</td><td>郊区（平谷/房山）的集群地址更容易申请</td></tr>
+</tbody></table>
+
+<blockquote><p><strong>费用对比</strong>：集群注册<strong>地址本身</strong>更便宜（免费~几百/年 vs 终身地址1500-3000首年），但地址每年续费。2年以上算总账，终身地址略省（首年贵但后续不用续地址费）。两种方案费用差距不大，选哪个主要看托管机构的打包报价和服务质量。</p></blockquote>
+
+<p><strong>方案二：郊区园区终身地址</strong></p>
+
+<p>郊区园区招商引资的注册地址，一次性收费，终身不用续费。比集群注册贵首年，但从第二年起持平或更省。</p>
+
+<table><thead>
+<tr><th>郊区</th><th>终身地址费（约）</th></tr>
+</thead><tbody>
+<tr><td>平谷</td><td>1500-2000元</td></tr>
+<tr><td>房山</td><td>1500-2500元</td></tr>
+<tr><td>大兴</td><td>2000-3000元</td></tr>
+<tr><td>延庆/密云</td><td>1000-1500元</td></tr>
+</tbody></table>
+
+<ul>
+<li>代办打包：注册+地址+刻章 <strong>2000-4000元全包</strong></li>
+<li>和你住海淀没关系，公司注册在郊区完全合法</li>
+</ul>
+
+<h3 id="3-5-操作流程">3.5 操作流程</h3>
+
+<pre><code>
+Step 1: 办理北京居住证（非京籍前置条件）
+    ↓  → 已有的话跳过，约15个工作日
+Step 2: 注册有限责任公司（选郊区终身地址）
+    ↓  → 找代办或自己办，1-3个工作日拿营业执照
+Step 3: 刻章 + 银行开户
+    ↓  → 公章、财务章、法人章 + 对公账户
+Step 4: 税务登记 + 社保开户
+    ↓  → 到区税务局/社保中心办理
+Step 5: 公积金开户（可选）
+    ↓  → 到北京住房公积金管理中心
+Step 6: 增员（爱人、弟弟）
+    ↓  → 作为雇工添加，签订劳动合同
+Step 7: 每月/每季度正常报税 + 缴纳社保
+    ↓  → 代理记账公司处理
+</code></pre>
+
+<h3 id="3-6-关键政策要点">3.6 关键政策要点</h3>
+
+<table><thead>
+<tr><th>要点</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td><strong>法人=员工</strong></td><td>有限责任公司法人可与公司签劳动合同，合法领取工资薪金</td></tr>
+<tr><td><strong>工资薪金个税</strong></td><td>正常发工资即产生工资薪金个税记录，满足摇号要求</td></tr>
+<tr><td><strong>雇工定义</strong></td><td>只要有劳动关系（签劳动合同、发工资），就必须交五险</td></tr>
+<tr><td><strong>非京籍可行</strong></td><td>通过公司为雇工缴纳北京职工社保，非京籍可合法参保</td></tr>
+<tr><td><strong>公积金</strong></td><td>非强制，但建议交（最低5%，对摇号有益）</td></tr>
+<tr><td><strong>零申报可行</strong></td><td>无实际业务时可以做零申报，不影响社保缴纳</td></tr>
+</tbody></table>
+
+<h3 id="3-7-风险与应对">3.7 风险与应对</h3>
+
+<table><thead>
+<tr><th>风险</th><th>等级</th><th>应对</th></tr>
+</thead><tbody>
+<tr><td>地址挂靠被查</td><td>低</td><td>选郊区园区终身地址，政府备案最可靠</td></tr>
+<tr><td>税务异常</td><td>低</td><td>用代理记账，按时零申报</td></tr>
+<tr><td>社保审计</td><td>低</td><td>依法签劳动合同，真实发工资（银行转账留痕）</td></tr>
+<tr><td>工资与职位不匹配</td><td>低</td><td>初创公司低薪合理；但避免低于5000（税务稽查红线）</td></tr>
+<tr><td>给员工发工资的钱从哪来</td><td>无风险</td><td>来自注册资本金或股东借款注入公司，合法合规</td></tr>
+</tbody></table>
+
+<h3 id="3-8----零收入公司发工资-合法-但要发-合理工资">3.8 ⚠️ 零收入公司发工资：合法，但要发"合理工资"</h3>
+
+<p><strong>核心：不冲突。</strong> 公司没有业务收入，完全可以合法雇佣员工、发工资、代扣个税。</p>
+
+<p>资金流转路径：</p>
+<pre><code>
+家庭资金 →（股东借款/增资）→ 公司对公账户 →（发工资）→ 爱人和弟弟个人卡 →（代扣个税）→ 税务局
+</code></pre>
+
+<p><strong>但有一个重要细节：工资不能太低。</strong> 金税四期下，长期发5000元以下（免征额线）工资的公司是税务稽查重点。发6000-10000元反而更安全，因为：</p>
+
+<ul>
+<li>初创公司创始人拿<strong>低薪</strong>（而非零薪或5000擦边）是正常的</li>
+<li>零收入公司与低薪在逻辑上一致——"创业阶段，控制成本"</li>
+<li>但是工资要与职位匹配：爱人≈总经理/执行董事 6000-10000元；弟弟≈技术主管 6000-8000元，都是北京同岗位的正常低值</li>
+<li>如果公司零收入却发20000+高薪，反而不合理</li>
+</ul>
+
+<p><strong>但！个税金额不能为零。</strong> 摇号要求"每年有个人所得税缴纳记录"，如果工资太低（扣除5000免征额+社保公积金后应纳税所得额为0），就没有实际缴税记录。</p>
+
+<table><thead>
+<tr><th>月工资</th><th>应税所得（扣5000+社保532+公积金172后）</th><th>月个税</th><th>年个税</th><th>摇号</th></tr>
+</thead><tbody>
+<tr><td>5000元</td><td>-704元（免）</td><td>0</td><td>0</td><td>❌</td></tr>
+<tr><td>6000元</td><td>296元</td><td>~8.9元</td><td>~107元</td><td>✅ 有记录但极少</td></tr>
+<tr><td>8000元</td><td>2296元</td><td>~68.9元</td><td>~827元</td><td>✅</td></tr>
+<tr><td>10000元</td><td>4296元</td><td>~128.9元</td><td>~1547元</td><td>✅</td></tr>
+</tbody></table>
+
+<blockquote><p><strong>建议月工资6000-8000元</strong>：刚好产生个税记录，成本可控。按最低工资发的话个税会是零，摇号不认。</p></blockquote>
+
+<p><strong>注意</strong>：工资越高，公司承担的五险一金也越高（按实际工资基数），需要平衡总成本。</p>
+
+<h3 id="3-9-资产隔离-公司债务不波及家庭">3.9 资产隔离：公司债务不波及家庭</h3>
+
+<p>有限责任公司的核心优势：股东仅以认缴出资额为限承担责任，公司亏损/破产不波及个人财产。</p>
+
+<p><strong>但有一人公司陷阱</strong>：如果爱人一个人持股（一人有限责任公司），根据《公司法》第63条，<strong>举证责任在你身上</strong>——必须自证公私财产分离，否则有限责任保护失效。</p>
+
+<table><thead>
+<tr><th>防护措施</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td>公私账户严格分开</td><td>公司对公账户≠家庭账户，绝不混用</td></tr>
+<tr><td>规范发薪留痕</td><td>银行转账发工资，不拿公司钱付个人账单</td></tr>
+<tr><td>每年审计报告</td><td>一人公司法定要求</td></tr>
+<tr><td><strong>最稳妥：加个小股东</strong></td><td>爱人99% + 弟弟/父母1%，避开一人公司的举证陷阱</td></tr>
+</tbody></table>
+
+<hr>
+
+<h2 id="四-方案b--第三方代缴-不推荐-作为信息参考">四、方案B: 第三方代缴（不推荐，作为信息参考）</h2>
+
+<h3 id="风险清单">风险清单</h3>
+
+<table><thead>
+<tr><th>风险</th><th>具体后果</th></tr>
+</thead><tbody>
+<tr><td><strong>违法</strong></td><td>2022年《社会保险基金行政监督办法》明确挂靠代缴为违法行为</td></tr>
+<tr><td><strong>钱财两空</strong></td><td>交钱后机构跑路，社保实际没缴</td></tr>
+<tr><td><strong>刑事风险</strong></td><td>涉及骗取社保待遇，可能被追究刑事责任</td></tr>
+<tr><td><strong>摇号资格无效</strong></td><td>人社部门核查时，无真实劳动关系的社保记录可能被剔除</td></tr>
+<tr><td><strong>北京官方态度</strong></td><td>门头沟人社局2026年5月发布警告：所有收费代缴社保行为均涉嫌诈骗</td></tr>
+</tbody></table>
+
+<blockquote><p><strong>结论：此路不通，不要考虑。</strong></p></blockquote>
+
+<hr>
+
+<h2 id="五-建议方案与行动清单">五、建议方案与行动清单</h2>
+
+<h3 id="最终方案-有限责任公司-法人爱人-法人员工合一">最终方案：有限责任公司，法人爱人，法人员工合一</h3>
+
+<pre><code>
+你（H3C在职）→ 不参与公司，不受影响
+爱人 → 法人 + 员工 → 签劳动合同 → 每月发工资 → 工资薪金个税 ✅
+弟弟 → 员工 → 签劳动合同 → 每月发工资 → 工资薪金个税 ✅
+</code></pre>
+
+<h3 id="时间线">时间线</h3>
+
+<pre><code>
+第1步（本月）: 确认爱人和弟弟的居住证状态
+第2步（下月）: 注册有限责任公司（法人：爱人）
+第3步（注册当月）: 社保开户 + 公积金开户 + 增员（爱人+弟弟）
+第4步（持续）: 代理记账 + 每月发工资 + 缴纳社保公积金
+第5步（5年后）: 满足摇号条件
+</code></pre>
+
+<h3 id="立即行动">立即行动</h3>
+
+<ul>
+<li>[ ] 确认爱人是否有北京居住证，没有就办理</li>
+<li>[ ] 确认弟弟是否有北京居住证</li>
+<li>[ ] 选择注册区域（推荐你所在区，方便办理）</li>
+<li>[ ] 联系2-3家代办公司询价（营业执照+地址挂靠+代理记账打包价）</li>
+<li>[ ] <strong>注册有限责任公司，法人：爱人</strong>（有限责任公司的法人可以同时是员工，签劳动合同领工资薪金个税）</li>
+<li>你在H3C在职，不能注册公司（劳动合同限制）→ 爱人当法人无冲突</li>
+<li>爱人与公司签劳动合同，弟弟也签，正常发工资代扣工资薪金个税</li>
+</ul>
+
+<h3 id="代办询价清单-有限责任公司">代办询价清单（有限责任公司）</h3>
+
+<table><thead>
+<tr><th>意向机构</th><th>注册费</th><th>地址费/年</th><th>记账费/年</th><th>总首年费用</th></tr>
+</thead><tbody>
+<tr><td>机构1</td><td></td><td></td><td></td><td></td></tr>
+<tr><td>机构2</td><td></td><td></td><td></td><td></td></tr>
+<tr><td>机构3</td><td></td><td></td><td></td><td></td></tr>
+</tbody></table>
+
+<h3 id="长远价值">长远价值</h3>
+
+<p>除了摇号，缴纳北京社保还带来：</p>
+<ul>
+<li>✅ 北京购房资格（连续5年社保）</li>
+<li>✅ 医保报销（北京职工医保待遇高）</li>
+<li>✅ 退休养老金（缴费年限累计）</li>
+<li>✅ 子女在京入学（社保记录是必要条件）</li>
+<li>✅ 积分落户（社保年限是核心积分项）</li>
+</ul>
+
+<hr>
+
+<h2 id="四-实施指南-从零到每月运转">四、实施指南：从零到每月运转</h2>
+
+<blockquote><p>方案：有限责任公司，法人爱人（99%），弟弟占1%避开一人公司举证陷阱</p></blockquote>
+<blockquote><p>月薪：爱人7000元，弟弟6500元，公积金按5%</p></blockquote>
+<blockquote><p><strong>北京社保最低缴费基数（2026年）: 6326元</strong> — 每年更新，工资不得低于此值</p></blockquote>
+
+<hr>
+
+<h3 id="4-1-前置准备-本月启动-2-4周">4.1 前置准备（本月启动，2-4周）</h3>
+
+<ul>
+<li>[ ] ⭐⭐⭐ 确认爱人持有有效<strong>北京居住证</strong>（有）</li>
+<li>[ ] ⭐⭐⭐ 确认弟弟持有有效<strong>北京居住证</strong>（⚠️ 目前没有，见下方解决方案）</li>
+<li>[ ] 确定公司名称（2-3个备选），格式：北京XX文化创意有限公司</li>
+<li>[ ] 确定经营范围（组织文化艺术交流、布艺手作、文创产品开发、互联网销售等）</li>
+<li>[ ] 确定注册资本（建议3-10万认缴，无需实缴）</li>
+<li>[ ] ⭐⭐ 联系2-3家地址卖家/代办询价（集群注册 vs 郊区终身地址）</li>
+</ul>
+
+<h4 id="买地址必问清单---避坑">买地址必问清单 &amp; 避坑</h4>
+
+<table><thead>
+<tr><th>#</th><th>必须问清楚</th><th>为什么重要</th><th>怎么判断靠谱</th></tr>
+</thead><tbody>
+<tr><td>1</td><td><strong>这个地址能开哪几家银行？</strong></td><td>虚拟地址很多银行拒开，白花钱</td><td>卖家能说出具体支行名称+有合作案例</td></tr>
+<tr><td>2</td><td><strong>银行上门核查，你们配合吗？</strong></td><td>客户经理要去实地拍照</td><td>卖家说"配合"且能描述具体流程</td></tr>
+<tr><td>3</td><td><strong>提供哪些备案文件？</strong></td><td>开户需要产权证明+租赁合同</td><td>营业执照地址一致的<strong>产权证复印件+租赁合同+园区备案</strong>缺一不可</td></tr>
+<tr><td>4</td><td><strong>地址是终身还是一次性？每年续费吗？</strong></td><td>集群注册每年续费，忘了续=地址异常=公司被拉黑</td><td>写入合同，标注续费日期和价格</td></tr>
+<tr><td>5</td><td><strong>经营范围有限制吗？</strong></td><td>部分园区只接科技公司，不接文创类</td><td>"文化创意"类目能注册吗，确认</td></tr>
+<tr><td>6</td><td><strong>工商信函/异常核查怎么处理？</strong></td><td>工商局随机抽查寄信，没人收=列入异常</td><td>卖家代收工商信函并通知你</td></tr>
+<tr><td>7</td><td><strong>营业执照地址精确到门牌号吗？</strong></td><td>地址模糊=注册驳回</td><td>要精确到XX路XX号XX室</td></tr>
+</tbody></table>
+
+<p><strong>坑</strong>：</p>
+<ul>
+<li>⛔ 淘宝/闲鱼上"200块永久地址"基本都是假的，别碰</li>
+<li>⛔ 卖家说不出合作银行→地址大概率开不了户</li>
+<li>⛔ "我们帮你搞定银行"但不签合同→可能造假</li>
+<li>✅ 正规园区会签合同+开发票+提供备案文件</li>
+</ul>
+
+<blockquote><p>⚠️ <strong>弟弟居住证解决方案</strong>：单位入职交社保不需要居住证。弟弟可先办<strong>居住登记卡</strong>，6个月后换居住证。两条线并行不互阻。</p></blockquote>
+
+<h3 id="4-2-公司注册-1-2周">4.2 公司注册（1-2周）</h3>
+
+<table><thead>
+<tr><th>步骤</th><th>操作</th><th>方式</th><th>耗时</th></tr>
+</thead><tbody>
+<tr><td>1</td><td>核名：提交2-3个备选名称</td><td>📱 线上（e窗通）</td><td>10分钟-1天</td></tr>
+</tbody></table>
+
+<blockquote><p>⚠️ <strong>代办风险与防护</strong>：代办需提交爱人身份证+居住证，存在信息被滥用的风险。防护措施：</p></blockquote>
+<blockquote><p>- 找有实体办公室的正规财税公司（美团/企查查可查工商信息），不找个人代办</p></blockquote>
+<blockquote><p>- 签正规合同，明确"仅限于本次公司注册使用"</p></blockquote>
+<blockquote><p>- 法人章、公章、财务章注册完成后<strong>立即自己保管</strong>，不留给代办</p></blockquote>
+<blockquote><p>- 营业执照下来后，法人（爱人）亲自去银行开户，不委托代办</p></blockquote>
+<blockquote><p>- 注册完成后在"国家企业信用信息公示系统"和"天眼查"核查公司信息是否正确</p></blockquote>
+<blockquote><p>- 定期（每季度）查一次公司名下是否有异常贷款/变更记录</p></blockquote>
+<table><thead>
+<tr><th>2</th><th>⭐⭐ 提交材料：爱人(法人)身份证+居住证 + 弟弟(股东)身份证</th><th>📱 线上（e窗通+北京通APP电子签）</th><th>1天</th></tr>
+</thead><tbody>
+<tr><td>3</td><td>领取营业执照</td><td>📱 线上（电子执照）+ 邮寄纸质</td><td>1-3天</td></tr>
+<tr><td>4</td><td>刻章：公章/财务章/法人章/发票章</td><td>📱 线上申请+邮寄</td><td>1天</td></tr>
+<tr><td>5</td><td>⭐⭐ 税务登记 + 社保开户 + 公积金开户</td><td>📱 线上（e窗通可同步勾选）</td><td>1天</td></tr>
+<tr><td>6</td><td>⭐⭐ 签代理记账合同</td><td>找正规机构，含记账+报税+年报</td><td>1-2天</td></tr>
+<tr><td>7</td><td>⭐⭐⭐ 银行开对公账户</td><td>🏢 <strong>线下</strong>（法人爱人亲自去），见开户要点</td><td>半天</td></tr>
+<tr><td>8</td><td>⭐⭐⭐ 签劳动合同 + 社保增员 + 个税备案</td><td>爱人+弟弟签合同，社保系统添加，税务局备案</td><td>1天</td></tr>
+<tr><td>9</td><td>微信支付商户号 + 商家收款码</td><td>📱 线上（执照+对公账户，费率0.38%）</td><td>1-3天</td></tr>
+<tr><td>10</td><td>视频号：企业认证 + 微信小店</td><td>📱 认证300元/年→跳过千粉门槛→开小店(免费)→直播挂商品</td><td>1-3天</td></tr>
+<tr><td>11</td><td>小红书：个人店 + 带货权限</td><td>📱 执照开个人店(免费)→交保证金1000→直播挂商品</td><td>1-3天</td></tr>
+<tr><td>12</td><td>抖音：小店 + 蓝V + 橱窗</td><td>📱 开小店(免费)→自动蓝V→交保证金2000→直播挂小黄车</td><td>1-3天</td></tr>
+<tr><td><strong>合计</strong></td><td><strong>全流程2-3周</strong></td><td></td><td></td></tr>
+</tbody></table>
+
+<blockquote><p>💡 三平台直播+挂商品的总成本：<strong>保证金3000元（可退）+ 视频号认证300元/年（可选）</strong>。无年费负担。</p></blockquote>
+<blockquote><p>- 抖音：开小店自动得蓝V，<strong>省600元年费</strong>，保证金2000</p></blockquote>
+<blockquote><p>- 小红书：个人店免年费，保证金1000</p></blockquote>
+<blockquote><p>- 视频号：认证300元/年跳过千粉门槛（不认证也行，攒1000粉后免费开）</p></blockquote>
+
+<p><strong>开户要点与避坑</strong>：虚拟地址开户是公司注册全流程里<strong>最容易踩坑的一步</strong>。</p>
+
+<table><thead>
+<tr><th>坑</th><th>具体是什么</th><th>怎么准备</th></tr>
+</thead><tbody>
+<tr><td><strong>银行拒开</strong></td><td>四大行（工农中建）对虚拟地址审核严，直接拒</td><td>首选<strong>招商银行、浦发银行</strong>（对小微企业最友好），次选建行/北京银行</td></tr>
+<tr><td><strong>上门核查</strong></td><td>客户经理要去注册地址实地拍照，挂靠地址没人办公→被拒</td><td>买地址时确认"支持银行开户+配合核查"，卖家安排人应答</td></tr>
+<tr><td><strong>法人远程不给办</strong></td><td>法人不到场基本开不了，代办也替代不了</td><td>爱人本人去，带齐：<strong>营业执照正副本+公章+法人章+身份证+公司章程</strong></td></tr>
+<tr><td><strong>地址备案文件不匹配</strong></td><td>银行系统里地址和工商备案不一致</td><td>买地址时索要：营业执照地址一致的<strong>产权证明复印件+租赁合同+园区备案文件</strong></td></tr>
+<tr><td><strong>被列为高风险客户</strong></td><td>新公司+无社保记录+虚拟地址→银行风控直接拉黑</td><td>先完成税务登记和社保开户再去银行，显得"正常经营"</td></tr>
+<tr><td><strong>选错支行</strong></td><td>不是每家支行都接虚拟地址开户</td><td>提前电话问"你们支行接园区注册地址开户吗？"，确认了再去</td></tr>
+</tbody></table>
+
+<p><strong>最佳路径</strong>：</p>
+<pre><code>
+1. 买地址 → 确认卖家有合作银行（通常是招行某支行）
+2. 拿执照 → 先完成税务登记+社保开户（让公司看起来"活跃"）
+3. 预约银行 → 法人带全套材料去合作支行
+4. 当场开好 → 拿到U盾/密码器，激活网银
+</code></pre>
+
+<blockquote><p>💡 <strong>买地址时必问卖家</strong>："你们地址能开哪几家银行？有没有不核查直接开的？"如果卖家支支吾吾说不清→换一家。</p></blockquote>
+
+<blockquote><p>📌 <strong>唯一必须线下</strong>：银行开对公账户（法人爱人亲自去）。其他（工商/税务/社保/公积金）e窗通七合一全程线上，新公司法后连监事都可免。</p></blockquote>
+
+<h4 id="省钱方案-只买地址-自己注册">省钱方案：只买地址，自己注册</h4>
+
+<p>完全可行。代办主要赚的是"省时间"的钱，不是必须的。</p>
+
+<table><thead>
+<tr><th>方式</th><th>地址费</th><th>代办注册费</th><th>总首年费用</th><th>耗时</th></tr>
+</thead><tbody>
+<tr><td>代办全包</td><td>含在内</td><td>2000-4000元</td><td>2000-4000元</td><td>3天</td></tr>
+<tr><td><strong>只买地址+自己注册</strong></td><td>1500-3000元</td><td>0</td><td>1500-3000元</td><td>3-7天</td></tr>
+</tbody></table>
+
+<p><strong>自己注册的坑</strong>：</p>
+
+<table><thead>
+<tr><th>坑</th><th>说明</th><th>如何避</th></tr>
+</thead><tbody>
+<tr><td>经营范围不会选</td><td>选错经营范围后续开票/资质受限</td><td>抄同类型公司的经营范围（天眼查搜"北京XX文化创意有限公司"）</td></tr>
+<tr><td>注册地址信息填错</td><td>地址和备案信息不一致被驳回</td><td>买地址时让卖家提供精确到门牌号的注册地址文本</td></tr>
+<tr><td>电子签名不会操作</td><td>北京通APP签名步骤多</td><td>按e窗通提示一步步来，有问题打11616611</td></tr>
+<tr><td>税务报到漏做</td><td>拿到执照后忘记税务登记</td><td>e窗通会自动同步税务，但首次登录电子税务局需手动激活</td></tr>
+<tr><td>社保公积金没同步开户</td><td>只注册了公司没开社保户</td><td>e窗通注册时勾选"五险一金同步开户"</td></tr>
+</tbody></table>
+
+<p><strong>建议</strong>：自己注册完全可行，但第一次如果不想折腾，花几百找代办只做注册（不含地址和记账）也行，拿到执照后后面的社保公积金代理记账你自己来或者另找。询价时可以问"只买地址+只代办注册，分开报价"。</p>
+
+<h3 id="4-3-员工入职与社保增员">4.3 员工入职与社保增员</h3>
+
+<blockquote><p>对应主流程步骤8。开户完成后立即执行。</p></blockquote>
+
+<table><thead>
+<tr><th>⭐</th><th>操作</th><th>细节</th></tr>
+</thead><tbody>
+<tr><td>⭐⭐⭐</td><td>爱人+弟弟签<strong>劳动合同</strong></td><td>爱人：总经理/设计师 7000元；弟弟：运营主管 6500元</td></tr>
+<tr><td>⭐⭐⭐</td><td>社保系统增员</td><td>添加爱人和弟弟，填报工资基数</td></tr>
+<tr><td>⭐⭐</td><td>公积金系统增员</td><td>同上，比例5%</td></tr>
+<tr><td>⭐⭐</td><td>税务局个税备案</td><td>全员全额扣缴申报备案</td></tr>
+</tbody></table>
+
+<blockquote><p>⚠️ <strong>合同、工资表、银行流水三者必须一致</strong>，这是社保审计的核心凭证。</p></blockquote>
+
+<h3 id="4-4-每月例常操作">4.4 每月例常操作</h3>
+
+<table><thead>
+<tr><th>时间节点</th><th>操作</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td><strong>每月10日前</strong></td><td>代理记账公司完成上月个税申报</td><td>⭐ 自动</td></tr>
+<tr><td><strong>每月15日前</strong></td><td>⭐⭐⭐ 社保系统确认缴费（银行自动扣款）</td><td><strong>断缴=5年重算！确保余额充足</strong></td></tr>
+<tr><td><strong>每月15日前</strong></td><td>公积金系统确认缴费</td><td>同上</td></tr>
+<tr><td><strong>每季度15日前</strong></td><td>增值税申报（零申报）</td><td>⭐ 代理记账处理</td></tr>
+<tr><td><strong>发工资日</strong></td><td>⭐⭐⭐ 对公账户→爱人和弟弟个人卡转账</td><td><strong>银行转账，严禁现金</strong></td></tr>
+<tr><td><strong>每年1-3月</strong></td><td>上月个税汇算清缴</td><td>⭐ 代理记账处理</td></tr>
+<tr><td><strong>每年3-6月</strong></td><td>⭐⭐ 工商年报</td><td>代理记账处理，漏报列异常名录</td></tr>
+<tr><td><strong>每年5月前</strong></td><td>上年度企业所得税汇算清缴</td><td>⭐ 代理记账处理</td></tr>
+</tbody></table>
+
+<h3 id="4-5-每月精确费用表-爱人7000元---弟弟6500元">4.5 每月精确费用表（爱人7000元 + 弟弟6500元）</h3>
+
+<blockquote><p>社保公积金统一按最低基数6326元缴纳（2026年北京下限），个税按实际工资申报。</p></blockquote>
+
+<h4 id="社保公积金明细-每人-月-基数6326">社保公积金明细（每人/月，基数6326）</h4>
+
+<table><thead>
+<tr><th>项目</th><th>公司承担</th><th>个人承担</th></tr>
+</thead><tbody>
+<tr><td>养老保险（16%/8%）</td><td>1,012.16</td><td>506.08</td></tr>
+<tr><td>医疗保险（9.8%/2%）</td><td>619.95</td><td>126.52</td></tr>
+<tr><td>失业保险（0.5%/0.5%）</td><td>31.63</td><td>31.63</td></tr>
+<tr><td>工伤保险（0.4%）</td><td>25.30</td><td>—</td></tr>
+<tr><td>生育保险（0.8%）</td><td>50.61</td><td>—</td></tr>
+<tr><td>公积金（5%）</td><td>316.30</td><td>316.30</td></tr>
+<tr><td><strong>每人小计</strong></td><td><strong>2,055.95</strong></td><td><strong>980.53</strong></td></tr>
+<tr><td><strong>两人总计</strong></td><td><strong>4,111.90</strong></td><td><strong>1,961.06</strong></td></tr>
+</tbody></table>
+
+<h4 id="个税计算-按实际工资">个税计算（按实际工资）</h4>
+
+<pre><code>
+爱人（7000元）：应税所得 = 7000-5000-980.53 = 1019.47 → 个税 30.58元/月 ✅
+弟弟（6500元）：应税所得 = 6500-5000-980.53 = 519.47 → 个税 15.58元/月 ✅
+两人合计个税：46.16元/月，553.92元/年 ✅
+</code></pre>
+
+<h4 id="每月总支出">每月总支出</h4>
+
+<table><thead>
+<tr><th>项目</th><th>金额</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td>发工资（7000+6500）</td><td>13,500.00</td><td>对公账户→个人卡</td></tr>
+<tr><td>个税代扣</td><td>-46.16</td><td>公司代缴税务局</td></tr>
+<tr><td>员工实收</td><td>13,453.84</td><td></td></tr>
+<tr><td>公司社保公积金</td><td>4,111.90</td><td>缴纳账户→社保/公积金</td></tr>
+<tr><td>代理记账（均摊）</td><td>~300.00</td><td>年费3600÷12</td></tr>
+<tr><td><strong>公司月总出账</strong></td><td><strong>≈17,912元</strong></td><td></td></tr>
+</tbody></table>
+
+<h4 id="年度净成本">年度净成本</h4>
+
+<table><thead>
+<tr><th>项目</th><th>年费用</th></tr>
+</thead><tbody>
+<tr><td>公司社保公积金</td><td>4,111.90×12 = 49,342.80元</td></tr>
+<tr><td>代理记账</td><td>~3,600元</td></tr>
+<tr><td>银行账户管理费</td><td>~500元</td></tr>
+<tr><td>个税（不可回收）</td><td>~554元</td></tr>
+<tr><td><strong>年度净成本</strong></td><td><strong>≈54,000元，约4,500元/月</strong></td></tr>
+</tbody></table>
+
+<blockquote><p>💡 按最低基数缴纳比按实际工资缴纳年省约3,260元。<strong>注意</strong>：社保基数理论上应等于工资，小微企业实际操作中多数按最低线缴纳，但属于灰色地带。</p></blockquote>
+
+<h4 id="钱从哪来-对公账户资金流转">钱从哪来？对公账户资金流转</h4>
+
+<p>公司无收入，所有资金来自家庭积蓄。合法路径：</p>
+
+<pre><code>
+家庭积蓄 → 股东借款注入公司 → 公司对公账户 → 发工资+交社保公积金
+                                       ↑
+                              工资回到个人卡（净回收）
+</code></pre>
+
+<table><thead>
+<tr><th>操作</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td>初始注入</td><td>按2-3个月用量（约5-6万）以"股东借款"名义转入对公账户</td></tr>
+<tr><td>每月循环</td><td>工资发出去→回到家庭账户→次月再转入对公账户（可循环使用）</td></tr>
+<tr><td>实际消耗</td><td>只有社保公司和个税是纯支出（约3600元/月），工资回到家庭可复用</td></tr>
+<tr><td><strong>推荐补充</strong></td><td>爱人布艺市集/电商收入走公司账户，产生真实流水</td></tr>
+</tbody></table>
+
+<blockquote><p>公司账上体现为"其他应付款-股东借款"，不交税。家庭净支出只有社保+个税+运营费。</p></blockquote>
+
+<h4 id="一举两得的优化-爱人布艺收入走公司账">⭐ 一举两得的优化：爱人布艺收入走公司账</h4>
+
+<p>长期纯零收入公司容易触发"长亏不倒"稽查风险。爱人做布艺手作本来就打算创业，<strong>线下市集、朋友圈、闲鱼的收入走公司账户</strong>，一举多得：</p>
+
+<table><thead>
+<tr><th>好处</th><th>说明</th></tr>
+</thead><tbody>
+<tr><td><strong>让公司"真经营"</strong></td><td>有真实收入流水，摆脱纯壳公司嫌疑</td></tr>
+<tr><td><strong>收入不用多</strong></td><td>每月几千块就足够证明公司活跃</td></tr>
+<tr><td><strong>公司可开发票</strong></td><td>如果是正规客户可以开票（小规模纳税人，税率低）</td></tr>
+<tr><td><strong>收入可抵成本</strong></td><td>材料采购、摊位费计入公司成本，不浪费</td></tr>
+<tr><td><strong>社保基数更合理</strong></td><td>有收入后，按最低基数交社保更有说服力</td></tr>
+<tr><td><strong>为创业铺路</strong></td><td>平台建好了，后续直接放大经营</td></tr>
+</tbody></table>
+
+<p><strong>线下收款方案：必须用商家码，别用个人码</strong>。</p>
+
+<table><thead>
+<tr><th>方式</th><th>费率</th><th>风险</th></tr>
+</thead><tbody>
+<tr><td><strong>公司商家收款码</strong></td><td>0.38%（月收5000仅19元）</td><td>✅ 合规，直接入对公账户</td></tr>
+<tr><td>个人码→转公司账户</td><td>0</td><td>❌ <strong>2026年严查</strong>，公私混同+隐匿收入嫌疑</td></tr>
+</tbody></table>
+
+<blockquote><p>⚠️ 金税四期下，个人码收经营款已是稽查重点，有企业因此被罚几十万。<strong>每月几块钱手续费，买的是合规和安全，绝对不能省。</strong> 营业执照下来后去微信支付商户平台申请即可。</p></blockquote>
+
+<h4 id="代理记账-vs-自己记账">代理记账 vs 自己记账</h4>
+
+<table><thead>
+<tr><th>维度</th><th>代理记账</th><th>自己记账</th></tr>
+</thead><tbody>
+<tr><td><strong>年成本</strong></td><td>2400-4000元</td><td>0（或工具费几百）</td></tr>
+<tr><td><strong>难度</strong></td><td>零操心</td><td>零申报简单，但需学基本操作</td></tr>
+<tr><td><strong>风险</strong></td><td>遇不靠谱代理被连累</td><td>漏报、错报被罚款（首次一般警告）</td></tr>
+<tr><td><strong>每月耗时</strong></td><td>0</td><td>约30分钟-1小时</td></tr>
+</tbody></table>
+
+<p><strong>自己记账可行吗？</strong> 对你的场景（零收入公司，只有工资支出和社保），记账非常简单：</p>
+<ul>
+<li>每月1笔：发工资（借方管理费用-工资，贷方银行存款）</li>
+<li>每月1笔：交社保（借方管理费用-社保，贷方银行存款）</li>
+<li>每季1笔：增值税零申报</li>
+<li>工具推荐：<strong>自记账APP</strong>、<strong>金蝶精斗云</strong>，零基础可上手</li>
+</ul>
+
+<p><strong>代理记账风险</strong>：</p>
+<table><thead>
+<tr><th>风险</th><th>应对</th></tr>
+</thead><tbody>
+<tr><td>不报/漏报个税</td><td>每月在个税APP上确认申报记录</td></tr>
+<tr><td>用你公司虚开发票</td><td>定期查电子税务局发票记录</td></tr>
+<tr><td>超低价（&lt;2000/年）</td><td>通常是外包转包，容易出问题</td></tr>
+</tbody></table>
+
+<blockquote><p>💡 <strong>建议</strong>：第一年用代理记账（熟悉流程），第二年如果觉得简单就转自己记。</p></blockquote>
+
+<h3 id="4-6-关键时间节点">4.6 关键时间节点</h3>
+
+<pre><code>
+现在（6月）
+  → 确认居住证 / 办居住证
+
+6月-7月
+  → 询价代办、选定方案
+
+7月-8月
+  → 公司注册 + 开户 + 社保公积金开户
+
+8月
+  → 签劳动合同 + 增员 + 首次发工资交社保
+
+8月起
+  → 每月正常运转，代理记账自动处理
+
+2031年8月
+  → 满足5年，申请摇号 ✅
+</code></pre>
+
+<h3 id="4-7-关键注意事项清单">4.7 关键注意事项清单</h3>
+
+<table><thead>
+<tr><th>类别</th><th>注意事项</th><th>重要性</th></tr>
+</thead><tbody>
+<tr><td><strong>社保不中断</strong></td><td>每月15日前确保对公账户余额充足，自动扣款失败=断缴→5年重算</td><td>⭐⭐⭐</td></tr>
+<tr><td><strong>银行转账发工资</strong></td><td>必须走对公账户→个人卡，严禁现金发薪</td><td>⭐⭐⭐</td></tr>
+<tr><td><strong>劳动合同</strong></td><td>必须有真实签字的合同，职位薪资与实际一致</td><td>⭐⭐⭐</td></tr>
+<tr><td><strong>对公账户余额</strong></td><td>保持至少2-3个月社保费用的余额，防止扣款失败</td><td>⭐⭐⭐</td></tr>
+<tr><td><strong>股东架构</strong></td><td>爱人99%+弟弟1%，避开一人公司举证陷阱</td><td>⭐⭐</td></tr>
+<tr><td><strong>居住证</strong></td><td>必须每年续签，断签则社保连续性可能受影响</td><td>⭐⭐</td></tr>
+<tr><td><strong>代理记账</strong></td><td>选有资质的机构，签正规合同，每月确认申报记录</td><td>⭐⭐</td></tr>
+<tr><td><strong>工商年报</strong></td><td>每年3-6月必须报，漏报列异常名录</td><td>⭐⭐</td></tr>
+<tr><td><strong>税务零申报</strong></td><td>无业务收入报零申报合法，但个税不能为零</td><td>⭐</td></tr>
+<tr><td><strong>地址年检</strong></td><td>集群注册每年确认地址续费状态</td><td>⭐</td></tr>
+<tr><td><strong>年度审计</strong></td><td>虽非一人公司但建议做</td><td>⭐</td></tr>
+</tbody></table>
+
+<h3 id="4-8-风险提示">4.8 风险提示</h3>
+
+<table><thead>
+<tr><th>风险</th><th>概率</th><th>影响</th><th>缓解</th></tr>
+</thead><tbody>
+<tr><td>社保政策收紧，零运营公司被限制</td><td>中低</td><td>可能无法继续缴纳</td><td>爱人后续接实际业务即可化解</td></tr>
+<tr><td>摇号政策变动（如要求提高社保基数）</td><td>低</td><td>需调整工资</td><td>目前7000元按中等基数，有上调空间</td></tr>
+<tr><td>代理记账公司出问题被查</td><td>低</td><td>连带税务异常</td><td>选正规机构，签合同，定期查看申报记录</td></tr>
+</tbody></table>
+
+<hr>
+
+<blockquote><p><strong>参考来源</strong>: 北京人社局官网、知乎非京籍个体户社保攻略、北京小客车指标管理信息系统、2025年社保新规解读、《公司法》一人有限责任公司条款</p></blockquote>
+
+<div class="footer">
+  <p>生成自: beijing-company-social-insurance-plan.md | 转换时间: 2026-06-11 | 仅供内部参考</p>
+</div>
+</body>
+</html>
