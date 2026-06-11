@@ -4,9 +4,10 @@
 
 ## 📁 目录结构
 
-- [[career-strategy/|职业发展策略]] — 核心分析（中控/移远/产业链 + 简历/面试/谈薪全攻略）
+- [[career-strategy/|职业发展策略]] — 核心分析（北京海淀/昌平嵌入式岗位 + 简历/面试/谈薪全攻略）
 - [[../../.codebuddy/rules/interview-prep.mdc|面试准备Skill]] — 输入公司名，自动生成面试准备清单
 - [[interview-project-summaries/]] — 面试资料汇总（公司记录/技术基础/项目设计/通用准备）
+- [[interview-project-summaries/interview-prep/职业画像与求职分析|完整职业画像]] — 简历提取 v1.0（~9年经验/自研RTOS/TSN/DSP优化）
 - [[interview-project-summaries/company-interviews/九号-牛客面经题整理-FreeRTOS|九号-FreeRTOS面经]] — 牛客网14题答案整理
 
 ## 🔗 相关资源
