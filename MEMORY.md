@@ -72,7 +72,7 @@
 
 ### Git 规范
 - .codebuddy/ 不同步 Git，.gitignore 忽略（2026-05-23）
-- 推送到远程统一使用 `05-Tools/backup/auto_push.ps1` 脚本（2026-06-11）
+- 推送到远程统一使用 `05-Tools/backup/auto_push.ps1` 脚本；脚本失败时手动推送，但 commit message 遵循脚本格式 `auto: [N files] 目录摘要 (扩展名汇总)`（2026-06-11）
 
 ---
 
