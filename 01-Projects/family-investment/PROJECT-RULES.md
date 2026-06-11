@@ -47,3 +47,12 @@
 - `cost_is_total: true` → cost_basis 为总成本(直接使用)
 - 默认 → cost_basis 为单价(乘以数量)
 - `cost_unknown: true` → 成本待补充
+
+## 文件同步规则
+- **`beijing-company-social-insurance-plan.md`** ← 唯一编辑源
+- **`beijing-company-social-insurance-plan.html`** ← 自动生成，禁止手动编辑
+- **修改 .md 后必须同步重生成 .html**：
+  ```
+  python 05-Tools/fileops/md2html.py 01-Projects/family-investment/research/beijing-company-social-insurance-plan.md
+  ```
+- HTML 文件头部有 `<!-- AUTO-GENERATED -->` 标记，方便识别
