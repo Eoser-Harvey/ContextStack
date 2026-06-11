@@ -68,6 +68,12 @@
 
 ## AI / 技术
 
+### 2026-06-11: Academic Research Skills (ARS) — Claude Code 学术研究 Skill 套件深度分析
+- **来源**: https://github.com/Imbad0202/academic-research-skills
+- **作者**: Cheng-I Wu（吳政宜）
+- **整理产物**: `../academic-research-skills-deep-analysis.md`
+- **概要**: 30k Star / 2.5k Fork 的 Claude Code 学术研究 Skill 套件，覆盖 research→write→review→revise→finalize 全管线。32+ 专业 Agent、四大 Skill（Deep Research 13 Agent / Academic Paper 12 Agent / Paper Reviewer 7 Agent / Pipeline 10 Stage）。核心设计模式：苏格拉底引导、魔鬼代言人让步阈值协议、完整性验证门（不可跳过）、风格校准、四索引引用验证（S2+OpenAlex+Crossref+arXiv）、数据访问级别元数据、范围写入守卫。提炼 8 个可直接借鉴的设计模式 + 4 条对 ContextStack 的具体改进建议（自动化质量门为首要）
+
 ### 2026-05-29: Codex 国内接入三种方案教程
 - **来源**: https://mp.weixin.qq.com/s/Qvfr9LC2wF9ltCEyKFqK3g
 - **作者**: 苍何（第540篇原创）

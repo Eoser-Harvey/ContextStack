@@ -47,6 +47,8 @@
 | **Knowledge** | 非京籍孩子升学路径全解析 | 6条升学路子：积分落户/工居/回老家/国际学校/中职贯通/天津落户 | 全部 | 2026-06-05 |
 | **Knowledge** | 面试经验总库 | 7家公司完整面试记录+教训+5条红线+赛道P0考点+提问策略 | career-development | 2026-06-10 |
 | **Knowledge** | interview-prep Skill | 输入公司名自动生成8模块面试准备清单 | 全部 | 2026-06-10 |
+| **Knowledge** | Academic Research Skills 深度分析 | Claude Code 学术研究Skill套件：32+Agent、完整性门、引用验证、反讨好机制 | 全部 | 2026-06-11 |
+| **Knowledge** | OpenSquilla MetaSkill 分析 | Agent自组织技能新范式：动态发现+自动编排工作流，解决「组合灾难」 | 全部 | 2026-06-11 |
 
 ---
 
