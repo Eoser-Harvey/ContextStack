@@ -45,18 +45,49 @@ openspec init
 
 ## 核心工作流：propose → apply → archive
 
-```mermaid
-提出需求 → 审阅规范 → 实施代码 → 验证测试 → 归档清理
-/propose    /explore    /apply     /verify    /archive
-```
+### 实操示例（以 family-investment 项目为例）
 
-| 命令 | 作用 | 说明 |
-|------|------|------|
-| `/opsx:propose` | 创建变更提案 | AI 先读现有 specs，生成 proposal.md |
-| `/opsx:explore` | 审阅和完善规范 | 人工+AI 共同打磨 spec，确认需求 |
-| `/opsx:apply` | 按规范写代码 | AI 严格按 spec.md 实现，不跑偏 |
-| `/opsx:verify` | 验证实现 | 检查代码是否符合规范 |
-| `/opsx:archive` | 归档 | 将完成的 changes/ 内容合并到 specs/，清理临时文件 |
+**前置**：在项目目录执行 `cmd /c "openspec init --tools codebuddy"`，完成后重启 IDE。
+
+**第1步 — 提需求**：在 CodeBuddy 对话中输入：
+```
+/opsx:propose 给投资报告增加月度净资产趋势图，横轴月份纵轴净值
+```
+OpenSpec 会读取现有 `specs/`，生成 `changes/net-worth-chart/proposal.md` 和 `tasks.md`。
+
+**第2步 — 审阅规范**：
+```
+/opsx:explore 净值图的 Y 轴要显示绝对金额还是涨跌幅？数据源用哪个文件？
+```
+AI 会追问细节，你确认后更新 spec。
+
+**第3步 — 写代码**：
+```
+/opsx:apply
+```
+AI 严格按 spec.md 实现代码，每完成一个 task 就标记 `[x]`。
+
+**第4步 — 验证**：
+```
+/opsx:verify
+```
+检查代码是否符合规范，生成验证报告。
+
+**第5步 — 归档**：
+```
+/opsx:archive
+```
+将完成的变更合并到 `specs/`，删除临时 `changes/` 目录。
+
+### 命令速查
+
+| 命令 | 作用 |
+|------|------|
+| `/opsx:propose "描述需求"` | 创建变更提案，AI 生成 proposal.md |
+| `/opsx:explore "问题"` | 在写代码前打磨规范，澄清细节 |
+| `/opsx:apply` | 按规范写代码，逐步完成 tasks.md |
+| `/opsx:verify` | 验证实现是否符合规范 |
+| `/opsx:archive` | 归档完成的需求到 specs/ |
 
 ## 与 ContextStack 现有 Skills 的关系
 
