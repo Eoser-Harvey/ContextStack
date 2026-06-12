@@ -127,7 +127,7 @@
 
 #### 求职面试 — 今日宜休 ISHO
 - 状态: 面试讨论中
-- 文件: `02-Knowledge/career-development/interview-company-analysis/MS分析-北京今日宜休科技ISHO-20260529.md`
+- 文件: `02-Knowledge/career-development/interview-project-summaries/company-interviews/isho-analysis.md`
 
 #### 求职面试 — 已面7家公司
 - 状态: 全部结束（蚂蚁/加速进化/昉擎/西门子/思朗/宜休/九号），经验已归档

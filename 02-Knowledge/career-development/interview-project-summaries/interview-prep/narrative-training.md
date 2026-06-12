@@ -256,6 +256,6 @@
 ---
 
 **关联文档**：
-- [[../company-interviews/九号-一面深度复盘与改进方案|九号一面深度复盘]]
-- [[../company-interviews/九号-一面复盘与二面备战|九号备战完整版]]
-- [[./职业画像与求职分析|完整职业画像 v1.0]]
+- [[../company-interviews/ninebot-deep-review|九号一面深度复盘]]
+- [[../company-interviews/ninebot-review|九号备战完整版]]
+- [[./career-profile|完整职业画像 v1.0]]

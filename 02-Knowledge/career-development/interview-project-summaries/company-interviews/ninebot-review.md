@@ -1,4 +1,4 @@
-# 九号平台组 — 一面复盘 & 二面备战指南
+# 九号平台组 — 复盘 & 备战指南
 
 > 生成时间: 2026-06-09 | 数据来源: 豆包聊天记录 + 牛客/CSDN 全网面经
 
@@ -65,7 +65,7 @@
 
 **建议**：花 2-3 天把《C 语言深度剖析》的指针/内存章节过一遍，特别是和嵌入式场景结合的部分。
 
-#### 2.2.1 裸机 HardFault 定位指南（面试高频）
+#### 2.2.1 裸机 HardFault 定位指南（高频）
 
 九号一面考过：「给地址 0x69a9 写 int 值 → HardFault，为什么？」答案核心是**非对齐访问**（0x69a9 不是 4 字节对齐，ARM Cortex-M 不允许非对齐的 32-bit 访问）。但面试官更想听的是「如果真出了 HardFault，你怎么定位？」
 
@@ -93,8 +93,8 @@ void HardFault_Handler(void)
         : : : "r0", "r1", "r2", "r3"
     );
     // 保存到全局变量，供调试器/J-Link 查看
-    fault_regs.pc  = *((uint32_t*)(((uint32_t)&stacked_r0) + 24));
-    fault_regs.lr  = *((uint32_t*)(((uint32_t)&stacked_r0) + 20));
+    fault_regs.pc  = *((uint32_t*)(((uint32_t)&stacked_r0) + 24));   // ★ 这就是出错指令的地址
+    fault_regs.lr  = *((uint32_t*)(((uint32_t)&stacked_r0) + 20));   // (异常发生前的返回地址)
     fault_regs.psr = *((uint32_t*)(((uint32_t)&stacked_r0) + 28));
 
     while(1);  // 卡死在这里，用调试器查看 fault_regs
@@ -150,7 +150,11 @@ grep "0x0800" firmware.map | grep -B5 "0x08003A24"
 
 **面试时这么说**：
 
-> 「HardFault 定位我分四步走：第一，在 HardFault_Handler 中先判断 MSP/PSP 找到正确的栈指针；第二，从栈帧偏移 24 字节取出 PC 寄存器值，这就是触发异常的指令地址；第三，通过 CFSR 寄存器判断具体是哪种 fault（非对齐、总线错误、用法错误等）；第四，拿 PC 值去 .map 文件反查函数名和大致代码位置。如果是量产现场没有调试器，我会用串口把 PC 和 CFSR 打印出来，同时做个死循环让看门狗复位，故障信息记录到 Flash 日志区。」
+> 「HardFault 定位我分四步走：
+第一，在 HardFault_Handler 中先判断 MSP/PSP 找到正确的栈指针；
+第二，从栈帧偏移 24 字节取出 PC 寄存器值，这就是触发异常的指令地址；
+第三，通过 CFSR 寄存器判断具体是哪种 fault（非对齐、总线错误、用法错误等）；
+第四，拿 PC 值去 .map 文件反查函数名和大致代码位置。如果是量产现场没有调试器，我会用串口把 PC 和 CFSR 打印出来，同时做个死循环让看门狗复位，故障信息记录到 Flash 日志区。」
 
 #### 2.2.2 字节对齐导致 HardFault 的原理解释
 

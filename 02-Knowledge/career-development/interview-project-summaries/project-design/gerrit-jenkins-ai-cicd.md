@@ -334,5 +334,5 @@ Jenkins Pipeline post-failure hook�?
 ## 关联文档
 
 - [[../../../01-Projects/tencent-cloud-training/notes/07-full-training-summary|腾讯 CodeBuddy 培训完整总结]] �?SDD 方法�?- [[../../../02-Knowledge/skills/sdd-tools-comparison|SDD 三大工具对比]] �?SuperPowers/SpecKit/OpenSpec
-- [[../../interview-company-analysis/MS分析-北京今日宜休科技ISHO-20260529|ISHO 面试分析]]
+- [[../../interview-project-summaries/company-interviews/isho-analysis|ISHO 面试分析]]
 - [[../../interview-project-summaries/嵌入式设计总结|嵌入式项目总结]]

@@ -10,7 +10,7 @@
 - [[interview-project-summaries/技术面试知识点总汇|技术知识点总汇]] — 全域技术知识整合（RTOS/C/外设/CI-CD/AI）
 - [[interview-project-summaries/interview-prep/职业画像与求职分析|完整职业画像]] — 简历提取 v1.0（~9年经验/自研RTOS/TSN/DSP优化）
 - [[interview-project-summaries/interview-prep/MS叙事化训练计划|MS叙事化训练]] — 7天训练方案（本质→实践→坑→思考）
-- [[interview-project-summaries/company-interviews/九号-牛客面经题整理-FreeRTOS|九号-FreeRTOS面经]] — 牛客网14题答案整理
+- [[interview-project-summaries/company-interviews/ninebot-questions|九号-FreeRTOS面经]] — 牛客网14题答案整理
 
 ## 🔗 相关资源
 
