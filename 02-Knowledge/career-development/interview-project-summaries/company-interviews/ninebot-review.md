@@ -138,23 +138,43 @@ void HardFault_Handler(void)
 }
 ```
 
-**Step 4 — 离线分析：PC 地址 → .map 文件 → 源码行**
+**Step 3.5 — CFSR 寄存器详解**
+
+CFSR（可配置故障状态寄存器）地址 `0xE000ED28`，32 位中实际是三个寄存器拼接而成，根据位号判断故障类型：
+
+| 段 | 寄存器 | 管什么 |
+|------|------|------|
+| **UFSR** [15:0] | 用法错误 | 未定义指令、非对齐访问（bit8→UNALIGNED）、除零（bit9→DIVBYZERO）、协处理器缺失 |
+| **BFSR** [23:16] | 总线错误 | 精确总线错误（bit1→PRECISERR，地址可从 BFAR 0xE000ED38 读出）、不精确错误 |
+| **MMSR** [31:24] | 内存管理 | MPU 违规、访问不可执行区域（bit7→MMARVALID，配合 0xE000ED34 读出非法地址） |
+
+**Step 4 — 离线分析：PC 地址 → 函数名 → 源码行**
+
+`.map` 文件只能定位到函数，无法精确到行。需要 `.elf` 文件（带调试符号）+ `addr2line`（GNU 工具链自带）才能到源码行：
 
 ```
-# 编译时生成 map 文件
-arm-none-eabi-gcc -Wl,-Map=firmware.map ...
+# 编译时生成 map 和 elf 文件
+arm-none-eabi-gcc -Wl,-Map=firmware.map -o firmware.elf ...
 
-# 搜索 PC 地址落在哪个函数
+# .map 查函数名
 grep "0x0800" firmware.map | grep -B5 "0x08003A24"
+# → 输出: .text.task_scheduler  0x08001380  0xa4  → 是 scheduler 函数
+
+# .elf + addr2line 精确到行
+arm-none-eabi-addr2line -e firmware.elf 0x080013a0
+# → 输出: src/scheduler.c:142  ← 精确到源码行！
+```
+
+> `addr2line` 支持 GCC（`.elf` 含 DWARF 调试信息，离线可读）。Keil 的 `fromelf` 也能从 `.axf` 提取符号，但不如 addr2line 精确。IAR 的 `.out` 文件**不能离线反查行号**，必须连上 IDE + J-Link 在调试态才能映射 PC→源码行。
 ```
 
 **面试时这么说**：
 
 > 「HardFault 定位我分四步走：
-第一，在 HardFault_Handler 中先判断 MSP/PSP 找到正确的栈指针；
+第一，在 HardFault_Handler 中先判断 MSP/PSP 找到正确的栈指针， MSP（内核/裸机默认模式）\ PSP（RTOS 任务运行中）；
 第二，从栈帧偏移 24 字节取出 PC 寄存器值，这就是触发异常的指令地址；
 第三，通过 CFSR 寄存器判断具体是哪种 fault（非对齐、总线错误、用法错误等）；
-第四，拿 PC 值去 .map 文件反查函数名和大致代码位置。如果是量产现场没有调试器，我会用串口把 PC 和 CFSR 打印出来，同时做个死循环让看门狗复位，故障信息记录到 Flash 日志区。」
+第四，拿 PC 值去 `.map` 文件反查函数名，再用 `.elf` 文件 + `addr2line` 精确定位到源码行。如果是量产现场没有调试器，我会用串口把 PC 和 CFSR 打印出来，同时做个死循环让看门狗复位，故障信息记录到 Flash 日志区。」
 
 #### 2.2.2 字节对齐导致 HardFault 的原理解释
 
