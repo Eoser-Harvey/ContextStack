@@ -53,6 +53,6 @@
 - **`beijing-company-social-insurance-plan.html`** ← 自动生成，禁止手动编辑
 - **修改 .md 后必须同步重生成 .html**：
   ```
-  python 05-Tools/fileops/md2html.py 01-Projects/family-investment/research/beijing-company-social-insurance-plan.md
+  python 05-Tools/fileops/md2html.py 01-Projects/family-investment/company-setup/beijing-company-social-insurance-plan.md
   ```
 - HTML 文件头部有 `<!-- AUTO-GENERATED -->` 标记，方便识别

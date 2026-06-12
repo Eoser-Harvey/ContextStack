@@ -7,7 +7,7 @@
 | 文件/目录 | 说明 |
 |-----------|------|
 | [[./portfolio/]] | 持仓追踪（holdings.yaml + 自动报告 + 交易日志 + A8计划） |
-| [[./beijing-company-social-insurance-plan.md]] | 北京公司社保规划 |
+| [[../company-setup/beijing-company-social-insurance-plan.md]] | 北京开公司社保全攻略 |
 
 ## 关联资源
 
