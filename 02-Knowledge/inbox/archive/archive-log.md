@@ -68,6 +68,12 @@
 
 ## AI / 技术
 
+### 2026-06-12: 歸藏 Skill 设计哲学 — 爆款 Skill 创作者的万字经验谈
+- **来源**: https://mp.weixin.qq.com/s/sZXl5kHA9LErEwnegpvgXg
+- **作者**: 歸藏的 AI 工具箱
+- **整理产物**: `../skill-design-philosophy-guizang-20260612.md`
+- **概要**: 歸藏基于 PPT/SocialCard/Logo Generator/AI Desk Card 等爆款 Skill 创作经验，系统阐述 Skill 的核心定义（人的经验外化）、架构原则（中心短辐射厚/Thin Harness Fat Skills）、质量维护六步法（gotchas > 正向说明）、设计类 Skill 核心理念（把品味变成可执行限制）、Skill 生态分发策略、以及 Skill vs Gene/Capsule 的对比。提炼 5 条对 ContextStack 的直接启发。
+
 ### 2026-06-11: Academic Research Skills (ARS) — Claude Code 学术研究 Skill 套件深度分析
 - **来源**: https://github.com/Imbad0202/academic-research-skills
 - **作者**: Cheng-I Wu（吳政宜）
