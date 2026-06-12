@@ -112,7 +112,15 @@ def main():
         alpha = 1.0 if key in ('净资产', '总资产', '现金固收', '加密货币') else 0.7
 
         ax.plot(plot_dates, plot_vals, style, linewidth=lw,
-                color=color, label=key, alpha=alpha, marker='o', markersize=4)
+                color=color, label=key, alpha=alpha, marker='o', markersize=5)
+
+        # 在数据点上标注具体金额
+        if key in ('净资产', '总资产', '现金固收', '加密货币'):
+            for x, y in zip(plot_dates, plot_vals):
+                offset = 15 if key == '净资产' else 10
+                ax.annotate(f'{y/10000:.1f}万', (x, y),
+                            textcoords='offset points', xytext=(0, offset),
+                            fontsize=7, color=color, ha='center', alpha=0.85)
 
     ax.set_xlabel('月份', fontsize=12)
     ax.set_ylabel('资产值 (CNY)', fontsize=12)
