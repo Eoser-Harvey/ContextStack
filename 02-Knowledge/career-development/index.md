@@ -4,13 +4,21 @@
 
 ## 📁 目录结构
 
-- [[career-strategy/|职业发展策略]] — 核心分析（北京海淀/昌平嵌入式岗位 + 简历/面试/谈薪全攻略）
-- [[../../.codebuddy/rules/interview-prep.mdc|面试准备Skill]] — 输入公司名，自动生成面试准备清单
-- [[interview-project-summaries/|面试资料汇总]] — 公司记录+技术基础+项目设计+通用准备
-- [[interview-project-summaries/tech-interview-notes|技术知识点总汇]] — 全域技术知识整合（RTOS/C/外设/CI-CD/AI）
-- [[interview-project-summaries/interview-prep/职业画像与求职分析|完整职业画像]] — 简历提取 v1.0（~9年经验/自研RTOS/TSN/DSP优化）
-- [[interview-project-summaries/interview-prep/MS叙事化训练计划|MS叙事化训练]] — 7天训练方案（本质→实践→坑→思考）
-- [[interview-project-summaries/company-interviews/ninebot-questions|九号-FreeRTOS面经]] — 牛客网14题答案整理
+### 职业策略
+- [[career-strategy/|career-strategy/]] — 个人职业发展分析 + 端侧AI企业定制攻略
+
+### 面试项目汇总
+- [[interview-project-summaries/|interview-project-summaries/]] — 四大模块：
+  - [[interview-project-summaries/01-company-interviews/|01-公司面试记录]] — 九号/ISHO/思朗面试复盘 + 职业画像
+  - [[interview-project-summaries/02-interview-prep/|02-面试准备]] — 叙事训练 + C算法题 + 通用问题
+  - [[interview-project-summaries/03-project-design/|03-项目设计]] — CI/CD流程 + 架构图
+  - [[interview-project-summaries/04-embedded-fundamentals/|04-嵌入式基础]] — C++/RTOS/嵌入式AI笔记
+
+### 关键入口
+- [[interview-project-summaries/01-company-interviews/career-profile|完整职业画像]] — 简历提取 v1.0
+- [[interview-project-summaries/02-interview-prep/narrative-training|叙事化训练计划]] — 7天训练方案
+- [[interview-project-summaries/01-company-interviews/ninebot-questions|九号-FreeRTOS面经]] — 牛客网14题答案整理
+- [[interview-project-summaries/tech-interview-notes|技术知识点总汇]] — RTOS/C/外设/CI-CD/AI
 
 ## 🔗 相关资源
 
@@ -20,12 +28,13 @@
 
 ## 🎯 使用说明
 
-1. **职业规划**：参考核心分析文档制定个人职业发展策略
-2. **简历优化**：使用企业定制化模板修改简历
-3. **面试准备**：练习专属面试话术和谈薪策略
+1. **职业规划**：参考职业策略文档制定个人职业发展策略
+2. **面试准备**：按 02-面试准备 → 04-嵌入式基础 → 03-项目设计 顺序复习
+3. **公司面试**：面试前查阅 01-公司面试记录中对应公司的复盘
 4. **技能对齐**：对照市场调研报告补齐技能缺口
 
 ## 📝 更新日志
 
-- 2026-06-10：新增九号公司嵌入式面试题整理（14题，含 FreeRTOS/数据结构/网络/DMA 等）
+- 2026-06-14：目录重构为四模块结构（01公司面试/02面试准备/03项目设计/04嵌入式基础），修复全部索引链接
+- 2026-06-10：新增九号公司嵌入式面试题整理（14题）
 - 2026-05-13：创建职业发展知识库，迁移核心分析文档

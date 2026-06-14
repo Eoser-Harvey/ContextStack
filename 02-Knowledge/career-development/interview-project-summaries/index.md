@@ -1,12 +1,12 @@
 # 面试资料汇总
 
 ## 目录
-- [[./tech-interview-notes|技术面试知识点总汇]] — 整合全部技术知识（RTOS/C语言/外设/CI-CD/AI）
-- [[./interview-prep/|通用面试准备]] — 职业画像 + 叙事化训练 + 算法题
-- [[./company-interviews/|公司面试记录]] — 九号/ISHO/思朗面试复盘
-- [[./embedded-fundamentals/|嵌入式基础知识]] — C++/RTOS/嵌入式AI原始笔记
-- [[./project-design/|项目设计]] — CI/CD流程 + 架构图
+- [[./01-company-interviews/|01-公司面试记录]] — 九号/ISHO/思朗面试复盘 + 职业画像
+- [[./02-interview-prep/|02-面试准备]] — 叙事化训练 + C算法题 + 通用问题
+- [[./03-project-design/|03-项目设计]] — CI/CD流程 + 架构图
+- [[./04-embedded-fundamentals/|04-嵌入式基础]] — C++/RTOS/嵌入式AI笔记
+- [[./tech-interview-notes|技术面试知识点总汇]] — 全域技术知识整合
 
 ---
 
-**最后更新**: 2026-06-12
+**最后更新**: 2026-06-14
