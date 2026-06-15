@@ -5,9 +5,9 @@
 #   manual        = 预IPO代币/小众平台, 需手动更新当月价格
 
 meta:
-  last_updated: "2026-06-14"
-  usd_cny: 6.780
-  hkd_cny: 0.865
+  last_updated: "2026-06-15"
+  usd_cny: 6.770
+  hkd_cny: 0.864
 
 # ============================================================
 # 投资持仓 (每个标的必须含: quantity, cost_basis, price_source)
