@@ -5,9 +5,9 @@
 #   manual        = 预IPO代币/小众平台, 需手动更新当月价格
 
 meta:
-  last_updated: "2026-06-15"
+  last_updated: "2026-06-16"
   usd_cny: 6.770
-  hkd_cny: 0.864
+  hkd_cny: 0.865
 
 # ============================================================
 # 投资持仓 (每个标的必须含: quantity, cost_basis, price_source)
@@ -64,14 +64,14 @@ holdings:
   - id: crcl_yan
     symbol: CRCL
     name: Circle(燕蒙古)
-    quantity: 207.46
-    cost_basis_usd: 14245.76
+    quantity: 221.59
+    cost_basis_usd: 15387.76
     cost_is_total: true
     category: us_stock_tokenized
     storage: 燕蒙古WEB3
     price_source: sina
     sina_symbol: "gb_crcl"
-    note: 原169.3股均价$63.20; 06-02换仓买入+26.02股; 06-05卖TSLA买CRCL+12.14股@$83, 新均价$68.69/股
+    note: 原207.46股成本$14,245.76均价$68.69; 06-16买入+14.13股@$80.80($1,142), 新均价$69.45/股
 
   - id: mrvl_han
     symbol: MRVL
@@ -83,6 +83,18 @@ holdings:
     price_source: sina
     sina_symbol: "gb_mrvl"
     note: 2026-06-05现金买入2000USDT, 约$291/股, 数量待确认
+
+  - id: dram_han
+    symbol: DRAM
+    name: DRAM(币安)
+    quantity: 27.4
+    cost_basis_usd: 72.60
+    category: us_stock
+    storage: 韩伟蒙古币安
+    price_source: manual
+    manual_price_usd: 72.60
+    manual_price_date: "2026-06-16"
+    note: 2026-06-16 买入27.4股@$72.60, 总成本$1,989.24
 
   - id: nok_han
     symbol: NOK
@@ -255,8 +267,13 @@ cash:
     amount_hkd: 146060
     note: 含13W家庭内部调配, 其余为打新盈利
   - name: 币安USDT余额
-    amount_usd: 10500
-    note: 2026-06-02 MA120策略卖出ETH($13,992)+BTC($23,166)所得; 2026-06-04用$1,576买入CRCL; 2026-06-05用$2,000买入MRVL; 2026-06-05还清币安借贷$13,400; 2026-06-05抄底买入BTC 0.03409个@$61600($2,100); 2026-06-11买入NOK $2,000
+    amount_usd: 8510
+    note: >
+      06-02: MA120卖出ETH($13,992)+BTC($23,166)
+      06-04: 买CRCL -$1,576
+      06-05: 买MRVL -$2,000 + 还借贷 -$13,400 + 抄底BTC -$2,100
+      06-11: 买NOK -$2,000
+      06-16: 买DRAM -$1,989
 
 # ============================================================
 # 固定资产

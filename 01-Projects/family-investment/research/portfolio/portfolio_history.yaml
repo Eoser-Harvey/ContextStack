@@ -67,8 +67,8 @@ holdings_history:
     all_time_low_date: '2026-06-14'
   mrvl_han:
     name: 迈威尔(币安)
-    all_time_high_price: 291.0
-    all_time_high_date: '2026-06-05'
+    all_time_high_price: 292.81
+    all_time_high_date: '2026-06-16'
     all_time_low_price: 252.59
     all_time_low_date: '2026-06-11'
   bitgo:
@@ -124,3 +124,6 @@ net_worth_snapshots:
 - date: '2026-06-15'
   net_worth_cny: 1187923
   total_assets_cny: 1587923
+- date: '2026-06-16'
+  net_worth_cny: 1179755
+  total_assets_cny: 1579755
