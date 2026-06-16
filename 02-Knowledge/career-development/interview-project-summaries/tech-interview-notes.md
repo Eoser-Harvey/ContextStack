@@ -1,4 +1,4 @@
-# 技术面试知识点总汇
+# 技术知识点总汇
 
 > 整合来源：RTOS笔记.docx + 嵌入式基础.docx/嵌入式基础2.docx + 嵌入式设计总结.docx + 九号牛客面经 + 九号备战文档 + gerrit-jenkins-ai-cicd.md
 > 创建：2026-06-12
@@ -9,12 +9,16 @@
 
 ### 1.1 自研 RTOS (AcuOS) 性能数据
 
-| 指标 | AcuOS | FreeRTOS | μC/OS |
-|------|-------|----------|-------|
-| 内核代码量 | 10KB | ~5KB ROM | — |
-| 零任务内存 | 40KB | ~2KB RAM | — |
-| 创建32任务增量 | 0.4KB | ≥17KB | — |
-| M4平台实时性 | 3ms | — | — |
+| 指标 | AcuOS (M4) | AcuOS (DSP) | FreeRTOS (参考) |
+|------|-----------|------------|--------------|
+| 内核 ROM | ~5KB | ~10KB | ~6-10KB |
+| 静态 RAM（零任务） | ~1.3KB | ~2.6KB | ~2-3KB |
+| TCB 大小 | 24 bytes | 36 bytes | ~56 bytes |
+| 每任务栈（默认） | 256B (64 words) | 800B (200 words) | 可配 |
+| TCB 分配方式 | 静态数组预分配 768B | 动态 | 动态/静态可选 |
+| 32任务额外 RAM | ~8KB（栈256B×32）| ~25.6KB（栈800B×32）| ≥17KB |
+| IPC 支持 | Semaphore + Queue | Semaphore + Queue + Mutex + Flag + Alarm | 全量 IPC |
+| 上下文切换 | PendSV（标准 Cortex-M） | DSP 汇编 | PendSV |
 
 **已支持特性**：任务创建/优先级/栈配置(静态)、信号量、消息队列、软件定时器、互斥锁、系统时间、系统负载率
 
