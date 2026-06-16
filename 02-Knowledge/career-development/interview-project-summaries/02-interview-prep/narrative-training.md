@@ -291,6 +291,37 @@ T_OsTcb 中有 uiStkFree 字段，初始为 uiStkSize（任务栈大小）。
 **面试话术**：
 > 「我在 TCB 里维护了一个 `uiStkFree` 字段，每次调度结束后扫描栈底连续零值来估算剩余空间。实际踩过坑：DSP 上 FFT 任务在栈上开了个大数组，直接把栈打穿覆写了相邻 TCB，现象是任务莫名其妙跳到非法地址。后来规范了：所有 >256B 的局部数组一律静态分配。」
 
+**对照：FreeRTOS 如何检测和预防栈溢出**
+
+FreeRTOS 提供了两套方案，比 AcuOS 的"扫描零值"更完备：
+
+| 方案 | 实现方式 | 优缺点 |
+|------|------|------|
+| **方案一：运行时检测** `configCHECK_FOR_STACK_OVERFLOW=2` | 任务切换时检查栈顶指针是否越界 + 检查栈底 canary 是否被破坏 | ✅ 实时检测，溢出立即触发 hook；❌ 只在切换时检查 |
+| **方案二：水印检测** `uxTaskGetStackHighWaterMark()` | 栈初始化时全部填入 `0xA5`，运行时统计栈底连续 `0xA5` 个数 = 剩余空间 | ✅ 原理和 AcuOS 完全一样（只是填充值不同）；❌ 需主动调用 |
+| **MPU 保护（Cortex-M 高级）** | 配置 MPU 在任务栈底放一个不可访问页，溢出时触发 MemManage Fault | ✅ 硬件级零开销；❌ 需要 MPU 支持，内存粒度对齐 |
+
+**核心差异**：
+
+```
+FreeRTOS 栈初始化：全部填入 0xA5A5A5A5（已知魔数）
+AcuOS   栈初始化：全部清零  0x00000000
+
+检测逻辑完全相同：从栈底向上数，连续"初始值"的个数 = 剩余空间
+```
+
+**FreeRTOS 的"溢出直接挂钩"机制**（AcuOS 没有）：
+
+```c
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {
+    // 栈真的溢出了！立即记录 + 安全重启
+    // AcuOS 没有这个——只能靠 uiStkFree 趋近 0 时人工判断
+}
+```
+
+**面试加分对比话术**：
+> 「FreeRTOS 的栈检测比我的 AcuOS 多一层兜底——除了水印法，它还有 `configCHECK_FOR_STACK_OVERFLOW=2` 在每次任务切换时检查栈顶，加上溢出 hook 可以自动触发安全处理。不过核心原理一样：填初始值→运行后扫描剩余连续初始值→得到剩余空间。差别只是 FreeRTOS 用 `0xA5`、我用 `0x00`。」
+
 ---
 
 **二、临界区关中断过长导致通信丢包**
