@@ -190,7 +190,7 @@ FUNC_NAME(OsStartFirstTask):
 	/* ToDo: reset the system SP to the base of the system stack,
 	 * as it will only be used for interrupts and exceptions from this point
 	 * so any space currently being used on the stack will be wasted. */
-	// ½«ÏµÍ³SPÖØÖÃÎªÏµÍ³¶ÑÕ»µÄµ×²¿£¬ÒòÎªËü½«½öÓÃÓÚ´Ó´Ëµã¿ªÊ¼µÄÖĞ¶ÏºÍÒì³££¬Òò´Ë¶ÑÕ»ÉÏµ±Ç°Ê¹ÓÃµÄËùÓĞ¿Õ¼ä¶¼½«±»ÀË·Ñ
+	// å°†ç³»ç»ŸSPé‡ç½®ä¸ºç³»ç»Ÿå †æ ˆçš„åº•éƒ¨ï¼Œå› ä¸ºå®ƒå°†ä»…ç”¨äºä»æ­¤ç‚¹å¼€å§‹çš„ä¸­æ–­å’Œå¼‚å¸¸ï¼Œå› æ­¤å †æ ˆä¸Šå½“å‰ä½¿ç”¨çš„æ‰€æœ‰ç©ºé—´éƒ½å°†è¢«æµªè´¹
 	 
 	/* 
 		 We are currently in the system (foreground) data and DAG regs
@@ -209,11 +209,11 @@ FUNC_NAME(OsStartFirstTask):
     /* Setup some variables to restore the loop stack */
     R0 = DM(I3, M6);   
     R0 = R0 + R0;                                      /* R0 = 2 * R0, move load pointer to stack region */
-    // R0Ïà¼ÓµÄ½á¹û½øÈëALU£¿
-    // Ïà¼Ó½á¹û±íÊ¾£ºstack count£¿
+    // R0ç›¸åŠ çš„ç»“æœè¿›å…¥ALUï¼Ÿ
+    // ç›¸åŠ ç»“æœè¡¨ç¤ºï¼šstack countï¼Ÿ
     
-    /* PEx¡¢PEyÌõ¼ş(ALU = 0 or exclusive access successful¶ÀÁ¢·ÃÎÊ³É¹¦)¶¼³ÉÁ¢£¬½øĞĞJmup.
-     AZ=1´ú±íEQÌõ¼ş³ÉÁ¢£¬AZ±íÊ¾£ºALU result zero or floating-point underflow
+    /* PExã€PEyæ¡ä»¶(ALU = 0 or exclusive access successfulç‹¬ç«‹è®¿é—®æˆåŠŸ)éƒ½æˆç«‹ï¼Œè¿›è¡ŒJmup.
+     AZ=1ä»£è¡¨EQæ¡ä»¶æˆç«‹ï¼ŒAZè¡¨ç¤ºï¼šALU result zero or floating-point underflow
     */
     IF EQ JUMP (PC, .Initial_Loop_Stack_Done) (DB);    /* if stack count is zero then we're done */
         R0 = R0 - 1;                                   /* pre-decrement count, get stack count into M2 */
@@ -221,8 +221,8 @@ FUNC_NAME(OsStartFirstTask):
 
 .Initial_Loop_Stack:                             /* top of loop */
     /* 
-    PUSH LOOPÖ¸Áî½öÍ¨¹ı¸ü¸ÄÖ¸ÕëÀ´Ñ¹Èë¶ÑÕ»¡£Ëü²»»á¸ü¸ÄÑ­»·µØÖ·¶ÑÕ»µÄÄÚÈİ¡£
-              Òò´Ë£¬Í¨³£Ó¦ÔÚPUSH LOOPÖ¸ÁîÖ®ºóĞ´ÈëREGF_LADDR¼Ä´æÆ÷¡£
+    PUSH LOOPæŒ‡ä»¤ä»…é€šè¿‡æ›´æ”¹æŒ‡é’ˆæ¥å‹å…¥å †æ ˆã€‚å®ƒä¸ä¼šæ›´æ”¹å¾ªç¯åœ°å€å †æ ˆçš„å†…å®¹ã€‚
+              å› æ­¤ï¼Œé€šå¸¸åº”åœ¨PUSH LOOPæŒ‡ä»¤ä¹‹åå†™å…¥REGF_LADDRå¯„å­˜å™¨ã€‚
     */
     PUSH LOOP;
     IF NE JUMP (PC, .Initial_Loop_Stack)(DB);    /* R0 == 0 on final iteration */
@@ -273,7 +273,7 @@ xPortSFT31Handler:
 FUNC_NAME(_adi_SoftIntTaskSw):
 
       /* Unlike a "raw" core interrupt, thsi entrypoint is called from the SEC dispatcher, which has
-       * already saved some register to the foreground (i.e.e system) stack. In order to mimicÄ£Äâ the
+       * already saved some register to the foreground (i.e.e system) stack. In order to mimicæ¨¡æ‹Ÿ the
        * behaviour of a core interrupt, and hence to minimise the differences between using a core
        * interrupt and an SEC interrupt for rescheduling, we restore those registers here. This puts
        * the register state (apart from PC) back as it was at the point where the SEC dispatcher was
@@ -288,7 +288,7 @@ FUNC_NAME(_adi_SoftIntTaskSw):
 
 // already saved some register to the foreground (i.e.e system) stack
 
-/* 1. ÓÃSECÖĞ¶ÏÄ£ÄâÏµÍ³ÖĞ¶Ï£¬¼Ä´æÆ÷´¦Àí²»Í¬µã:
+/* 1. ç”¨SECä¸­æ–­æ¨¡æ‹Ÿç³»ç»Ÿä¸­æ–­ï¼Œå¯„å­˜å™¨å¤„ç†ä¸åŒç‚¹:
    
 */
 

@@ -355,20 +355,16 @@ OsTaskCreate() (第256行)    → 关中断 + 链表插入 → 约 0.05ms
 | 1小时连续运行 | 0 次异常 | 几百次 CRC 校验失败 |
 | 根源 | — | 关中断时长 > UART FIFO 深度 |
 
-#### 解决方法（三条路，从好到最优）
+#### 解决方法
 
 ```
-① 降低关中断时长（最直接）
-   → OsSchedule() 的 OsPreSchedule() 不在临界区内做
-   → 把 Tick 处理拆成"关中断拿锁 + 开中断计算 + 关中断放锁"
-
-② DMA + 空闲中断（根本解决）
+① DMA + 空闲中断（根本解决）
    → UART 不靠 RX 中断逐字节收
    → 配置 DMA 自动搬运到环形缓冲区
    → 空闲中断触发时一次性处理整帧
    → 关中断期间 DMA 继续运行，不丢数据
 
-③ 硬件 FIFO 深度利用
+② 硬件 FIFO 深度利用
    → SHARC DSP UART 可配置触发等级
    → 设置为 FIFO 过半触发中断（而非每字节触发）
    → 减少中断频率，同时缓冲更多字节
@@ -377,6 +373,60 @@ OsTaskCreate() (第256行)    → 关中断 + 链表插入 → 约 0.05ms
 #### 面试话术
 
 > 「电力仪表上 10ms ADC 采样和 200ms Modbus 通信并行跑。曾遇到一个诡异 bug：通信偶尔丢包 2-5%，但系统不卡死。定位方法是关掉所有用户任务只跑通信 → 正常；说明问题不在通信代码本身。然后逐个打开任务，发现加到 5 个以上任务后丢包率上升——原来 `OsTimeTick()` 关中断长达 1.2ms，而 UART FIFO 只有 16 字节深度，115200 波特率下 1.4ms 就溢出了。解决：把 OsSchedule() 里不依赖原子保护的逻辑移到临界区外，关中断时长降到 0.2ms，丢包消失。更根本的解法是 DMA+空闲中断接收，关中断期间 DMA 照跑不误。」
+
+---
+
+#### 🔍 深入：OsExitCritical 嵌套计数机制详解
+
+> 📌 代码依据：`SharcDsp.c:58-90`，完整实现仅 33 行
+
+```
+Uint32 OsEnterCritical(void) {
+    uiMask = sysreg_bit_tst(sysreg_MODE1, IRPTEN);   // ①先读当前中断状态(开/关)
+    BIT CLR MODE1 0x1000;                             // ②汇编: 关中断
+    g_uiCpuSr++;                                      // ③全局嵌套计数+1
+    if (g_uiCpuSr == 1)                               // ④只有最外层才保存原始状态
+        g_uiSavedIntMask = uiMask;
+    return (g_uiCpuSr);                               // ⑤返回当前计数
+}
+
+void OsExitCritical(Uint32 uiCpuSr) {
+    g_uiCpuSr = uiCpuSr;     // ①恢复到"我进入时"的计数值
+    g_uiCpuSr--;              // ②我这层退出，减1
+    if (g_uiCpuSr == 0) {     // ③所有层都退出了？
+        if (0u != g_uiSavedIntMask)
+            sysreg_bit_set(IRPTEN);  // ④恢复中断
+    }
+}
+```
+
+**单层调用**（99%的场景）：
+
+```
+OS_ENTER:  g_uiCpuSr: 0 → 1 → return 1
+           g_uiCpuSr==1 → 保存中断状态 → 关中断
+           
+OS_EXIT:   uiCpuSr=1 → g_uiCpuSr=1 → -1 → =0
+           0==0 → 开中断 ✓
+```
+
+**嵌套调用**（func_A 关中断后又调 func_B）：
+
+```
+func_A::ENTER:  g_uiCpuSr: 0→1, CpuSr_A=1, 关中断
+    │
+  func_B::ENTER: g_uiCpuSr: 1→2, CpuSr_B=2
+  func_B::EXIT:  g_uiCpuSr=2→-1→=1  (1≠0, 不开中断！)
+    │
+func_A::EXIT:    g_uiCpuSr=1→-1→=0  (0==0, 开中断！)
+```
+
+**核心设计哲学**：
+- `g_uiCpuSr` = 当前还在临界区内的层数（0 = 完全退出）
+- `uiCpuSr`（参数）= 快照值——"我进来时已经叠了几层"
+- 退出时恢复快照再减 1 = 精确还原嵌套深度
+- 只有深度归零（最外层退出）才真正开中断
+- 如果进入时中断本来就是关的（`g_uiSavedIntMask == 0`），退出时也不开，保持原始状态
 
 ---
 

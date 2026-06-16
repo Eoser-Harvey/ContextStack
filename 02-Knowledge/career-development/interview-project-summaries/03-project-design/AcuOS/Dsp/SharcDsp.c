@@ -1,9 +1,9 @@
 /*******************************************************************************
-* ÎÄ¼şÃû³Æ£ºSharcDsp.c
-* ÎÄ¼şËµÃ÷£ºcpu platform
-* µ±Ç°°æ±¾£ºV1.0
-* ×÷ Õß£º   wuzhiliang
-* Íê³ÉÈÕÆÚ£º2021-1-9
+* æ–‡ä»¶åç§°ï¼šSharcDsp.c
+* æ–‡ä»¶è¯´æ˜ï¼šcpu platform
+* å½“å‰ç‰ˆæœ¬ï¼šV1.0
+* ä½œ è€…ï¼š   hanwei
+* å®Œæˆæ—¥æœŸï¼š2021-1-9
 *******************************************************************************/
 #include <builtins.h>                                      // sysreg_read
 #include <sysreg.h>                                        // sysreg_MODE1
@@ -93,7 +93,7 @@ void OsContextSwitchInt(void)
 {
 	/* Use SEC interrupts SOFT6 for SHARC0 (core 1) and SOFT7 for SHARC1 (core 2)
 	 *
-	 * Ä¿Ç°Ö»Ö§³ÖSHARC  Core0
+	 * ç›®å‰åªæ”¯æŒSHARC  Core0
 	 * */
 
 	*pREG_SEC0_RAISE = INTR_SYS_SOFT6_INT;
@@ -134,7 +134,7 @@ Uint32 *OsTaskStkInit(void (*pTask)(void), Uint32 *puiStk, Uint32 uiStkSize)
 	pRec->M14 =  1;
 	pRec->M15 = (Uint32)-1;
 
-    /* ÈÎÎñ´«²Î(Ä¿Ç°AcuOSÏµÍ³²»Ö§³Ö´«²Î) */
+    /* ä»»åŠ¡ä¼ å‚(ç›®å‰AcuOSç³»ç»Ÿä¸æ”¯æŒä¼ å‚) */
     pRec->R4    = (Uint32)NULL;
 
     /* .. and the Run function. */
