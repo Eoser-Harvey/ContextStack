@@ -76,7 +76,7 @@
 
 #### 📐 自研RTOS双平台资源分析（源码核实）
 
-**ARM M4 版本** `E:\R&D Data Document\...\AcuOS_20180802\AcuOS_K10\App\`
+**ARM M4 版本** `源码待上传`
 
 | 文件 | 源码 | 说明 |
 |------|------|------|
@@ -95,7 +95,7 @@
 | IPC | Semaphore + Queue | — |
 | 上下文切换 | PendSV 异常 | 标准 Cortex-M 实践 |
 
-**DSP SHARC 版本** `E:\ProjectGroup\1-Acuvim\...\LibDspAcuOs\LibDspAcuOs\Source\`
+**DSP SHARC 版本** `03-project-design/AcuOS/Dsp/`
 
 | 文件 | 源码 | 说明 |
 |------|------|------|
