@@ -5,7 +5,7 @@
 #   manual        = 预IPO代币/小众平台, 需手动更新当月价格
 
 meta:
-  last_updated: "2026-06-16"
+  last_updated: "2026-06-17"
   usd_cny: 6.770
   hkd_cny: 0.865
 
@@ -95,6 +95,18 @@ holdings:
     manual_price_usd: 72.60
     manual_price_date: "2026-06-16"
     note: 2026-06-16 买入27.4股@$72.60, 总成本$1,989.24
+
+  - id: spcx_han
+    symbol: SPCX
+    name: SPCX(币安)
+    quantity: 15.52
+    cost_basis_usd: 204.96
+    category: us_stock
+    storage: 韩伟蒙古币安
+    price_source: manual
+    manual_price_usd: 204.96
+    manual_price_date: "2026-06-17"
+    note: 2026-06-17 用3182USDT买入15.52股, 均价~$204.96/股
 
   - id: nok_han
     symbol: NOK
@@ -267,13 +279,14 @@ cash:
     amount_hkd: 146060
     note: 含13W家庭内部调配, 其余为打新盈利
   - name: 币安USDT余额
-    amount_usd: 8510
+    amount_usd: 5328
     note: >
       06-02: MA120卖出ETH($13,992)+BTC($23,166)
       06-04: 买CRCL -$1,576
       06-05: 买MRVL -$2,000 + 还借贷 -$13,400 + 抄底BTC -$2,100
       06-11: 买NOK -$2,000
       06-16: 买DRAM -$1,989
+      06-17: 买SPCX -$3,182
 
 # ============================================================
 # 固定资产

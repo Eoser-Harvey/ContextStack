@@ -35,6 +35,7 @@
 | **Project** | wechat-radar | AI驱动公众号智能日报，环境就绪 | 01-Projects/wechat-radar | 2026-06-10 |
 | **Project** | family-investment | 家庭投资管理项目 | 01-Projects/family-investment | 2026-06-10 |
 | **Project** | 求职面试-今日宜休ISHO | 面试讨论中，已完成全面匹配度分析 | career-development | 2026-05-29 |
+| **Project** | 个性化Agent开发 | 待规划：李笑来认知蒸馏Agent、健康Agent等 | 01-Projects/personal-agents | 2026-06-17 |
 | **Reference** | S5120V8逻辑寄存器手册 | 硬件参考 | network-device-debug | — |
 | **Reference** | Wireshark 抓包 | 网络分析工具 | network-device-debug | — |
 | **Knowledge** | ContextStack四层架构 | 框架说明 | 全部 | 2026-04-29 |
@@ -51,6 +52,8 @@
 | **Knowledge** | Academic Research Skills 深度分析 | Claude Code 学术研究Skill套件：32+Agent、完整性门、引用验证、反讨好机制 | 全部 | 2026-06-11 |
 | **Knowledge** | OpenSquilla MetaSkill 分析 | Agent自组织技能新范式：动态发现+自动编排工作流，解决「组合灾难」 | 全部 | 2026-06-11 |
 | **Knowledge** | ClawHunt Agent众包市场分析 | Agent任务众包平台：需求方挂任务→Agent竞标→法币结算。当前收入微薄，适合观察学习 | 全部 | 2026-06-16 |
+| **Knowledge** | 八字紫微排盘Skill (bazi-ziwei) | AI八字+紫微斗数排盘：算法精准排盘+格局补层+综合印证+水墨风HTML海报 | 全部 | 2026-06-17 |
+| **Knowledge** | 半导体材料国产替代投资机会 | 五大紧缺材料赛道：氮化镓/靶材/硅微粉/ABF板/光刻胶。英飞凌GaN被禁催化，江丰电子业绩已验证 | family-investment | 2026-06-17 |
 
 ---
 

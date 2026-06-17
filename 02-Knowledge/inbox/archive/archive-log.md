@@ -187,6 +187,12 @@
 
 ## 投资理财
 
+### 2026-06-17: AI 上游材料投资分析 + 个人配置建议 — 氮化镓/靶材/硅微粉/ABF + 美股A股对照
+- **来源**: https://mp.weixin.qq.com/s/VGiAKzDoTUb_aBY0zNhLoA
+- **作者**: 宝哥（公众号：宝总投资）
+- **整理产物**: `../ai-upstream-materials-investment-analysis-harve-20260617.md`
+- **概要**: 宝总投资延续 AI 紧缺材料主题，新增氮化镓/靶材/硅微粉/ABF 四大方向，引用白毛女神 Serenity 的"瓶颈理论"。基于前文五大材料 + 新增四大方向，形成九大 AI 上游材料全景图。深度结合 harve 个人财务状况（$136K 投资资产 86% 集中在 BTC+CRCL，70万现金，40万信用卡负债），给出分层投资建议：美股 SOXX ETF 底仓 + NVTS 小仓；A股 生益科技（确定性最高）+ 天岳先进（成长弹性）；优先还清信用卡负债。含 Serenity 方法论拆解、四步瓶颈定位法、风险矩阵。
+
 ### 2026-06-16: AI 紧缺材料龙头梳理 — 磷化铟/六氟化钨/碳化硅/CCL/MLCC
 - **来源**: https://mp.weixin.qq.com/s/XNudANewhNhByskuPH3xhQ
 - **作者**: 宝哥（公众号：宝总投资）

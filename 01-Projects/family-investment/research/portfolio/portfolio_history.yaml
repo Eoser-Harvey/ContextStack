@@ -73,8 +73,8 @@ holdings_history:
     all_time_low_date: '2026-06-11'
   bitgo:
     name: BitGo(韩伟长桥)
-    all_time_high_price: 6.04
-    all_time_high_date: '2026-06-02'
+    all_time_high_price: 6.16
+    all_time_high_date: '2026-06-17'
     all_time_low_price: 4.98
     all_time_low_date: '2026-06-14'
   xiaomi_ht:
@@ -127,3 +127,6 @@ net_worth_snapshots:
 - date: '2026-06-16'
   net_worth_cny: 1179755
   total_assets_cny: 1579755
+- date: '2026-06-17'
+  net_worth_cny: 1180712
+  total_assets_cny: 1580712
