@@ -7,20 +7,38 @@
 
 | 文件 | 用途 |
 |------|------|
-| [inbox.md](./inbox.md) | 收件箱主文件 — 待处理列表 + 处理日志 |
+| [index.md](./index.md) | 本文件 — 分类计数 + 处理日志 |
 | [archive/archive-log.md](./archive/archive-log.md) | 归档记录（按分类分节） |
 
-## 内容分类
+## 内容分类统计
 
 | 分类 | 文件数 | 最新更新 |
 |------|--------|----------|
-| AI/技术 | 15 | 2026-06-12 |
-| 投资理财 | 9 | 2026-06-17 |
+| AI/技术 | 20 | 2026-06-16 |
+| 投资理财 | 11 | 2026-06-17 |
+| 个人成长 | 4 | 2026-06-05 |
 | 财富认知 | 1 | 2026-05-30 |
-| 个人成长 | 2 | 2026-05-30 |
-| 生活工具 | 1 | 2026-05-24 |
 | 健康/生活 | 1 | 2026-05-30 |
-| 系统优化 | 0 | 已移至 ../03-Memory/sessions/ |
+| 生活工具 | 1 | 2026-05-24 |
+| 求职 | 1 | 2026-06-16 |
+| **合计** | **39** | — |
+
+> 注：`_ars_readme.md`、`ruflo_readme.md` 为 GitHub README 本地副本（非整理产物），待清理。
+> `ruflo-agent-orchestration-research.md` 与 `ruflo-agent-orchestration-platform.md` 内容重复，后者为升级版，待删除前者。
+
+## 处理日志（2026-06-11 及之后）
+
+| 日期 | 内容 | 文件 | 分类 |
+|------|------|------|------|
+| 2026-06-17 | 半导体材料国产替代投资机会分析（五大紧缺赛道） | `semiconductor-materials-investment-opportunities-2026.md` | 投资理财 |
+| 2026-06-17 | AI上游材料投资分析+个人配置建议（氮化镓/靶材/硅微粉/ABF） | `ai-upstream-materials-investment-analysis-harve-20260617.md` | 投资理财 |
+| 2026-06-16 | AI紧缺材料龙头梳理（磷化铟/六氟化钨/碳化硅/CCL/MLCC） | `ai-supply-chain-materials-leaders-20260616.md` | 投资理财 |
+| 2026-06-16 | 2026中国具身智能TOP30企业求职分析 | `embodied-intelligence-top30-job-analysis.md` | 求职 |
+| 2026-06-16 | ClawHunt Agent众包市场分析 | `clawhunt-agent-marketplace-analysis.md` | AI/技术 |
+| 2026-06-16 | OpenSquilla MetaSkill分析（Agent自组织技能新范式） | `opensquilla-metaskill-analysis.md` | AI/技术 |
+| 2026-06-15 | ARS使用指南（从安装到实战，27种模式速查） | `academic-research-skills-usage-guide.md` | AI/技术 |
+| 2026-06-12 | 歸藏 Skill 设计哲学（万字长文，爆款Skill创作者经验） | `skill-design-philosophy-guizang-20260612.md` | AI/技术 |
+| 2026-06-11 | ARS深度分析（30k Star 学术研究 Skill 套件） | `academic-research-skills-deep-analysis.md` | AI/技术 |
 
 ## 相关入口
 
@@ -29,11 +47,4 @@
 
 ---
 
-| 2026-06-11 | GitHub: Imbad0202/academic-research-skills 深度分析（30k Star） | `academic-research-skills-deep-analysis.md` | AI/技术 |
-| 2026-06-12 | 歸藏：万字长文 Skill 设计哲学（爆款 Skill 创作者经验） | `skill-design-philosophy-guizang-20260612.md` | AI/技术 |
-| 2026-06-16 | AI紧缺材料龙头梳理：磷化铟/六氟化钨/碳化硅/CCL/MLCC | `ai-supply-chain-materials-leaders-20260616.md` | 投资理财 |
-| 2026-06-17 | AI上游材料投资分析+个人配置建议：氮化镓/靶材/硅微粉/ABF+美股A股 | `ai-upstream-materials-investment-analysis-harve-20260617.md` | 投资理财 |
-
----
-
-**最后更新**: 2026-06-17
+**最后更新**: 2026-06-19

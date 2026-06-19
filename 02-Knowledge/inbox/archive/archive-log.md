@@ -178,14 +178,40 @@
 ### 2026-05-28: Ruflo README（原始）
 - **来源**: https://github.com/ruvnet/ruflo
 - **整理产物**: `../ruflo_readme.md`
+- ⚠️ 待删除：GitHub README 本地副本，非整理产物
 
 ### 2026-05-28: Ruflo多智能体编排平台
 - **来源**: https://github.com/ruvnet/ruflo
 - **整理产物**: `../ruflo-agent-orchestration-platform.md`
 
+### 2026-06-15: ARS 使用指南 — 从安装到实战
+- **来源**: https://github.com/Imbad0202/academic-research-skills
+- **作者**: Cheng-I Wu（吳政宜）
+- **整理产物**: `../academic-research-skills-usage-guide.md`
+- **概要**: ARS v3.12.1 完整使用手册。安装（Plugin 一行命令）、四大 Skill 速查表（27 种模式总览）、Deep Research 8 模式详解（含苏格拉底/PRISMA/事实核查）、Academic Paper 11 模式（含修订教练/格式转换/AI 披露）、Paper Reviewer 6 模式（含校准 FNR/FPR）、Pipeline 10 阶段全流程（含 10 个用户决策检查点）、Token 预算与费用（完整管线 $4-6）、进阶配置（跨模型验证/文献库预加载/引用缓存/会话恢复）、新手入门 5 步路径。与深度分析文档互补：分析=为什么这么设计，使用指南=怎么用。
+
+### 2026-06-16: ClawHunt — Agent 众包市场分析
+- **来源**: https://mp.weixin.qq.com/s/hBuUlBF5rQ9sjTgMGD_xqg
+- **作者**: 苍何
+- **整理产物**: `../clawhunt-agent-marketplace-analysis.md`
+- **概要**: ClawHunt 是 AI Agent 任务众包平台（需求方挂任务→Agent 竞标→法币结算）。拆解核心流程、市场前景、竞争优势与风险。结合个人匹配度分析：当前平台收入微薄，适合观察学习而非全力投入。
+
+### 2026-06-16: OpenSquilla / MetaSkill 分析 — Agent 自组织技能新范式
+- **来源**: https://mp.weixin.qq.com/s/_V6t5xFR6PJdKE879Xt-DQ
+- **作者**: 苍何
+- **项目**: OpenSquilla（GitHub 3700+ Star）
+- **整理产物**: `../opensquilla-metaskill-analysis.md`
+- **概要**: MetaSkill 3.0 是「元 markdown」，不定义业务逻辑，只定义如何检索/筛选/组合原子 Skill。解决 Agent 的「组合爆炸」问题：从会调用工具升级为会自组织技能、稳定交付工作流。含公众号转小红书实际案例、MetaSkill 协议设计、与传统工作流对比、与 ARS 对比。
+
 ---
 
 ## 投资理财
+
+### 2026-06-17: 半导体材料国产替代投资机会分析 — 2026
+- **来源**: https://mp.weixin.qq.com/s/VGiAKzDoTUb_aBY0zNhLoA
+- **作者**: 苍何
+- **整理产物**: `../semiconductor-materials-investment-opportunities-2026.md`
+- **概要**: 核心逻辑「找上游瓶颈中的瓶颈 + 国产替代」。五大紧缺材料赛道（氮化镓/靶材/硅微粉/ABF板/光刻胶），含 A 股/美股/日本标的梳理、投资策略建议、风险提醒。英飞凌 GaN 被禁催化国产替代加速，江丰电子业绩已验证靶材赛道。
 
 ### 2026-06-17: AI 上游材料投资分析 + 个人配置建议 — 氮化镓/靶材/硅微粉/ABF + 美股A股对照
 - **来源**: https://mp.weixin.qq.com/s/VGiAKzDoTUb_aBY0zNhLoA
@@ -219,3 +245,12 @@
 ### 2026-06-05: 非京籍孩子升学路径全解析
 - **来源**: 《从小规划升学》+ 网络资料整合
 - **整理产物**: `../non-beijing-resident-education-paths.md`
+
+---
+
+## 求职
+
+### 2026-06-16: 2026 中国具身智能 TOP30 企业求职分析
+- **来源**: 2026 中国具身智能领军企业 30 强榜单（Talentland 发布）
+- **整理产物**: `../embodied-intelligence-top30-job-analysis.md`
+- **概要**: Talentland 发布的具身智能 30 强榜单完整梳理，含各公司城市/定位/融资阶段。结合 harve 技能画像（MCU/RTOS/C/嵌入式8年）做匹配度分析，按优先级排序求职建议，含薪资参考和行动清单。头部公司：宇树科技、优必选、智元机器人、银河通用等。
