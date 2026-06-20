@@ -28,6 +28,13 @@ Thumbs.db
 02-Knowledge/skills/0.wechat-push/wechat_message.txt
 02-Knowledge/skills/0.wechat-push/profile_archive/
 
+# feishu-push cache & temp files
+02-Knowledge/skills/1.feishu-push/latest_tweets.json
+02-Knowledge/skills/1.feishu-push/translation_cache.json
+02-Knowledge/skills/1.feishu-push/tweet_history.json
+02-Knowledge/skills/1.feishu-push/wechat_message.txt
+02-Knowledge/skills/1.feishu-push/profile_archive/
+
 # Test temp files (auto-push script will also auto-cleanup)
 .test*.txt
 .verify*.txt
