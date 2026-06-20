@@ -24,7 +24,6 @@
 | **合计** | **39** | — |
 
 > 注：`_ars_readme.md`、`ruflo_readme.md` 为 GitHub README 本地副本（非整理产物），待清理。
-> `ruflo-agent-orchestration-research.md` 与 `ruflo-agent-orchestration-platform.md` 内容重复，后者为升级版，待删除前者。
 
 ## 处理日志（2026-06-11 及之后）
 

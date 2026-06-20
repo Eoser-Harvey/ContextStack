@@ -111,7 +111,7 @@ sau douyin upload-note --account <account_name> --images 1.png 2.png --title "�
 
 **潜在使用场景**:
 - 结合 `ai-agent-repos-collection.md` 中的视频/自媒体工具
-- 与 `ruflo-agent-orchestration-research.md` 的多 Agent 编排能力结合
+- 与 `ruflo-agent-orchestration-platform.md` 的多 Agent 编排能力结合
 - 自动化内容发布流程，减少重复劳动
 
 **建议关注**:

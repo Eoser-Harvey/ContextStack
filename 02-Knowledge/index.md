@@ -93,7 +93,6 @@ ContextStack 的知识管理中心，存放规范文档、技能模块和知识�
 
 ### 待处理问题
 
-- `ruflo-agent-orchestration-research.md`（2026-05-28）与 `ruflo-agent-orchestration-platform.md`（2026-05-29）内容重复，后者为升级版，待删除前者
 - `ruflo_readme.md`、`_ars_readme.md` 为 GitHub README 本地副本，非整理产物，待删除
 
 ---

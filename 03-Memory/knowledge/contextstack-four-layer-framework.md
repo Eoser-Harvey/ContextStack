@@ -199,7 +199,6 @@ ContextStack/
 **关联文件**: 
 - `../GLOBAL-RULES.md`
 - `../MEMORY.md`
-- `../ContextStack协作架构.md`
 - `../FRAMEWORK-README.md`
 
 > **变更**: 2026-05-23 合并了原 `ContextStack协作架构-交互协议.md` 的独有内容（会话结束流程、错误处理协议、工作台状态转换、Memory更新协议），该文件已删除。
