@@ -52,6 +52,11 @@ Thumbs.db
 # Token cache files (敏感信息)
 **/.lark_token_cache.json
 
+# Scripts containing lark secrets (本地保留，不推送远程)
+01-Projects/automated task/0.trae-feishu-push/push_lark.py
+01-Projects/automated task/0.trae-feishu-push/send_daily_ai_news.py
+02-Knowledge/skills/1.trae-feishu-push/push_lark.py
+
 # Test temp files (auto-push script will also auto-cleanup)
 .test*.txt
 .verify*.txt
