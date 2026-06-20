@@ -21,6 +21,13 @@ Thumbs.db
 # Logs
 *.log
 
+# wechat-push cache & temp files (非方案/脚本的临时缓存文件)
+02-Knowledge/skills/0.wechat-push/latest_tweets.json
+02-Knowledge/skills/0.wechat-push/translation_cache.json
+02-Knowledge/skills/0.wechat-push/tweet_history.json
+02-Knowledge/skills/0.wechat-push/wechat_message.txt
+02-Knowledge/skills/0.wechat-push/profile_archive/
+
 # Test temp files (auto-push script will also auto-cleanup)
 .test*.txt
 .verify*.txt
