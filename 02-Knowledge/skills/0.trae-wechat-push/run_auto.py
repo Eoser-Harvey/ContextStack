@@ -1,7 +1,7 @@
 """
 X推文推送 — Automation 执行脚本
 当本地网络受限时，推文数据从 fetcher_web.py 获取
-完整流程: 加载数据 → 翻译 → 分析 → 推送到微信
+完整流程: 加载数据 → 翻译 → 分析 → 推送到飞书群
 """
 import json
 import os
@@ -13,8 +13,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from translator import Translator
 from analyzer import analyze_tweets
-from pusher import push_to_wechat
 from fetcher_web import build_tweets_from_fetch
+from push_lark import push_to_lark
 
 
 def load_history(history_path):
@@ -50,6 +50,7 @@ def filter_new_tweets(tweets, history_ids):
 def main():
     print("=" * 60)
     print("X推文推送系统启动 — {}".format(datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+    print("推送目标: 飞书群 (CodeBuddy推文推送①)")
     print("=" * 60)
 
     # 1. 加载配置
@@ -58,21 +59,13 @@ def main():
         config = yaml.safe_load(f)
 
     output_cfg = config["output"]
-    history_path = output_cfg["history_file"]
-    send_key = config["server_chan"]["send_key"]
+    history_path = os.path.join(os.path.dirname(__file__), output_cfg["history_file"])
 
-    # 2. 检查 SendKey
-    if send_key == "YOUR_SEND_KEY_HERE":
-        print("[ERROR] 请先在 config.yaml 中设置 Server酱 SendKey!")
-        print("        获取地址: https://sct.ftqq.com/")
-        # 即使没有 SendKey，也继续翻译和分析，保存到文件
-        print("[INFO] 将继续翻译和分析推文，结果保存到本地文件...")
-
-    # 3. 加载历史
+    # 2. 加载历史
     history_ids = load_history(history_path)
     print("[INFO] 历史记录: {} 条已推送推文".format(len(history_ids)))
 
-    # 4. 获取推文数据
+    # 3. 获取推文数据
     print("[INFO] 加载推文数据...")
     all_tweets = build_tweets_from_fetch()
     print("[INFO] 共获取 {} 条推文".format(len(all_tweets)))
@@ -81,7 +74,7 @@ def main():
         print("[INFO] 未获取到推文，退出")
         return
 
-    # 5. 过滤新推文
+    # 4. 过滤新推文
     new_tweets = filter_new_tweets(all_tweets, history_ids)
     print("[INFO] 新推文: {} 条".format(len(new_tweets)))
 
@@ -89,47 +82,34 @@ def main():
         print("[INFO] 没有新推文，无需推送")
         return
 
-    # 6. 翻译
+    # 5. 翻译
     print("[INFO] 开始翻译...")
     translator = Translator(config)
     new_tweets = translator.translate_tweets(new_tweets)
 
-    # 7. AI分析
+    # 6. AI分析
     print("[INFO] 开始AI分析...")
     new_tweets = analyze_tweets(new_tweets, config["profile"])
 
-    # 8. 保存结果到本地文件
+    # 7. 保存结果到本地文件
     result_path = os.path.join(os.path.dirname(__file__), "latest_tweets.json")
     with open(result_path, "w", encoding="utf-8") as f:
         json.dump(new_tweets, f, ensure_ascii=False, indent=2)
     print("[OK] 分析结果已保存到 latest_tweets.json")
 
-    # 8b. 保存微信纯文本格式消息（用于 WeChat MCP 直接推送）
-    from pusher import build_wechat_text
-    wechat_msg = build_wechat_text(new_tweets)
-    wechat_msg_path = os.path.join(os.path.dirname(__file__), "wechat_message.txt")
-    with open(wechat_msg_path, "w", encoding="utf-8") as f:
-        f.write(wechat_msg)
-    print("[OK] 微信推送文本已保存到 wechat_message.txt")
+    # 8. 推送到飞书群
+    print("[INFO] 推送到飞书群...")
+    success = push_to_lark(new_tweets)
 
-    # 9. 推送微信（如果有 SendKey）
-    if send_key != "YOUR_SEND_KEY_HERE":
-        print("[INFO] 推送到微信...")
-        success = push_to_wechat(new_tweets, send_key)
-
-        if success:
-            new_ids = [t.get("id", "") for t in new_tweets if t.get("id")]
-            all_ids = history_ids + new_ids
-            save_history(history_path, all_ids, output_cfg["max_history"])
-            print("[OK] 完成! 推送 {} 条新推文".format(len(new_tweets)))
-        else:
-            print("[ERROR] 推送失败，历史未更新")
+    if success:
+        new_ids = [t.get("id", "") for t in new_tweets if t.get("id")]
+        all_ids = history_ids + new_ids
+        save_history(history_path, all_ids, output_cfg["max_history"])
+        print("[OK] 完成! 推送 {} 条新推文到飞书群".format(len(new_tweets)))
     else:
-        print("[INFO] 跳过微信推送（未配置 SendKey）")
-        print("[INFO] 推送方案: 1) Server酱(需SendKey)  2) WeChat MCP(已生成wechat_message.txt)")
-        print("[INFO] 推文数据已保存到 latest_tweets.json，可手动查看")
+        print("[ERROR] 推送失败，历史未更新，下次将重试")
 
-    # 10. 打印摘要
+    # 9. 打印摘要
     print("")
     print("=" * 60)
     print("推文摘要:")

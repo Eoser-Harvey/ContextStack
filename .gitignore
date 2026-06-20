@@ -35,6 +35,23 @@ Thumbs.db
 02-Knowledge/skills/1.feishu-push/wechat_message.txt
 02-Knowledge/skills/1.feishu-push/profile_archive/
 
+# trae-wechat-push cache & temp files
+02-Knowledge/skills/0.trae-wechat-push/latest_tweets.json
+02-Knowledge/skills/0.trae-wechat-push/translation_cache.json
+02-Knowledge/skills/0.trae-wechat-push/tweet_history.json
+02-Knowledge/skills/0.trae-wechat-push/wechat_message.txt
+02-Knowledge/skills/0.trae-wechat-push/profile_archive/
+
+# trae-feishu-push cache & temp files
+02-Knowledge/skills/1.trae-feishu-push/latest_tweets.json
+02-Knowledge/skills/1.trae-feishu-push/translation_cache.json
+02-Knowledge/skills/1.trae-feishu-push/tweet_history.json
+02-Knowledge/skills/1.trae-feishu-push/wechat_message.txt
+02-Knowledge/skills/1.trae-feishu-push/profile_archive/
+
+# Token cache files (敏感信息)
+**/.lark_token_cache.json
+
 # Test temp files (auto-push script will also auto-cleanup)
 .test*.txt
 .verify*.txt

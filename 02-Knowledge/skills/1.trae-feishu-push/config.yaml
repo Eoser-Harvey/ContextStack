@@ -1,0 +1,88 @@
+# X推文推送系统配置
+
+# 关注的X用户
+users:
+  - username: elonmusk
+    display_name: 马斯克
+    user_id: "44196397"
+  - username: cz_binance
+    display_name: CZ (赵长鹏)
+    user_id: "902926941413453824"
+  - username: realDonaldTrump
+    display_name: 特朗普
+    user_id: "25073877"
+
+# 推文获取配置
+fetch:
+  # 方案1: Nitter RSS (免费)
+  nitter_instances:
+    - https://nitter.net
+    - https://nitter.poast.org
+    - https://nitter.privacydev.net
+  # 每次获取最新推文数
+  tweets_per_user: 5
+  # 超时时间(秒)
+  timeout: 30
+
+# 翻译配置 (使用免费翻译API)
+translate:
+  engine: google  # google / bing / deepl
+  source_lang: auto
+  target_lang: zh-CN
+
+# Server酱推送配置
+server_chan:
+  # 从 https://sct.ftqq.com/ 获取 SendKey
+  send_key: "YOUR_SEND_KEY_HERE"
+
+# 个人画像 (用于AI分析)
+profile:
+  name: Harvey
+  career:
+    company: 新华三
+    role: PL (项目负责人)
+    experience: "~9年嵌入式开发"
+    skills: ["C语言", "Python", "TSN协议", "网络设备", "驱动开发", "TFLM"]
+    focus: ["端侧AI", "嵌入式系统", "工业网络"]
+    salary: "30K×16=53W/年"
+  assets:
+    crypto:
+      btc: "~0.642 BTC (链上0.13 + 币安0.51)"
+      eth: "~1.35 ETH (链上，含NFT)"
+      usdt: "$10,500 (币安)"
+    stocks:
+      us: ["CRCL (626股分散5账户)", "MRVL (6.87股)", "NOK (134.41股)", "BitGo (54股)"]
+      a_shares: []
+      hk: ["小米 (1400股)", "优必选 (50股)"]
+    ts_tokens:
+      xiaoan: "106,499秒 (≈¥15,545)"
+      wufan: "818秒 (≈¥16,115)"
+    real_estate: "北京海淀住宅 ¥320W"
+    cash: "¥63W (家庭备用金) + HK打新资金 HK$146,060"
+    total_assets: "¥1,587,923 (净资产 ¥1,187,923)"
+  liabilities:
+    credit_card_invest: "¥400,000 (投资WEB3)"
+    binance_loan: "¥0 (2026-06-05已全部还清)"
+    mortgage_commercial: "¥400,000 (自住)"
+    mortgage_fund: "¥1,400,000 (自住)"
+  family:
+    location: 北京
+    hukou: 非京籍 (内蒙古)
+    children: 有孩子 (在京上学)
+    spouse: 已婚 (薛燕)
+  insurance:
+    hanwei_zhongji: "达尔文50W (¥6,960/年, 2026-06-15生效)"
+    hanwei_dingshou: "待配置 (目标200W保额)"
+    xueyan_zhongji: "待配置 (目标30-50W保额)"
+  risk_profile: 高风险偏好 (加密货币+美股集中持仓, CRCL占投资47.9%⚠️)
+  interests: ["加密货币", "端侧AI", "CPO产业链", "投资理财", "职业发展"]
+  a8_plan:
+    target: "1000万人民币 (2026-2028)"
+    btc_target: "2.32个 (当前0.642, 进度27.7%)"
+    strategy: "MA120趋势 + 月度定投¥16,700 + 港股打新"
+    current_mode: "BTC在MA120下方, 定投暂存USDT待命"
+
+# 输出配置
+output:
+  history_file: tweet_history.json
+  max_history: 200
