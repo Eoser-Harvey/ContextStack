@@ -182,7 +182,213 @@
 
 ---
 
-## 六、待办事项
+## 六、国内推文抓取方案：x-tweet-fetcher + Firecrawl/Browserless 组合
+
+### 6.1 x-tweet-fetcher 概览
+
+**项目信息**：
+- 作者：ythx-101
+- Stars：818+（ClawHub 生态，2026年6月数据）
+- 语言：Python
+- 仓库：https://github.com/ythx-101/x-tweet-fetcher（SkillHub）
+
+**核心能力**：
+
+| 功能 | 命令 | 依赖 |
+|------|------|------|
+| 单条推文抓取 | `--url <tweet_url>` | 零依赖（仅 Python stdlib） |
+| 回复线程抓取 | `--url <tweet_url> --replies` | Camofox 浏览器 |
+| 用户时间线 | `--user <username> --limit 300` | Camofox 浏览器 |
+| 中文平台抓取 | `fetch_china.py --url <url>` | Camofox（微信公众号除外） |
+| Google 搜索 | `camofox_search("query")` | Camofox 浏览器 |
+| X-Tracker 增长监控 | `tweet_growth_cli.py --add/--run/--report` | 零依赖 |
+
+**支持抓取的内容类型**：
+- 普通推文：完整文本 + 统计数据（点赞/转发/浏览/书签/回复数）
+- 长推文（Twitter Blue）：完整文本
+- X Articles（长文）：完整文章标题、正文、字数统计
+- 引用推文：自动包含
+- 媒体 URL：图片 + 视频链接
+
+**中文平台支持**：
+
+| 平台 | 状态 | 备注 |
+|------|------|------|
+| 微信公众号 | 支持 | 使用 web_fetch 直接抓取，无需 Camofox |
+| 微博 | 支持 | Camofox 渲染 JS |
+| Bilibili | 支持 | 视频信息 + 统计数据 |
+| CSDN | 支持 | 文章 + 代码块 |
+| 知乎/小红书 | 需要登录 | 需要 Cookie 导入 |
+
+### 6.2 底层原理
+
+**零依赖模式（基础推文抓取）**：
+- 使用 [FxTwitter](https://github.com/FxEmbed/FxEmbed) 公共 API（`api.fxtwitter.com`）
+- FxTwitter 作为 X/Twitter 内容的代理，无需认证即可获取推文数据
+- 限制：无法抓取回复线程，依赖 FxTwitter 服务可用性
+
+**高级模式（回复/时间线/搜索）**：
+- 依赖 **Camofox** 浏览器服务（运行在 `localhost:9377`）
+- Camofox 基于 [Camoufox](https://camoufox.com/)（Firefox 分支，C++ 级别指纹伪装）
+- 能绕过 Cloudflare 检测、浏览器指纹识别、JavaScript 挑战
+
+### 6.3 隐藏组合：x-tweet-fetcher + Firecrawl/Browserless
+
+**核心思路**：x-tweet-fetcher 的高级功能依赖 Camofox 作为浏览器后端，但 **Camofox 可以被替换为 Firecrawl 或 Browserless**，从而获得以下优势：
+
+#### 方案 A：x-tweet-fetcher + Firecrawl
+
+Firecrawl 的 `/scrape` API 可以直接抓取 X.com 页面并返回结构化 Markdown/JSON：
+
+```
+Firecrawl /scrape API
+  ├── 真实浏览器渲染 JS 页面
+  ├── 内置代理轮换（绕过 IP 限制）
+  ├── 反爬对抗（绕过 Cloudflare）
+  ├── 返回干净 Markdown/结构化 JSON
+  └── 支持批量抓取（batch_scrape）
+```
+
+**集成方式**：
+1. 用 Firecrawl 的 Python SDK 替代 Camofox 的 HTTP 调用
+2. 将 x-tweet-fetcher 的推文解析逻辑保留，但数据获取层改为 Firecrawl
+3. Firecrawl 直接返回 X.com 页面的渲染后 Markdown，x-tweet-fetcher 从中提取推文结构化数据
+
+**优势**：
+- 无需本地运行 Camofox 浏览器，降低资源消耗
+- 享受 Firecrawl 的代理池和反爬能力
+- 支持高并发批量抓取
+- 免费额度：Hobby 计划有一定免费额度
+
+**劣势**：
+- 需要 Firecrawl API Key（免费注册）
+- 超出免费额度需要付费（Scale 计划支持百万级页面）
+- 有一定延迟（云端渲染）
+
+#### 方案 B：x-tweet-fetcher + Browserless
+
+Browserless 提供云端无头浏览器服务，通过 WebSocket（Puppeteer/Playwright）连接：
+
+```
+Browserless Cloud
+  ├── 托管 Chrome 实例（无需本地运行）
+  ├── 内置住宅代理（免费计划 1000 单位/月）
+  ├── 支持 Puppeteer/Playwright 全 API
+  ├── REST API 一键抓取（/scrape 端点）
+  └── 并发会话管理
+```
+
+**集成方式**：
+1. Browserless 替代 Camofox 作为浏览器后端
+2. 通过 Browserless 的 `/scrape` REST API 或 WebSocket 连接
+3. x-tweet-fetcher 的页面解析逻辑不变，只需替换浏览器连接层
+
+**优势**：
+- 免费计划：1000 单位/月，包含住宅代理
+- 生产级稳定性（SLA 保障）
+- 并发会话管理（可同时开多个 Tab）
+- 与 Camofox API 接口类似，替换成本低
+
+**劣势**：
+- 免费额度有限
+- 需要网络能访问 Browserless 服务（国内可能需代理）
+- 不如 Camofox 的 C++ 级指纹伪装深度
+
+#### 方案 C：全栈组合（推荐）
+
+```
+x-tweet-fetcher（解析层）
+  ├── 基础推文：FxTwitter API（零依赖，零成本）
+  ├── 批量/高级：Firecrawl /scrape（云端渲染 + 代理池）
+  ├── 高并发/稳定性：Browserless（托管浏览器 + 会话管理）
+  └── 本地开发/测试：Camofox（完全免费，离线可用）
+```
+
+### 6.4 为什么这个组合能绕过限制？
+
+| 限制类型 | 传统方案问题 | 组合方案解决 |
+|---------|------------|------------|
+| **Rate Limit** | 单 IP 频繁请求被限 | Firecrawl/Browserless 自带 IP 轮换代理池 |
+| **登录墙** | 部分内容需登录才能看 | 真实浏览器渲染（可注入 Cookie/登录态） |
+| **Cloudflare** | 直接 HTTP 请求被拦截 | Firecrawl 内置反爬 + Camofox 指纹伪装 |
+| **JS 渲染** | 静态 HTTP 拿不到动态内容 | 全部使用真实浏览器渲染 |
+| **采集量瓶颈** | 单机浏览器资源有限 | 云端并发（Firecrawl 批量 + Browserless 多会话） |
+| **生产稳定性** | 本地浏览器容易崩溃/内存泄漏 | 云端托管，自动恢复，SLA 保障 |
+
+### 6.5 国内环境部署建议
+
+由于国内直接访问 X.com 受限，推荐以下部署架构：
+
+```
+┌─────────────────────────────────────────┐
+│           国内服务器（你的机器）           │
+│  x-tweet-fetcher 脚本 + 调度器（cron）    │
+│  ├── 基础推文：FxTwitter API（需代理）    │
+│  └── 高级抓取：API 调用云服务              │
+└──────────────┬──────────────────────────┘
+               │ HTTPS（需代理/科学上网）
+               ▼
+┌─────────────────────────────────────────┐
+│          海外云服务（API 层）              │
+│  ├── Firecrawl API（云端渲染 + 代理）     │
+│  ├── Browserless（托管浏览器）            │
+│  └── 或自建 Camofox 在海外 VPS 上         │
+└─────────────────────────────────────────┘
+```
+
+**具体步骤**：
+1. 在国内机器上部署 x-tweet-fetcher 脚本
+2. 基础推文抓取走 FxTwitter API（配置代理）
+3. 批量/高级抓取调用 Firecrawl API 或 Browserless
+4. 抓取结果存入本地知识库（`02-Knowledge/inbox`）
+5. 定时任务通过 cron 触发，结果推送到飞书群
+
+### 6.6 实际代码示例
+
+**使用 Firecrawl 抓取单条推文**：
+```python
+from firecrawl import FirecrawlApp
+
+app = FirecrawlApp(api_key="your_api_key")
+
+# 直接抓取 X.com 推文页面
+result = app.scrape_url(
+    "https://x.com/username/status/123456789",
+    params={"formats": ["markdown"]}
+)
+print(result["markdown"])
+```
+
+**使用 Browserless 抓取推文**：
+```python
+import requests
+
+# Browserless /scrape REST API
+response = requests.post(
+    "https://chrome.browserless.io/scrape",
+    headers={"Cache-Control": "no-cache", "Content-Type": "application/json"},
+    json={
+        "url": "https://x.com/username/status/123456789",
+        "elements": [{"selector": "article[data-testid='tweet']"}]
+    },
+    params={"token": "your_browserless_api_key"}
+)
+data = response.json()
+```
+
+**x-tweet-fetcher 原生方式（零依赖）**：
+```python
+from scripts.fetch_tweet import fetch_tweet
+
+result = fetch_tweet("https://x.com/user/status/123456")
+tweet = result["tweet"]
+print(tweet["text"])
+print(f"Likes: {tweet['likes']}, Views: {tweet['views']}")
+```
+
+---
+
+## 七、待办事项
 
 以下加入框架待办，供后续研究：
 
@@ -195,6 +401,11 @@
 | 5 | 跟踪微信官方AI Agent | 高 | 等待全面开放，最安全的自动化方案 |
 | 6 | 研究Serenity NAV折价策略 | 中 | 关注Wistron、GlobalWafers等标的 |
 | 7 | 补充X推文内容 | 高 | 用户粘贴推文内容后做精准分析 |
+| 8 | 部署 x-tweet-fetcher 基础版 | 高 | 零依赖抓取单条推文，验证 FxTwitter API 在国内的可用性 |
+| 9 | 注册 Firecrawl 免费额度 | 高 | 测试 /scrape 端点抓取 X.com 推文内容 |
+| 10 | 注册 Browserless 免费额度 | 中 | 测试 Puppeteer 连接抓取推文，对比 Firecrawl |
+| 11 | 搭建 x-tweet-fetcher 全栈组合 | 中 | 零依赖 + Firecrawl + Browserless 三层架构，写入定时调度 |
+| 12 | 测试微信公众号抓取 | 中 | x-tweet-fetcher 的 fetch_china.py 支持微信文章抓取 |
 
 ---
 

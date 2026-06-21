@@ -106,9 +106,16 @@ class Translator:
     def translate_tweets(self, tweets):
         """批量翻译推文，优先使用缓存"""
         cache_hits = 0
+        pre_translated = 0
         for tweet in tweets:
             content = tweet.get("content", "")
             tweet_id = tweet.get("id", "")
+
+            # 优先使用 GitHub Actions 预翻译数据
+            if tweet.get("translated") and tweet["translated"].strip() and tweet["translated"] != "[翻译失败]":
+                pre_translated += 1
+                continue
+
             if content:
                 translated = self.translate(content, tweet_id)
                 if tweet_id and tweet_id in self.cache:
@@ -116,5 +123,5 @@ class Translator:
                 tweet["translated"] = translated or "[翻译失败]"
             else:
                 tweet["translated"] = ""
-        print(f"[INFO] 翻译完成: 缓存命中 {cache_hits}/{len(tweets)} 条")
+        print(f"[INFO] 翻译完成: GitHub预翻译 {pre_translated} 条, 缓存命中 {cache_hits}/{len(tweets)} 条")
         return tweets

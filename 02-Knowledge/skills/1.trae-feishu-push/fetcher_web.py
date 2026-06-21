@@ -132,8 +132,9 @@ def build_tweets_from_fetch():
     """返回最新推文数据
     
     优先级:
-    1. fetched_tweets.json (AI 浏览器抓取的实时推文)
-    2. 硬编码数据 (兜底)
+    1. GitHub Actions 抓取 (github_fetcher.py → 实时推文)
+    2. fetched_tweets.json (AI 浏览器抓取的推文，已废弃)
+    3. 硬编码数据 (兜底)
     
     返回推文列表，每条推文格式:
     {
@@ -146,11 +147,24 @@ def build_tweets_from_fetch():
         "source_note": "来源备注 (可选)"
     }
     """
-    # 优先读取 AI 抓取的推文
+    # 1. 优先从 GitHub Actions 拉取
+    try:
+        from github_fetcher import pull_tweets_from_github
+        github_tweets = pull_tweets_from_github()
+        if github_tweets:
+            print("[INFO] 使用 GitHub Actions 抓取的实时推文 ({}) 条".format(len(github_tweets)))
+            return github_tweets
+    except ImportError:
+        print("[INFO] github_fetcher.py 不可用，跳过")
+    except Exception as e:
+        print("[INFO] GitHub 拉取失败: {}，尝试其他数据源".format(e))
+    
+    # 2. 读取本地 fetched_tweets.json
     fetched = load_fetched_tweets()
     if fetched:
+        print("[INFO] 使用 fetched_tweets.json 中的推文 ({}) 条".format(len(fetched)))
         return fetched
     
-    # 回退到硬编码数据
-    print("[INFO] fetched_tweets.json 不存在或为空，使用硬编码数据")
+    # 3. 回退到硬编码数据
+    print("[INFO] 所有实时数据源不可用，使用硬编码兜底数据")
     return _get_hardcoded_tweets()
