@@ -1,8 +1,8 @@
 # X推文全流程自动化方案 — 架构文档
 
 > 归档时间: 2026-06-21  
-> 当前版本: **v7 (双线并行：Syndication + Nitter 互补覆盖)**  
-> 稳定性: ✅ 4/4 用户全覆盖 (Run #11 验证)  
+> 当前版本: **v8 (自动重试 + Nitter 实例自愈)**  
+> 稳定性: ✅ 4/4 用户全覆盖 (Run #14/#15 验证)  
 > 目标路径: `01-Projects/automated task/0.trae-feishu-push-hour`  
 > 执行入口: `python run_auto.py`
 
@@ -175,9 +175,9 @@ python run_auto.py
 | 故障 | 现象 | 处理 |
 |------|------|------|
 | GitHub 拉取失败 | `使用硬编码兜底数据` | 手动 workflow_dispatch |
-| 某用户抓取失败 | 该用户 0 条 | **双线并行自动切换源**，不影响其他用户 |
+| 某用户抓取失败 | 该用户 0 条 | **v8 自动重试（等15s再试一次）**，不影响其他用户 |
 | 推送失败 | 无 msg_id | 不更新历史，下次自动重试 |
-| Nitter 实例过期 | 部分失效 | 每月检查[官方Wiki](https://github.com/zedeus/nitter/wiki/Instances) |
+| Nitter 实例过期 | 部分失效 | **v8 每6h自动抓取 Wiki 刷新，启动时健康检查排除死节点** |
 | Git push 冲突 | Run 标记 failure | 同一时刻有多个 push — 下一次自动成功 |
 
 ## 九、版本历史
@@ -188,14 +188,15 @@ python run_auto.py
 | v4 | 2026-06-21 | 飞书推送迁移；FxTwitter回退 |
 | v5 | 2026-06-21 | 更新9个验证可用Nitter实例；添加Syndication API回退 |
 | v6 | 2026-06-21 | Syndication优先策略（发现互补覆盖问题） |
-| **v7** | **2026-06-21** | **双线并行策略：每用户同时尝试两个源，互补覆盖 → 4/4稳定** |
+| v7 | 2026-06-21 | 双线并行策略：每用户同时尝试两个源，互补覆盖 → 4/4稳定 |
+| **v8** | **2026-06-21** | **自动重试(2 attempts per user) + Nitter 实例自愈(健康检查 + Wiki每6h自动刷新)** |
 
 ## 十、技术要点
 
-- **文本处理**: 避免 `$` `|`，用全角 `｜` 替代
+- **文本处理**: 避免 `$` `｜`，用全角 `｜` 替代
 - **去重逻辑**: 推文 ID 比对 `tweet_history.json`
 - **推送失败不更新历史**: 下次自动重试
 - **翻译双重保障**: GitHub Actions 海外预翻译 + 本地缓存
 - **Bot 永久有效**: app_id + app_secret，无需用户授权刷新
-- **Nitter 实例维护**: 每月检查 [官方Wiki](https://github.com/zedeus/nitter/wiki/Instances)
+- **v8 自愈系统**: 启动时健康检查 Nitter 实例 + 每 6h 自动从 [官方Wiki](https://github.com/zedeus/nitter/wiki/Instances) 刷新实例列表 + 每用户双源失败后 15s 自动重试一次
 - **Cron 调度**: 新 commit 推送 main 分支后自动激活

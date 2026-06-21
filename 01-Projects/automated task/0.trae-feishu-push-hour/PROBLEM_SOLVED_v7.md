@@ -1,7 +1,7 @@
 # X推文抓取链路问题解决总结
 
 > 归档日期: 2026-06-21  
-> 涉及系统: X推文飞书推送系统 v4→v7  
+> 涉及系统: X推文飞书推送系统 v4→v8  
 > GitHub仓库: Eoser-Harvey/twitter-feed-fetcher
 
 ---
@@ -101,15 +101,49 @@ Fetched: 2026-06-21T05:02:33 UTC
 - 翻译: ✅ GitHub Actions 预翻译优先
 - 飞书推送: ✅ 6 条消息全部成功（上次推送）
 
-## 六、长期维护建议
+## 六、v8 升级：自动重试 + Nitter 实例自愈
 
-1. **每月检查 Nitter 实例** — 访问 [官方Wiki](https://github.com/zedeus/nitter/wiki/Instances) 淘汰失效实例
+**日期**: 2026-06-21 19:45
+
+### 问题4: 定时任务周期性失败 & Nitter 实例手动维护繁琐
+
+Run #12 (scheduled, 16:01 BJT) 全部数据源临时不可达导致 `exit code 1`，此后 6 个小时无新数据推送。
+
+### v8 解决方案
+
+| 特性 | 实现 |
+|------|------|
+| **自动重试** | 每用户双源失败后等待 15s 再尝试一次（2 attempts） |
+| **健康检查** | 启动时对每个 Nitter 实例做 GET /elonmusk 快速探测（5s 超时），自动排除无响应实例 |
+| **Wiki 自动刷新** | 每 6 小时自动抓取 [Nitter 官方 Wiki](https://github.com/zedeus/nitter/wiki/Instances)，解析 Online+Working 双✅实例列表 |
+| **全健康回退** | 如果健康检查标记所有实例为 unhealthy，使用完整列表兜底（防止健康检查自身故障导致误判） |
+
+### v8 执行流程
+
+```
+Phase 0: Nitter Instance Manager
+  ├── 检查 nitter_instances.json 缓存
+  ├── >6h? → 抓取 Wiki 获取最新实例列表
+  ├── 健康检查: GET /elonmusk (5s timeout)
+  └── 输出 healthy 实例列表
+
+Phase 1: Dual-source + Retry (每个用户)
+  ├── Attempt 1: Syndication API → Nitter (healthy only)
+  └── Attempt 2: wait 15s → Syndication API → Nitter
+
+Phase 2: Translate (unchanged)
+Phase 3: Save & Exit
+```
+
+## 七、长期维护建议
+
+1. ~~**每月检查 Nitter 实例**~~ ✅ 已自动化：每 6 小时自动从 Wiki 刷新
 2. **监控 GitHub Actions 运行** — 确保至少有一个 `schedule` 事件触发记录
 3. **关注 Syndication API 稳定性** — 如果 Twitter 更改 API 格式需更新解析器
-4. **Nitter 实例维护脚本** — 可自动化检测实例可用性并更新列表
+4. ~~**Nitter 实例维护脚本**~~ ✅ 已内置到 fetch_tweets.py v8
 
-## 七、相关文档
+## 八、相关文档
 
-- [ARCHITECTURE.md](E:\ProjectGroup\AI\ContextStack\01-Projects\automated task\0.trae-feishu-push-hour\ARCHITECTURE.md) — v7 架构文档
-- [README.md](E:\ProjectGroup\AI\ContextStack\01-Projects\automated task\0.trae-feishu-push-hour\README.md) — v7 技术方案归档
-- [GitHub 仓库](https://github.com/Eoser-Harvey/twitter-feed-fetcher) — `fetch_tweets.py` v7
+- [ARCHITECTURE.md](ARCHITECTURE.md) — v8 架构文档
+- [README.md](README.md) — v7 技术方案归档
+- [GitHub 仓库](https://github.com/Eoser-Harvey/twitter-feed-fetcher) — `fetch_tweets.py` v8
