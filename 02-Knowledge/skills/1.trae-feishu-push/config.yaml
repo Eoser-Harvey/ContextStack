@@ -36,16 +36,16 @@ server_chan:
   send_key: "YOUR_SEND_KEY_HERE"
 
 # 个人画像 (用于AI分析)
-# last_sync: 2026-06-21T00:00:00
+# last_sync: 2026-06-22T00:00:00
 profile:
   name: Harvey
   career:
     company: 新华三
-    role: PL (项目负责人)
-    experience: "~9年嵌入式开发 (爱博精电6年 + 新华三3年)"
+    role: 嵌入式开发工程师
+    experience: "~3年嵌入式产品开发 (爱博精电 + 新华三)"
     skills: ["C语言", "Python", "自研RTOS", "TSN全协议栈(802.1Qbv/AS/Qci/Qbu/CB/Qcc)", "DSP汇编优化", "ARM架构", "驱动开发", "TFLM", "PL管理"]
     focus: ["端侧AI", "MCU/RTOS底层驱动", "嵌入式系统", "工业网络"]
-    salary: "30K×16=53W/年"
+    salary: "当前30K×16, 目标50-70W总包"
     target_companies: ["小米", "地平线", "寒武纪", "百度", "字节跳动", "联想"]
     location_constraint: "北京海淀/昌平"
     job_search_status: "已约1年, 面试过九号/ISHO/思朗"
