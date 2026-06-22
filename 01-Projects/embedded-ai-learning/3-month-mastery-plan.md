@@ -487,6 +487,13 @@
 - **GitHub仓库**：tensorflow/tflite-micro
 - **官方示例**：tensorflow/lite/micro/examples/
 
+### 学术期刊
+- **MDPI Electronics**：https://www.mdpi.com/journal/electronics
+  - 开放获取，嵌入式AI/Edge AI/TinyML 论文可免费下载
+  - 推荐搜索关键词：`TinyML` `MCU inference` `TFLM` `edge computing`
+  - 用法：每周扫标题 → 挑 1 篇有代码的实验复现 → 主攻 Regular Issue 论文
+  - ⚠️ 仅作拓宽视野，深度学习以 TFLM 源码和实战项目为主
+
 ### 学习材料
 - **腾讯云专业AI编程材料**
 - **CSDN相关技术博客**
