@@ -49,6 +49,11 @@ Thumbs.db
 02-Knowledge/skills/1.trae-feishu-push/wechat_message.txt
 02-Knowledge/skills/1.trae-feishu-push/profile_archive/
 
+# 0.trae-feishu-push-hour cache & temp files (GitHub Actions 自动生成，本地保留)
+01-Projects/automated task/0.trae-feishu-push-hour/fetched_tweets.json
+01-Projects/automated task/0.trae-feishu-push-hour/latest_tweets.json
+01-Projects/automated task/0.trae-feishu-push-hour/tweet_history.json
+
 # Token cache files (敏感信息)
 **/.lark_token_cache.json
 
