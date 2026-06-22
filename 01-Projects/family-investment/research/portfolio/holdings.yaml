@@ -5,7 +5,7 @@
 #   manual        = 预IPO代币/小众平台, 需手动更新当月价格
 
 meta:
-  last_updated: "2026-06-17"
+  last_updated: "2026-06-22"
   usd_cny: 6.770
   hkd_cny: 0.865
 
@@ -193,15 +193,7 @@ holdings:
     sina_symbol: "hk09880"
     note: 2026-06-11 卖出机器人ETF换仓买入, 看好港股AI机器人龙头
 
-  - id: xiaomi_ht
-    symbol: "1810.HK"
-    name: 小米集团(港股通)
-    quantity: 1400
-    cost_basis_hkd: 29.612
-    category: hk_stock
-    storage: 东方财富港股通
-    price_source: yahoo
-    yahoo_symbol: "1810.HK"
+  # xiaomi_ht 2026-06-22 清仓: 1400股成本HKD$29.61, 卖出~HKD$23.69, 亏损~20%, 资金待换仓AI大模型股
 
   # ── TS平台 · KOL时间代币 ──
   - id: ts_xiaoan
