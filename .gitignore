@@ -63,6 +63,10 @@ Thumbs.db
 01-Projects/automated task/1.trae-feishu-push-day/send_daily_ai_news.py
 02-Knowledge/skills/1.trae-feishu-push/push_lark.py
 
+# Scripts containing lark secrets — .secrets.yaml (本地保留，不推送远程)
+01-Projects/automated task/0.trae-feishu-push-hour/.secrets.yaml
+01-Projects/automated task/1.trae-feishu-push-day/.secrets.yaml
+
 # Test temp files (auto-push script will also auto-cleanup)
 .test*.txt
 .verify*.txt
