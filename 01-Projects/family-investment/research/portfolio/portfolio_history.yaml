@@ -31,14 +31,14 @@ holdings_history:
     name: Circle(燕蒙古)
     all_time_high_price: 113.07
     all_time_high_date: '2026-06-02'
-    all_time_low_price: 77.84
-    all_time_low_date: '2026-06-14'
+    all_time_low_price: 75.65
+    all_time_low_date: '2026-06-23'
   crcl_han:
     name: Circle(韩伟蒙古)
     all_time_high_price: 113.07
     all_time_high_date: '2026-06-02'
-    all_time_low_price: 77.84
-    all_time_low_date: '2026-06-14'
+    all_time_low_price: 75.65
+    all_time_low_date: '2026-06-23'
     trades:
     - date: '2026-06-04'
       type: buy
@@ -51,20 +51,20 @@ holdings_history:
     name: Circle(韩伟长桥)
     all_time_high_price: 113.07
     all_time_high_date: '2026-06-02'
-    all_time_low_price: 77.84
-    all_time_low_date: '2026-06-14'
+    all_time_low_price: 75.65
+    all_time_low_date: '2026-06-23'
   crcl_hst:
     name: Circle(华盛通)
     all_time_high_price: 113.07
     all_time_high_date: '2026-06-02'
-    all_time_low_price: 77.84
-    all_time_low_date: '2026-06-14'
+    all_time_low_price: 75.65
+    all_time_low_date: '2026-06-23'
   crcl_hf:
     name: Circle(韩芳)
     all_time_high_price: 113.07
     all_time_high_date: '2026-06-02'
-    all_time_low_price: 77.84
-    all_time_low_date: '2026-06-14'
+    all_time_low_price: 75.65
+    all_time_low_date: '2026-06-23'
   mrvl_han:
     name: 迈威尔(币安)
     all_time_high_price: 292.81
@@ -130,3 +130,6 @@ net_worth_snapshots:
 - date: '2026-06-17'
   net_worth_cny: 1180712
   total_assets_cny: 1580712
+- date: '2026-06-23'
+  net_worth_cny: 1133580
+  total_assets_cny: 1533580

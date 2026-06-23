@@ -5,9 +5,9 @@
 #   manual        = 预IPO代币/小众平台, 需手动更新当月价格
 
 meta:
-  last_updated: "2026-06-22"
-  usd_cny: 6.770
-  hkd_cny: 0.865
+  last_updated: "2026-06-23"
+  usd_cny: 6.790
+  hkd_cny: 0.866
 
 # ============================================================
 # 投资持仓 (每个标的必须含: quantity, cost_basis, price_source)
@@ -76,25 +76,15 @@ holdings:
   - id: mrvl_han
     symbol: MRVL
     name: 迈威尔(币安)
-    quantity: 6.87
-    cost_basis_usd: 291.00
+    quantity: 16.674
+    cost_basis_usd: 299.59
     category: us_stock
     storage: 韩伟蒙古币安
     price_source: sina
     sina_symbol: "gb_mrvl"
-    note: 2026-06-05现金买入2000USDT, 约$291/股, 数量待确认
+    note: 2026-06-05买入6.87股@$291($2,000); 06-18买入5.384股@$297.85($1,604); 06-22买入4.42股@$315.16($1,393); 总成本$4,996, 均价$299.59/股
 
-  - id: dram_han
-    symbol: DRAM
-    name: DRAM(币安)
-    quantity: 27.4
-    cost_basis_usd: 72.60
-    category: us_stock
-    storage: 韩伟蒙古币安
-    price_source: manual
-    manual_price_usd: 72.60
-    manual_price_date: "2026-06-16"
-    note: 2026-06-16 买入27.4股@$72.60, 总成本$1,989.24
+  # dram_han 2026-06-22 清仓: 27.4股成本$72.60, 卖出$80.68, 盈利$221(+11.1%), 资金换仓CRCL
 
   - id: spcx_han
     symbol: SPCX
@@ -125,14 +115,14 @@ holdings:
   - id: crcl_han
     symbol: CRCL
     name: Circle(韩伟蒙古)
-    quantity: 268.25
-    cost_basis_usd: 15843.84
+    quantity: 334.198
+    cost_basis_usd: 21045.84
     cost_is_total: true
     category: us_stock_tokenized
     storage: 韩伟蒙古WEB3
     price_source: sina
     sina_symbol: "gb_crcl"
-    note: 成本均价$63.20/股; 2026-06-02用TSLA卖出资金买入12.68股@$99.13; 2026-06-04用BTC卖出资金买入17.55股@$89.80
+    note: 成本均价$62.97/股; 2026-06-02用TSLA卖出资金买入12.68股@$99.13; 2026-06-04用BTC卖出资金买入17.55股@$89.80; 2026-06-22卖DRAM获利买入28.748股@$76.87; 后续加仓37.2股@$80.43
 
   # ── 美股 · HK券商 ──
   - id: crcl_cb
