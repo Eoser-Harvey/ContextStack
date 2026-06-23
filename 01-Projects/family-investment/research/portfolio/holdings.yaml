@@ -86,17 +86,7 @@ holdings:
 
   # dram_han 2026-06-22 清仓: 27.4股成本$72.60, 卖出$80.68, 盈利$221(+11.1%), 资金换仓CRCL
 
-  - id: spcx_han
-    symbol: SPCX
-    name: SPCX(币安)
-    quantity: 15.52
-    cost_basis_usd: 204.96
-    category: us_stock
-    storage: 韩伟蒙古币安
-    price_source: manual
-    manual_price_usd: 204.96
-    manual_price_date: "2026-06-17"
-    note: 2026-06-17 用3182USDT买入15.52股, 均价~$204.96/股
+  # spcx_han 2026-06-18 清仓: 15.52股成本$204.96, 卖出$179.50, 亏损$396(-12.4%), 看不懂趋势撤离
 
   - id: nok_han
     symbol: NOK
