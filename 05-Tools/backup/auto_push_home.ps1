@@ -184,7 +184,35 @@ function Test-GitHubReachable {
 
 if (-not (Invoke-GitPull)) { exit 1 }
 
-# === Step 2: Check for local changes =========================================
+# === Step 2: Push any already-committed changes first =========================
+$commitsAhead = [int](& git rev-list --count origin/master..HEAD 2>&1)
+if ($commitsAhead -gt 0) {
+    Add-Content -Path $logFile -Value "Step 2: $commitsAhead committed but un-pushed, pushing..."
+    $gitExtraArgs = @()
+    if (-not $script:vpnProxy) { $gitExtraArgs = @("-c", "http.proxy=", "-c", "https.proxy=") }
+    try {
+        $pushOutput = & git @gitExtraArgs -c http.lowSpeedLimit=0 -c http.lowSpeedTime=60 push origin master 2>&1
+        if ($LASTEXITCODE -eq 0) {
+            Add-Content -Path $logFile -Value "Push OK: $pushOutput"
+            Add-Content -Path $logFile -Value ""
+            exit 0
+        }
+        # HTTPS failed, try SSH
+        if (Test-SshReachable) {
+            $pushOutput = & git push origin-ssh master 2>&1
+            if ($LASTEXITCODE -eq 0) {
+                Add-Content -Path $logFile -Value "Push OK (SSH): $pushOutput"
+                Add-Content -Path $logFile -Value ""
+                exit 0
+            }
+        }
+        Add-Content -Path $logFile -Value "Push of ahead commits FAILED: $($pushOutput -replace '\n',' ')"
+    } catch {
+        Add-Content -Path $logFile -Value "Push of ahead commits FAILED: $_"
+    }
+}
+
+# === Step 3: Check for local changes (uncommitted) ============================
 $status = git status --porcelain
 if (-not $status) {
     Add-Content -Path $logFile -Value "No local changes to push."
@@ -192,7 +220,7 @@ if (-not $status) {
     exit 0
 }
 
-# === Step 2.5: Auto-cleanup temp test files ==================================
+# === Step 3.5: Auto-cleanup temp test files ==================================
 $tempCleaned = $false
 Get-ChildItem $repoPath -File -ErrorAction SilentlyContinue | Where-Object {
     $_.Name -match '^\.(test|verify|tmp|x)[.\-]' -and $_.Length -lt 500
@@ -210,7 +238,7 @@ if ($tempCleaned) {
     }
 }
 
-# === Step 3: Generate commit message =========================================
+# === Step 4: Generate commit message =========================================
 $rawFiles = @($status -split "`n" | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne "" })
 
 $groups = @{}
@@ -242,9 +270,16 @@ foreach ($key in ($groups.Keys | Sort-Object)) {
 $commitMsg = if ($parts.Count -gt 0) { "auto: " + ($parts -join ", ") } else { "auto: changes" }
 
 git add -A
-git commit -m $commitMsg 2>&1 | Out-Null
+$commitOutput = & git commit -m $commitMsg 2>&1
+if ($LASTEXITCODE -eq 0) {
+    Add-Content -Path $logFile -Value "Commit OK: $commitMsg"
+} else {
+    Add-Content -Path $logFile -Value "Commit FAILED: $commitOutput"
+    Add-Content -Path $logFile -Value ""
+    exit 1
+}
 
-# === Step 4: Push with Retry + SSH Fallback ==================================
+# === Step 5: Push with Retry + SSH Fallback ==================================
 $maxPushRetries = 3
 $pushRetryDelays = @(10, 30, 60)
 
@@ -257,12 +292,12 @@ if (-not $script:vpnProxy) {
 $httpsPushed = $false
 for ($i = 0; $i -lt $maxPushRetries; $i++) {
     if ($i -gt 0) {
-        Add-Content -Path $logFile -Value "Step 4: HTTPS retry $i after $($pushRetryDelays[$i-1])s..."
+        Add-Content -Path $logFile -Value "Step 5: HTTPS retry $i after $($pushRetryDelays[$i-1])s..."
         Start-Sleep -Seconds $pushRetryDelays[$i-1]
     }
 
     if (-not (Test-GitHubReachable)) {
-        Add-Content -Path $logFile -Value "Step 4: GitHub HTTPS unreachable (attempt $($i+1)/$maxPushRetries)"
+        Add-Content -Path $logFile -Value "Step 5: GitHub HTTPS unreachable (attempt $($i+1)/$maxPushRetries)"
         continue
     }
 
@@ -285,11 +320,11 @@ for ($i = 0; $i -lt $maxPushRetries; $i++) {
 if (-not $httpsPushed) {
     # Phase B: Fallback to SSH over port 443
     if (Test-SshReachable) {
-        Add-Content -Path $logFile -Value "Step 4: HTTPS exhausted, trying SSH over port 443..."
+        Add-Content -Path $logFile -Value "Step 5: HTTPS exhausted, trying SSH over port 443..."
 
         for ($i = 0; $i -lt $maxPushRetries; $i++) {
             if ($i -gt 0) {
-                Add-Content -Path $logFile -Value "Step 4: SSH retry $i after $($pushRetryDelays[$i-1])s..."
+                Add-Content -Path $logFile -Value "Step 5: SSH retry $i after $($pushRetryDelays[$i-1])s..."
                 Start-Sleep -Seconds $pushRetryDelays[$i-1]
             }
 
@@ -310,7 +345,7 @@ if (-not $httpsPushed) {
             }
         }
     } else {
-        Add-Content -Path $logFile -Value "Step 4: SSH port 443 also unreachable, giving up"
+        Add-Content -Path $logFile -Value "Step 5: SSH port 443 also unreachable, giving up"
     }
 }
 
