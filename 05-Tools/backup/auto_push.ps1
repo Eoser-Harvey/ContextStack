@@ -92,7 +92,25 @@ if (-not $pullOk) {
     exit 1
 }
 
-# === Step 2: Check for local changes =========================================
+# === Step 2: Push any already-committed changes first =========================
+$commitsAhead = [int](& git rev-list --count origin/master..HEAD 2>&1)
+if ($commitsAhead -gt 0) {
+    Add-Content -Path $logFile -Value "Step 2: $commitsAhead committed but un-pushed, pushing..."
+    try {
+        $pushOutput = & git push origin master 2>&1
+        if ($LASTEXITCODE -eq 0) {
+            Add-Content -Path $logFile -Value "Push OK: $pushOutput"
+            Add-Content -Path $logFile -Value ""
+            exit 0
+        } else {
+            Add-Content -Path $logFile -Value "Push of ahead commits FAILED: $($pushOutput -replace '\n',' ')"
+        }
+    } catch {
+        Add-Content -Path $logFile -Value "Push of ahead commits FAILED: $_"
+    }
+}
+
+# === Step 3: Check for local changes (uncommitted) =========================================
 $status = git status --porcelain
 if (-not $status) {
     Add-Content -Path $logFile -Value "No local changes to push."
@@ -100,7 +118,7 @@ if (-not $status) {
     exit 0
 }
 
-# === Step 3: Generate commit message =========================================
+# === Step 4: Generate commit message =========================================
 $files = @($status -split "`n" | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne "" })
 $fileCount = $files.Count
 
@@ -137,7 +155,7 @@ if ($LASTEXITCODE -eq 0) {
     exit 1
 }
 
-# === Step 4: Push (2 retries) ==========================================
+# === Step 5: Push (2 retries) ==========================================
 $pushOk = $false
 
 for ($i = 0; $i -lt $maxRetries; $i++) {
