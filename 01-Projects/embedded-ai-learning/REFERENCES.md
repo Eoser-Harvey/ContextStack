@@ -6,6 +6,7 @@
 - [evaluation-and-optimized-plan.md](./evaluation-and-optimized-plan.md) — 评估与优化方案
 - [端侧AI产业链龙头企业图谱-2026.md](./端侧AI产业链龙头企业图谱-2026.md)
 - [knowledge/model-optimization-techniques.md](./knowledge/model-optimization-techniques.md) — **模型优化技术知识库**（量化/剪枝/蒸馏/CNN/RNN/轻量化网络）
+- [knowledge/loss-function-embedded-ai.md](./knowledge/loss-function-embedded-ai.md) — **损失函数**（BCE/Sparse CE/MSE/MAE/Huber + 选型原则）
 - [knowledge/paper-edge-ai-survey-2025.md](./knowledge/paper-edge-ai-survey-2025.md) — **论文精读**（Cordova-Cardenas et al., 2025 — 五阶段方法论 + Benchmarks）
 - [courses/index.md](./courses/index.md) — 课程索引
 
