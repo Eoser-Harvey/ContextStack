@@ -106,13 +106,13 @@ holdings:
     symbol: CRCL
     name: Circle(韩伟蒙古)
     quantity: 334.198
-    cost_basis_usd: 21045.84
+    cost_basis_usd: 22621.84
     cost_is_total: true
     category: us_stock_tokenized
     storage: 韩伟蒙古WEB3
     price_source: sina
     sina_symbol: "gb_crcl"
-    note: 成本均价$62.97/股; 2026-06-02用TSLA卖出资金买入12.68股@$99.13; 2026-06-04用BTC卖出资金买入17.55股@$89.80; 2026-06-22卖DRAM获利买入28.748股@$76.87; 后续加仓37.2股@$80.43
+    note: 成本均价$67.69/股; 原始250.7股@$63.20; 06-04加仓+17.55@$89.80; 06-22加仓+28.748@$76.87; 06-23加仓+37.2@$80.43
 
   # ── 美股 · HK券商 ──
   - id: crcl_cb
