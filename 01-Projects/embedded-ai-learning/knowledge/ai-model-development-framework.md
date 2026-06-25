@@ -38,17 +38,17 @@
               设备体积 ↓
 ```
 
-| 维度 | 云端AI | 边缘AI（Edge Server/NPU） | 嵌入式AI（MCU/小SoC） |
-|------|:---:|:---:|:---:|
-| **典型硬件** | NVIDIA A100 / TPU Pod | Jetson Orin / 树莓派5 / RK3588 | STM32 / ESP32 / nRF52 / Cortex-M |
-| **功耗** | 250W+ | 5-25W | **0.01mW - 500mW** |
-| **内存** | 80GB HBM | 512MB - 32GB DDR | **4KB - 4MB SRAM** |
-| **存储** | NVMe SSD | eMMC / SD卡 | **64KB - 16MB Flash** |
-| **精度** | FP16/BF16 | FP16/INT8 | **INT8 / INT4 / 二值化** |
-| **典型延迟** | 100ms-10s | 10-100ms | **0.1ms - 50ms** |
-| **OS** | Linux | Android/Linux | **Bare Metal / FreeRTOS / Zephyr** |
-| **模型大小** | 几GB | 几MB - 几百MB | **几KB - 几百KB** |
-| **能否在线更新** | ✅ 随时 | ✅ OTA | ❌ 通常需刷固件 |
+| 维度              | 云端AI                  | 边缘AI（Edge Server/NPU）      | 嵌入式AI（MCU/小SoC）          |
+|:------------------|:------------------------|:------------------------------|:------------------------------|
+| **典型硬件**       | NVIDIA A100 / TPU Pod    | Jetson Orin / 树莓派5 / RK3588 | STM32 / ESP32 / nRF52 / Cortex-M |
+| **功耗**           | 250W+                   | 5-25W                          | **0.01mW - 500mW**            |
+| **内存**           | 80GB HBM                | 512MB - 32GB DDR               | **4KB - 4MB SRAM**            |
+| **存储**           | NVMe SSD                | eMMC / SD卡                    | **64KB - 16MB Flash**         |
+| **精度**           | FP16/BF16               | FP16/INT8                      | **INT8 / INT4 / 二值化**       |
+| **典型延迟**       | 100ms-10s               | 10-100ms                       | **0.1ms - 50ms**              |
+| **OS**             | Linux                   | Android/Linux                  | **Bare Metal / FreeRTOS / Zephyr** |
+| **模型大小**       | 几GB                    | 几MB - 几百MB                   | **几KB - 几百KB**             |
+| **能否在线更新**   | ✅ 随时                 | ✅ OTA                         | ❌ 通常需刷固件               |
 
 > **面试金句**：「嵌入式AI和边缘AI的核心区别不在于'是不是在端侧'，而在于'资源约束有多严'。边缘AI可以跑Linux+几百MB模型，嵌入式AI要在256KB RAM里跑INT8推理，这是两个数量级的工程挑战。」
 
