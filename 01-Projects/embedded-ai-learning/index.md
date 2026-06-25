@@ -10,7 +10,7 @@
 - [[端侧AI产业链龙头企业图谱-2026]] - 端侧AI全产业链龙头企业图谱：上下游企业、上市情况、职业建议
 - [[../../02-Knowledge/career-development/个人职业发展分析-端侧AI企业定制攻略|个人职业发展分析-端侧AI企业定制攻略]] - 个人职业发展分析：定制简历、面试攻略、谈薪策略（位于02-Knowledge职业发展库）
 - [[embedded-ai-learning.code-workspace]] - VSCode工作区配置
-- [[knowledge/ai-model-development-framework]] - **AI模型全景框架**：零基础快速建立从数据到芯片的8阶段完整认知 ← 新增
+- [[knowledge/ai-model-development-framework]] - **嵌入式AI全领域知识体系**：6大应用场景×7层技术栈×硬件生态×软件框架×面试考题库（全景地图）
 - [[knowledge/model-optimization-techniques]] - **模型优化技术知识库**：量化/剪枝/蒸馏/推理优化 + CNN/RNN/轻量化网络（面试+实战核心）
 - [[knowledge/loss-function-embedded-ai]] - **损失函数**：嵌入式AI工业场景版（BCE/Sparse CE/MSE/MAE/Huber选型+代码） ← 新增
 - [[knowledge/paper-edge-ai-survey-2025]] - **论文精读**：Electronics 2025 综述 — 五阶段部署方法论 + Edge Benchmarks ← 新增
