@@ -5,7 +5,7 @@
 #   manual        = 预IPO代币/小众平台, 需手动更新当月价格
 
 meta:
-  last_updated: "2026-06-23"
+  last_updated: "2026-06-24"
   usd_cny: 6.790
   hkd_cny: 0.866
 
@@ -27,36 +27,11 @@ holdings:
     price_source: cryptocompare
     note: 上个周期持仓, 成本已归零
 
-  - id: eth_onchain
-    symbol: ETH
-    name: 以太坊NFT(链上)
-    quantity: 1.35
-    cost_basis_usd: 2608
-    category: crypto
-    storage: 链上钱包
-    price_source: cryptocompare
-    note: 地板价，含NFT
+  # eth_onchain 2026-06-24 清仓: 1.35个ETH, 链上ETH全部清仓
 
   # ── 交易所 · 韩伟蒙古币安 ──
-  - id: btc_binance
-    symbol: BTC
-    name: 比特币(币安)
-    quantity: 0.51247
-    cost_basis_usd: 85242
-    category: crypto
-    storage: 韩伟蒙古币安
-    price_source: cryptocompare
-    note: 2026-06-02 MA120策略卖出0.32463个@$71360; 后续抄底买入0.08581个@$64600; 2026-06-05抄底买入0.03409个@$61600
-
-  - id: eth_binance
-    symbol: ETH
-    name: 以太坊(币安)
-    quantity: 0.0003
-    cost_basis_usd: 2608
-    category: crypto
-    storage: 韩伟蒙古币安
-    price_source: cryptocompare
-    note: 2026-06-02 MA120策略清仓卖出6.9677个@$2008，卖出金额$13,992，剩余0.0003为dust
+  # btc_binance 2026-06-24 头脑发热清仓: 0.51247个均价$58,550, 卖出约$30,006, 违反A8纪律 ❌
+  # eth_binance 2026-06-02 MA120策略清仓卖出6.9677个@$2008, 剩余0.0003为dust
 
   # ── 链上证券 · 燕蒙古WEB3 ──
   # 成本计算: 总CRCL 480股(含代持60), 总盈利22750U, 代持成本83U
@@ -64,40 +39,31 @@ holdings:
   - id: crcl_yan
     symbol: CRCL
     name: Circle(燕蒙古)
-    quantity: 221.59
-    cost_basis_usd: 15387.76
+    quantity: 351.22
+    cost_basis_usd: 24423.76
     cost_is_total: true
     category: us_stock_tokenized
     storage: 燕蒙古WEB3
     price_source: sina
     sina_symbol: "gb_crcl"
-    note: 原207.46股成本$14,245.76均价$68.69; 06-16买入+14.13股@$80.80($1,142), 新均价$69.45/股
+    note: 原288.85股成本$20,082.76均价$69.53; 06-24加仓+62.37@$69.60($4,341), 新均价$69.54/股
 
   - id: mrvl_han
     symbol: MRVL
     name: 迈威尔(币安)
-    quantity: 16.674
-    cost_basis_usd: 299.59
+    quantity: 29.192
+    cost_basis_usd: 287.74
     category: us_stock
     storage: 韩伟蒙古币安
     price_source: sina
     sina_symbol: "gb_mrvl"
-    note: 2026-06-05买入6.87股@$291($2,000); 06-18买入5.384股@$297.85($1,604); 06-22买入4.42股@$315.16($1,393); 总成本$4,996, 均价$299.59/股
+    note: 2026-06-05买入6.87股@$291($2,000); 06-18买入5.384股@$297.85($1,604); 06-22买入4.42股@$315.16($1,393); 06-24买入5.78股@~$270.93($1,566); 06-24买入6.738股@$273($1,839); 总成本$8,401, 均价$287.74/股
 
   # dram_han 2026-06-22 清仓: 27.4股成本$72.60, 卖出$80.68, 盈利$221(+11.1%), 资金换仓CRCL
 
   # spcx_han 2026-06-18 清仓: 15.52股成本$204.96, 卖出$179.50, 亏损$396(-12.4%), 看不懂趋势撤离
 
-  - id: nok_han
-    symbol: NOK
-    name: 诺基亚(币安)
-    quantity: 134.41
-    cost_basis_usd: 14.88
-    category: us_stock
-    storage: 韩伟蒙古币安
-    price_source: sina
-    sina_symbol: "gb_nok"
-    note: 2026-06-11 情绪追高买入(英伟达+诺基亚合作传闻), 主观认为非理性操作, 计划择机清仓
+  # nok_han 2026-06-24 清仓: 134.41股成本$14.88, 卖出$1,840, 亏损~$160(-8%), 情绪化操作止损离场
 
   # ── 链上证券 · 韩伟蒙古WEB3 ──
   # 成本计算: 总CRCL 480股(含代持60), 总盈利22750U, 代持成本83U
@@ -251,14 +217,9 @@ cash:
     amount_hkd: 146060
     note: 含13W家庭内部调配, 其余为打新盈利
   - name: 币安USDT余额
-    amount_usd: 5328
-    note: >
-      06-02: MA120卖出ETH($13,992)+BTC($23,166)
-      06-04: 买CRCL -$1,576
-      06-05: 买MRVL -$2,000 + 还借贷 -$13,400 + 抄底BTC -$2,100
-      06-11: 买NOK -$2,000
-      06-16: 买DRAM -$1,989
-      06-17: 买SPCX -$3,182
+     amount_usd: 20000
+     note: >
+       06-24: 恐慌清仓BTC($30,006)+清仓NOK($1,840)+清仓ETH链上-燕蒙古买CRCL($4,695+$4,341)-买MRVL($1,566+$1,839) → 余$20,000
 
 # ============================================================
 # 固定资产
