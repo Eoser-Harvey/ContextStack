@@ -313,6 +313,157 @@ for (int i = 0; i < output_dim; i++) {
 
 ---
 
+## 🧠 扩展思考题（2026-06-27）
+
+### 问题4：不同任务为什么选这个架构？（工业时序 → 1D CNN，视觉分类 → MobileNet，语音 → DS-CNN）
+
+这是嵌入式AI中最重要的架构选型问题。核心原则：**没有万能架构，每种场景都有自己的最优解。**
+
+#### 架构选型决策表
+
+| 任务类型                 | 推荐架构          | 不选替代方案                    | 关键理由                                                       |
+|--------------------------|:-----------------:|:-------------------------------|:------------------------------------------------------------|
+| **工业时序**（振动/电流） | 1D CNN            | LSTM / GRU / 2D CNN             | NPU加速并行计算，比LSTM快10×；工业窗口短(100-200点)，LSTM时序优势不成立 |
+| **图像分类**（MCU级）     | MobileNetV1 0.25× | ResNet / VGG / 大MobileNet      | 深度可分离卷积参数减8×，200KB以内，TFLM官方示例                  |
+| **关键词语音KWS**         | DS-CNN (深度可分离) | 大TCN / LSTM / Transformer       | 语音频谱特征+极致轻量(<50KB)，TFLM官方示例                    |
+| **目标检测**（低端NPU）   | MobileNetV1+SSD   | YOLOv8 完整版 / Faster R-CNN    | SSD检测头比YOLO轻，MobileNet骨干NPU友好                        |
+| **传感器异常检测**         | Autoencoder / 1D CNN | Isolation Forest / LSTM          | AE重构误差天然适合异常检测；1D CNN做窗口分类也行              |
+| **极致低功耗**（<64KB SRAM）| MCUNet           | MobileNet / 自定义CNN            | NAS搜索+专用TinyEngine，量身定做的MCU架构                     |
+
+#### 重点案例：工业时序为什么不选LSTM？
+
+```
+                    1D CNN                          LSTM
+                  ──────────                    ──────────
+  计算方式     并行（整个窗口一次卷积）         串行（t1→t2→t3逐帧算）
+  硬件加速     NPU完美支持，5-10×加速            NPU完全不支持，纯CPU
+  内存占用     张量可复用缓冲区（低）            需保存隐藏状态h_t、c_t（高）
+  窗口长度     100-200点最适合                  长序列优势在100-200点窗口发挥不出
+  精度         局部突变特征提取精准              串行累积误差，反而容易失真
+  推理速度     以ESP32为例：1-3ms               同样输入：30-50ms（差10×以上）
+  落地结论     ✅ 端侧时序任务最优解              ❌ 端侧完全没优势
+```
+
+> **一句话**：LSTM的理论优势（长序列记忆）在嵌入式短窗口场景中不存在，反而被串行计算的硬件劣势拖死。
+
+#### 选型三步法
+
+```
+Step 1: 看任务类型
+  传感器数据 → 1D CNN（时序）
+  摄像头数据 → MobileNet / YOLO-Lite（视觉）
+  音频数据   → DS-CNN / 1D CNN（频谱）
+
+Step 2: 看算力约束
+  MCU(<1 GOPS) → 1D CNN / DS-CNN（无NPU也勉强能跑）
+  SoC(10+ GOPS)→ MobileNetV2 / YOLO-Nano
+  NPU(100+ T)  → YOLOv8n / 复杂模型
+
+Step 3: 看内存约束
+  Flash < 512KB → 从源头设计极小模型（通道16/32）
+  Flash 1-4MB   → MobileNet 0.25× / DS-CNN
+  Flash > 8MB   → MobileNetV2 / 中等分辨率
+```
+
+---
+
+### 问题5：模型参数量、运算量怎么估算？怎么判断模型能不能放进MCU里？
+
+#### 一、参数量估算（决定Flash占用）
+
+**基本公式：**
+
+| 层类型 | 参数量公式 | 示例 |
+|--------|-----------|------|
+| **全连接层(FullyConnected)** | `input_dim × output_dim + output_dim`（权重+偏置） | 784×128+128 = 100,480 ≈ **100K参数** |
+| **标准卷积(Conv2D)** | `C_in × C_out × K_h × K_w + C_out` | 3×16×3×3+16 = 448 ≈ **0.4K参数** |
+| **深度可分离卷积(DW+1×1)** | `C_in × K_h × K_w + C_in × C_out`（无偏置≈不计） | 16×3×3 + 16×32 = 144+512 = **656** ← 比标准卷积少8×！ |
+| **批归一化BN** | `4 × C`（γ, β, μ, σ 各C个） | 64×4 = **256参数** |
+
+**Flash占用换算：**
+
+```
+模型格式          参数量 → Flash大小
+─────────────────────────────────
+FP32 浮点模型   参数 × 4 Bytes   100K参数 → ~400KB
+INT8 量化模型   参数 × 1 Byte    100K参数 → ~100KB  ← 目标格式
+INT4 极端量化   参数 × 0.5 Byte  100K参数 → ~50KB
+```
+
+加上FlatBuffer元数据开销（通常额外10-20KB），**INT8量化后模型大小 ≈ 参数量 × 1.2 ÷ 1024 KB**。
+
+#### 二、运算量估算（决定推理速度）
+
+**MAC（Multiply-Accumulate，一次乘加运算）统计：**
+
+| 层类型 | MAC公式 | 示例（输入32×32×3，Conv 3×3→16通道） |
+|--------|---------|--------------------------------------|
+| **Conv2D** | `H_out × W_out × K_h × K_w × C_in × C_out` | 32×32×3×3×3×16 ≈ 442K MAC |
+| **深度可分离卷积** | `H×W×(K_h×K_w×C_in + C_in×C_out)` | ~220K MAC ← 标准卷积的一半 |
+| **全连接层** | `input_dim × output_dim`（≈MAC数） | 784×128 ≈ 100K MAC |
+| **总计算量** | 所有层MAC求和 | 一个轻型CNN：1-20M MAC |
+
+**延迟粗略估算（ESP32-S3 @ 240MHz）：**
+
+```
+INT8 + NPU加速：        每MAC ≈ 1-2 个时钟周期  → 20M MAC ≈ 10-20ms
+INT8 + CPU：            每MAC ≈ 3-5 个时钟周期  → 20M MAC ≈ 30-50ms
+FP32 + CPU：            每MAC ≈ 10-30个时钟周期  → 20M MAC ≈ 100-300ms
+```
+
+#### 三、能不能放进MCU？——硬约束检查表
+
+```
+检查项                      计算方法                         通过标准
+─────────────────────────────────────────────────────────────────
+① 模型大小(Flash)         参数量 × 1(INT8) ÷ 1024 KB          < Flash可用空间的50%
+                           例：200K参数 → 200KB → 8MB Flash ✅
+
+② 推理内存峰值(SRAM)      PC端跑TFLite打印每层内存峰值         < SRAM可用空间的80%
+                           经验：图像 50-200KB，时序 10-30KB   例：150KB → 512KB SRAM ✅
+
+③ 推理延迟                总MAC ÷ (MCU频率 × NPU效率)          < 需求指标
+                           例：20M ÷ 240M ≈ 83ms              需求<100ms ✅
+
+④ 算子支持                用 Netron 查看模型中的所有算子        全部在TFLM MicroMutableOpResolver注册范围内
+                           Conv2D/FC/ReLU/Pool/Softmax ✅
+                           LSTM/BatchNorm/Attention ❌
+
+⑤ Flash可用空间(扣除固件)  Flash总 - 固件(os+驱动)大小          > 模型大小×1.2
+                           例：8MB - 2MB = 6MB > 0.2MB ✅
+```
+
+#### 四、实操检查命令（PC端验证）
+
+```bash
+# 1. 查看INT8模型大小
+ls -lh model_int8.tflite
+
+# 2. 用Netron查看模型结构和算子列表
+netron model_int8.tflite
+
+# 3. 用TFLite Benchmark测PC端延迟和内存
+python -c "
+import tensorflow as tf
+interpreter = tf.lite.Interpreter('model_int8.tflite')
+interpreter.allocate_tensors()
+# 查看每层输入输出shape，估算最大内存层
+for detail in interpreter.get_tensor_details():
+    print(detail['name'], detail['shape'], detail['dtype'])
+"
+
+# 4. 快速估算参数量（Python）
+import json, subprocess
+# TensorFlow: model.summary() 直接看
+# PyTorch:  sum(p.numel() for p in model.parameters())
+```
+
+> **嵌入式工程师的判断公式**：
+> 模型能跑 = (Flash_used < 50% × Flash_total) ∧ (SRAM_peak < 80% × SRAM_total) ∧ (Latency < Requirement) ∧ (所有算子 ∈ TFLM支持列表)
+> 四个条件缺一不可。
+
+---
+
 ## 📚 嵌入式AI三大赛道面试题全集（2026-06-26 归档自豆包）
 
 > 来源：[豆包对话](https://www.doubao.com/thread/xbdb8ebbca3c483d6be281a3fcb03aa81)
