@@ -11,6 +11,7 @@
 - [[../../02-Knowledge/career-development/个人职业发展分析-端侧AI企业定制攻略|个人职业发展分析-端侧AI企业定制攻略]] - 个人职业发展分析：定制简历、面试攻略、谈薪策略（位于02-Knowledge职业发展库）
 - [[embedded-ai-learning.code-workspace]] - VSCode工作区配置
 - [[knowledge/ai-model-development-framework]] - **嵌入式AI全领域知识体系**：6大应用场景×7层技术栈×硬件生态×软件框架×面试考题库（全景地图）
+- [[knowledge/model-layer-architecture]] - **模型层结构详解**：逻辑划分→具体算子层、基础/视觉/时序/输出层、ESP32-S3 NPU清单、代码示例 ← 新增
 - [[knowledge/model-optimization-techniques]] - **模型优化技术知识库**：量化/剪枝/蒸馏/推理优化 + CNN/RNN/轻量化网络（面试+实战核心）
 - [[knowledge/loss-function-embedded-ai]] - **损失函数**：嵌入式AI工业场景版（BCE/Sparse CE/MSE/MAE/Huber选型+代码） ← 新增
 - [[knowledge/paper-edge-ai-survey-2025]] - **论文精读**：Electronics 2025 综述 — 五阶段部署方法论 + Edge Benchmarks ← 新增
