@@ -66,6 +66,7 @@ Thumbs.db
 # Scripts containing lark secrets — .secrets.yaml (本地保留，不推送远程)
 01-Projects/automated task/0.trae-feishu-push-hour/.secrets.yaml
 01-Projects/automated task/1.trae-feishu-push-day/.secrets.yaml
+01-Projects/automated task/1.trae-feishu-push-day-yan-trae/.secrets.yaml
 
 # Test temp files (auto-push script will also auto-cleanup)
 .test*.txt
