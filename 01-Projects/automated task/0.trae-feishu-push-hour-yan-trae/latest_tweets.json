@@ -1,93 +1,61 @@
 [
   {
-    "id": "tweet_cz_binance_2070442064697843848#m",
-    "username": "cz_binance",
-    "display_name": "CZ (赵长鹏)",
-    "published_at": "Fri, 26 Jun 2026 09:40:29 GMT",
-    "content": "Sad to see EU cutting their users off from the best liquidity in the world. Liquidity is the best consumer protection. Hope to see things change in the future.",
-    "url": "https://x.com/cz_binance/status/2070442064697843848",
-    "translated": "很遗憾看到欧盟切断了用户与世界上最好的流动性的联系。流动性是对消费者最好的保障。希望未来能看到事情的改变。",
-    "source_note": "GitHub Actions: 2026-06-28T05:19:33.424759+00:00",
+    "id": "tweet_elonmusk_2071184354756477041#m",
+    "username": "elonmusk",
+    "display_name": "马斯克",
+    "published_at": "Sun, 28 Jun 2026 10:50:05 GMT",
+    "content": "Grok 4.5, based on our 1.5T V9 foundation model, with Cursor data added in supplemental training, is now in private beta at SpaceX & Tesla. Early evals show performance close to, perhaps exceeding Opus. RL is continuing to significantly improve the model, and the Grok Build harness gets better every day. Nice work by all those involved! Completely trained from scratch new models will be released by @SpaceX every month this year.",
+    "url": "https://x.com/elonmusk/status/2071184354756477041",
+    "translated": "Grok 4.5 基于我们的 1.5T V9 基础模型，并在补充训练中添加了 Cursor 数据，现已在 SpaceX 和 Tesla 进行内测。早期评估显示性能接近甚至超过 Opus。 RL 正在继续显着改进模型，Grok Build 线束每天都在变得更好。所有参与者都干得好！ @SpaceX 今年每个月都会发布经过完全从头开始训练的新模型。",
+    "source_note": "GitHub Actions: 2026-06-28T11:10:02.016152+00:00",
     "analysis": {
-      "investment": "📊 **CZ动态关注**\n作为币安创始人，CZ的推文对加密市场有直接影响。你的加密资产分布在链上+币安+WEB3，建议关注是否有交易所政策变化信号。",
+      "investment": "💻 **SpaceX 600亿美元收购Cursor — AI编程革命**\nSpaceX宣布以$600亿收购AI编程平台Cursor，打造AI原生软件开发。\n📌 投资启示:\n• SPCX(当前$173.42)用股票收购Cursor→稀释现有股东但换取AI编程赛道龙头\n• Cursor年收入约$2-3B，$60B估值=20-30x P/S，在AI赛道属合理偏高\n• 你的持仓(CRCL 626股+MRVL+NOK)不受直接影响，但利好AI编程生态链\n📌 职业启示: AI编程工具(Cursor/Copilot)正在改变软件开发——你的Python+嵌入式技能不会被替代，但需要学会用AI工具提效。\n学习Cursor/GitHub Copilot，让你的编码效率提升50%+。",
+      "career": "💼 **AI编程时代 — 嵌入式工程师的新工具**\nSpaceX $600亿收购Cursor标志着AI编程进入主流。\n你在新华三做PL (项目负责人)，~9年嵌入式开发 (爱博精电6年 + 新华三3年)，技能栈(C语言, Python, 自研RTOS, TSN全协议栈(802.1Qbv/AS/Qci/Qbu/CB/Qcc), DSP汇编优化, ARM架构, 驱动开发, TFLM, PL管理)不会被AI替代，但会用AI工具的工程师会替代不会的。\n📌 行动: 学会用Cursor/Copilot辅助嵌入式开发，把重复性编码交给AI，聚焦架构设计和系统优化——这才是PL的核心价值。",
+      "life": "💻 **AI工具解放生产力**: SpaceX $600亿收购Cursor——AI编程工具正在改变所有工程师的工作方式。你在学习TFLM的同时，也建议花1-2小时体验Cursor/Copilot，用AI辅助写嵌入式代码——把重复劳动交给AI，把创造力留给自己。\n🕐 **工作强度提醒**: 马斯克以极限工作著称，但你在新华三已有~9年嵌入式开发 (爱博精电6年 + 新华三3年)，注意劳逸结合。投资+工作+学习的三角需要合理分配精力。",
+      "family": "👨‍👩‍👧 **AI时代的教育投资**: SpaceX $600亿收购Cursor——AI编程将从'专业技能'变成'基础技能'。你孩子(在京上学)未来面对的就业市场，AI编程可能和今天的Office一样基础。建议：让孩子从小接触AI工具，培养'用AI解决问题'的思维，而非死记硬背。你在学TFLM的过程本身就是在给孩子做榜样。"
+    }
+  },
+  {
+    "id": "tweet_elonmusk_2070987522336010277#m",
+    "username": "elonmusk",
+    "display_name": "马斯克",
+    "published_at": "Sat, 27 Jun 2026 21:47:57 GMT",
+    "content": "RT by @elonmusk: \"To anyone I have offended, I just want to say I reinvented electric cars and I am sending people to Mars on a Rocketship, did you think I was also gonna be a chill normal dude?\" @elonmusk",
+    "url": "https://x.com/elonmusk/status/2070987522336010277",
+    "translated": "@elonmusk 的转发：“对于我冒犯过的任何人，我只想说我重新发明了电动汽车，我正在用火箭飞船把人们送到火星，你认为我也会成为一个冷静的普通人吗？” @埃隆马斯克",
+    "source_note": "GitHub Actions: 2026-06-28T11:10:02.016152+00:00",
+    "analysis": {
+      "investment": "🚀 **星舰火星计划 — 2026年底发射窗口**\n马斯克明确2026年底火星发射窗口，星舰是关键。\nSpaceX IPO(SPCX $161)后马斯克聚焦火星殖民，这对你持有TSLA(2.45股)有间接利好：\n• 马斯克精力分配：IPO后SpaceX资金充裕，可更专注星舰→TSLA管理压力减小\n• 航天产业链：SPCX的长期叙事是火星经济，短期关注每个发射窗口的股价催化\n📌 你投资组合中的TSLA+机器人ETF+加密→都属于'高风险高回报'配置，与马斯克的'即使只有10%成功率也要试'理念一致，但需控制单赛道集中度",
+      "career": "💼 **长期视野与职业定位**\n马斯克说'把科幻变为现实'——你作为嵌入式工程师，所做的底层驱动/协议开发恰恰是让科幻落地的关键技术层。\n你在新华三的~9年嵌入式开发 (爱博精电6年 + 新华三3年)，端侧AI(TFLM)是你从'传统嵌入式'到'智能嵌入式'的跃迁路径。\n📌 建议: 在TFLM学习同时，关注边缘计算+AI推理芯片(如ESP32-S3/NPU)的实战，这是硬件工程师在AI时代最值钱的能力。",
+      "life": "",
+      "family": "👨‍👩‍👧 **为孩子点燃好奇心**: 马斯克说'让科幻变为现实，为每个人创造激动人心的未来'——在为孩子规划教育路径时（非京籍升学6条路径），也要培养他们对科技的好奇心。你正在学的端侧AI，也许某天可以和孩子一起做个AI小项目，这比任何培训班都更能激发学习动力。"
+    }
+  },
+  {
+    "id": "tweet_elonmusk_2071006600379117903#m",
+    "username": "elonmusk",
+    "display_name": "马斯克",
+    "published_at": "Sat, 27 Jun 2026 23:03:45 GMT",
+    "content": "RT by @elonmusk: Everyone tells me that Elon Musk is a fascist because he could \"solve world hunger\" for a mere 3 billion dollars, but MacKenzie Bezos has burned through 26 billion dollars of her ex husband's money and accomplished absolutely nothing of note.",
+    "url": "https://x.com/elonmusk/status/2071006600379117903",
+    "translated": "RT @elonmusk：每个人都告诉我埃隆·马斯克是法西斯主义者，因为他只需 30 亿美元就能“解决世界饥饿”，但麦肯齐·贝索斯却烧光了前夫 260 亿美元的钱，却没有取得任何值得注意的成就。",
+    "source_note": "GitHub Actions: 2026-06-28T11:10:02.016152+00:00",
+    "analysis": {
+      "investment": "🚗 **特斯拉相关**\n你已清仓TSLA(06-02换仓CRCL)，但马斯克关于特斯拉的推文仍可能影响整个科技板块情绪。关注FSD/机器人出租车等长期叙事对AI产业链的影响。",
       "career": "",
       "life": "",
       "family": ""
     }
   },
   {
-    "id": "tweet_cz_binance_2070176909162410430#m",
-    "username": "cz_binance",
-    "display_name": "CZ (赵长鹏)",
-    "published_at": "Thu, 25 Jun 2026 16:06:51 GMT",
-    "content": "Binance bStocks has reached $100M in AUM",
-    "url": "https://x.com/cz_binance/status/2070176909162410430",
-    "translated": "Binance bStocks 的资产管理规模已达 1 亿美元",
-    "source_note": "GitHub Actions: 2026-06-28T05:19:33.424759+00:00",
-    "analysis": {
-      "investment": "📊 **CZ动态关注**\n作为币安创始人，CZ的推文对加密市场有直接影响。你的加密资产分布在链上+币安+WEB3，建议关注是否有交易所政策变化信号。",
-      "career": "",
-      "life": "",
-      "family": ""
-    }
-  },
-  {
-    "id": "tweet_cz_binance_2069794756368965751#m",
-    "username": "cz_binance",
-    "display_name": "CZ (赵长鹏)",
-    "published_at": "Wed, 24 Jun 2026 14:48:19 GMT",
-    "content": "Good to see this finally getting to closure. » CEA Industries ends proxy fight with YZi Labs, adds Ella Zhang as board director | The Block https://www.theblock.co/post/405919/cea-industries-ends-proxy-fight-yzi-labs",
-    "url": "https://x.com/cz_binance/status/2069794756368965751",
-    "translated": "很高兴看到这最终结束。 » CEA Industries 结束与 YZi Labs 的代理权争夺战，Ella 张出任董事会董事 |区块 https://www.theblock.co/post/405919/cea-industries-ends-proxy-fight-yzi-labs",
-    "source_note": "GitHub Actions: 2026-06-28T05:19:33.424759+00:00",
-    "analysis": {
-      "investment": "📊 **CZ动态关注**\n作为币安创始人，CZ的推文对加密市场有直接影响。你的加密资产分布在链上+币安+WEB3，建议关注是否有交易所政策变化信号。",
-      "career": "",
-      "life": "",
-      "family": ""
-    }
-  },
-  {
-    "id": "tweet_aleabitoreddit_2071074680253911267#m",
+    "id": "tweet_aleabitoreddit_2071164721299112316#m",
     "username": "aleabitoreddit",
     "display_name": "Serenity (白毛股神)",
-    "published_at": "Sun, 28 Jun 2026 03:34:17 GMT",
-    "content": "WSJ: “China Has Matched Anthropic in Cybersecurity, Resetting AI Race” China’s Zhipu AI, has matched Anthropic’s Mythos in certain benchmarks, such as exploiting cybersecurity bugs. Well, that’s not good. Instead of blaming the administration which did the correct thing… Anthropic’s clearly at fault for not setting enough guardrails to prevent distillation. Even before Fable release there were a lot of rumors that China had backdoors to distill it. Part of it is the trillions of capex to accelerate the AI moat. And the second part is not handing that work over on a silver platter for millions in API calls.",
-    "url": "https://x.com/aleabitoreddit/status/2071074680253911267",
-    "translated": "《华尔街日报》：“中国在网络安全方面与 Anthropic 不相上下，重启人工智能竞赛” 中国的智普人工智能在某些基准测试中与 Anthropic 的 Mythos 不相上下，例如利用网络安全漏洞。嗯，这不太好。与其责怪做正确事情的政府……人类显然有错，因为没有设置足够的护栏来防止蒸馏。甚至在《神鬼寓言》发行之前，就有很多传言称中国有后门来提取它。其中一部分是加速人工智能护城河的数万亿资本支出。第二部分并不是将这项工作交给数以百万计的 API 调用。",
-    "source_note": "GitHub Actions: 2026-06-28T05:19:33.424759+00:00",
-    "analysis": {
-      "investment": "暂无针对此推文的具体建议。",
-      "career": "",
-      "life": "",
-      "family": ""
-    }
-  },
-  {
-    "id": "tweet_aleabitoreddit_2070789923108798545#m",
-    "username": "aleabitoreddit",
-    "display_name": "Serenity (白毛股神)",
-    "published_at": "Sat, 27 Jun 2026 08:42:45 GMT",
-    "content": "Robotics is next. Both deal count and investment amounts are skyrocketing per pitchbook March data (source: a16z) Good thing is: the same AI DC exposure often has cross-exposure to humanoid ramp. Like DRAM/NAND with memory (on humanoid inference/storage) or DFB lasers with photonics (FMCW LiDAR vision/sensing). Right now most exposure is upstream component parts… or programs within large players like $AMZN or $TSLA. So global IPO season H2 into 2027 for pure play humanoids/robotics companies is going to be fun.",
-    "url": "https://x.com/aleabitoreddit/status/2070789923108798545",
-    "translated": "机器人技术是下一个。根据 3 月份数据，交易数量和投资金额都在飙升（来源：a16z） 好的一面是：同样的 AI DC 曝光通常会与人形爬坡交叉曝光。就像带有内存的 DRAM/NAND（用于人形推理/存储）或带有光子学的 DFB 激光器（FMCW LiDAR 视觉/传感）。目前，大多数曝光都是上游零部件……或者是 $AMZN 或 $TSLA 等大型企业内部的程序。因此，对于纯粹的类人/机器人公司来说，2027 年下半年的全球 IPO 季将会很有趣。",
-    "source_note": "GitHub Actions: 2026-06-28T05:19:33.424759+00:00",
-    "analysis": {
-      "investment": "暂无针对此推文的具体建议。",
-      "career": "",
-      "life": "",
-      "family": ""
-    }
-  },
-  {
-    "id": "tweet_aleabitoreddit_2070754658868687086#m",
-    "username": "aleabitoreddit",
-    "display_name": "Serenity (白毛股神)",
-    "published_at": "Sat, 27 Jun 2026 06:22:38 GMT",
-    "content": "Kinda nutty OpenAI’s is launching its heavyweight 5.6 Sol frontier model on $CBRS. At up to 750 tokens/sec, which is obscene performance. American inference go brrr. I actually picked up starter positions on Cerebras for the first time in the ~170s (below $185 IPO price) after seeing this news yesterday. Feels like validation of its tech. IMO a bit overvalued compared to profitable companies like $JBL at the same valuation. But there’s likely premiums for OpenAI exposure, as long as they stay the leader.",
-    "url": "https://x.com/aleabitoreddit/status/2070754658868687086",
-    "translated": "有点疯狂的 OpenAI 正在 $CBRS 上推出其重量级 5.6 Sol 前沿模型。高达 750 个令牌/秒，这是令人不快的性能。美国的推理去吧。事实上，在昨天看到这个消息后，我在大约 170 年代（低于 185 美元的 IPO 价格）第一次获得了 Cerebras 的首发头寸。感觉像是对其技术的验证。与同等估值的 JBL 等盈利公司相比，IMO 的估值有点高估。但只要 OpenAI 保持领先地位，他们的曝光度就可能会溢价。",
-    "source_note": "GitHub Actions: 2026-06-28T05:19:33.424759+00:00",
+    "published_at": "Sun, 28 Jun 2026 09:32:04 GMT",
+    "content": "Yup, Schaeffler $SHA0 is the ideal example for automotive players. ~ €7.47B MC auto player. - but also working with 45 humanoid players (extremely insane number, they do have €5.14b debt, EV is higher) - covers bearings, gearboxes, sensors/ECUs, actuators, power electronics. -ests. They can be roughly 50% BOM of a humanoid - targeting 10% market share of that. But only projecting a few hundred million revenue by 2030 (extremely sandbagged) if we’re using Elon’s projections for the market. Then’s theres auto players like Nabtesco (6268) for joints. And then Sanhua in China for $TSLA Optimus. Many of them are trade at lower valuations from drag from auto. But humanoids + AI Auto (TSM chairman cited this as a growth vector) should be a good catalyst past 2027 for automotive players. IMO there just needs to be a ChatGPT/Anthropic breakout downstream leader first for humanoids. That brings up the entire ecosystem that has robotics exposure. But as of now it’s probably like 1% of many of their overall revenue figures, and markets are focusing on immediate upside from bottlenecks like memory or MLCC. I’m sure we’ll see some random Toto-HBM type surprise as different humanoid architecture evolve.",
+    "url": "https://x.com/aleabitoreddit/status/2071164721299112316",
+    "translated": "是的，舍弗勒 $SHA0 是汽车玩家的理想示例。 ~ €7.47B MC 自动播放器。 - 而且还与 45 个人形玩家合作（数量极其疯狂，他们确实有 5.14b 欧元的债务，EV 更高） - 涵盖轴承、变速箱、传感器/ECU、执行器、电力电子设备。 -ests。它们大约占人形机器人 BOM 的 50%，目标是占其中 10% 的市场份额。但如果我们使用 Elon 对市场的预测，那么到 2030 年，收入预计只有几亿（完全是沙袋）。还有像 Nabtesco (6268) 这样的汽车接头连接器。然后是三花在中国的特斯拉擎天柱。由于汽车行业的拖累，其中许多公司的估值较低。但人形机器人 + AI Auto（TSM 董事长将此视为增长载体）应该会成为 2027 年之后汽车厂商的良好催化剂。在我看来，类人机器人首先需要有一个 ChatGPT/Anthropic 突破下游领导者。这就带来了具有机器人技术的整个生态系统。但截至目前，它可能只占其整体收入数据的 1%，而且市场正在关注内存或 MLCC 等瓶颈带来的直接上行空间。我确信随着不同人形架构的发展，我们会看到一些随机的 Toto-HBM 类型的惊喜。",
+    "source_note": "GitHub Actions: 2026-06-28T11:10:02.016152+00:00",
     "analysis": {
       "investment": "暂无针对此推文的具体建议。",
       "career": "",

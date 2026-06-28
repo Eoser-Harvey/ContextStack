@@ -1,5 +1,55 @@
 [
   {
+    "id": "tweet_elonmusk_2071184354756477041#m",
+    "username": "elonmusk",
+    "display_name": "马斯克",
+    "published_at": "Sun, 28 Jun 2026 10:50:05 GMT",
+    "content": "Grok 4.5, based on our 1.5T V9 foundation model, with Cursor data added in supplemental training, is now in private beta at SpaceX & Tesla. Early evals show performance close to, perhaps exceeding Opus. RL is continuing to significantly improve the model, and the Grok Build harness gets better every day. Nice work by all those involved! Completely trained from scratch new models will be released by @SpaceX every month this year.",
+    "url": "https://x.com/elonmusk/status/2071184354756477041",
+    "translated": "Grok 4.5 基于我们的 1.5T V9 基础模型，并在补充训练中添加了 Cursor 数据，现已在 SpaceX 和 Tesla 进行内测。早期评估显示性能接近甚至超过 Opus。 RL 正在继续显着改进模型，Grok Build 线束每天都在变得更好。所有参与者都干得好！ @SpaceX 今年每个月都会发布经过完全从头开始训练的新模型。",
+    "source_note": "GitHub Actions: 2026-06-28T11:10:02.016152+00:00"
+  },
+  {
+    "id": "tweet_elonmusk_2070987522336010277#m",
+    "username": "elonmusk",
+    "display_name": "马斯克",
+    "published_at": "Sat, 27 Jun 2026 21:47:57 GMT",
+    "content": "RT by @elonmusk: \"To anyone I have offended, I just want to say I reinvented electric cars and I am sending people to Mars on a Rocketship, did you think I was also gonna be a chill normal dude?\" @elonmusk",
+    "url": "https://x.com/elonmusk/status/2070987522336010277",
+    "translated": "@elonmusk 的转发：“对于我冒犯过的任何人，我只想说我重新发明了电动汽车，我正在用火箭飞船把人们送到火星，你认为我也会成为一个冷静的普通人吗？” @埃隆马斯克",
+    "source_note": "GitHub Actions: 2026-06-28T11:10:02.016152+00:00"
+  },
+  {
+    "id": "tweet_elonmusk_2071006600379117903#m",
+    "username": "elonmusk",
+    "display_name": "马斯克",
+    "published_at": "Sat, 27 Jun 2026 23:03:45 GMT",
+    "content": "RT by @elonmusk: Everyone tells me that Elon Musk is a fascist because he could \"solve world hunger\" for a mere 3 billion dollars, but MacKenzie Bezos has burned through 26 billion dollars of her ex husband's money and accomplished absolutely nothing of note.",
+    "url": "https://x.com/elonmusk/status/2071006600379117903",
+    "translated": "RT @elonmusk：每个人都告诉我埃隆·马斯克是法西斯主义者，因为他只需 30 亿美元就能“解决世界饥饿”，但麦肯齐·贝索斯却烧光了前夫 260 亿美元的钱，却没有取得任何值得注意的成就。",
+    "source_note": "GitHub Actions: 2026-06-28T11:10:02.016152+00:00"
+  },
+  {
+    "id": "tweet_cz_binance_2070791417929359409#m",
+    "username": "cz_binance",
+    "display_name": "CZ (赵长鹏)",
+    "published_at": "Sat, 27 Jun 2026 08:48:42 GMT",
+    "content": "RT by @cz_binance: I got my Binance Virtual Card now I can use it anywhere in Pakistan 🇵🇰 UAE and many other countries around the world. Thanks #Binance",
+    "url": "https://x.com/cz_binance/status/2070791417929359409",
+    "translated": "@cz_binance 转发：我现在拿到了币安虚拟卡，我可以在巴基斯坦🇵🇰阿联酋和世界各地的许多其他国家的任何地方使用它。谢谢#Binance",
+    "source_note": "GitHub Actions: 2026-06-28T11:10:02.016152+00:00"
+  },
+  {
+    "id": "tweet_cz_binance_2070981656958152977#m",
+    "username": "cz_binance",
+    "display_name": "CZ (赵长鹏)",
+    "published_at": "Sat, 27 Jun 2026 21:24:38 GMT",
+    "content": "RT by @cz_binance: Capital doesn't care about narratives",
+    "url": "https://x.com/cz_binance/status/2070981656958152977",
+    "translated": "RT @cz_binance：资本不关心叙事",
+    "source_note": "GitHub Actions: 2026-06-28T11:10:02.016152+00:00"
+  },
+  {
     "id": "tweet_cz_binance_2070442064697843848#m",
     "username": "cz_binance",
     "display_name": "CZ (赵长鹏)",
@@ -7,27 +57,7 @@
     "content": "Sad to see EU cutting their users off from the best liquidity in the world. Liquidity is the best consumer protection. Hope to see things change in the future.",
     "url": "https://x.com/cz_binance/status/2070442064697843848",
     "translated": "很遗憾看到欧盟切断了用户与世界上最好的流动性的联系。流动性是对消费者最好的保障。希望未来能看到事情的改变。",
-    "source_note": "GitHub Actions: 2026-06-28T05:19:33.424759+00:00"
-  },
-  {
-    "id": "tweet_cz_binance_2070176909162410430#m",
-    "username": "cz_binance",
-    "display_name": "CZ (赵长鹏)",
-    "published_at": "Thu, 25 Jun 2026 16:06:51 GMT",
-    "content": "Binance bStocks has reached $100M in AUM",
-    "url": "https://x.com/cz_binance/status/2070176909162410430",
-    "translated": "Binance bStocks 的资产管理规模已达 1 亿美元",
-    "source_note": "GitHub Actions: 2026-06-28T05:19:33.424759+00:00"
-  },
-  {
-    "id": "tweet_cz_binance_2069794756368965751#m",
-    "username": "cz_binance",
-    "display_name": "CZ (赵长鹏)",
-    "published_at": "Wed, 24 Jun 2026 14:48:19 GMT",
-    "content": "Good to see this finally getting to closure. » CEA Industries ends proxy fight with YZi Labs, adds Ella Zhang as board director | The Block https://www.theblock.co/post/405919/cea-industries-ends-proxy-fight-yzi-labs",
-    "url": "https://x.com/cz_binance/status/2069794756368965751",
-    "translated": "很高兴看到这最终结束。 » CEA Industries 结束与 YZi Labs 的代理权争夺战，Ella 张出任董事会董事 |区块 https://www.theblock.co/post/405919/cea-industries-ends-proxy-fight-yzi-labs",
-    "source_note": "GitHub Actions: 2026-06-28T05:19:33.424759+00:00"
+    "source_note": "GitHub Actions: 2026-06-28T11:10:02.016152+00:00"
   },
   {
     "id": "tweet_realDonaldTrump_2068370500334637542#m",
@@ -37,7 +67,7 @@
     "content": "RT by @realDonaldTrump: POLL…",
     "url": "https://x.com/realDonaldTrump/status/2068370500334637542",
     "translated": "RT @realDonaldTrump：投票……",
-    "source_note": "GitHub Actions: 2026-06-28T05:19:33.424759+00:00"
+    "source_note": "GitHub Actions: 2026-06-28T11:10:02.016152+00:00"
   },
   {
     "id": "tweet_realDonaldTrump_2068370042018767262#m",
@@ -47,7 +77,7 @@
     "content": "Pinned: POLL: ICE has been abused by the Fake News Media at levels never seen before. They are Great Patriots who work hard, and do a fantastic job in a very hostile environment. Much of this hostility is caused by the Dumocrats and the Fake News. The concept I have had for quite some time — A strong feeling that the name of these Patriots, “ICE,” should be changed to, “NICE,” in that it will totally discombobulate Crooked, Dishonest, and Unpatriotic Reporters and Journalists. For them to say, “We went to a NICE Facility today,” as opposed to “ICE” or, “NICE Agents have deported a Violent Drug Dealer,” they won’t be able to handle it, they will go totally crazy! All it means is adding an “N” (“National”) to “ICE (“Immigration and Customs Enforcement”) — A much more prestigious name. Everyone loves it, but I have been told by the legendary Tom Homan that the Agents do not love it as much as the other population. Who thinks that we should add an “N” to change the name of “ICE” to “NICE?”   Thank you for your attention to this matter! President DJT",
     "url": "https://x.com/realDonaldTrump/status/2068370042018767262",
     "translated": "已固定：民意调查：假新闻媒体对 ICE 的滥用达到了前所未有的程度。他们是伟大的爱国者，他们努力工作，在非常恶劣的环境中做得非常出色。这种敌意很大程度上是由杜民主派和假新闻引起的。我有一段时间一直有这样的想法——一种强烈的感觉，这些爱国者的名字“ICE”应该改为“NICE”，因为这将彻底扰乱不诚实、不诚实、不爱国的记者和记者。对于他们来说，“我们今天去了一家 NICE 设施”，而不是“ICE”或“NICE 特工驱逐了一名暴力毒贩”，他们将无法处理，他们会完全疯掉！这意味着在“ICE”（“移民和海关执法局”）中添加一个“N”（“国家”）——一个更有声望的名字。每个人都喜欢它，但传奇人物汤姆·霍曼告诉我，特工们并不像其他人那样喜欢它。谁认为我们应该添加一个“N”来将“ICE”的名字改为“NICE”？   感谢您对此事的关注！总裁DJT",
-    "source_note": "GitHub Actions: 2026-06-28T05:19:33.424759+00:00"
+    "source_note": "GitHub Actions: 2026-06-28T11:10:02.016152+00:00"
   },
   {
     "id": "tweet_realDonaldTrump_2057968277062582378#m",
@@ -57,7 +87,27 @@
     "content": "Video",
     "url": "https://x.com/realDonaldTrump/status/2057968277062582378",
     "translated": "视频",
-    "source_note": "GitHub Actions: 2026-06-28T05:19:33.424759+00:00"
+    "source_note": "GitHub Actions: 2026-06-28T11:10:02.016152+00:00"
+  },
+  {
+    "id": "tweet_aleabitoreddit_2071164721299112316#m",
+    "username": "aleabitoreddit",
+    "display_name": "Serenity (白毛股神)",
+    "published_at": "Sun, 28 Jun 2026 09:32:04 GMT",
+    "content": "Yup, Schaeffler $SHA0 is the ideal example for automotive players. ~ €7.47B MC auto player. - but also working with 45 humanoid players (extremely insane number, they do have €5.14b debt, EV is higher) - covers bearings, gearboxes, sensors/ECUs, actuators, power electronics. -ests. They can be roughly 50% BOM of a humanoid - targeting 10% market share of that. But only projecting a few hundred million revenue by 2030 (extremely sandbagged) if we’re using Elon’s projections for the market. Then’s theres auto players like Nabtesco (6268) for joints. And then Sanhua in China for $TSLA Optimus. Many of them are trade at lower valuations from drag from auto. But humanoids + AI Auto (TSM chairman cited this as a growth vector) should be a good catalyst past 2027 for automotive players. IMO there just needs to be a ChatGPT/Anthropic breakout downstream leader first for humanoids. That brings up the entire ecosystem that has robotics exposure. But as of now it’s probably like 1% of many of their overall revenue figures, and markets are focusing on immediate upside from bottlenecks like memory or MLCC. I’m sure we’ll see some random Toto-HBM type surprise as different humanoid architecture evolve.",
+    "url": "https://x.com/aleabitoreddit/status/2071164721299112316",
+    "translated": "是的，舍弗勒 $SHA0 是汽车玩家的理想示例。 ~ €7.47B MC 自动播放器。 - 而且还与 45 个人形玩家合作（数量极其疯狂，他们确实有 5.14b 欧元的债务，EV 更高） - 涵盖轴承、变速箱、传感器/ECU、执行器、电力电子设备。 -ests。它们大约占人形机器人 BOM 的 50%，目标是占其中 10% 的市场份额。但如果我们使用 Elon 对市场的预测，那么到 2030 年，收入预计只有几亿（完全是沙袋）。还有像 Nabtesco (6268) 这样的汽车接头连接器。然后是三花在中国的特斯拉擎天柱。由于汽车行业的拖累，其中许多公司的估值较低。但人形机器人 + AI Auto（TSM 董事长将此视为增长载体）应该会成为 2027 年之后汽车厂商的良好催化剂。在我看来，类人机器人首先需要有一个 ChatGPT/Anthropic 突破下游领导者。这就带来了具有机器人技术的整个生态系统。但截至目前，它可能只占其整体收入数据的 1%，而且市场正在关注内存或 MLCC 等瓶颈带来的直接上行空间。我确信随着不同人形架构的发展，我们会看到一些随机的 Toto-HBM 类型的惊喜。",
+    "source_note": "GitHub Actions: 2026-06-28T11:10:02.016152+00:00"
+  },
+  {
+    "id": "tweet_aleabitoreddit_2071135874100990438#m",
+    "username": "aleabitoreddit",
+    "display_name": "Serenity (白毛股神)",
+    "published_at": "Sun, 28 Jun 2026 07:37:26 GMT",
+    "content": "Guess we finally found why $META signed massive agreements with Neoclouds like $NBIS back in March... And why Gemini got super nerfed. $GOOGL reportedly restricted Meta's capacity in March 2026 because of compute restraints. Google's CEO said from last earnings computing power restrictions prevented Google Cloud from taking on more customer needs and made the department's backlog nearly double the previous quarter. This is probably positive for the AI DC capex buildout since hyperscalers capacity is way below what is needed, and especially so if they can't rely on one another.",
+    "url": "https://x.com/aleabitoreddit/status/2071135874100990438",
+    "translated": "我猜我们终于找到了为什么 $META 在三月份与像 $NBIS 这样的 Neoclouds 签署了大规模协议......以及为什么 Gemini 被超级削弱了。据报道，由于计算限制，$GOOGL 在 2026 年 3 月限制了 Meta 的容量。谷歌首席执行官表示，从上次财报来看，计算能力限制导致谷歌云无法满足更多客户需求，并使该部门的积压订单比上一季度增加了近一倍。这对于 AI DC 资本支出建设可能是积极的，因为超大规模企业的容量远低于所需的水平，尤其是在它们不能相互依赖的情况下。",
+    "source_note": "GitHub Actions: 2026-06-28T11:10:02.016152+00:00"
   },
   {
     "id": "tweet_aleabitoreddit_2071074680253911267#m",
@@ -67,26 +117,6 @@
     "content": "WSJ: “China Has Matched Anthropic in Cybersecurity, Resetting AI Race” China’s Zhipu AI, has matched Anthropic’s Mythos in certain benchmarks, such as exploiting cybersecurity bugs. Well, that’s not good. Instead of blaming the administration which did the correct thing… Anthropic’s clearly at fault for not setting enough guardrails to prevent distillation. Even before Fable release there were a lot of rumors that China had backdoors to distill it. Part of it is the trillions of capex to accelerate the AI moat. And the second part is not handing that work over on a silver platter for millions in API calls.",
     "url": "https://x.com/aleabitoreddit/status/2071074680253911267",
     "translated": "《华尔街日报》：“中国在网络安全方面与 Anthropic 不相上下，重启人工智能竞赛” 中国的智普人工智能在某些基准测试中与 Anthropic 的 Mythos 不相上下，例如利用网络安全漏洞。嗯，这不太好。与其责怪做正确事情的政府……人类显然有错，因为没有设置足够的护栏来防止蒸馏。甚至在《神鬼寓言》发行之前，就有很多传言称中国有后门来提取它。其中一部分是加速人工智能护城河的数万亿资本支出。第二部分并不是将这项工作交给数以百万计的 API 调用。",
-    "source_note": "GitHub Actions: 2026-06-28T05:19:33.424759+00:00"
-  },
-  {
-    "id": "tweet_aleabitoreddit_2070789923108798545#m",
-    "username": "aleabitoreddit",
-    "display_name": "Serenity (白毛股神)",
-    "published_at": "Sat, 27 Jun 2026 08:42:45 GMT",
-    "content": "Robotics is next. Both deal count and investment amounts are skyrocketing per pitchbook March data (source: a16z) Good thing is: the same AI DC exposure often has cross-exposure to humanoid ramp. Like DRAM/NAND with memory (on humanoid inference/storage) or DFB lasers with photonics (FMCW LiDAR vision/sensing). Right now most exposure is upstream component parts… or programs within large players like $AMZN or $TSLA. So global IPO season H2 into 2027 for pure play humanoids/robotics companies is going to be fun.",
-    "url": "https://x.com/aleabitoreddit/status/2070789923108798545",
-    "translated": "机器人技术是下一个。根据 3 月份数据，交易数量和投资金额都在飙升（来源：a16z） 好的一面是：同样的 AI DC 曝光通常会与人形爬坡交叉曝光。就像带有内存的 DRAM/NAND（用于人形推理/存储）或带有光子学的 DFB 激光器（FMCW LiDAR 视觉/传感）。目前，大多数曝光都是上游零部件……或者是 $AMZN 或 $TSLA 等大型企业内部的程序。因此，对于纯粹的类人/机器人公司来说，2027 年下半年的全球 IPO 季将会很有趣。",
-    "source_note": "GitHub Actions: 2026-06-28T05:19:33.424759+00:00"
-  },
-  {
-    "id": "tweet_aleabitoreddit_2070754658868687086#m",
-    "username": "aleabitoreddit",
-    "display_name": "Serenity (白毛股神)",
-    "published_at": "Sat, 27 Jun 2026 06:22:38 GMT",
-    "content": "Kinda nutty OpenAI’s is launching its heavyweight 5.6 Sol frontier model on $CBRS. At up to 750 tokens/sec, which is obscene performance. American inference go brrr. I actually picked up starter positions on Cerebras for the first time in the ~170s (below $185 IPO price) after seeing this news yesterday. Feels like validation of its tech. IMO a bit overvalued compared to profitable companies like $JBL at the same valuation. But there’s likely premiums for OpenAI exposure, as long as they stay the leader.",
-    "url": "https://x.com/aleabitoreddit/status/2070754658868687086",
-    "translated": "有点疯狂的 OpenAI 正在 $CBRS 上推出其重量级 5.6 Sol 前沿模型。高达 750 个令牌/秒，这是令人不快的性能。美国的推理去吧。事实上，在昨天看到这个消息后，我在大约 170 年代（低于 185 美元的 IPO 价格）第一次获得了 Cerebras 的首发头寸。感觉像是对其技术的验证。与同等估值的 JBL 等盈利公司相比，IMO 的估值有点高估。但只要 OpenAI 保持领先地位，他们的曝光度就可能会溢价。",
-    "source_note": "GitHub Actions: 2026-06-28T05:19:33.424759+00:00"
+    "source_note": "GitHub Actions: 2026-06-28T11:10:02.016152+00:00"
   }
 ]
