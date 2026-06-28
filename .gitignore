@@ -73,4 +73,10 @@ Thumbs.db
 .verify*.txt
 .tmp*.txt
 .x.txt
+01-Projects/automated task/0.trae-feishu-push-hour-yan-trae/tweet_history.json
+01-Projects/automated task/0.trae-feishu-push-hour-yan-trae/latest_tweets.json
+01-Projects/automated task/0.trae-feishu-push-hour-yan-trae/fetched_tweets.json
+01-Projects/automated task/0.trae-feishu-push-hour-yan-trae/push_lark.py
+01-Projects/automated task/0.trae-feishu-push-hour-yan-trae/profile_archive/
+01-Projects/automated task/0.trae-feishu-push-hour-yan-trae/.secrets.yaml
 
