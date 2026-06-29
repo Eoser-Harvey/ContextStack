@@ -14,6 +14,8 @@
 
 ```cpp
 // ① 注册算子 —— 告诉 TFLM "我需要哪些运算"
+//    ↓ hello_world 只注册了 1 种：FULLY_CONNECTED（全连接层）
+//    ↓ 配置位置：同一文件的第 30-35 行（见下方源码）
 HelloWorldOpResolver op_resolver;
 RegisterOps(op_resolver);   // 内部调用 op_resolver.AddFullyConnected()
 
@@ -35,6 +37,46 @@ float y_pred = interpreter.output(0)->data.f[0];
 ```
 
 > **注意**：文件中用了 `using HelloWorldOpResolver = tflite::MicroMutableOpResolver<1>;`（第 30 行）做了类型别名，本质就是 `MicroMutableOpResolver<1>`。
+
+### 算子注册详解（2026-06-29 基于本地源码核实）
+
+**hello_world 的算子配置在 `hello_world_test.cc` 第 30-35 行：**
+
+```cpp
+// 第 30 行：模板参数 <1> 表示"我最多注册 1 种算子"
+using HelloWorldOpResolver = tflite::MicroMutableOpResolver<1>;
+
+// 第 32-35 行：实际注册函数
+TfLiteStatus RegisterOps(HelloWorldOpResolver& op_resolver) {
+  TF_LITE_ENSURE_STATUS(op_resolver.AddFullyConnected());  // ← 只注册全连接层
+  return kTfLiteOk;
+}
+```
+
+**为什么只注册 1 种？**
+
+| 维度 | 说明 |
+|------|------|
+| **模型结构** | hello_world 模型 = 1 个输入 + 1 个全连接层 + 1 个输出 → 逼近 sin(x) |
+| **唯一算子** | `FULLY_CONNECTED` — 矩阵乘法 `output = activation(input × weight + bias)` |
+| **为什么<1>** | template 参数是编译期常量，决定了内部 `registrations_[1]` 数组的大小，**不用的算子不编译进固件，节省 Flash** |
+| **底层定义** | `micro_mutable_op_resolver.h` 第 356 行：`AddFullyConnected()` 注册 `BuiltinOperator_FULLY_CONNECTED` + 解析函数 `ParseFullyConnected` |
+
+**如果模型有更多层怎么办？**
+
+```
+模型用了 Conv2D + ReLU + FC？ → MicroMutableOpResolver<3>
+   op_resolver.AddConv2D();
+   op_resolver.AddSoftmax();   // ReLU 不需要单独注册，融合在 Conv2D 里
+   op_resolver.AddFullyConnected();
+
+模型用了 1D CNN + MaxPool + FC？ → MicroMutableOpResolver<3>
+   op_resolver.AddConv2D();     // 1D CNN 和 2D CNN 用同一个注册
+   op_resolver.AddMaxPool2D();
+   op_resolver.AddFullyConnected();
+```
+
+> **关键认知**：`MicroMutableOpResolver<N>` 的 N 是编译期写死的——这迫使你**在写代码时就知道模型需要哪些算子**。这是嵌入式设计哲学：静态分配、编译期验证、零运行时开销。
 
 **嵌入式类比**：和 STM32 初始化外设流程一样 —— `Init → Config → Start → Read`
 
