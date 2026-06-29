@@ -36,7 +36,30 @@ interpreter.Invoke();
 float y_pred = interpreter.output(0)->data.f[0];
 ```
 
-> **注意**：文件中用了 `using HelloWorldOpResolver = tflite::MicroMutableOpResolver<1>;`（第 30 行）做了类型别名，本质就是 `MicroMutableOpResolver<1>`。
+> **注意**：文件中用了 `using HelloWorldOpResolver = tflite::MicroMutableOpResolver<1>;`（第 30 行）做了类型别名。
+
+### `MicroMutableOpResolver<1>` 中的 `1` 是什么？
+
+> 基于 `micro_mutable_op_resolver.h` 源码（第 50-774 行）的完整答案
+
+**`1` 是一个 C++ 非类型模板参数（non-type template parameter）**，在全类模板中作为 `tOpCount` 传入（头文件第 50 行）：
+
+```cpp
+template <unsigned int tOpCount>
+class MicroMutableOpResolver : public MicroOpResolver {
+```
+
+**三件事（全部是编译期发生）：**
+
+| 作用 | 源码位置 | 实际效果 |
+|------|---------|---------|
+| **① 决定数组大小** | 第 768-773 行 | 编译器分配 `registrations_[1]` + `builtin_codes_[1]` + `builtin_parsers_[1]` 三个栈数组——**零堆分配，全部编译期固定** |
+| **② 运行时边界检查** | 第 97 行 / 第 749 行 | 如果尝试注册超过 1 个算子 → `registrations_len_ >= tOpCount` → 打印错误 + 返回 `kTfLiteError`，**不会崩溃** |
+| **③ 决定二进制体积** | 链接期 | 只有注册了的算子实现会被链接进固件，不用的被丢弃 → hello_world 只需 `FULLY_CONNECTED` 的代码，其他 100+ 种算子全部不编译 |
+
+**`1` 是 custom + builtin 算子总数上限**（它们在内部共享同一个计数器 `registrations_len_`）。hello_world 只有 1 个 builtin（全连接层），所以 `<1>` 刚好。
+
+**如果写 `<5>` 但只注册了 3 个？** → 编译器分配了 5 个槽位但只用 3 个，内存略浪费但不影响功能。**反过来写 `<1>` 但注册 2 个？** → 第二个注册返回 `kTfLiteError`（安全失败，不会数组越界）。
 
 ### 算子注册详解（2026-06-29 基于本地源码核实）
 
@@ -59,8 +82,7 @@ TfLiteStatus RegisterOps(HelloWorldOpResolver& op_resolver) {
 |------|------|
 | **模型结构** | hello_world 模型 = 1 个输入 + 1 个全连接层 + 1 个输出 → 逼近 sin(x) |
 | **唯一算子** | `FULLY_CONNECTED` — 矩阵乘法 `output = activation(input × weight + bias)` |
-| **为什么<1>** | template 参数是编译期常量，决定了内部 `registrations_[1]` 数组的大小，**不用的算子不编译进固件，节省 Flash** |
-| **底层定义** | `micro_mutable_op_resolver.h` 第 356 行：`AddFullyConnected()` 注册 `BuiltinOperator_FULLY_CONNECTED` + 解析函数 `ParseFullyConnected` |
+| **底层定义** | `micro_mutable_op_resolver.h` 第 356 行：`AddFullyConnected()` → 注册 `BuiltinOperator_FULLY_CONNECTED` + 解析函数 `ParseFullyConnected`
 
 **如果模型有更多层怎么办？**
 
