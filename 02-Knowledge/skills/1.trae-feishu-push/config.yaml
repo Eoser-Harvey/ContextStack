@@ -1,103 +1,115 @@
-# X推文推送系统配置
-
-# 关注的X用户
 users:
-  - username: elonmusk
-    display_name: 马斯克
-    user_id: "44196397"
-  - username: cz_binance
-    display_name: CZ (赵长鹏)
-    user_id: "902926941413453824"
-  - username: realDonaldTrump
-    display_name: 特朗普
-    user_id: "25073877"
-
-# 推文获取配置
+- username: elonmusk
+  display_name: 马斯克
+  user_id: '44196397'
+- username: cz_binance
+  display_name: CZ (赵长鹏)
+  user_id: '902926941413453824'
+- username: realDonaldTrump
+  display_name: 特朗普
+  user_id: '25073877'
 fetch:
-  # 方案1: Nitter RSS (免费)
   nitter_instances:
-    - https://nitter.net
-    - https://nitter.poast.org
-    - https://nitter.privacydev.net
-  # 每次获取最新推文数
+  - https://nitter.net
+  - https://nitter.poast.org
+  - https://nitter.privacydev.net
   tweets_per_user: 5
-  # 超时时间(秒)
   timeout: 30
-
-# 翻译配置 (使用免费翻译API)
 translate:
-  engine: google  # google / bing / deepl
+  engine: google
   source_lang: auto
   target_lang: zh-CN
-
-# Server酱推送配置
 server_chan:
-  # 从 https://sct.ftqq.com/ 获取 SendKey
-  send_key: "YOUR_SEND_KEY_HERE"
-
-# 个人画像 (用于AI分析)
-# last_sync: 2026-06-29T00:00:00
+  send_key: YOUR_SEND_KEY_HERE
 profile:
   name: Harvey
   career:
     company: 新华三
     role: 嵌入式开发工程师
-    experience: "~3年嵌入式产品开发经验 (新华三), 爱博精电6年工业仪表/DSP基础"
-    skills: ["C语言", "Python", "自研RTOS", "TSN全协议栈(802.1Qbv/AS/Qci/Qbu/CB/Qcc)", "DSP汇编优化", "ARM架构", "驱动开发", "TFLM", "PL管理"]
-    focus: ["端侧AI", "MCU/RTOS底层驱动", "嵌入式系统", "工业网络"]
-    salary: "当前30K×16, 目标50-70W总包"
-    target_companies: ["小米", "地平线", "寒武纪", "百度", "字节跳动", "联想"]
-    location_constraint: "北京海淀/昌平"
-    job_search_status: "已约1年, 面试过九号/ISHO/思朗"
-    interview_method: "工程叙事四层结构: 本质→实践→踩坑→思考"
+    experience: ~3年嵌入式产品开发经验 (新华三), 爱博精电6年工业仪表/DSP基础
+    skills:
+    - C语言
+    - ARM/DSP架构
+    - RTOS
+    - Linux
+    - Python
+    - TFLM
+    focus:
+    - 工业嵌入式
+    - 通信设备底层，非消费电子
+    salary: 当前30K×16, 目标50-70W总包
+    target_companies:
+    - 小米
+    - 地平线
+    - 寒武纪
+    - 百度
+    - 字节跳动
+    - 联想
+    location_constraint: 北京海淀/昌平
+    job_search_status: 已约 1 年, 面试过 九号/ISHO/思朗
+    interview_method: '工程叙事四层结构: 本质→实践→踩坑→思考'
   assets:
     crypto:
-      btc: "0.1298 BTC (链上唯一持仓, 币安已清仓)"
-      eth: "已清仓 (2026-06-24)"
-      usdt: "$20,000 (币安余额)"
+      btc: 0.1298 BTC (链上唯一持仓, 币安已清仓)
+      eth: 已清仓 (2026-06-24)
+      usdt: $20,000 (币安余额)
     stocks:
-      us: ["CRCL 835.9股 (分散5账户, 燕蒙古351.22+韩伟蒙古334.20+长桥25.5+华盛通45+韩芳80)", "MRVL 29.19股 (浮亏-5.2%)", "BitGo 54股 (浮亏-69.6%)"]
-      hk: ["优必选 50股 (浮盈+3.1%)"]
+      us:
+      - CRCL 835.9股 (分散5账户)
+      - MRVL 29.19股
+      - BitGo 54股
+      hk:
+      - 优必选 50股
     ts_tokens:
-      xiaoan: "106,499秒 (≈¥15,591, 浮盈+129.6%)"
-      wufan: "818秒 (≈¥16,163, 浮亏-33.3%)"
-    real_estate: "北京海淀住宅 ¥320W (2025年底购入)"
-    cash: "¥630,808 (家庭备用金) + HK$146,060 (打新资金) + $20,000 (币安USDT)"
-    total_assets: "¥1,433,184 (净资产 ¥1,033,184)"
-    investment_assets: "¥540,081"
-    crcl_concentration: "CRCL 835.9股, 占投资约78% ⚠️ 高度集中"
+      xiaoan: 106,499秒 (≈¥15,591)
+      wufan: 818秒 (≈¥16,163)
+    real_estate: 北京海淀住宅 ¥320W (2025年底购入)
+    cash: ¥630,808 (家庭备用金) + HK$146,060 (打新资金) + $20,000 (币安USDT)
+    total_assets: ¥1,433,184 (净资产 ¥1,033,184)
+    investment_assets: ¥540,081
+    crcl_concentration: CRCL 835.9股, 占投资约73% ⚠️ 高度集中
   liabilities:
-    credit_card_invest: "¥400,000 (投资WEB3)"
-    binance_loan: "¥0 (2026-06-05已全部还清)"
-    mortgage_commercial: "¥400,000 (自住)"
-    mortgage_fund: "¥1,400,000 (自住)"
+    mortgage_commercial: ¥400,000 (自住)
+    mortgage_fund: ¥1,400,000 (自住)
+    credit_card_invest: ¥400,000 (投资WEB3)
+    binance_loan: ¥0 (2026-06-05已全部还清)
   family:
     location: 北京
     hukou: 非京籍 (内蒙古)
     children: 有孩子 (在京上学)
     spouse: 已婚 (薛燕)
   insurance:
-    hanwei_zhongji: "达尔文50W (¥6,960/年, 2026-06-15生效)"
-    hanwei_dingshou: "待配置 (目标200W保额)"
-    xueyan_zhongji: "待配置 (目标30-50W保额)"
-  risk_profile: "高风险偏好 (加密货币+美股集中持仓, CRCL占投资47.0%⚠️)"
-  interests: ["加密货币", "端侧AI", "CPO产业链", "投资理财", "职业发展"]
+    hanwei_zhongji: 达尔文50W (¥6,960/年, 2026-06-15生效)
+    hanwei_dingshou: 待配置 (目标200W保额)
+    xueyan_zhongji: 待配置 (目标30-50W保额)
+  risk_profile: 高风险偏好 (加密货币+美股集中持仓, CRCL 835.9股⚠️)
+  interests:
+  - 加密货币
+  - 端侧AI
+  - CPO产业链
+  - 投资理财
+  - 职业发展
   a8_plan:
-    target: "1000万人民币 (2026-2028)"
-    btc_target: "2.32个 (当前0.642, 进度27.7%)"
-    strategy: "MA120趋势 + 月度定投¥16,700 + 港股打新"
-    current_mode: "BTC在MA120下方, 定投暂存USDT待命"
+    target: 1000万人民币 (2026-2028)
+    btc_target: 2.32个 (当前0.130, 进度5.6%)
+    strategy: MA120趋势 + 月度定投¥16,700 + 港股打新
+    current_mode: BTC在MA120下方, 定投暂存USDT待命
   recent_trades:
-    - "2026-06-02: MA120卖出BTC 0.32463@$71360 + 清仓ETH 6.9677@$2008"
-    - "2026-06-04: 买入CRCL 17.55股@$89.80"
-    - "2026-06-05: 买入MRVL 6.87股@$291 + 抄底BTC 0.03409@$61600 + 还清币安借贷"
-    - "2026-06-11: 清仓机器人ETF换仓优必选50股 + 追高买入NOK 134.41股"
-    - "2026-06-16: 买入DRAM 27.4股@$72.60 + CRCL 14.13股@$80.80"
-    - "2026-06-17: 买入SPCX 15.52股@$204.96"
-    - "2026-06-22: 清仓DRAM 27.4股@$80.68(盈利+11.1%) 换仓CRCL 28.748股@$76.87 + 清仓小米1400股@$23.69(亏损-20%)"
-    - "2026-06-24: ⚠️恐慌清仓BTC 0.51247@$58,550(亏损~$55,236) + 清仓ETH链上1.35个 + 清仓NOK 134.41股(亏~$160) + 加仓CRCL 62.37股@$69.60 + 加仓MRVL 12.52股 → 币安余USDT $20,000"
-
-# 输出配置
+  - 'BTC(币安): 0.51247 → 0 ⚠️ (**恐慌清仓！均价$58,550，亏损~$55,236**)'
+  - 'ETH(链上): 1.35 → 0 (清仓链上ETH)'
+  - 'NOK(币安): 134.41 → 0 (止损清仓，亏~$160(-8%))'
+  - 'CRCL(燕蒙古): 221.59 → 351.22 (+129.63股(67.26@$69.80 + 62.37@$69.60)累计$9,036)'
+  - 'MRVL(币安): 16.674 → 29.192 (+12.518股累计$3,405)'
+  - '币安USDT: $222 → $20,000 (卖BTC/NOK/ETH → 买CRCL/MRVL后余)'
+  - 'eth_onchain 2026-06-24 清仓: 1.35个ETH, 链上ETH全部清仓'
+  - 'btc_binance 2026-06-24 头脑发热清仓: 0.51247个均价$58,550, 卖出约$30,006, 违反A8纪律 ❌'
+  - eth_binance 2026-06-02 MA120策略清仓卖出6.9677个@$2008, 剩余0.0003为dust
+  - 'dram_han 2026-06-22 清仓: 27.4股成本$72.60, 卖出$80.68, 盈利$221(+11.1%), 资金换仓CRCL'
+  - 'spcx_han 2026-06-18 清仓: 15.52股成本$204.96, 卖出$179.50, 亏损$396(-12.4%), 看不懂趋势撤离'
+  - 'nok_han 2026-06-24 清仓: 134.41股成本$14.88, 卖出$1,840, 亏损~$160(-8%), 情绪化操作止损离场'
+  - robot_etf 2026-06-11 全部清仓卖出 ¥1.203, 换仓至 优必选
+  - 'xiaomi_ht 2026-06-22 清仓: 1400股成本HKD$29.61, 卖出~HKD$23.69, 亏损~20%, 资金待换仓AI大模型股'
+  last_sync: '2026-06-30T00:13:05.042362'
 output:
   history_file: tweet_history.json
   max_history: 200
