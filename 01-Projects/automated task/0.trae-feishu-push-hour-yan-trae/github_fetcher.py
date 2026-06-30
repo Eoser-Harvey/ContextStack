@@ -101,13 +101,17 @@ def convert_to_fetched_format(github_data):
     result = []
 
     for t in tweets:
-        # Clean URL (remove #m suffix)
+        # Clean URL and tweet_id (remove #m suffix from Nitter RSS)
         url = t.get("url", "")
         if "#m" in url:
             url = url.split("#m")[0]
 
+        tweet_id = t.get("id", f"tweet_{t['username']}_{t.get('tweet_id', 'unknown')}")
+        if "#m" in tweet_id:
+            tweet_id = tweet_id.replace("#m", "")
+
         result.append({
-            "id": t.get("id", f"tweet_{t['username']}_{t.get('tweet_id', 'unknown')}"),
+            "id": tweet_id,
             "username": t.get("username", ""),
             "display_name": t.get("display_name", ""),
             "published_at": t.get("published_at", ""),
