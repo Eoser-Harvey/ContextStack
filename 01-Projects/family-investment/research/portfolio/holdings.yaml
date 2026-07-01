@@ -6,8 +6,8 @@
 
 meta:
   last_updated: "2026-07-01"
-  usd_cny: 6.800
-  hkd_cny: 0.867
+  usd_cny: 6.796
+  hkd_cny: 0.866
 
 # ============================================================
 # 投资持仓 (每个标的必须含: quantity, cost_basis, price_source)

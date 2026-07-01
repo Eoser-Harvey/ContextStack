@@ -145,15 +145,74 @@ print(f"📊 报告引擎 v2 启动 — {today_display}")
 print("=" * 60)
 print("\n[1/6] 拉取实时价格...")
 
-# 汇率
+# 汇率 — 多源交叉验证，防单源异常
+uc = hc = None
+src_name = ""
+
+def fetch_sina_forex(sym):
+    """新浪外汇，来源与股票一致，对中国投资者最可靠"""
+    try:
+        r = requests.get(f"https://hq.sinajs.cn/list=fx_s{sym.lower()}", timeout=10,
+                         headers={"Referer": "https://finance.sina.com.cn"})
+        r.encoding = "gbk"
+        if '"' in r.text:
+            parts = r.text.split('"')[1].split(",")
+            if len(parts) > 7 and parts[1]:
+                return float(parts[1])
+    except:
+        pass
+    return None
+
+# 源1: Sina外汇（中国在岸汇率，最贴近实际换汇成本）
+uc_sina = fetch_sina_forex("usdcny")
+
+# 源2: exchangerate-api（国际离岸汇率）
+uc_api = None
+_hkd_rate = None
 try:
     r = requests.get('https://api.exchangerate-api.com/v4/latest/USD', timeout=15)
-    uc = r.json()['rates']['CNY']
-    hc = uc / r.json()['rates']['HKD']
-    print(f"  USD/CNY={uc:.4f}  HKD/CNY={hc:.4f}")
-except Exception as e:
-    print(f"  汇率API失败: {e}, 用默认值")
-    uc, hc = 7.25, 0.93
+    j = r.json()
+    uc_api = j['rates']['CNY']
+    _hkd_rate = j['rates']['HKD']
+except:
+    pass
+
+# 交叉验证：两源都有时取中位值，差值过大则信任Sina
+if uc_sina and uc_api:
+    diff_pct = abs(uc_sina - uc_api) / uc_sina * 100
+    if diff_pct < 2:
+        uc = (uc_sina + uc_api) / 2
+        src_name = f"Sina({uc_sina:.4f})+exchangerate({uc_api:.4f})→中位"
+    else:
+        uc = uc_sina
+        src_name = f"Sina({uc_sina:.4f})，exchangerate({uc_api:.4f})偏差{diff_pct:.1f}%已丢弃"
+elif uc_sina:
+    uc = uc_sina
+    src_name = f"Sina({uc_sina:.4f})"
+elif uc_api:
+    uc = uc_api
+    src_name = f"exchangerate({uc_api:.4f})"
+else:
+    uc = 7.25
+    src_name = "默认值(7.2500)"
+
+# 范围校验：异常值回退
+if not (6.5 <= uc <= 7.5):
+    print(f"  ⚠️ 汇率异常 {uc:.4f}，回退到默认值 7.25")
+    uc = 7.25
+    src_name = "异常回退→7.2500"
+
+# HKD/CNY 独立获取，或通过 USD 折算
+hc = None
+hc_sina = fetch_sina_forex("hkdcny")
+if hc_sina:
+    hc = hc_sina
+elif _hkd_rate:
+    hc = uc / _hkd_rate
+else:
+    hc = 0.93
+
+print(f"  USD/CNY={uc:.4f}  HKD/CNY={hc:.4f}  (来源: {src_name})")
 
 # BTC/ETH (Gate.io)
 btc = eth = None
