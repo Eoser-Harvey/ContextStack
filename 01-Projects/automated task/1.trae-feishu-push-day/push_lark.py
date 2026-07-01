@@ -194,6 +194,8 @@ def send_interactive_card(chat_id: str, card_json: Dict[str, Any],
         resp = requests.post(url, json=payload, headers=headers, timeout=15)
         resp.raise_for_status()
         data = resp.json()
+    except requests.Timeout:
+        raise RuntimeError("发送消息超时(15秒)，飞书API无响应")
     except requests.RequestException as e:
         raise RuntimeError(f"发送消息网络请求失败: {e}")
     except json.JSONDecodeError as e:

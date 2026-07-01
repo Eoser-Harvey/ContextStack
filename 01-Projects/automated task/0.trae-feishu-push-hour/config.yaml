@@ -11,6 +11,9 @@ users:
   - username: realDonaldTrump
     display_name: 特朗普
     user_id: "25073877"
+  - username: aleaborteddit
+    display_name: Serenity (白毛股神)
+    user_id: ""
 
 # 推文获取配置
 fetch:

@@ -134,11 +134,7 @@ class ProfileAnalyzer:
                     f"CZ对监管的评论需特别关注。"
                     f"✅ 借贷已还清，建议保持USDT适当流动性应对监管变化。"
                 )
-            return (
-                f"📊 **CZ动态关注**\n"
-                f"作为币安创始人，CZ的推文对加密市场有直接影响。"
-                f"你的加密资产分布在链上+币安+WEB3，建议关注是否有交易所政策变化信号。"
-            )
+            return ""
 
         # 马斯克相关
         if username == "elonmusk":
@@ -282,30 +278,12 @@ class ProfileAnalyzer:
                     f"但你的技能方向长期受益于AI产业爆发。"
                 )
             if any(kw in text for kw in ["ai", "人工智能", "grok", "xai", "robot", "机器人"]):
-                return (
-                    f"🤖 **AI/机器人赛道**\n"
-                    f"你持有优必选(港股)50股，马斯克对AI和机器人的言论直接影响板块情绪。\n"
-                    f"结合你的端侧AI学习方向(TFLM)，这个赛道与你技能高度相关，" 
-                    f"可关注AI赛道机会，但也需控制单一赛道集中度。"
-                )
+                return ""
             if any(kw in text for kw in ["tesla", "特斯拉", "tsla", "ev", "fsd"]):
-                return (
-                    f"🚗 **特斯拉相关**\n"
-                    f"你已清仓TSLA(06-02换仓CRCL)，但马斯克关于特斯拉的推文" 
-                    f"仍可能影响整个科技板块情绪。关注FSD/机器人出租车等长期叙事对AI产业链的影响。"
-                )
+                return ""
             if any(kw in text for kw in ["doge", "狗狗币", "crypto", "加密"]):
-                return (
-                    f"🐕 **马斯克加密言论**\n"
-                    f"马斯克的加密相关推文历史上对市场影响巨大。"
-                    f"你的加密仓位较重(BTC+ETH+USDT)，需警惕马斯克推文引发的短期剧烈波动，"
-                    f"不建议追高或恐慌抛售。"
-                )
-            return (
-                f"🔍 **马斯克动态**\n"
-                f"马斯克的推文覆盖科技/AI/加密/政治多领域。"
-                f"从你的资产配置看，重点关注AI/机器人(与你技能相关)和加密(与你持仓相关)方向的信号。"
-            )
+                return ""
+            return ""
 
         # 特朗普相关
         if username == "realDonaldTrump":
@@ -387,37 +365,14 @@ class ProfileAnalyzer:
                     f"币安USDT ${assets['crypto']['usdt']}可在确认降息趋势后逐步部署。"
                 )
             if any(kw in text for kw in ["tariff", "关税", "trade", "贸易", "manufacturing"]):
-                return (
-                    f"🏛️ **关税政策持续高压**\n"
-                    f"特朗普已发布42条行政令+13条公告推进关税政策，制造业回流美国是大方向。\n"
-                    f"你持有美股(CRCL/TSLA)+港股+A股，关税环境紧张时需关注：\n"
-                    f"• 中概股/港股可能承压 → 影响你的港股CRCL持仓\n"
-                    f"• A股可能受益于国产替代 → 机器人ETF/小米或有机会\n"
-                    f"• 新华三(你的雇主)作为国产网络设备商，在国产替代浪潮中可能受益"
-                )
+                return ""
             if any(kw in text for kw in ["crypto", "bitcoin", "加密", "比特币"]):
-                return (
-                    f"🏛️ **特朗普加密立场**\n"
-                    f"特朗普对加密货币的态度影响美国监管走向。"
-                    f"你的加密资产占比较高，若特朗普释放友好信号可能利好，"
-                    f"但政治言论波动大，建议以长期持有为主，不追短期消息。"
-                )
+                return ""
             if any(kw in text for kw in ["fed", "美联储", "rate", "利率", "stock", "股市"]):
-                return (
-                    f"📈 **宏观政策影响**\n"
-                    f"特朗普对美联储/利率的评论影响全球资本市场。\n"
-                    f"你的多市场配置(加密+美股+港股+A股)对利率敏感，"
-                    f"降息预期利好风险资产。当前你币安有${assets['crypto']['usdt']}空闲资金，"
-                    f"可在宏观明朗后逐步部署。"
-                )
-            return (
-                f"🌐 **宏观政策风向**\n"
-                f"特朗普言论影响全球政策预期。作为多资产配置者，"
-                f"关注其对中美关系、美联储政策、加密货币监管的态度变化。"
-                f"建议保持家庭备用金¥{assets['cash']}不动，投资资金独立管理。"
-            )
+                return ""
+            return ""
 
-        return "暂无针对此推文的具体建议。"
+        return ""
 
     def _career_advice(self, username, content, translated):
         """生成职业发展建议"""
@@ -528,19 +483,9 @@ class ProfileAnalyzer:
                     f"这是硬件工程师在AI时代最值钱的能力。"
                 )
             if any(kw in text for kw in ["hire", "招聘", "team", "团队"]):
-                return (
-                    f"💼 **行业趋势**\n"
-                    f"马斯克的招聘/团队言论反映顶级科技公司的人才需求。"
-                    f"你的技能栈({', '.join(career['skills'])})与AI+硬件方向匹配度高，"
-                    f"建议持续关注端侧AI岗位机会。"
-                )
+                return ""
             if any(kw in text for kw in ["ai", "人工智能", "engineering", "工程"]):
-                return (
-                    f"💼 **职业启发**\n"
-                    f"马斯克关于AI/工程的言论与你端侧AI学习方向契合。"
-                    f"你在{career['company']}做{career['role']}，有{career['experience']}，"
-                    f"端侧AI是嵌入式工程师的高价值转型方向，坚持TFLM学习有长期回报。"
-                )
+                return ""
 
         if username == "cz_binance":
             if any(kw in text for kw in ["zoom out", "best performing", "15 years", "short-term"]):
@@ -580,12 +525,7 @@ class ProfileAnalyzer:
 
         if username == "realDonaldTrump":
             if any(kw in text for kw in ["manufacturing", "制造", "tariff", "关税", "america"]):
-                return (
-                    f"💼 **国产替代职业红利**\n"
-                    f"特朗普关税政策推动制造业回流美国，对中国意味着加速国产替代。\n"
-                    f"你在{career['company']}(新华三)作为国产网络设备商的核心技术人员，"
-                    f"在国产替代浪潮中处于有利位置。端侧AI+TSN+工业网络是你的差异化竞争力。"
-                )
+                return ""
 
         return ""
 

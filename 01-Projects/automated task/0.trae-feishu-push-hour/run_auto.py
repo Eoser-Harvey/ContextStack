@@ -38,12 +38,21 @@ def save_history(history_path, tweet_ids, max_history):
 
 
 def filter_new_tweets(tweets, history_ids):
-    """过滤出未推送过的新推文"""
+    """过滤出未推送过的新推文（同时去重批次内重复）"""
     new_tweets = []
+    seen_in_batch = set()
     for tweet in tweets:
         tid = tweet.get("id", "")
-        if tid and tid not in history_ids:
-            new_tweets.append(tweet)
+        if not tid:
+            continue
+        if tid in history_ids:
+            print(f"[DEDUP] 跳过历史推文: {tid[:50]}...")
+            continue
+        if tid in seen_in_batch:
+            print(f"[DEDUP] 跳过批次内重复: {tid[:50]}...")
+            continue
+        new_tweets.append(tweet)
+        seen_in_batch.add(tid)
     return new_tweets
 
 
