@@ -7,3 +7,6 @@
 # Python
 __pycache__/
 *.py[cod]
+
+# Profile 归档（本地生成，无需提交）
+profile_archive/
