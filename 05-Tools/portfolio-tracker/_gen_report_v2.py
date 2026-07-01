@@ -15,7 +15,15 @@ if sys.platform == "win32":
 
 BASE = Path("e:/ProjectGroup/AI/ContextStack/01-Projects/family-investment/research/portfolio")
 HY_PATH = BASE / "holdings.yaml"
-OUT = BASE / "reports/家庭资产报告-2026-06.md"
+# 自动识别当前月份，若当月报告文件不存在则复制上月报告
+_current_month = datetime.now().strftime("%Y-%m")
+OUT = BASE / f"reports/家庭资产报告-{_current_month}.md"
+_prev_month = (datetime.now().replace(day=1) - timedelta(days=1)).strftime("%Y-%m")
+_prev_file = BASE / f"reports/家庭资产报告-{_prev_month}.md"
+if not OUT.exists() and _prev_file.exists():
+    import shutil
+    shutil.copy(_prev_file, OUT)
+    print(f"  📄 {_current_month} 报告不存在，已从 {_prev_month} 复制创建")
 A8_PATH = BASE / "reports/Crypto-A8计划-2026至2028.md"
 ANNUAL_PATH = BASE / "reports/家庭资产年度报告-2026.md"
 PH_PATH = BASE / "portfolio_history.yaml"

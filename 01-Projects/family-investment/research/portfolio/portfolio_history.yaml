@@ -107,7 +107,7 @@ holdings_history:
     name: nok_han
     all_time_high_price: 14.8
     all_time_high_date: '2026-06-14'
-    all_time_low_price: 13.03
+    all_time_low_price: 12.98
     all_time_low_date: '2026-07-01'
   crcl_binance:
     name: Circle(韩伟币安)
