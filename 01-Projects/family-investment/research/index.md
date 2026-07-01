@@ -8,6 +8,7 @@
 |-----------|------|
 | [[./portfolio/]] | 持仓追踪（holdings.yaml + 自动报告 + 交易日志 + A8计划） |
 | [[./investment-reflection-journal.md]] | 个人投资反思日志（2021-至今，按时间线归档） |
+| [[./second-curve-ai-projects.md]] | 第二曲线：AI 驱动可落地项目清单（嵌入式面试陪跑等） |
 | [[../company-setup/beijing-company-social-insurance-plan.md]] | 北京开公司社保全攻略 |
 
 ## 关联资源
