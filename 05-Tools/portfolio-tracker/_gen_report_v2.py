@@ -460,7 +460,9 @@ cash_pct = cash_total / total_assets * 100
 L.append(f"| 现金固收 | ¥{cash_total:,.0f} | {cash_pct:.1f}% |")
 L.append(f"| **总资产** | **¥{total_assets:,.0f}** | **100%** |")
 L.append(f"| **总负债** | **¥{liab_total:,.0f}** | — |")
-L.append(f"| **净资产** | **¥{net_worth:,.0f}** | — |\n")
+L.append(f"| **净资产** | **¥{net_worth:,.0f}** | — |")
+L.append(f"| **投资总资产** | **¥{investment_total:,.0f}** | {investment_total/total_assets*100:.1f}% |")
+L.append(f"| **投资净资产** | **¥{investment_total - liab_total:,.0f}** | — |\n")
 
 # 二、投资明细
 L.append("## 二、投资资产明细（含盈亏）\n")
