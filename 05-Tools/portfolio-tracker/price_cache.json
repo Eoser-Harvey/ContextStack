@@ -1,18 +1,7 @@
 {
-  "date": "2026-06-11",
-  "crypto": {
-    "ETH": null,
-    "BTC": null
-  },
-  "stock": {
-    "159770.SZ": {
-      "price": 1.172,
-      "currency": "CNY",
-      "source": "Sina"
-    },
-    "MRVL": null,
-    "1810.HK": null
-  },
+  "date": "2026-07-01",
+  "crypto": {},
+  "stock": {},
   "rates": {
     "USD_CNY": 7.25,
     "HKD_CNY": 0.93

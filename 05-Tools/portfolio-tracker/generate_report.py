@@ -347,11 +347,13 @@ def update_history(hist, holdings, report_date):
             continue
         entry = hh[hid]
 
-        if entry["all_time_high_price"] is None or price > entry["all_time_high_price"]:
+        ath = entry.get("all_time_high_price")
+        if ath is None or price > ath:
             entry["all_time_high_price"] = round(price, 2)
             entry["all_time_high_date"] = report_date
 
-        if entry["all_time_low_price"] is None or price < entry["all_time_low_price"]:
+        atl = entry.get("all_time_low_price")
+        if atl is None or price < atl:
             entry["all_time_low_price"] = round(price, 2)
             entry["all_time_low_date"] = report_date
 
@@ -448,6 +450,15 @@ def build_report(data, history_data, rates, report_date):
     lines.append(f"| **总资产** | **¥{total_assets:,.0f}** | **100%** |")
     lines.append(f"| **总负债** | **¥{liab_total_cny:,.0f}** | — |")
     lines.append(f"| **净资产** | **¥{net_worth:,.0f}** | — |")
+    lines.append("")
+
+    # 拆解: 家庭总资产 = 现金固收 + 投资资产
+    cash_fixed = categories.get("现金固收", 0)
+    investment_assets = total_assets - cash_fixed
+    investment_net = investment_assets - liab_total_cny
+    lines.append(f"> 💡 **家庭总资产 ¥{total_assets:,.0f}** = 现金固收 ¥{cash_fixed:,.0f} + 投资资产 ¥{investment_assets:,.0f}")
+    lines.append(f"> 💡 **投资净资产 ¥{investment_net:,.0f}** = 投资资产 ¥{investment_assets:,.0f} − 投资负债 ¥{liab_total_cny:,.0f}")
+    lines.append(f"> 💡 **家庭净资产 ¥{net_worth:,.0f}** = 总资产 ¥{total_assets:,.0f} − 总负债 ¥{liab_total_cny:,.0f}")
     lines.append("")
 
     # ────────────── 投资明细 + 盈亏 ──────────────
