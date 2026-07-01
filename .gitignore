@@ -61,6 +61,7 @@ Thumbs.db
 01-Projects/automated task/0.trae-feishu-push/push_lark.py
 01-Projects/automated task/0.trae-feishu-push/send_daily_ai_news.py
 01-Projects/automated task/1.trae-feishu-push-day/send_daily_ai_news.py
+01-Projects/automated task/1.trae-feishu-push-day-yan-trae/send_daily_ai_news.py
 02-Knowledge/skills/1.trae-feishu-push/push_lark.py
 
 # Scripts containing lark secrets — .secrets.yaml (本地保留，不推送远程)

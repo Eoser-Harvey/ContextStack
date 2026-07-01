@@ -1,3 +1,7 @@
+# 持仓历史最值 + 净资产快照
+# 自动生成: _gen_report_v2.py 每次运行自动更新
+# 手动补充: trades 交易记录
+
 holdings_history:
   btc_onchain:
     name: 比特币(链上)
@@ -9,20 +13,20 @@ holdings_history:
     name: 以太坊NFT(链上)
     all_time_high_price: 1862.06
     all_time_high_date: '2026-06-02'
-    all_time_low_price: 1610.59
-    all_time_low_date: '2026-06-11'
+    all_time_low_price: 1607.11
+    all_time_low_date: '2026-07-01'
   btc_binance:
     name: 比特币(币安)
     all_time_high_price: 66768.36
     all_time_high_date: '2026-06-02'
-    all_time_low_price: 61196.9
-    all_time_low_date: '2026-06-11'
+    all_time_low_price: 59794.2
+    all_time_low_date: '2026-07-01'
   eth_binance:
     name: 以太坊(币安)
     all_time_high_price: 1862.06
     all_time_high_date: '2026-06-02'
-    all_time_low_price: 1610.59
-    all_time_low_date: '2026-06-11'
+    all_time_low_price: 1607.11
+    all_time_low_date: '2026-07-01'
   crcl_yan:
     name: Circle(燕蒙古)
     all_time_high_price: 113.07
@@ -103,8 +107,8 @@ holdings_history:
     name: nok_han
     all_time_high_price: 14.8
     all_time_high_date: '2026-06-14'
-    all_time_low_price: 13.4
-    all_time_low_date: '2026-06-11'
+    all_time_low_price: 13.03
+    all_time_low_date: '2026-07-01'
   crcl_binance:
     name: Circle(韩伟币安)
     all_time_high_price: 62.9
@@ -150,4 +154,5 @@ net_worth_snapshots:
   net_worth_cny: 1133580
   total_assets_cny: 1533580
 - date: '2026-07-01'
-  net_worth_cny: 1050925.08
+  net_worth_cny: 999301
+  total_assets_cny: 1399301
