@@ -498,7 +498,7 @@ def generate_archive(holdings_profile: dict, report_totals: dict,
     lines.append("")
     lines.append("- **家庭所在地**: 北京")
     lines.append("- **户口**: 非京籍 (内蒙古)")
-    lines.append("- **子女**: 有孩子 (在京上学)")
+    lines.append("- **子女**: 暂无 (计划明后年备孕)")
     lines.append("- **配偶**: 已婚 (薛燕)")
     lines.append("")
     lines.append("### 保险配置")
