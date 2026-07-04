@@ -37,6 +37,26 @@ def save_history(history_path, tweet_ids, max_history):
         json.dump(tweet_ids, f, ensure_ascii=False, indent=2)
 
 
+def maybe_cleanup_history(history_path, current_batch_ids):
+    """推送成功后执行：每周清理历史缓存，仅保留本周最新批次"""
+    marker_path = os.path.join(os.path.dirname(history_path) or ".", ".last_cleanup_week")
+    now = datetime.now()
+    current_week_key = f"{now.isocalendar()[0]}-W{now.isocalendar()[1]:02d}"
+
+    if os.path.exists(marker_path):
+        with open(marker_path, "r", encoding="utf-8") as f:
+            if f.read().strip() == current_week_key:
+                return  # 本周已清理过
+
+    # 重置历史：仅保留本周批次
+    with open(history_path, "w", encoding="utf-8") as f:
+        json.dump(current_batch_ids, f, ensure_ascii=False, indent=2)
+
+    with open(marker_path, "w", encoding="utf-8") as f:
+        f.write(current_week_key)
+    print(f"[CLEANUP] 🗑️ 本周({current_week_key})推送完成，历史缓存已重置（仅保留本周{len(current_batch_ids)}条）")
+
+
 def filter_new_tweets(tweets, history_ids):
     """过滤出未推送过的新推文（同时去重批次内重复）"""
     new_tweets = []
@@ -114,6 +134,7 @@ def main():
         new_ids = [t.get("id", "") for t in new_tweets if t.get("id")]
         all_ids = history_ids + new_ids
         save_history(history_path, all_ids, output_cfg["max_history"])
+        maybe_cleanup_history(history_path, all_ids)  # 推送成功后清理历史缓存
         print("[OK] 完成! 推送 {} 条新推文到飞书群".format(len(new_tweets)))
     else:
         print("[ERROR] 推送失败，历史未更新，下次将重试")

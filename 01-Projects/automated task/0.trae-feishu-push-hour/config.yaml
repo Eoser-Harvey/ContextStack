@@ -101,4 +101,4 @@ profile:
 # 输出配置
 output:
   history_file: tweet_history.json
-  max_history: 200
+  max_history: 50  # 周清理后无需缓存太多

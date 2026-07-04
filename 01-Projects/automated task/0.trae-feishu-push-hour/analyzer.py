@@ -10,18 +10,79 @@ class ProfileAnalyzer:
     def __init__(self, profile):
         self.profile = profile
 
+    # 有意义的推文关键词（匹配到才生成完整建议）
+    MEANINGFUL_KEYWORDS = {
+        "elonmusk": [
+            "cursor", "burry", "ai", "compute", "grok", "spacex", "tesla",
+            "robot", "agi", "singularity", "bitcoin", "crypto", "doge",
+            "spcx", "stock", "share", "price", "model y", "tsla", "fsd",
+            "starship", "mars", "orbit", "latency", "engineering",
+            "10%", "odds", "important", "lesson", "build", "construct",
+            "coding", "ai-native", "remote", "hospital", "save lives",
+            "iran", "peace", "resource", "military", "multiplanetary",
+            "censor", "审查", "protect the children", "prison", "politician",
+            "250,000", "girls", "raped", "abused", "white girls",
+            "$60b", "60b", "acquire", "cursor", "wealth", "inexplicable",
+        ],
+        "cz_binance": [
+            "zoom out", "best performing", "short-term", "15 years",
+            "might be late", "can't predict", "😂", "late",
+            "iran", "macro", "tailwind", "oil", "fed", "rate cut",
+            "$61k", "$67k", "trend", "narrative", "fundamental",
+            "super cycle", "supercycle", "don't panic", "panic",
+            "not return", "not dead", "not die",
+            "btc", "bitcoin", "crypto", "regulat", "compliance",
+            "build", "developer", "builder", "don't quit", "24 years",
+        ],
+        "realDonaldTrump": [
+            "phase 2", "easier", "phase 1", "mou online",
+            "never have a nuclear", "nuclear weapon",
+            "fully open", "flowing", "greatest peace deal",
+            "fake news", "paying", "iran will be paying",
+            "gas", "0.47", "$0", "signing", "geneva", "ceremony",
+            "g7", "summit", "france", "golden age", "respect",
+            "iran", "peace deal", "hormuz",
+            "tariff", "trade", "manufacturing",
+            "crypto", "bitcoin", "fed", "rate", "stock",
+            "now we build",
+        ],
+        "aleaborteddit": [
+            "stock", "share", "market", "trade", "invest",
+            "crcl", "nok", "mrvl", "dram", "spcx",
+            "buy", "sell", "position", "portfolio", "earnings",
+            "analysis", "technical", "fundamental", "valuation",
+            "ai", "chip", "semi", "semiconductor", "etf",
+        ],
+    }
+
     def analyze(self, tweets):
         """对所有推文生成分析建议"""
         for tweet in tweets:
             tweet["analysis"] = self._analyze_single(tweet)
         return tweets
 
+    def _is_meaningful(self, username, text):
+        """快速判断推文是否与用户的投资/科技/职业关注领域相关"""
+        keywords = self.MEANINGFUL_KEYWORDS.get(username, [])
+        return any(kw in text for kw in keywords)
+
     def _analyze_single(self, tweet):
-        """分析单条推文并生成建议"""
+        """分析单条推文并生成建议
+        仅当推文内容匹配有意义关键词时，才生成完整建议(投资/职业/生活/家庭)。
+        不匹配的推文只做简单摘要，避免信息过载。
+        """
         username = tweet.get("username", "")
         content = tweet.get("content", "")
         translated = tweet.get("translated", "")
+        text = (content + " " + translated).lower()
 
+        if not self._is_meaningful(username, text):
+            # 不匹配任何有意义关键词 → 只做摘要，不生成建议
+            return {
+                "summary": "该推文与你的投资/科技/职业关注领域关联度较低，仅供参考。"
+            }
+
+        # 匹配到有意义关键词 → 生成完整建议
         analysis = {
             "investment": self._investment_advice(username, content, translated),
             "career": self._career_advice(username, content, translated),

@@ -219,14 +219,19 @@ def build_lark_messages(tweets):
             msg += f"翻译: {translated}\n"
             msg += "━━━━━━━━━━━━━━━━━━━━\n"
 
-        if analysis.get("investment"):
-            msg += f"\n💰 投资:\n{analysis['investment']}\n"
-        if analysis.get("career"):
-            msg += f"\n💼 职业:\n{analysis['career']}\n"
-        if analysis.get("life"):
-            msg += f"\n🧘 生活:\n{analysis['life']}\n"
-        if analysis.get("family"):
-            msg += f"\n👨‍👩‍👧 家庭:\n{analysis['family']}\n"
+        if analysis.get("summary"):
+            # 非关键推文 → 只显示摘要
+            msg += f"\n💡 {analysis['summary']}\n"
+        else:
+            # 关键推文 → 显示完整建议
+            if analysis.get("investment"):
+                msg += f"\n💰 投资:\n{analysis['investment']}\n"
+            if analysis.get("career"):
+                msg += f"\n💼 职业:\n{analysis['career']}\n"
+            if analysis.get("life"):
+                msg += f"\n🧘 生活:\n{analysis['life']}\n"
+            if analysis.get("family"):
+                msg += f"\n👨‍👩‍👧 家庭:\n{analysis['family']}\n"
 
         msg += "\n━━━━━━━━━━━━━━━━━━━━"
         msgs.append(msg)

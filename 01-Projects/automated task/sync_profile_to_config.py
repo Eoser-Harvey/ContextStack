@@ -27,6 +27,7 @@ LOG_FILE = Path(r"E:\ProjectGroup\AI\ContextStack\01-Projects\automated task\syn
 USD_CNY = 6.796
 HKD_CNY = 0.866
 
+
 def log(msg: str, level: str = "INFO"):
     ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     line = f"[{ts}] [{level}] {msg}"
@@ -71,7 +72,7 @@ def parse_report_totals(report_path: Path) -> dict:
     text = report_path.read_text(encoding="utf-8")
     result = {}
 
-    # 提取表格行中的总资产/净资产/投资总资产 (格式: | **总资产** | **¥1,398,774** |)
+    # 提取表格行中的总资产/净资产/投资总资产
     m = re.search(r"\|\s*\*\*总资产\*\*\s*\|\s*\*\*¥([\d,]+)\*\*", text)
     if m:
         result["total_assets"] = m.group(1)
@@ -119,11 +120,14 @@ def extract_holdings_profile(holdings: dict) -> dict:
         "real_estate": [],
         "cash": "",
         "crcl_concentration": "",
+        "key_indicators": {},
     }
 
     crcl_total_qty = 0
     crcl_price = 0
-    investment_total_cny = 0  # 所有投资持仓的市值总和
+    investment_total_cny = 0
+    btc_market_cny = 0
+    crcl_market_cny = 0
 
     holdings_list = holdings.get("holdings", [])
     for h in holdings_list:
@@ -131,51 +135,80 @@ def extract_holdings_profile(holdings: dict) -> dict:
         symbol = h.get("symbol", "")
         qty = h.get("quantity", 0)
         price = h.get("manual_price_usd", 0)
+        market_val_cny = qty * price * USD_CNY
 
         if cat == "crypto":
             if symbol == "BTC":
-                investment_total_cny += qty * price * USD_CNY
-                profile["crypto"]["btc"] = f"{qty:.4f} BTC (链上唯一持仓, 币安已清仓)"
+                btc_market_cny = market_val_cny
+                investment_total_cny += market_val_cny
+                profile["crypto"]["btc"] = {
+                    "qty": f"{qty:.4f}",
+                    "price_usd": f"${price:,.2f}",
+                    "market_cny": f"¥{market_val_cny:,.0f}",
+                    "storage": "链上钱包",
+                }
 
         elif cat in ("us_stock", "us_stock_tokenized"):
-            market_val_cny = qty * price * USD_CNY
             investment_total_cny += market_val_cny
             if symbol == "CRCL":
                 crcl_total_qty += qty
                 crcl_price = price
+                crcl_market_cny += market_val_cny
             else:
-                profile["stocks"]["us"].append(f"{symbol} {qty}股")
+                profile["stocks"]["us"].append({
+                    "symbol": symbol,
+                    "name": h.get("name", symbol),
+                    "qty": qty,
+                    "price_usd": price,
+                    "market_cny": market_val_cny,
+                    "storage": h.get("storage", ""),
+                })
         elif cat == "hk_stock":
-            market_val_cny = qty * price * USD_CNY
             investment_total_cny += market_val_cny
-            # 使用name字段显示中文名 (如"优必选(港股通)" → "优必选")
             h_name = h.get("name", symbol)
-            display_name = re.sub(r"\(.*?\)", "", h_name).strip()  # 去掉括号部分
-            profile["stocks"]["hk"].append(f"{display_name} {qty}股")
+            display_name = re.sub(r"\(.*?\)", "", h_name).strip()
+            profile["stocks"]["hk"].append({
+                "symbol": symbol,
+                "name": display_name,
+                "qty": qty,
+                "price_usd": price,
+                "market_cny": market_val_cny,
+            })
 
         elif cat == "ts_time_token":
-            qty_num = h.get("quantity", 0)
-            investment_total_cny += qty_num * price * USD_CNY
+            investment_total_cny += market_val_cny
             if symbol == "XIAOAN":
-                profile["ts_tokens"]["xiaoan"] = f"{qty_num:,}秒 (≈¥{qty_num * price * USD_CNY:,.0f})"
+                profile["ts_tokens"]["xiaoan"] = {
+                    "qty": f"{qty:,}秒",
+                    "market_cny": f"¥{market_val_cny:,.0f}",
+                }
             elif symbol == "WUFAN":
-                profile["ts_tokens"]["wufan"] = f"{qty_num}秒 (≈¥{qty_num * price * USD_CNY:,.0f})"
+                profile["ts_tokens"]["wufan"] = {
+                    "qty": f"{qty}秒",
+                    "market_cny": f"¥{market_val_cny:,.0f}",
+                }
 
     # ETH状态检测
     has_eth = any(h.get("symbol") == "ETH" and h.get("quantity", 0) > 0 for h in holdings_list)
     if has_eth:
-        profile["crypto"]["eth"] = "有持仓"
+        profile["crypto"]["eth"] = {"status": "有持仓"}
     else:
         yaml_text = HOLDINGS_PATH.read_text(encoding="utf-8")
         if "eth" in yaml_text.lower() and "清仓" in yaml_text:
-            profile["crypto"]["eth"] = "已清仓 (2026-06-24)"
+            profile["crypto"]["eth"] = {"status": "已清仓 (2026-06-24)"}
 
     # CRCL汇总 + 集中度
     if crcl_total_qty > 0:
-        profile["stocks"]["us"].insert(0, f"CRCL {crcl_total_qty:.1f}股 (分散多账户)")
+        crcl_summary = {
+            "symbol": "CRCL",
+            "name": "Circle",
+            "total_qty": crcl_total_qty,
+            "total_market_cny": crcl_market_cny,
+            "price_usd": crcl_price,
+        }
+        profile["stocks"]["crcl_summary"] = crcl_summary
         if investment_total_cny > 0 and crcl_price > 0:
-            crcl_market = crcl_total_qty * crcl_price * USD_CNY
-            pct = crcl_market / investment_total_cny * 100
+            pct = crcl_market_cny / investment_total_cny * 100
             profile["crcl_concentration"] = f"CRCL {crcl_total_qty:.1f}股, 占投资约{pct:.0f}% ⚠️ 高度集中"
 
     # USDT余额
@@ -192,13 +225,25 @@ def extract_holdings_profile(holdings: dict) -> dict:
         elif "打新" in name:
             hkd_cash = c.get("amount_hkd", 0)
 
-    profile["crypto"]["usdt"] = f"${usdt_balance:,.0f} (币安余额)"
+    profile["crypto"]["usdt"] = {"balance": f"${usdt_balance:,.0f}", "storage": "韩伟蒙古币安"}
     profile["cash"] = f"¥{cny_cash:,.0f} (家庭备用金) + HK${hkd_cash:,.0f} (打新资金) + ${usdt_balance:,.0f} (币安USDT)"
 
     # 固定资产
     fixed = holdings.get("fixed_assets", [])
     for fa in fixed:
         profile["real_estate"].append(f"{fa['name']} ¥{fa['value_cny']//10000:,}W ({fa.get('note', '')})")
+
+    # 关键指标
+    liabilities = holdings.get("liabilities", [])
+    credit_card_debt = 0
+    for li in liabilities:
+        if "信用卡" in li.get("name", ""):
+            credit_card_debt = li.get("amount_cny", 0)
+    profile["key_indicators"] = {
+        "btc_ratio": f"{btc_market_cny / investment_total_cny * 100:.1f}%" if investment_total_cny else "N/A",
+        "crcl_ratio": f"{crcl_market_cny / investment_total_cny * 100:.0f}%" if investment_total_cny else "N/A",
+        "credit_card_debt": credit_card_debt,
+    }
 
     return profile
 
@@ -207,27 +252,21 @@ def extract_career_profile(career_text: str) -> dict:
     """从职业发展文档提取关键画像"""
     profile = {}
 
-    # 提取经验年限 - 文档中有纠正信息
-    # 职业发展档案中说 ~9年，但config要保持简历口径 ~3年(新华三)
-    # 使用简化版本与简历一致
-    m = re.search(r"(\d+)年嵌入式产品开发经验", career_text)
-    if m:
-        profile["experience"] = f"~{m.group(1)}年嵌入式产品开发经验"
-
-    # 提取角色
-    m = re.search(r"角色\|\s*(.+?)\s*\|", career_text)
-    if m:
-        profile["role"] = m.group(1).strip()
-
-    # 提取技能栈 - 表格中用"、"(顿号)分隔
+    # 提取技能栈 - 表格中查找
     m = re.search(r"技能栈\s*\|\s*(.+?)\s*\|", career_text)
     if m:
         skills_raw = m.group(1).strip()
         skills_raw = skills_raw.replace("**", "")
-        # 用中文顿号"、"和英文逗号"," 分割
         skills = re.split(r"[、,]", skills_raw)
         skills = [s.strip() for s in skills if s.strip()]
         profile["skills"] = skills
+
+    # 提取S级能力（核心能力）
+    m = re.search(r"S级能力\s*\|\s*(.+?)\s*\|", career_text)
+    if m:
+        core_raw = m.group(1).strip()
+        core_raw = core_raw.replace("**", "")
+        profile["core_skills"] = core_raw
 
     # 提取目标公司
     target_companies = []
@@ -242,7 +281,6 @@ def extract_career_profile(career_text: str) -> dict:
     m = re.search(r"行业聚焦\s*\|\s*(.+?)\s*\|", career_text)
     if m:
         focus = m.group(1).strip()
-        # 去掉Markdown加粗标记
         focus = focus.replace("**", "")
         profile["focus"] = focus
 
@@ -250,7 +288,6 @@ def extract_career_profile(career_text: str) -> dict:
     m = re.search(r"地点约束\s*\|\s*\*\*(.+?)\*\*", career_text)
     if m:
         loc = m.group(1).strip()
-        # 规范化："北京，优先海淀/昌平" → "北京海淀/昌平"
         loc = re.sub(r"[，,]\s*优先\s*", "", loc)
         loc = loc.replace("，", "").replace(",", "")
         profile["location_constraint"] = loc
@@ -295,7 +332,7 @@ def build_recent_trades(holdings: dict) -> list:
                 trades.append(line)
                 seen.add(line)
 
-    return trades[:15]  # 保留最近15条
+    return trades[:15]
 
 
 def deep_compare(old_val, new_val, path=""):
@@ -340,6 +377,7 @@ def update_config(config: dict, holdings_profile: dict, report_totals: dict,
 
     a["cash"] = holdings_profile.get("cash", "")
     a["crcl_concentration"] = holdings_profile.get("crcl_concentration", "")
+    a["key_indicators"] = holdings_profile.get("key_indicators", {})
 
     if report_totals.get("total_assets"):
         if report_totals.get("net_assets"):
@@ -352,16 +390,16 @@ def update_config(config: dict, holdings_profile: dict, report_totals: dict,
     # ── 负债 ──
     holdings_data = load_yaml(HOLDINGS_PATH)
     liabilities = holdings_data.get("liabilities", [])
+    if "liabilities" not in a:
+        a["liabilities"] = {}
+    a_liab = a["liabilities"]
     if liabilities:
-        a_liab = {}
-        # 中文名→英文键的映射
         name_to_key = {
             "房贷—商贷": "mortgage_commercial",
             "房贷—公积金": "mortgage_fund",
             "信用卡循环(投资WEB3)": "credit_card_invest",
             "币安BTC质押借贷": "binance_loan",
         }
-        # 默认后缀（当note为空时使用）
         default_suffix = {
             "房贷—商贷": " (自住)",
             "房贷—公积金": " (自住)",
@@ -386,7 +424,7 @@ def update_config(config: dict, holdings_profile: dict, report_totals: dict,
             a_liab[key] = val
 
     # ── 职业画像 (experience不覆盖, 因config中已基于简历核实为~3年, 职业文档含冲突的9年) ──
-    for key in ("role", "skills", "focus", "salary",
+    for key in ("role", "skills", "core_skills", "focus", "salary",
                 "target_companies", "location_constraint", "job_search_status",
                 "interview_method"):
         if career_profile.get(key):
@@ -406,124 +444,208 @@ def update_config(config: dict, holdings_profile: dict, report_totals: dict,
     return config, changes
 
 
-def generate_archive(holdings_profile: dict, report_totals: dict,
-                      career_data: dict, changes: list, date_str: str) -> str:
-    """生成归档Markdown内容"""
+def generate_archive_table(holdings_profile: dict, report_totals: dict,
+                            career_data: dict, config: dict, changes: list,
+                            date_str: str) -> str:
+    """生成归档Markdown内容（表格格式，与现有归档一致）"""
+    today_display = datetime.now().strftime("%Y-%m-%d")
     lines = [
-        f"---",
-        f"date: {date_str}",
-        f"source: holdings.yaml + 最新月度报告 + 职业发展档案",
-        f"---",
-        f"",
-        f"# 个人画像归档 ({date_str})",
-        f"",
-        f"## 一、投资持仓概览",
-        f"",
+        f"# 个人画像归档 - {today_display}",
+        "",
+        "## 投资持仓概览",
+        "",
     ]
 
-    # crypto
-    lines.append("### 加密货币")
+    # ── 加密货币 ──
     crypto = holdings_profile.get("crypto", {})
-    if crypto.get("btc"):
-        lines.append(f"- **BTC**: {crypto['btc']}")
-    if crypto.get("eth"):
-        lines.append(f"- **ETH**: {crypto['eth']}")
-    if crypto.get("usdt"):
-        lines.append(f"- **USDT**: {crypto['usdt']}")
-    lines.append("")
-
-    # stocks
-    stocks = holdings_profile.get("stocks", {})
-    if stocks.get("us") or stocks.get("hk"):
-        lines.append("### 股票")
-        if stocks.get("us"):
-            lines.append(f"**美股:**")
-            for s in stocks["us"]:
-                lines.append(f"- {s}")
-        if stocks.get("hk"):
-            lines.append(f"**港股:**")
-            for s in stocks["hk"]:
-                lines.append(f"- {s}")
+    if crypto:
+        lines.append("### 加密货币")
+        lines.append("| 标的 | 数量 | 当前价(USD) | 市值(CNY) | 存放 |")
+        lines.append("|------|------|------------|-----------|------|")
+        if "btc" in crypto:
+            b = crypto["btc"]
+            lines.append(f"| BTC(链上) | {b['qty']} | {b['price_usd']} | {b['market_cny']} | {b['storage']} |")
+        if "usdt" in crypto:
+            u = crypto["usdt"]
+            lines.append(f"| USDT(币安) | — | — | {u['balance']} | {u['storage']} |")
+        if "eth" in crypto:
+            e = crypto["eth"]
+            lines.append(f"| ETH | — | — | — | {e.get('status', '')} |")
         lines.append("")
 
-    # ts_tokens
+    # ── 美股 ──
+    stocks = holdings_profile.get("stocks", {})
+    all_us_stocks = []
+
+    # CRCL汇总
+    crcl_summary = stocks.get("crcl_summary")
+    if crcl_summary:
+        all_us_stocks.append({
+            "name": "Circle(CRCL合计)",
+            "qty": f"{crcl_summary['total_qty']:.1f}",
+            "price_usd": f"${crcl_summary['price_usd']:.2f}",
+            "market_cny": f"¥{crcl_summary['total_market_cny']:,.0f}",
+            "storage": "分散多账户",
+        })
+
+    # 其他美股
+    for s in stocks.get("us", []):
+        all_us_stocks.append({
+            "name": s.get("name", s.get("symbol", "")),
+            "qty": f"{s['qty']}",
+            "price_usd": f"${s['price_usd']:.2f}" if isinstance(s['price_usd'], (int, float)) else s['price_usd'],
+            "market_cny": f"¥{s['market_cny']:,.0f}",
+            "storage": s.get("storage", ""),
+        })
+
+    if all_us_stocks:
+        lines.append("### 美股")
+        lines.append("| 标的 | 数量 | 当前价(USD) | 市值(CNY) | 存放 |")
+        lines.append("|------|------|------------|-----------|------|")
+        for s in all_us_stocks:
+            lines.append(f"| {s['name']} | {s['qty']} | {s['price_usd']} | {s['market_cny']} | {s['storage']} |")
+        lines.append("")
+
+    # ── 港股 ──
+    hk_stocks = stocks.get("hk", [])
+    if hk_stocks:
+        lines.append("### 港股")
+        lines.append("| 标的 | 数量 | 当前价 | 市值(CNY) |")
+        lines.append("|------|------|-------|-----------|")
+        for s in hk_stocks:
+            lines.append(f"| {s['name']} | {s['qty']} | ${s['price_usd']:.2f} | ¥{s['market_cny']:,.0f} |")
+        lines.append("")
+
+    # ── TS时间代币 ──
     ts = holdings_profile.get("ts_tokens", {})
     if ts:
         lines.append("### TS时间代币")
+        lines.append("| 标的 | 数量 | 市值(CNY) |")
+        lines.append("|------|------|-----------|")
         for k, v in ts.items():
-            lines.append(f"- **{k}**: {v}")
+            lines.append(f"| {k} | {v['qty']} | {v['market_cny']} |")
         lines.append("")
 
-    # 总资产
-    lines.append(f"- **总资产**: {report_totals.get('total_assets', 'N/A')}")
-    lines.append(f"- **净资产**: {report_totals.get('net_assets', 'N/A')}")
-    if report_totals.get("investment_assets"):
-        lines.append(f"- **投资资产**: {report_totals['investment_assets']}")
+    # ── 关键指标 ──
+    lines.append("### 关键指标")
+    lines.append("| 指标 | 数值 |")
+    lines.append("|------|------|")
+    lines.append(f"| 总资产 | ¥{report_totals.get('total_assets', 'N/A')} |")
+    lines.append(f"| 净资产 | ¥{report_totals.get('net_assets', 'N/A')} |")
+    lines.append(f"| 投资总资产 | ¥{report_totals.get('investment_assets', 'N/A')} |")
 
-    if holdings_profile.get("real_estate"):
-        for re_item in holdings_profile["real_estate"]:
-            lines.append(f"- **房产**: {re_item}")
+    # 从config读取家庭备用金和打新资金
+    cfg_profile = config.get("profile", {})
+    cfg_assets = cfg_profile.get("assets", {})
+    cash_str = holdings_profile.get("cash", "")
+    # 提取备用金部分（不含括号后缀）
+    cash_simple = cash_str.split("(")[0].strip() if "(" in cash_str else cash_str
+    lines.append(f"| 家庭备用金 | {cash_simple} |")
 
-    if holdings_profile.get("cash"):
-        lines.append(f"- **现金**: {holdings_profile['cash']}")
+    # 从指标中提取
+    indicators = holdings_profile.get("key_indicators", {})
+    if indicators.get("credit_card_debt"):
+        lines.append(f"| 信用卡负债 | ¥{indicators['credit_card_debt']:,} |")
+    if indicators.get("btc_ratio"):
+        lines.append(f"| BTC占投资比 | {indicators['btc_ratio']} |")
+    if indicators.get("crcl_ratio"):
+        lines.append(f"| CRCL集中度 | {indicators['crcl_ratio']} ⚠️ |")
 
-    if holdings_profile.get("crcl_concentration"):
-        lines.append(f"- **风险集中度**: {holdings_profile['crcl_concentration']}")
-
-    lines.append("")
-    lines.append("## 二、职业发展画像")
-    lines.append("")
-
-    career = career_data
-    lines.append(f"- **公司**: 新华三")
-    if career.get("role"):
-        lines.append(f"- **角色**: {career['role']}")
-    if career.get("experience"):
-        lines.append(f"- **经验**: {career['experience']}")
-    if career.get("skills"):
-        lines.append(f"- **技能**: {', '.join(career['skills'])}")
-    if career.get("focus"):
-        lines.append(f"- **聚焦**: {career['focus']}")
-    if career.get("salary"):
-        lines.append(f"- **薪资**: {career['salary']}")
-    if career.get("target_companies"):
-        lines.append(f"- **目标公司**: {', '.join(career['target_companies'])}")
-    if career.get("location_constraint"):
-        lines.append(f"- **地点约束**: {career['location_constraint']}")
-    if career.get("job_search_status"):
-        lines.append(f"- **求职状态**: {career['job_search_status']}")
-
-    lines.append("")
-    lines.append("## 三、家庭与保险")
-    lines.append("")
-    lines.append("- **家庭所在地**: 北京")
-    lines.append("- **户口**: 非京籍 (内蒙古)")
-    lines.append("- **子女**: 暂无 (计划明后年备孕)")
-    lines.append("- **配偶**: 已婚 (薛燕)")
-    lines.append("")
-    lines.append("### 保险配置")
-    lines.append("- **hanwei_zhongji**: 达尔文50W (¥6,960/年, 2026-06-15生效)")
-    lines.append("- **hanwei_dingshou**: 待配置 (目标200W保额)")
-    lines.append("- **xueyan_zhongji**: 待配置 (目标30-50W保额)")
+    # 房贷
+    liab = cfg_assets.get("liabilities", {})
+    if liab.get("mortgage_commercial") or liab.get("mortgage_fund"):
+        lines.append(f"| 房贷总额 | 商贷+公积金 |")
     lines.append("")
 
-    # 从config读取负债信息
-    config = load_yaml(CONFIG_PATH)
-    liab = config.get("profile", {}).get("liabilities", {})
-    if liab:
-        lines.append("### 负债")
-        for k, v in liab.items():
-            lines.append(f"- **{k}**: {v}")
+    # ── 职业发展画像 ──
+    lines.append("## 职业发展画像")
+    lines.append("")
+    lines.append("| 维度 | 内容 |")
+    lines.append("|------|------|")
+
+    # 从config中读取职业信息（config保留简历核实版本）
+    cfg_career = cfg_profile.get("career", {})
+    lines.append(f"| 当前公司 | 新华三 |")
+    lines.append(f"| 当前角色 | {cfg_career.get('role', '嵌入式开发工程师')} |")
+    lines.append(f"| 经验 | {cfg_career.get('experience', '~3年嵌入式产品开发经验(新华三) + 爱博精电6年工业仪表/DSP基础')} |")
+    lines.append(f"| 技能栈 | {', '.join(cfg_career.get('skills', ['C语言', 'ARM/DSP架构', 'RTOS', 'Linux', 'Python', 'TFLM']))} |")
+
+    core_skills = cfg_career.get('core_skills', '')
+    if core_skills:
+        lines.append(f"| 核心能力 | {core_skills} |")
+    lines.append(f"| 行业聚焦 | {cfg_career.get('focus', '工业嵌入式、通信设备底层，非消费电子')} |")
+    lines.append(f"| 地点约束 | {cfg_career.get('location_constraint', '北京/海淀/昌平')} |")
+    lines.append(f"| 当前薪资 | {cfg_career.get('salary', '30K×16')} |")
+    lines.append(f"| 目标薪资 | 50-70W总包 |")
+    lines.append(f"| 求职状态 | {cfg_career.get('job_search_status', '已约1年，面试过九号/ISHO/思朗')} |")
+
+    im = cfg_career.get('interview_method', '')
+    if im:
+        lines.append(f"| 面试方法论 | {im} |")
+
+    target_companies = cfg_career.get('target_companies', [])
+    if target_companies:
+        lines.append(f"| 目标公司 | {'、'.join(target_companies)} |")
+    lines.append("")
+
+    # ── 家庭与保险 ──
+    lines.append("## 家庭与保险")
+    lines.append("")
+    lines.append("| 项目 | 内容 |")
+    lines.append("|------|------|")
+
+    cfg_family = cfg_profile.get("family", {})
+    lines.append(f"| 居住地 | {cfg_family.get('location', '北京')} |")
+    lines.append(f"| 户籍 | {cfg_family.get('hukou', '非京籍(内蒙古)')} |")
+    lines.append(f"| 子女 | {cfg_family.get('children', '有孩子(在京上学)')} |")
+    lines.append(f"| 配偶 | {cfg_family.get('spouse', '已婚(薛燕)')} |")
+
+    real_estate = holdings_profile.get("real_estate", [])
+    if real_estate:
+        for re_item in real_estate:
+            lines.append(f"| 房产 | {re_item} |")
+
+    cfg_insurance = cfg_profile.get("insurance", {})
+    for k, v in cfg_insurance.items():
+        lines.append(f"| {k} | {v} |")
+    lines.append("")
+
+    # ── A8计划进度 ──
+    a8_plan = cfg_profile.get("a8_plan", {})
+    if a8_plan:
+        lines.append("## A8计划进度")
+        lines.append("")
+        lines.append("| 指标 | 进度 |")
+        lines.append("|------|------|")
+        lines.append(f"| 目标 | {a8_plan.get('target', 'N/A')} |")
+        lines.append(f"| BTC目标 | {a8_plan.get('btc_target', 'N/A')} |")
+        lines.append(f"| 策略 | {a8_plan.get('strategy', 'N/A')} |")
+        lines.append(f"| 当前状态 | {a8_plan.get('current_mode', 'N/A')} |")
         lines.append("")
 
-    lines.append("## 四、本次更新变更记录")
+    # ── 本次更新变更记录 ──
+    lines.append("## 本次更新变更记录")
     lines.append("")
+    lines.append("| 变更项 | 旧值 | 新值 | 说明 |")
+    lines.append("|--------|------|------|------|")
+
+    # last_sync变更
+    old_sync = cfg_profile.get("last_sync", "")
+    new_sync = datetime.now().isoformat()
+    lines.append(f"| config.last_sync | {old_sync} | {new_sync} | 同步时间戳 |")
+
     if changes:
         for c in changes:
-            lines.append(f"- [{c}] 字段已更新")
+            # 尝试提取旧值和新值
+            parts = c.split(".")
+            field_name = parts[-1] if len(parts) > 1 else c
+            lines.append(f"| {c} | — | — | 字段已更新 |")
     else:
-        lines.append("- 无变更")
+        lines.append("| 数据源 | holdings.yaml | — | 投资持仓数据无变化 |")
+        lines.append("| 数据源 | 职业发展档案 | — | 职业画像数据无变化 |")
+        lines.append("| 数据源 | 最新月度报告 | — | 资产报告数据无变化 |")
 
+    lines.append("")
     return "\n".join(lines)
 
 
@@ -574,9 +696,14 @@ def main():
         save_yaml(CONFIG_PATH, config)
         log(f"config.yaml 已更新, last_sync={config['profile']['last_sync']}")
 
-        # 7. 生成归档
-        archive_content = generate_archive(holdings_profile, report_totals,
-                                           career_profile, changes, today)
+        # 重新读取更新后的config用于归档（含family/insurance完整信息）
+        updated_config = load_yaml(CONFIG_PATH)
+
+        # 7. 生成归档（表格格式）
+        archive_content = generate_archive_table(
+            holdings_profile, report_totals,
+            career_profile, updated_config, changes, today
+        )
 
         # hour归档
         HOUR_ARCHIVE_DIR.mkdir(parents=True, exist_ok=True)

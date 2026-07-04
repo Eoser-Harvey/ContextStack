@@ -50,31 +50,81 @@ profile:
     - 理想汽车
     - 石头科技
     - 美团
-    location_constraint: 北京/海淀/昌平
+    location_constraint: 北京海淀/昌平
     job_search_status: 已约 1 年，面试过 九号/ISHO/思朗
     interview_method: '工程叙事四层结构: 本质→实践→踩坑→思考'
+    core_skills: 自研RTOS、TSN全协议栈、DSP汇编优化、AMP异构架构
   assets:
     crypto:
-      btc: 0.1298 BTC (链上唯一持仓, 币安已清仓)
-      eth: 已清仓 (2026-06-24)
-      usdt: $9,303 (币安余额)
+      btc:
+        qty: '0.1298'
+        price_usd: $58,644.00
+        market_cny: ¥51,733
+        storage: 链上钱包
+      eth:
+        status: 已清仓 (2026-06-24)
+      usdt:
+        balance: $9,303
+        storage: 韩伟蒙古币安
     stocks:
       us:
-      - CRCL 921.3股 (分散多账户)
-      - GOOGL 7.65股
-      - DRAM 37股
-      - MRVL 29.192股
-      - BTGO 54股
+      - symbol: GOOGL
+        name: 谷歌(韩伟币安)
+        qty: 7.65
+        price_usd: 357.37
+        market_cny: 18579.451878000003
+        storage: 韩伟蒙古币安
+      - symbol: DRAM
+        name: DRAM(韩伟币安)
+        qty: 37
+        price_usd: 73.85
+        market_cny: 18569.730199999998
+        storage: 韩伟蒙古币安
+      - symbol: MRVL
+        name: 迈威尔(币安)
+        qty: 29.192
+        price_usd: 297.89
+        market_cny: 59098.049164480006
+        storage: 韩伟蒙古币安
+      - symbol: BTGO
+        name: BitGo(韩伟长桥)
+        qty: 54
+        price_usd: 5.47
+        market_cny: 2007.40248
+        storage: 韩伟长桥证券
       hk:
-      - 优必选 50股
+      - symbol: 9880.HK
+        name: 优必选
+        qty: 50
+        price_usd: 12.64
+        market_cny: 4295.072
+      crcl_summary:
+        symbol: CRCL
+        name: Circle
+        total_qty: 921.318
+        total_market_cny: 392143.78652664006
+        price_usd: 62.63
     ts_tokens:
-      xiaoan: 106,499秒 (≈¥15,604)
-      wufan: 818秒 (≈¥16,177)
+      xiaoan:
+        qty: 106,499秒
+        market_cny: ¥15,604
+      wufan:
+        qty: 818秒
+        market_cny: ¥16,177
     real_estate: 北京海淀住宅 ¥320W (购入2025年底)
     cash: ¥630,808 (家庭备用金) + HK$146,060 (打新资金) + $9,303 (币安USDT)
     total_assets: ¥1,398,774 (净资产 ¥998,774)
     investment_assets: ¥578,208
     crcl_concentration: CRCL 921.3股, 占投资约68% ⚠️ 高度集中
+    key_indicators:
+      btc_ratio: 8.9%
+      crcl_ratio: 68%
+      credit_card_debt: 400000
+    liabilities:
+      mortgage_commercial: ¥400,000 (自住)
+      mortgage_fund: ¥1,400,000 (自住)
+      credit_card_invest: ¥400,000 (循环刷卡用于WEB3投资)
+      binance_loan: $0 (2026-06-05全还清了)
   liabilities:
     mortgage_commercial: ¥400,000 (自住)
     mortgage_fund: ¥1,400,000 (自住)
@@ -117,7 +167,7 @@ profile:
   - 'MRVL: 2026-06-05买入6.87股@$291($2,000); 06-18买入5.384股@$297.85($1,604); 06-22买入4.42股@$315.16($1,393);
     06-24买入5.78股@~$270.93($1,566); 06-24买入6.738股@$273($1,839); 总成本$8,401, 均价$287.74/股'
   - '9880.HK: 2026-06-11 卖出机器人ETF换仓买入, 看好港股AI机器人龙头; Sina实时价HK$98.60'
-  last_sync: '2026-07-04T00:00:00.000000'
+  last_sync: '2026-07-05T00:09:21.525367'
 output:
   history_file: tweet_history.json
   max_history: 200
