@@ -22,6 +22,7 @@ translate:
 server_chan:
   send_key: YOUR_SEND_KEY_HERE
 profile:
+  last_sync: '2026-07-06T00:26:03.926158'
   name: Harvey
   career:
     company: 新华三
@@ -115,6 +116,7 @@ profile:
     cash: ¥630,808 (家庭备用金) + HK$146,060 (打新资金) + $9,303 (币安USDT)
     total_assets: ¥1,398,774 (净资产 ¥998,774)
     investment_assets: ¥578,208
+    net_assets: ¥998,774
     crcl_concentration: CRCL 921.3股, 占投资约68% ⚠️ 高度集中
     key_indicators:
       btc_ratio: 8.9%
@@ -126,10 +128,10 @@ profile:
       credit_card_invest: ¥400,000 (循环刷卡用于WEB3投资)
       binance_loan: $0 (2026-06-05全还清了)
   liabilities:
-    mortgage_commercial: ¥400,000 (自住)
-    mortgage_fund: ¥1,400,000 (自住)
-    credit_card_invest: ¥400,000 (投资WEB3)
-    binance_loan: ¥0 (2026-06-05已全部还清)
+    mortgage_commercial: ¥400,000
+    mortgage_fund: ¥1,400,000
+    credit_card_invest: ¥400,000
+    binance_loan: $0
   family:
     location: 北京
     hukou: 非京籍 (内蒙古)
@@ -167,7 +169,6 @@ profile:
   - 'MRVL: 2026-06-05买入6.87股@$291($2,000); 06-18买入5.384股@$297.85($1,604); 06-22买入4.42股@$315.16($1,393);
     06-24买入5.78股@~$270.93($1,566); 06-24买入6.738股@$273($1,839); 总成本$8,401, 均价$287.74/股'
   - '9880.HK: 2026-06-11 卖出机器人ETF换仓买入, 看好港股AI机器人龙头; Sina实时价HK$98.60'
-  last_sync: '2026-07-05T00:09:21.525367'
 output:
   history_file: tweet_history.json
   max_history: 200

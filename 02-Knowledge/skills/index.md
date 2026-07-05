@@ -75,6 +75,7 @@
 ## 相关
 
 - [[codebuddy-builtin-skills-analysis|WorkBuddy Top 10 Skills 适配分析]] — 10 个零成本 Skills 的 CodeBuddy 可行性分析
+- [[awesome-agent-skills-resources|Agent Skills 开源资源大全]] — GitHub 深度搜索 76+ 仓库（2026-07-05），含全平台通用skills + 名人思维skills（巴菲特/马斯克/段永平/李笑来/芒格等48+名人）
 - [[../system/methodology/index|调试方法论]] — Skills 的理论基础
 - [[../system/tool-configurations/index|工具配置]] — 工具配置文档
 - [[../../../.codebuddy/skills/note-organizer/SKILL|note-organizer SKILL.md]] — 智能笔记整理 Skill 源文件
