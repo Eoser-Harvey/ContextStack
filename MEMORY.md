@@ -34,7 +34,7 @@
 | **Project** | 腾讯云AI编程培训 | 培训资料归档 | 01-Projects/tencent-cloud-training | 2026-05-07 |
 | **Project** | BTC温度仪表盘 | 加密货币市场可视化 | 01-Projects/btc-temperature-gauge | 2026-05-07 |
 | **Project** | wechat-radar | AI驱动公众号智能日报，环境就绪 | 01-Projects/wechat-radar | 2026-06-10 |
-| **Project** | family-investment | 家庭投资管理项目 | 01-Projects/family-investment | 2026-06-10 |
+| **Project** | family-hub | 家庭决策枢纽（投资/健康/社保/信用/AI） | 01-Projects/family-hub | 2026-07-06 |
 | **Project** | 求职面试-今日宜休ISHO | 面试讨论中，已完成全面匹配度分析 | career-development | 2026-05-29 |
 | **Project** | 个性化Agent开发 | 待规划：李笑来认知蒸馏Agent、健康Agent等 | 01-Projects/personal-agents | 2026-06-17 |
 | **Reference** | S5120V8逻辑寄存器手册 | 硬件参考 | network-device-debug | — |
@@ -54,7 +54,7 @@
 | **Knowledge** | OpenSquilla MetaSkill 分析 | Agent自组织技能新范式：动态发现+自动编排工作流，解决「组合灾难」 | 全部 | 2026-06-11 |
 | **Knowledge** | ClawHunt Agent众包市场分析 | Agent任务众包平台：需求方挂任务→Agent竞标→法币结算。当前收入微薄，适合观察学习 | 全部 | 2026-06-16 |
 | **Knowledge** | 八字紫微排盘Skill (bazi-ziwei) | AI八字+紫微斗数排盘：算法精准排盘+格局补层+综合印证+水墨风HTML海报 | 全部 | 2026-06-17 |
-| **Knowledge** | 半导体材料国产替代投资机会 | 五大紧缺材料赛道：氮化镓/靶材/硅微粉/ABF板/光刻胶。英飞凌GaN被禁催化，江丰电子业绩已验证 | family-investment | 2026-06-17 |
+| **Knowledge** | 半导体材料国产替代投资机会 | 五大紧缺材料赛道：氮化镓/靶材/硅微粉/ABF板/光刻胶。英飞凌GaN被禁催化，江丰电子业绩已验证 | family-hub | 2026-06-17 |
 | **Knowledge** | 小黑怪诞正文配图 Skill | Codex Skill：把中文文章的认知锚点变成16:9手绘怪诞配图。小黑IP+纯白背景+少量红橙蓝批注。适合知识型/方法论内容配图 | 全部 | 2026-06-20 |
 | **Knowledge** | X推文自动化研究归档 | 闲鱼自动化/封号风险、全流程自动化可行性、24小时微信推送方案、飞书AI配置、信息源推荐。含7项待办 | 全部 | 2026-06-20 |
 
@@ -147,10 +147,10 @@
 - 描述: AI 驱动微信公众号智能日报
 - 文件: `01-Projects/wechat-radar/`
 
-#### family-investment
+#### family-hub
 - 状态: 进行中
-- 描述: 家庭投资管理项目
-- 文件: `01-Projects/family-investment/`
+- 描述: 家庭决策枢纽 — 投资追踪/健康管理/社保规划/信用管理/AI第二曲线
+- 文件: `01-Projects/family-hub/`
 
 ---
 

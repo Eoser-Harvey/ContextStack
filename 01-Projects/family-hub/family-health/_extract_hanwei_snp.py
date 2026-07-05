@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 
 TXT_PATH = r"E:\Personal Files\0.家庭健康\伟 基因检测\韩伟.txt"
-OUT_DIR = Path(r"e:\ProjectGroup\AI\ContextStack\01-Projects\family-investment\family-health")
+OUT_DIR = Path(r"e:\ProjectGroup\AI\ContextStack\01-Projects\family-hub\family-health")
 
 # Key SNPs to extract - organized by category
 KEY_SNPS = {

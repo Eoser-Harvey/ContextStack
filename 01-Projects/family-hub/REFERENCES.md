@@ -1,4 +1,4 @@
-# 家庭投资追踪系统 — 参考资料
+# 家庭决策枢纽 — 参考资料
 
 ## 数据源
 - [CryptoCompare API](https://min-api.cryptocompare.com/) — BTC/ETH实时价格

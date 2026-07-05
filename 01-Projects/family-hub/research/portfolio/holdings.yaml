@@ -1,4 +1,4 @@
-# 路径: 01-Projects/family-investment/research/portfolio/holdings.yaml
+# 路径: 01-Projects/family-hub/research/portfolio/holdings.yaml
 # 价格来源:
 #   cryptocompare = CryptoCompare API (国内直连, BTC/ETH)
 #   yahoo→stooq   = Yahoo Finance → Stooq回退 (美股/港股/A股ETF)

@@ -68,8 +68,8 @@ Thumbs.db
 01-Projects/automated task/0.trae-feishu-push-hour/.secrets.yaml
 01-Projects/automated task/1.trae-feishu-push-day/.secrets.yaml
 01-Projects/automated task/1.trae-feishu-push-day-yan-trae/.secrets.yaml
-01-Projects/family-investment/research/portfolio/.secrets.yaml
-01-Projects/family-investment/research/portfolio/.translation_cache.json
+01-Projects/family-hub/research/portfolio/.secrets.yaml
+01-Projects/family-hub/research/portfolio/.translation_cache.json
 
 # Test temp files (auto-push script will also auto-cleanup)
 .test*.txt
@@ -84,6 +84,6 @@ Thumbs.db
 01-Projects/automated task/0.trae-feishu-push-hour-yan-trae/.secrets.yaml
 
 # AI Stock三线卖出每日监控日报（自动生成，不跟踪）
-01-Projects/family-investment/research/portfolio/reports/three-sell-lines-daily-*.md
+01-Projects/family-hub/research/portfolio/reports/three-sell-lines-daily-*.md
 
 "*.html"  

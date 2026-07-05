@@ -7,7 +7,7 @@ import re
 from pathlib import Path
 
 PDF_PATH = r"E:\Personal Files\0.家庭健康\伟 基因检测\韩伟 基因检测报告.pdf"
-OUT_DIR = Path(r"e:\ProjectGroup\AI\ContextStack\01-Projects\family-investment\family-health")
+OUT_DIR = Path(r"e:\ProjectGroup\AI\ContextStack\01-Projects\family-hub\family-health")
 OUT_TXT = OUT_DIR / "_hanwei_pdf_key.txt"
 OUT_FIND = OUT_DIR / "_hanwei_findings.txt"
 

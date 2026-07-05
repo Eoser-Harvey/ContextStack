@@ -10,7 +10,7 @@ import re
 from pathlib import Path
 
 PDF_PATH = r"E:\Personal Files\0.家庭健康\微基金检查报告-燕.pdf"
-OUT_DIR = Path(r"e:\ProjectGroup\AI\ContextStack\01-Projects\family-investment\family-health")
+OUT_DIR = Path(r"e:\ProjectGroup\AI\ContextStack\01-Projects\family-hub\family-health")
 OUT_TXT = OUT_DIR / "_wegene_pdf_key.txt"
 
 print(f"[1] Opening PDF (98s expected)...", flush=True)

@@ -1,4 +1,4 @@
-# 家庭投资追踪系统 — 项目规则 (L2)
+# 家庭决策枢纽 — 项目规则 (L2)
 
 ## 项目概述
 自动化追踪跨平台投资资产（香港券商美股、WEB3资产、A股券商等），
@@ -6,7 +6,7 @@
 
 ## 目录结构
 ```
-01-Projects/family-investment/    # 项目工作台 (L2)
+01-Projects/family-hub/           # 项目工作台 (L2)
    WORKSPACE.md                   # 工作台入口
    STATE.md                       # 最新状态
    ACTIONS.md                     # 任务清单
@@ -53,6 +53,6 @@
 - **`beijing-company-social-insurance-plan.html`** ← 自动生成，禁止手动编辑
 - **修改 .md 后必须同步重生成 .html**：
   ```
-  python 05-Tools/fileops/md2html.py 01-Projects/family-investment/company-setup/beijing-company-social-insurance-plan.md
+  python 05-Tools/fileops/md2html.py 01-Projects/family-hub/company-setup/beijing-company-social-insurance-plan.md
   ```
 - HTML 文件头部有 `<!-- AUTO-GENERATED -->` 标记，方便识别

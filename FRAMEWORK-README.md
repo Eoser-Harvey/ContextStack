@@ -86,7 +86,7 @@ ContextStack/
 │   ├── btc-temperature-gauge/
 │   ├── tencent-cloud-training/
 │   ├── wechat-radar/
-│   ├── family-investment/
+│   ├── family-hub/
 │   └── topics/
 ├── 02-Knowledge/                # 知识库
 │   ├── system/
@@ -205,7 +205,7 @@ ContextStack/
 **框架版本**: v3.0
 **创建时间**: 2026-04-30
 **最后更新**: 2026-06-10
-**变更**: 目录树同步实际结构；补全 wechat-radar/family-investment 项目、images/ 目录；移除已合并的 system/templates/；03-Memory/ 子目录完善
+**变更**: family-investment→family-hub 升级为家庭决策枢纽；目录树同步实际结构；补全 wechat-radar 项目、images/ 目录；移除已合并的 system/templates/；03-Memory/ 子目录完善
 **设计原则**: 独立于AI助手、分层Context、持久化Memory、工作台驱动
 **文件规范**: 英文目录/文件名，中文文件内容
 **核心价值**: 积累您自己的通用协作框架，提升长期协作效率

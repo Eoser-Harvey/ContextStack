@@ -20,4 +20,4 @@
 ## 关联资源
 
 - **报告生成器 v2**：[[../../../05-Tools/portfolio-tracker/_gen_report_v2.py|_gen_report_v2.py]] — 当前主用引擎（从 holdings.yaml 单一事实源读取，联动同步 月度/年度/A8/history/index + 偏离检测引擎）
-- **项目工作台**：[[../../../01-Projects/family-investment/WORKSPACE.md|family-investment]]
+- **项目工作台**：[[../../../01-Projects/family-hub/WORKSPACE.md|family-hub]]

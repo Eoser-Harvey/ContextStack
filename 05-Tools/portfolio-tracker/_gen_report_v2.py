@@ -13,7 +13,7 @@ if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8")
     sys.stderr.reconfigure(encoding="utf-8")
 
-BASE = Path("e:/ProjectGroup/AI/ContextStack/01-Projects/family-investment/research/portfolio")
+BASE = Path("e:/ProjectGroup/AI/ContextStack/01-Projects/family-hub/research/portfolio")
 HY_PATH = BASE / "holdings.yaml"
 # 自动识别当前月份，若当月报告文件不存在则复制上月报告
 _current_month = datetime.now().strftime("%Y-%m")

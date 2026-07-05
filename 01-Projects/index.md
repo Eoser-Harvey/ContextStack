@@ -11,7 +11,7 @@
 | [腾讯云AI编程培训](./tencent-cloud-training/) | 资料整理 | [WORKSPACE.md](./tencent-cloud-training/WORKSPACE.md) |
 | [BTC温度仪表盘](./btc-temperature-gauge/) | 基础完成 | [WORKSPACE.md](./btc-temperature-gauge/WORKSPACE.md) |
 | [WeChat Radar](./wechat-radar/) | 环境就绪 | [WORKSPACE.md](./wechat-radar/WORKSPACE.md) |
-| [家庭投资管理](./family-investment/) | 进行中 | [WORKSPACE.md](./family-investment/WORKSPACE.md) |
+| [家庭决策枢纽](./family-hub/) | 进行中 | [WORKSPACE.md](./family-hub/WORKSPACE.md) |
 
 ## 项目标准文件结构
 
