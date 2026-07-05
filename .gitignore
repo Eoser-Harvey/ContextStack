@@ -81,4 +81,7 @@ Thumbs.db
 01-Projects/automated task/0.trae-feishu-push-hour-yan-trae/profile_archive/
 01-Projects/automated task/0.trae-feishu-push-hour-yan-trae/.secrets.yaml
 
+# AI Stock三线卖出每日监控日报（自动生成，不跟踪）
+01-Projects/family-investment/research/portfolio/reports/three-sell-lines-daily-*.md
+
 "*.html"  
