@@ -135,7 +135,7 @@ DSP版是量产代码，加上了带优先级继承的Mutex防反转、Flag做�
 
 #### 📓 原始 RTOS 设计笔记（完全归档自 `RTOS笔记.docx`）
 
-> ⚠️ 原文"创建32任务仅增0.4KB"指纯TCB开销（不含栈）：ARM版 TCB 20B/任务（32×20=640B），DSP版 TCB 36B/任务（32×36=1152B）。栈另计：ARM每任务256B（64字×4），DSP每任务800B（200字×4）。DSP版 TCB+栈合计 836B/任务
+> ⚠️ 原文"创建32任务仅增0.6KB"指纯TCB开销（不含栈）：ARM版 TCB 20B/任务（32×20=640B），DSP版 TCB 36B/任务（32×36=1152B）。栈另计：ARM每任务256B（64字×4），DSP每任务800B（200字×4）。DSP版 TCB+栈合计 836B/任务
 
 **AcuOS**
 
@@ -176,10 +176,22 @@ A5 — DSP1(RTOS) — DSP2
 OsQPend队列：DI、EEP写数据也有队列进行缓存
 OsFlagPend：按键、Modbus通信处理
 T_OsMutex：EEP写数据锁、IIC总线锁
-T_OsSem信号量：EEP写、软件缓存
+T_OsSem信号量：EEP写软件缓存
 
->> 看一下存储源码用了那些？信号量如何使用的？
-
+**EEPROM 存储模型**
+Task_A ─┐
+Task_B ─┤→ OsQPost(队列) →（数据入队，自动触发OsSchedule）
+Task_C ─┘        │
+                 ↓
+         EEP写任务 OsQPend 被唤醒
+                 │
+                 ↓ 取数据 → 写入软件缓存
+                 │
+                 ↓ OsSemPost(信号量) ← 数据流触发！
+                 │
+         Flush逻辑 OsSemPend 被唤醒
+                 │
+                 ↓ 拿互斥锁 → I2C → EEPROM硬件
 ---
 
 **FreeRTOS**
@@ -190,6 +202,7 @@ T_OsSem信号量：EEP写、软件缓存
 
 **优先级反转预防**
 使用优先级继承互斥锁（如 xSemaphoreCreateMutex()）替代二值信号量。
+一句话：把"谁在等锁"的最高优先级临时借给"谁拿着锁"，让锁持有者能跑完临界区。
 
 **中断设计**
 ISR原则：快进快出，通过任务通知（Task Notification）或队列传递数据到任务。
@@ -208,7 +221,12 @@ void vApplicationIdleHook(void) {
     __WFI(); // ARM Cortex-M睡眠指令
 }
 ```
-
+L1 硬件层：MCU 睡眠模式分级
+模式	功耗	唤醒源	唤醒后
+Run	全速	—	—
+Sleep（__WFI）	CPU 停，外设跑	任意中断	立即恢复，PC 继续
+Stop	CPU+高速时钟停	外部中断/RTC/LPUART	需恢复时钟
+Standby	仅备份域供电	RTC/WKUP 引脚	等价于复位
 ---
 
 **RTOS核心机制理解**
