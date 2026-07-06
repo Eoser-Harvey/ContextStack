@@ -99,7 +99,7 @@ LCD 任务先拿到互斥锁（正在遍历结构体读取显示数据）→计�
 |------|------|------|
 | 内核 ROM | ~5KB | ARM Thumb-2 紧凑指令集 |
 | 内核静态 RAM | **~1.3KB** | TCB表768B + Idle栈256B + Stat栈256B + 全局变量 |
-| TCB 大小 | **24 bytes** | 6字段：puiStk、TimeDly、Priority、Status、ptEvent、—— |
+| TCB 大小 | **20 bytes** | 6字段：puiStk、TimeDly、Priority、Status、ptEvent、—— |
 | 栈大小 | **64 words = 256B** | `OS_TASK_STK_SIZE=64` |
 | TCB 分配 | **静态数组 `[32]`** | 768B 预分配，建任务零额外开销 |
 | 每任务 RAM | **256B**（仅栈） | TCB 已在静态表中 |
@@ -135,7 +135,7 @@ DSP版是量产代码，加上了带优先级继承的Mutex防反转、Flag做�
 
 #### 📓 原始 RTOS 设计笔记（完全归档自 `RTOS笔记.docx`）
 
-> ⚠️ 原文"创建32任务仅增0.4KB"已被源码核实修正：ARM版 TCB静态预分配无额外TCB开销（仅栈256B/任务），DSP版每任务836B
+> ⚠️ 原文"创建32任务仅增0.4KB"指纯TCB开销（不含栈）：ARM版 TCB 20B/任务（32×20=640B），DSP版 TCB 36B/任务（32×36=1152B）。栈另计：ARM每任务256B（64字×4），DSP每任务800B（200字×4）。DSP版 TCB+栈合计 836B/任务
 
 **AcuOS**
 
