@@ -5,7 +5,7 @@
 
 ---
 
-## 一、ContextStack 自定义 Skills（13 个）
+## 一、ContextStack 自定义 Skills（16 个）
 
 ### 专业领域 Skills
 
@@ -18,6 +18,8 @@
 | [[interview-prep/interview-prep使用说明\|面试准备]] | 输入公司名，自动生成8模块面试准备清单 + 7家公司经验库 | `#interview` `#career` `#job-search` |
 | [[wechat-push/x-tweets-wechat-push-方案说明\|微信推送方案]] | X推文→微信推送方案演进：WeChat MCP vs Server酱 vs Bun JSON-RPC | `#wechat` `#push` `#automation` `#json-rpc` |
 | [[0.wechat-push/README\|X推文推送系统]] | 完整代码归档：抓取→翻译→分析→推送，Bun JSON-RPC 直连 | `#wechat` `#push` `#x-tweets` `#automation` |
+| [[ai-berkshire/index\|AI Berkshire投资研究]] | 投资研究AI助手：公司研究/财报分析/行业筛选/组合回顾 | `#investment-research` `#financial-analysis` `#ai-assistant` |
+| [[web-pack/index\|Web-Pack素材采集]] | 网页主题完整素材包采集，超越传统剪藏工具 | `#web-crawling` `#knowledge-management` `#content-collection` |
 
 ### AI 编码与治理 Skills（2026-05-13）
 
@@ -65,10 +67,10 @@
 
 | 类别 | 数量 | 位置 |
 |------|------|------|
-| ContextStack 自定义 | 14 | `02-Knowledge/skills/` |
+| ContextStack 自定义 | 16 | `02-Knowledge/skills/` |
 | CodeBuddy 内置 | 6 | CodeBuddy 预装 + `.codebuddy/skills/note-organizer/` |
 | 用户级安装 | 1 | `~/.codebuddy/skills/obsidian/` |
-| **合计** | **21** | — |
+| **合计** | **23** | — |
 
 ---
 
