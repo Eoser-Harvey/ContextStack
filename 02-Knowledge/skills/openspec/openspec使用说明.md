@@ -45,7 +45,7 @@ openspec init
 
 ## 核心工作流：propose → apply → archive
 
-### 实操示例（以 family-investment 项目为例）
+### 实操示例（以 family-hub 项目为例）
 
 **前置**：在项目目录执行 `cmd /c "openspec init --tools codebuddy"`，完成后重启 IDE。
 

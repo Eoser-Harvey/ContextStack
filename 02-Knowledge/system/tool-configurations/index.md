@@ -6,6 +6,8 @@
 
 - [[README|VSCode 全局配置备份]] — VSCode 配置备份与同步方案
   - `#tool-config` `#vscode` `#backup`
+- [[codebuddy-editor-multi-tab-fix|CodeBuddy 编辑器多标签修复]] — 打开新文件自动关闭旧页签的根因与修复
+  - `#codebuddy` `#editor` `#troubleshooting`
 
 ## 脚本文件
 
