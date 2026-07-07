@@ -146,7 +146,7 @@ if ($deletedFiles) {
     }
     Add-Content -Path $logFile -Value "Step 3: Skipped auto-commit of deleted files"
 }
-$commitOutput = & git commit -m $commitMsg 2>&1
+$commitOutput = & git commit -m "$commitMsg" 2>&1
 if ($LASTEXITCODE -eq 0) {
     Add-Content -Path $logFile -Value "Commit OK: $commitMsg"
 } else {
