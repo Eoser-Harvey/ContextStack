@@ -10,10 +10,12 @@
 """
 import json
 import os
+import re
 import time
 import yaml
 import requests
 from datetime import datetime
+from profile_loader import load_latest_profile
 
 
 # ====== 默认值（优先从 .secrets.yaml 或环境变量读取） ======
@@ -236,28 +238,89 @@ def build_lark_messages(tweets):
         msg += "\n━━━━━━━━━━━━━━━━━━━━"
         msgs.append(msg)
 
-    # 最后一条: 行动清单
+    # 最后一条: 行动清单（从 profile_archive 动态生成）
+    profile = load_latest_profile()
+    checklist = _build_dynamic_checklist(profile)
+    msgs.append(checklist)
+
+    return msgs
+
+
+def _build_dynamic_checklist(profile):
+    """从个人画像动态构建行动清单"""
     checklist = "📋 今日关注\n"
     checklist += "━━━━━━━━━━━━━━━━━━━━\n"
+
+    # — 投资板块 —
     checklist += "💰 投资:\n"
-    checklist += "  ├─ BTC 0.642个 ｜ USDT 10.5K待命\n"
-    checklist += "  ├─ MA120下方→暂存USDT，站回后定投\n"
-    checklist += "  ├─ CRCL占47.9%→100触发止盈\n"
-    checklist += "  └─ ✅ 币安借贷已还清 ｜ 信用卡40W待降\n"
+    if profile:
+        crypto = profile.get("assets", {}).get("crypto", {})
+        btc_str = crypto.get("btc", "")
+        usdt_str = crypto.get("usdt", "")
+        eth_str = crypto.get("eth", "")
+        crcl_str = profile.get("assets", {}).get("crcl_concentration", "")
+        cc_debt = profile.get("liabilities", {}).get("credit_card_invest", "")
+
+        # BTC
+        btc_qty = ""
+        if btc_str:
+            m = re.search(r'([\d.]+)\s*BTC', btc_str)
+            if m:
+                btc_qty = m.group(1)
+        checklist += f"  ├─ BTC {btc_qty}个(链上) ｜ USDT {usdt_str.replace('$', '') if usdt_str else '?'}待命\n"
+
+        # ETH
+        if eth_str and "已清仓" in eth_str:
+            checklist += f"  ├─ ETH已清仓\n"
+
+        checklist += "  ├─ MA120下方→暂存USDT，站回后定投\n"
+
+        # CRCL
+        crcl_pct = ""
+        if crcl_str:
+            m = re.search(r'([\d.]+%)', crcl_str)
+            if m:
+                crcl_pct = m.group(1)
+        checklist += f"  ├─ CRCL占{crcl_pct}⚠️→集中度风险极高\n"
+
+        # 负债
+        cc_short = ""
+        if cc_debt:
+            m = re.search(r'¥?([\d,]+)', cc_debt)
+            if m:
+                cc_short = m.group(1).replace(",", "万")
+                try:
+                    num = int(m.group(1).replace(",", ""))
+                    cc_short = f"{num//10000}W" if num >= 10000 else m.group(1)
+                except ValueError:
+                    pass
+        checklist += f"  └─ ✅ 币安借贷已还清 ｜ 信用卡{cc_short}待降\n"
+    else:
+        checklist += "  ├─ profile_archive 未加载，请检查档案文件\n"
     checklist += "━━━━━━━━━━━━━━━━━━━━\n"
+
+    # — 家庭板块 —
     checklist += "🏠 家庭:\n"
-    checklist += "  ├─ 保险韩伟✅重疾50W ｜ 定寿待配置\n"
-    checklist += "  ├─ 薛燕重疾待配置 ｜ 孩子升学规划\n"
+    if profile:
+        insurance = profile.get("insurance", {})
+        hanwei = insurance.get("hanwei_zhongji", "")
+        hanwei_short = ""
+        if hanwei:
+            m = re.search(r'(\d+W)', hanwei)
+            if m:
+                hanwei_short = m.group(1)
+        checklist += f"  ├─ 保险韩伟✅重疾{hanwei_short} ｜ 定寿待配置\n"
+        checklist += "  ├─ 薛燕重疾待配置 ｜ 孩子升学规划\n"
     checklist += "  └─ 家庭账户与投资账户严格隔离\n"
     checklist += "━━━━━━━━━━━━━━━━━━━━\n"
+
+    # — 生活板块（通用建议，保持静态） —
     checklist += "🧘 生活:\n"
     checklist += "  ├─ TFLM学习 ｜ 每天30分钟信息摄入\n"
     checklist += "  └─ 减少盯盘焦虑 ｜ 保持长期主义心态\n"
     checklist += "━━━━━━━━━━━━━━━━━━━━\n"
     checklist += "🤖 自动推送 ｜ Bot飞书群版"
-    msgs.append(checklist)
-
-    return msgs
+    return checklist
 
 
 # ====== 对外接口 ======

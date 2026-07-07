@@ -75,7 +75,7 @@
 ### 文件操作
 - ⛔ **文件操作红线**：只删除/修改自己创建的文件，绝不碰别人项目文件夹下的任何文件（2026-05-19，教训：误删 btc-temperature-gauge 的 server.py/server.js）
 - ⛔ 修改用户已有文件前必须先讨论确认：用户说「看看/是否合理/可以吗」是征求意见，先给分析+方案，**等明确说「按这个改」再动文件**（2026-07-06 违规教训：擅自改公司注册文件 beijing-company-social-insurance-plan.md）
-- ⛔ 临时文件只放 `D\WorkBuddy`（**不放 C 盘**），不污染 Claw 或框架目录；不建多余中介文件（如「新增记录」类）；skill 目录须符合现有模式（index.md + xxx使用说明.md，与 device-debugging 一致）（2026-07-06）
+- ⛔ 临时文件只放 `D\WorkBuddy\temp`（**不放 C 盘**），不污染 Claw 或框架目录；不建多余中介文件（如「新增记录」类）；skill 目录须符合现有模式（index.md + xxx使用说明.md，与 device-debugging 一致）（2026-07-06）
 - ⛔ 删除前必须确认归属：不确定来源的文件，宁可留着也不删
 - **及时清理**：无用文件（debug.log/.uploads 等临时文件）即查即删（2026-05-23）
 - **临时文件自动删除**：脚本执行过程中产生的临时文件（如 `_xxx_temp.py`、`_commit_msg.txt` 等），用完后直接 DeleteFile 删除，无需询问用户确认（2026-06-11）

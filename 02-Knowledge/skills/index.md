@@ -5,7 +5,7 @@
 
 ---
 
-## 一、ContextStack 自定义 Skills（16 个）
+## 一、ContextStack 自定义 Skills（17 个）
 
 ### 专业领域 Skills
 
@@ -32,6 +32,14 @@
 | [[pua-governance/pua-governance使用说明\|PUA Governance]] | RCA/Musk五步法/Jobs减法 + 强制检查清单 | `manual` `@skill://pua-governance` |
 | [[find-skills/Skill\|Find Skills]] | 技能发现与推荐 | `manual` `@skill://find-skills` |
 | [[openspec/openspec使用说明\|OpenSpec]] | 规范驱动开发（SDD），npm 全局工具 | `npm` `openspec` `/opsx:propose` |
+
+### 人物蒸馏 Skills（Persona Distillation）
+
+| Skill | 说明 | 标签 |
+|-------|------|------|
+| [[laoxue/index\|老薛（奋斗的老薛）人物蒸馏]] | 财富成长+投资决策+贵人杠杆+守富+精力战略的心智模型与启发式 | `#persona` `#财富成长` `#贵人杠杆` `#守富` |
+
+- 关联分析：[[laoxue/财富成长路径与关键决策\|老薛 0–100万 / 100–1000万 路径 + 对你千万级的借鉴]]
 
 ---
 
@@ -67,7 +75,7 @@
 
 | 类别 | 数量 | 位置 |
 |------|------|------|
-| ContextStack 自定义 | 16 | `02-Knowledge/skills/` |
+| ContextStack 自定义 | 17 | `02-Knowledge/skills/` |
 | CodeBuddy 内置 | 6 | CodeBuddy 预装 + `.codebuddy/skills/note-organizer/` |
 | 用户级安装 | 1 | `~/.codebuddy/skills/obsidian/` |
 | **合计** | **23** | — |

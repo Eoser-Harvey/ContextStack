@@ -15,6 +15,7 @@ from translator import Translator
 from analyzer import analyze_tweets
 from fetcher_web import build_tweets_from_fetch
 from push_lark import push_to_lark
+from profile_loader import load_latest_profile_or_exit
 
 
 def load_history(history_path):
@@ -116,9 +117,10 @@ def main():
     translator = Translator(config)
     new_tweets = translator.translate_tweets(new_tweets)
 
-    # 6. AI分析
+    # 6. AI分析 (个人画像从 profile_archive 动态加载)
     print("[INFO] 开始AI分析...")
-    new_tweets = analyze_tweets(new_tweets, config["profile"])
+    profile = load_latest_profile_or_exit()
+    new_tweets = analyze_tweets(new_tweets, profile)
 
     # 7. 保存结果到本地文件
     result_path = os.path.join(os.path.dirname(__file__), "latest_tweets.json")
