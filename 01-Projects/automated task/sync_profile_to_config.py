@@ -16,8 +16,8 @@ from pathlib import Path
 from copy import deepcopy
 
 # ── 路径配置 ──
-HOLDINGS_PATH = Path(r"E:\ProjectGroup\AI\ContextStack\01-Projects\family-investment\research\portfolio\holdings.yaml")
-REPORTS_DIR = Path(r"E:\ProjectGroup\AI\ContextStack\01-Projects\family-investment\research\portfolio\reports")
+HOLDINGS_PATH = Path(r"E:\ProjectGroup\AI\ContextStack\01-Projects\family-hub\research\portfolio\holdings.yaml")
+REPORTS_DIR = Path(r"E:\ProjectGroup\AI\ContextStack\01-Projects\family-hub\research\portfolio\reports")
 CAREER_FILE = Path(r"E:\ProjectGroup\AI\ContextStack\02-Knowledge\career-development\career-strategy\个人职业发展分析-端侧AI企业定制攻略.md")
 CONFIG_PATH = Path(r"E:\ProjectGroup\AI\ContextStack\02-Knowledge\skills\1.trae-feishu-push\config.yaml")
 HOUR_ARCHIVE_DIR = Path(r"E:\ProjectGroup\AI\ContextStack\01-Projects\automated task\0.trae-feishu-push-hour\profile_archive")

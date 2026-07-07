@@ -15,7 +15,7 @@ from push_lark import send_interactive_card, load_secrets
 
 # ==================== 路径 ====================
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-RESEARCH_DIR = r"E:\ProjectGroup\AI\ContextStack\01-Projects\family-investment\embedded-ai-research"
+RESEARCH_DIR = r"E:\ProjectGroup\AI\ContextStack\01-Projects\family-hub\embedded-ai-research"
 TODAY = datetime.now()
 DATE_STR = TODAY.strftime("%Y年%m月%d日")
 DATE_FILE = TODAY.strftime("%Y-%m-%d")

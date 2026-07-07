@@ -155,7 +155,7 @@ MetaSkill 只包含：
 - 当前：固定流程抓取→解析→生成日报
 - 可改进：用 MetaSkill 思路，自动发现「更好的抓取器」「更好的摘要生成器」
 
-**family-investment 项目**：
+**family-hub 项目**：
 - 当前：手动整理投资数据
 - 可改进：自动发现数据获取 Skill → 分析 Skill → 报告生成 Skill
 
