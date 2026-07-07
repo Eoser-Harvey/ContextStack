@@ -117,4 +117,4 @@ distilled_from: "colleague-skill（同事.skill）人格蒸馏方法论 + nuwa �
 
 - 同目录：[[财富成长路径与关键决策]] — 0–100 万 / 100–1000 万 路径拆解 + 对你现阶段（千万级）的借鉴清单
 - 参考来源：[[../../../02-Knowledge/skills/awesome-agent-skills-resources|Agent Skills 资源大全]] 第十一章（colleague-skill / nuwa 蒸馏方法论）
-- 原始素材：`D:\wechatDownload\下载\老薛的晨间日记\老薛财富成长精选\`（25 篇精选 PDF）
+- 原始素材：[[老薛财富成长精选/]]（25 篇精选 PDF，位于本 skill 目录内）
