@@ -3,7 +3,7 @@
 > 归档时间: 2026-06-21  
 > 当前版本: **v8 (自动重试 + Nitter 实例自愈)**  
 > 稳定性: ✅ 4/4 用户全覆盖 (Run #14/#15 验证)  
-> 目标路径: `01-Projects/automated task/0.trae-feishu-push-hour`  
+> 目标路径: `01-Projects/automated-task/0.trae-feishu-push-hour`  
 > 执行入口: `python run_auto.py`
 
 ---
@@ -86,7 +86,7 @@
 
 ## 三、核心文件说明
 
-### 3.1 本地执行文件 (01-Projects/automated task/0.trae-feishu-push-hour)
+### 3.1 本地执行文件 (01-Projects/automated-task/0.trae-feishu-push-hour)
 
 | 文件 | 职责 | 关键逻辑 |
 |------|------|---------|
@@ -162,7 +162,7 @@
 ## 七、运行方式
 
 ```bash
-cd "E:\ProjectGroup\AI\ContextStack\01-Projects\automated task\0.trae-feishu-push-hour"
+cd "E:\ProjectGroup\AI\ContextStack\01-Projects\automated-task\0.trae-feishu-push-hour"
 python run_auto.py
 ```
 

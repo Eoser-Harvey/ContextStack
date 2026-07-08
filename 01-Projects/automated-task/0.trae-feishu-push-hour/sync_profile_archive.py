@@ -30,7 +30,7 @@ REPORTS_DIR = PROJECT_ROOT / "01-Projects" / "family-hub" / "research" / "portfo
 CAREER_PATH = PROJECT_ROOT / "02-Knowledge" / "career-development" / "career-strategy" / "个人职业发展分析-端侧AI企业定制攻略.md"
 
 HOUR_ARCHIVE_DIR = Path(__file__).resolve().parent / "profile_archive"
-DAY_ARCHIVE_DIR = PROJECT_ROOT / "01-Projects" / "automated task" / "1.trae-feishu-push-day" / "profile_archive"
+DAY_ARCHIVE_DIR = PROJECT_ROOT / "01-Projects" / "automated-task" / "1.trae-feishu-push-day" / "profile_archive"
 
 LOG_PATH = Path(__file__).resolve().parent / "archive_sync.log"
 

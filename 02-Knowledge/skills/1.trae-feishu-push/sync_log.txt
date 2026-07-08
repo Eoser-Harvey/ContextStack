@@ -4,8 +4,8 @@
 [2026-07-07 00:01:34] 持仓摘要: 总资产¥1,398,727, 净资产¥-801,273
 [2026-07-07 00:01:34] 职业发展档案已加载 (~9年经验)
 [2026-07-07 00:01:34] config.yaml 已更新, last_sync: 2026-07-07T00:00:03.251477 -> 2026-07-07T00:01:34.739938
-[2026-07-07 00:01:34] hour归档已写入: E:\ProjectGroup\AI\ContextStack\01-Projects\automated task\0.trae-feishu-push-hour\profile_archive\profile_20260707.md
-[2026-07-07 00:01:34] day归档已写入: E:\ProjectGroup\AI\ContextStack\01-Projects\automated task\1.trae-feishu-push-day\profile_archive\profile_20260707.md
+[2026-07-07 00:01:34] hour归档已写入: E:\ProjectGroup\AI\ContextStack\01-Projects\automated-task\0.trae-feishu-push-hour\profile_archive\profile_20260707.md
+[2026-07-07 00:01:34] day归档已写入: E:\ProjectGroup\AI\ContextStack\01-Projects\automated-task\1.trae-feishu-push-day\profile_archive\profile_20260707.md
 [2026-07-07 00:01:34] 同步完成，变更数: 1
 [2026-07-07 00:01:34] ============================================================
 [2026-07-07 00:05:33] ============================================================
@@ -14,8 +14,8 @@
 [2026-07-07 00:05:33] 持仓摘要: 总资产¥1,398,727, 净资产¥998,727
 [2026-07-07 00:05:33] 职业发展档案已加载 (~9年经验)
 [2026-07-07 00:05:33] config.yaml 已更新, last_sync: 2026-07-07T00:01:34.739938 -> 2026-07-07T00:05:33.230930
-[2026-07-07 00:05:33] hour归档已写入: E:\ProjectGroup\AI\ContextStack\01-Projects\automated task\0.trae-feishu-push-hour\profile_archive\profile_20260707.md
-[2026-07-07 00:05:33] day归档已写入: E:\ProjectGroup\AI\ContextStack\01-Projects\automated task\1.trae-feishu-push-day\profile_archive\profile_20260707.md
+[2026-07-07 00:05:33] hour归档已写入: E:\ProjectGroup\AI\ContextStack\01-Projects\automated-task\0.trae-feishu-push-hour\profile_archive\profile_20260707.md
+[2026-07-07 00:05:33] day归档已写入: E:\ProjectGroup\AI\ContextStack\01-Projects\automated-task\1.trae-feishu-push-day\profile_archive\profile_20260707.md
 [2026-07-07 00:05:33] 同步完成，变更数: 1
 [2026-07-07 00:05:33] ============================================================
 [2026-07-07 00:08:10] ============================================================
@@ -24,7 +24,7 @@
 [2026-07-07 00:08:10] 持仓摘要: 总资产¥1,398,727, 净资产¥998,727
 [2026-07-07 00:08:10] 职业发展档案已加载 (~9年经验)
 [2026-07-07 00:08:10] config.yaml 已更新, last_sync: 2026-07-07T00:05:33.230930 -> 2026-07-07T00:08:10.890576
-[2026-07-07 00:08:10] hour归档已写入: E:\ProjectGroup\AI\ContextStack\01-Projects\automated task\0.trae-feishu-push-hour\profile_archive\profile_20260707.md
-[2026-07-07 00:08:10] day归档已写入: E:\ProjectGroup\AI\ContextStack\01-Projects\automated task\1.trae-feishu-push-day\profile_archive\profile_20260707.md
+[2026-07-07 00:08:10] hour归档已写入: E:\ProjectGroup\AI\ContextStack\01-Projects\automated-task\0.trae-feishu-push-hour\profile_archive\profile_20260707.md
+[2026-07-07 00:08:10] day归档已写入: E:\ProjectGroup\AI\ContextStack\01-Projects\automated-task\1.trae-feishu-push-day\profile_archive\profile_20260707.md
 [2026-07-07 00:08:10] 同步完成，变更数: 1
 [2026-07-07 00:08:10] ============================================================

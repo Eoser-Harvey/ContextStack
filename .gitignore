@@ -50,24 +50,24 @@ Thumbs.db
 02-Knowledge/skills/1.trae-feishu-push/profile_archive/
 
 # 0.trae-feishu-push-hour cache & temp files (GitHub Actions 自动生成，本地保留)
-01-Projects/automated task/0.trae-feishu-push-hour/fetched_tweets.json
-01-Projects/automated task/0.trae-feishu-push-hour/latest_tweets.json
-01-Projects/automated task/0.trae-feishu-push-hour/tweet_history.json
+01-Projects/automated-task/0.trae-feishu-push-hour/fetched_tweets.json
+01-Projects/automated-task/0.trae-feishu-push-hour/latest_tweets.json
+01-Projects/automated-task/0.trae-feishu-push-hour/tweet_history.json
 
 # Token cache files (敏感信息)
 **/.lark_token_cache.json
 
 # Scripts containing lark secrets (本地保留，不推送远程)
-01-Projects/automated task/0.trae-feishu-push/push_lark.py
-01-Projects/automated task/0.trae-feishu-push/send_daily_ai_news.py
-01-Projects/automated task/1.trae-feishu-push-day/send_daily_ai_news.py
-01-Projects/automated task/1.trae-feishu-push-day-yan-trae/send_daily_ai_news.py
+01-Projects/automated-task/0.trae-feishu-push/push_lark.py
+01-Projects/automated-task/0.trae-feishu-push/send_daily_ai_news.py
+01-Projects/automated-task/1.trae-feishu-push-day/send_daily_ai_news.py
+01-Projects/automated-task/1.trae-feishu-push-day-yan-trae/send_daily_ai_news.py
 02-Knowledge/skills/1.trae-feishu-push/push_lark.py
 
 # Scripts containing lark secrets — .secrets.yaml (本地保留，不推送远程)
-01-Projects/automated task/0.trae-feishu-push-hour/.secrets.yaml
-01-Projects/automated task/1.trae-feishu-push-day/.secrets.yaml
-01-Projects/automated task/1.trae-feishu-push-day-yan-trae/.secrets.yaml
+01-Projects/automated-task/0.trae-feishu-push-hour/.secrets.yaml
+01-Projects/automated-task/1.trae-feishu-push-day/.secrets.yaml
+01-Projects/automated-task/1.trae-feishu-push-day-yan-trae/.secrets.yaml
 01-Projects/family-hub/research/portfolio/.secrets.yaml
 01-Projects/family-hub/research/portfolio/.translation_cache.json
 
@@ -76,12 +76,12 @@ Thumbs.db
 .verify*.txt
 .tmp*.txt
 .x.txt
-01-Projects/automated task/0.trae-feishu-push-hour-yan-trae/tweet_history.json
-01-Projects/automated task/0.trae-feishu-push-hour-yan-trae/latest_tweets.json
-01-Projects/automated task/0.trae-feishu-push-hour-yan-trae/fetched_tweets.json
-01-Projects/automated task/0.trae-feishu-push-hour-yan-trae/push_lark.py
-01-Projects/automated task/0.trae-feishu-push-hour-yan-trae/profile_archive/
-01-Projects/automated task/0.trae-feishu-push-hour-yan-trae/.secrets.yaml
+01-Projects/automated-task/0.trae-feishu-push-hour-yan-trae/tweet_history.json
+01-Projects/automated-task/0.trae-feishu-push-hour-yan-trae/latest_tweets.json
+01-Projects/automated-task/0.trae-feishu-push-hour-yan-trae/fetched_tweets.json
+01-Projects/automated-task/0.trae-feishu-push-hour-yan-trae/push_lark.py
+01-Projects/automated-task/0.trae-feishu-push-hour-yan-trae/profile_archive/
+01-Projects/automated-task/0.trae-feishu-push-hour-yan-trae/.secrets.yaml
 
 # AI Stock三线卖出每日监控日报（自动生成，不跟踪）
 01-Projects/family-hub/research/portfolio/reports/three-sell-lines-daily-*.md

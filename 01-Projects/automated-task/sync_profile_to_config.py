@@ -20,9 +20,9 @@ HOLDINGS_PATH = Path(r"E:\ProjectGroup\AI\ContextStack\01-Projects\family-hub\re
 REPORTS_DIR = Path(r"E:\ProjectGroup\AI\ContextStack\01-Projects\family-hub\research\portfolio\reports")
 CAREER_FILE = Path(r"E:\ProjectGroup\AI\ContextStack\02-Knowledge\career-development\career-strategy\个人职业发展分析-端侧AI企业定制攻略.md")
 CONFIG_PATH = Path(r"E:\ProjectGroup\AI\ContextStack\02-Knowledge\skills\1.trae-feishu-push\config.yaml")
-HOUR_ARCHIVE_DIR = Path(r"E:\ProjectGroup\AI\ContextStack\01-Projects\automated task\0.trae-feishu-push-hour\profile_archive")
-DAY_ARCHIVE_DIR = Path(r"E:\ProjectGroup\AI\ContextStack\01-Projects\automated task\1.trae-feishu-push-day\profile_archive")
-LOG_FILE = Path(r"E:\ProjectGroup\AI\ContextStack\01-Projects\automated task\sync_profile.log")
+HOUR_ARCHIVE_DIR = Path(r"E:\ProjectGroup\AI\ContextStack\01-Projects\automated-task\0.trae-feishu-push-hour\profile_archive")
+DAY_ARCHIVE_DIR = Path(r"E:\ProjectGroup\AI\ContextStack\01-Projects\automated-task\1.trae-feishu-push-day\profile_archive")
+LOG_FILE = Path(r"E:\ProjectGroup\AI\ContextStack\01-Projects\automated-task\sync_profile.log")
 
 USD_CNY = 6.796
 HKD_CNY = 0.866
