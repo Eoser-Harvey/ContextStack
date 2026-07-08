@@ -7,6 +7,14 @@
 ### 职业策略
 - [[career-strategy/|career-strategy/]] — 个人职业发展分析 + 端侧AI企业定制攻略
 
+### 学习笔记
+- [[Learning notes/|Learning notes/]] — 五大分类：
+  - [[Learning notes/01-工作专业知识/|01-工作专业知识]]
+  - [[Learning notes/02-管理/|02-管理]]
+  - [[Learning notes/03-人生&职业发展/|03-人生&职业发展]]
+  - [[Learning notes/04-投资理财/|04-投资理财]]
+  - [[Learning notes/05-读书笔记/|05-读书笔记]]
+
 ### 面试项目汇总
 - [[interview-project-summaries/|interview-project-summaries/]] — 四大模块：
   - [[interview-project-summaries/01-company-interviews/|01-公司面试记录]] — 九号/ISHO/思朗面试复盘 + 职业画像
