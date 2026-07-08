@@ -68,6 +68,11 @@
 
 ## AI / 技术
 
+### 2026-07-08: 端侧AI研究 — ESP32生态三件套（esp-claw/esp-dl/环境监测站）
+- **来源**: 用户分享（github.com/espressif/esp-claw + github.com/espressif/esp-dl + CSDN/电子发烧友 2026-06）
+- **整理产物**: `../professional-technology/edge-ai-esp32-ecosystem-research-2026-07.md`
+- **概要**: esp-claw（1763 Star, ESP32 AI Agent 框架, Chat Coding 理念, v0.1.0 已发布）社区爆发期进展 + esp-dl（1072 Star, 深度学习推理引擎, INT8 量化, S3 PIE 7.2× 加速）感知底座 + ESP32 LoRa 太阳能环境监测站参考设计。含源码架构拆解、社区活跃指标、PR/贡献者全景、个人匹配度分析。
+
 ### 2026-06-12: 歸藏 Skill 设计哲学 — 爆款 Skill 创作者的万字经验谈
 - **来源**: https://mp.weixin.qq.com/s/sZXl5kHA9LErEwnegpvgXg
 - **作者**: 歸藏的 AI 工具箱

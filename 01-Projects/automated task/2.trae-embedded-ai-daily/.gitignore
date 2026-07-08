@@ -1,0 +1,5 @@
+# 排除凭证和缓存
+.secrets.yaml
+.lark_token_cache.json
+__pycache__/
+*.pyc

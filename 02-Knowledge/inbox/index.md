@@ -14,14 +14,16 @@
 
 | 分类 | 文件数 | 最新更新 |
 |------|--------|----------|
-| AI/技术 | 20 | 2026-06-16 |
+| AI/技术 | 20 | 2026-07-08 |
 | 投资理财 | 11 | 2026-06-17 |
 | 个人成长 | 4 | 2026-06-05 |
-| 财富认知 | 3 | 2026-07-07 |
+| 财富认知 | 1 | 2026-07-08 |
 | 健康/生活 | 1 | 2026-05-30 |
 | 生活工具 | 1 | 2026-05-24 |
 | 求职 | 1 | 2026-06-16 |
-| **合计** | **41** | — |
+| 专业技术 | 1 | 2026-07-08 |
+| 人物榜样 | 2 | 2026-07-08 |
+| **合计** | **42** | — |
 
 > 注：`_ars_readme.md`、`ruflo_readme.md` 为 GitHub README 本地副本（非整理产物），待清理。
 
@@ -38,8 +40,9 @@
 | 2026-06-15 | ARS使用指南（从安装到实战，27种模式速查） | `academic-research-skills-usage-guide.md` | AI/技术 |
 | 2026-06-12 | 歸藏 Skill 设计哲学（万字长文，爆款Skill创作者经验） | `skill-design-philosophy-guizang-20260612.md` | AI/技术 |
 | 2026-06-11 | ARS深度分析（30k Star 学术研究 Skill 套件） | `academic-research-skills-deep-analysis.md` | AI/技术 |
-| 2026-07-07 | 五位创作者成长路径对比分析（Innomad/老薛/不懂经/读读方法论/鑫长期主义） | `five-creators-growth-path-analysis.md` | 财富认知 |
-| 2026-07-07 | 老薛《毕业十年｜每一步都算数》完整复盘（2013-2023十年传记） | `laoxue-ten-year-retrospective.md` | 财富认知 |
+| 2026-07-07 | 五位创作者成长路径对比分析（Innomad/老薛/不懂经/读读方法论/鑫长期主义） | `role-model/five-creators-growth-path-analysis.md` | 人物榜样 |
+| 2026-07-07 | 老薛《毕业十年｜每一步都算数》完整复盘（2013-2023十年传记） | `role-model/laoxue-ten-year-retrospective.md` | 人物榜样 |
+| 2026-07-08 | 端侧AI研究：ESP32生态三件套（esp-claw社区进展/esp-dl/环境监测站） | `professional-technology/edge-ai-esp32-ecosystem-research-2026-07.md` | 专业技术 |
 
 ## 相关入口
 
@@ -48,4 +51,4 @@
 
 ---
 
-**最后更新**: 2026-07-07
+**最后更新**: 2026-07-08

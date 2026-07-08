@@ -1,0 +1,12 @@
+# 飞书 Bot 凭证（本地保密，禁止提交）
+.secrets.yaml
+
+# Token 缓存（本地生成，无需提交）
+.lark_token_cache.json
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Profile 归档（本地生成，无需提交）
+profile_archive/
