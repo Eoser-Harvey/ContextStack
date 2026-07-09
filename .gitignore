@@ -87,3 +87,9 @@ Thumbs.db
 01-Projects/family-hub/research/portfolio/reports/three-sell-lines-daily-*.md
 
 "*.html"  
+
+# send_embedded_ai_daily.py (本地保留，含密钥)
+01-Projects/automated-task/2.trae-embedded-ai-daily/send_embedded_ai_daily.py
+
+# embedded-ai-research daily (本地保留)
+01-Projects/family-hub/embedded-ai-research/daily/
