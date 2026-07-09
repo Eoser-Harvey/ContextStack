@@ -589,7 +589,7 @@ ARM 上 `__disable_irq()` 是简单关中断。DSP 上你的实现加了 `g_uiCp
 
 **问题本质**：MQTT 是物联网场景下设备与云端通信的事实标准，核心是发布/订阅模型，解决的是资源受限设备在不可靠网络下的可靠数据传输问题。
 
-**项目背景**：爱博精电 Acuvim 系列电力仪表，现场测量电压、电流、功率、功率因数、谐波等电力参数，需要实时上报到公司云平台做能耗监控和配电运维。仪表端是 ARM Cortex-M4 + DSP 双核架构，M4 负责通信和人机交互，DSP 负责采样计算。
+**项目背景**：爱博精电 Acuvim 系列电力仪表，现场测量电压、电流、功率、功率因数、谐波等电力参数，需要实时上报到公司云平台做能耗监控和配电运维。仪表端是 ARM Cortex-M4 + DSP 双核架构，M4 负责通信和人机交互，DSP 负责采样计算，M4 上跑自研 AcuOS。
 
 **我的角色**：负责设备端 MQTT 客户端的集成和调试。云端平台由后端团队开发，我负责把仪表测量数据按照约定的 Topic 和数据格式推上去，保证数据不丢、不断、不乱序。
 
@@ -597,34 +597,31 @@ ARM 上 `__disable_irq()` 是简单关中断。DSP 上你的实现加了 `g_uiCp
 
 | 维度 | 选型 | 理由 |
 |:-----|:-----|:-----|
-| MQTT 库 | Eclipse Paho MQTT C 嵌入式版 | 开源成熟、纯 C、RAM 占用 ~4KB，适合 MCU |
-| 传输层 | TCP + TLS（可选） | 工业场景要求加密，非加密时用裸 TCP |
-| QoS 策略 | 测量数据 QoS 1，告警数据 QoS 1 + Retain，配置下发 QoS 2 | 测量数据丢了无所谓下一帧补上，告警必须送达，配置不能重复执行 |
+| MQTT 库 | MQTT-C（Liam Bindle） | 零 OS 依赖、单文件、只需提供 send/recv 函数，完美适配自研 AcuOS |
+| 传输层 | TCP（工业内网，未用 TLS） | 仪表部署在工厂内网，网络隔离+防火墙，业务层加 HMAC 签名防篡改 |
+| QoS 策略 | 测量数据 QoS 1，告警数据 QoS 1 + Retain，配置下发 QoS 2 | 测量数据丢了下一帧补上，告警必须送达，配置不能重复执行 |
 | Topic 设计 | `devices/{device_id}/telemetry`（上报）、`devices/{device_id}/command`（下发）、`devices/{device_id}/status`（在线状态） | 层级化，云端可用通配符 `devices/+/telemetry` 批量订阅 |
-| 数据格式 | JSON（开发期）/ Protobuf（量产后） | JSON 调试方便，Protobuf 体积小 60%+，适合带宽受限场景 |
-| 心跳机制 | KeepAlive = 60s | 仪表环境网络稳定，60s 够用；移动端设备建议 15-30s |
+| 数据格式 | JSON | 和云端讨论好字段定义直接开发，调试方便、人可读，数据量不大够用 |
+| 心跳机制 | KeepAlive = 30s | 工业内网稳定但需要快速感知掉线，30s 够用 |
+| 异步方案 | AcuOS 独立通信任务（低优先级） | MQTT-C 是同步阻塞的，放低优先级任务里跑不阻塞测量任务 |
 
-> 🔍 追问：为什么选 Paho 而不是 MQTT-C？
+> 🔍 追问：为什么选 MQTT-C 而不是 Paho？
 
-| 维度 | Eclipse Paho MQTT C | MQTT-C (Liam Bindle) |
-|:-----|:--------------------|:---------------------|
-| ROM 占用 | ~30KB | ~10KB |
-| RAM 占用 | ~4KB | ~1KB |
-| MQTT 版本 | 3.1.1 + 5.0 | 仅 3.1.1 |
-| API 模型 | 同步 + 异步（非阻塞） | 仅同步（阻塞） |
-| TLS 支持 | 内置（OpenSSL/mbedTLS 适配层） | 无，需自己在 socket 层包 |
-| OS 依赖 | 需要 OS 抽象层（线程/互斥锁/信号量） | 零依赖，只需提供 `send/recv` 函数 |
-| 断线重连 | 内置自动重连机制 | 需自己实现 |
-| 社区维护 | Eclipse 官方项目，企业级 | 个人项目，社区较小 |
+| 维度 | MQTT-C (Liam Bindle) | Eclipse Paho MQTT C |
+|:-----|:---------------------|:--------------------|
+| OS 依赖 | **零依赖**，只需提供 send/recv 函数 | 需要 OS 抽象层（线程/互斥锁/信号量接口） |
+| 适配自研 RTOS | **直接用**，给两个函数就行 | 要移植 OS 适配层到 AcuOS，工作量大 |
+| RAM 占用 | ~1KB | ~4KB |
+| API 模型 | 同步（阻塞） | 同步 + 异步 |
+| TLS 支持 | 无（自己在 socket 层包） | 内置 |
+| 断线重连 | 自己实现 | 内置 |
+| 代码结构 | 单文件 `mqtt.c` | 多文件模块化 |
 
-**选 Paho 的 4 个关键理由**：
+**选 MQTT-C 的 3 个关键理由**：
 
-1. **异步 API 不阻塞测量任务** — Paho 的 `MQTTClient_publish()` 立即返回，后台线程发 ACK；MQTT-C 的 `mqtt_publish()` 阻塞等 ACK，网络抖动超时（默认 15s）会拖死测量任务。电力仪表采样优先级最高，不能因为通信阻塞采样。
-2. **内置 TLS** — 工业现场要求加密，Paho 对接 mbedTLS 几行代码搞定；MQTT-C 需自己在 socket 层包 TLS，工作量大且过安全认证时审查成本高。
-3. **内置自动重连** — Paho 配置后断线自动重连；MQTT-C 需自己写重连状态机（~200-300 行）。
-4. **RAM 不是瓶颈** — 64KB RAM 下 Paho 的 4KB 不构成约束。AcuOS ~8KB + LWIP ~16KB + Paho ~4KB + 测量缓冲 ~20KB = 48KB，剩余 16KB 可用。
-
-**什么时候该选 MQTT-C**：RAM < 16KB（如 STM32F103）、裸机无 RTOS、不需要 TLS、极简单传感器上报场景。
+1. **零 OS 依赖，适配自研 AcuOS 零成本** — Paho 需要线程/互斥锁/信号量接口，要移植到 AcuOS 得改一堆适配层。MQTT-C 只要你给它两个函数：`transport_send()` 和 `transport_recv()`，它就能跑。开发流程就是和云端讨论好 Topic + JSON 格式，直接开写，不需要配编译环境、不需要链接库。
+2. **RAM 占用小** — AcuOS ~8KB + LWIP ~16KB + MQTT-C ~1KB + 测量缓冲 ~20KB = 45KB，剩余 19KB 充裕。
+3. **同步阻塞不是问题** — MQTT-C 的 `mqtt_publish()` 是阻塞的，但放 AcuOS 的独立通信任务里跑（优先级低于测量任务），阻塞的是通信任务不是测量任务。测量任务算完数据扔到消息队列，通信任务从队列取数据调 `mqtt_publish`，调度器保证测量任务优先执行。
 
 **Topic 设计示例**：
 
@@ -646,25 +643,81 @@ Topic: devices/ACUVIM_001/status
 Payload: {"online":false,"reason":"unexpected_disconnect"}
 ```
 
+**设备端核心代码结构**：
+
+```c
+// 1. 传输层：给 MQTT-C 提供 send/recv
+int transport_send(const void* buf, int len) {
+    return lwip_send(g_socket_fd, buf, len, 0);
+}
+int transport_recv(void* buf, int len) {
+    return lwip_recv(g_socket_fd, buf, len, 0);
+}
+
+// 2. 通信任务（AcuOS 低优先级任务）
+void TaskMqttComm(void) {
+    mqtt_client_t client;
+    
+    while (1) {
+        // 连接 Broker
+        mqtt_connect(&client, "broker_ip", 1883, transport_send, transport_recv);
+        
+        // 订阅下行指令
+        mqtt_subscribe(&client, "devices/ACUVIM_001/command", 2);
+        
+        while (mqtt_connected) {
+            // 从消息队列取测量数据（阻塞等待，不消耗 CPU）
+            msg = OsQPend(&data_queue, 1000);
+            if (msg != NULL) {
+                // 组 JSON + 发布
+                build_json_payload(payload, msg);
+                mqtt_publish(&client, "devices/ACUVIM_001/telemetry", 
+                             payload, strlen(payload), 1);
+            }
+            // 检查下行指令
+            mqtt_sync(&client);
+        }
+        
+        // 断线重连（指数退避）
+        mqtt_reconnect_with_backoff();
+    }
+}
+
+// 3. 测量任务（高优先级，不被通信阻塞）
+void TaskMeasure(void) {
+    while (1) {
+        // ADC 采样 + DSP 计算
+        data = read_and_calculate();
+        // 扔进队列就不管了，通信任务慢慢发
+        OsQPost(&data_queue, &data);
+        OsTimeDlyMs(3000);  // 3 秒一帧
+    }
+}
+```
+
 **踩过的坑**：
 
 **坑 1：断线重连风暴**
 
 现象：现场有 200 台仪表同时部署，网络抖动恢复后所有设备同时重连，Broker 瞬间连接数飙升导致拒绝服务。
 
-原因：重连策略是固定 3 秒重试，没有退避机制。200 台设备同时 3 秒重试 = 同时涌入。
+原因：MQTT-C 没有内置重连，我写的重连逻辑是固定 3 秒重试，没有退避机制。200 台设备同时 3 秒重试 = 同时涌入。
 
 修复：改成**指数退避 + 随机抖动**：
-```
-base_delay = 1s
-max_delay = 60s
-retry_count = 0
-
-delay = min(base_delay * 2^retry_count, max_delay) + random(0, 1s)
+```c
+int reconnect_delay(int retry_count) {
+    int base = 1;  // 1秒
+    int max = 60;  // 60秒上限
+    int delay = base;
+    for (int i = 0; i < retry_count; i++) delay *= 2;
+    if (delay > max) delay = max;
+    delay += rand() % 1000;  // 随机抖动 0-1s
+    return delay;
+}
 // 第1次：1-2s，第2次：2-3s，第3次：4-5s ... 第6次以后：60-61s
 ```
 
-加随机抖动是关键——避免多台设备退避后仍然同步重连。
+加随机抖动是关键——避免多台设备退避后仍然同步重连。大概 100 行代码搞定，比 Paho 内置的灵活，可以按场景调参。
 
 **坑 2：QoS 1 消息重复**
 
@@ -678,51 +731,56 @@ delay = min(base_delay * 2^retry_count, max_delay) + random(0, 1s)
 ```
 云端收到后先查 `msg_id` 是否已入库，已入库则丢弃。QoS 2 也能解决但握手开销太大（4 次交互 vs QoS 1 的 2 次），测量数据 3 秒一帧，不值得。
 
-**坑 3：内存约束下的发送缓冲**
+**坑 3：谐波数据 JSON 太大，单帧放不下**
 
-现象：Paho MQTT 默认发送缓冲区 1024 字节，但谐波数据（63 次谐波 × 3 相 × JSON 格式）超过 2KB，直接截断丢数据。
+现象：63 次谐波 × 3 相，JSON 打包后 2.1KB，但 MQTT-C 发送缓冲区只配了 1KB，超出部分截断丢数据。
 
 原因：MCU 的 RAM 只有 64KB，不能无脑加大缓冲区。
 
-修复：**分帧上报**。把谐波数据拆成 3 帧（每相一帧），每帧 ~700 字节。同时把 JSON 换成 Protobuf，单帧从 700 字节压到 ~280 字节，一次就能传完三相。
+修复：**精简 JSON 字段名 + 分帧上报**。把 `harmonic_1` 缩成 `h1`，`phase_a` 缩成 `A`，单帧从 2.1KB 压到 ~900B。再按相拆成 3 帧（A/B/C 各一帧），每帧 ~300B，默认缓冲区足够。
 
-| 方案 | 单帧大小 | 帧数 | 总耗时 | RAM 占用 |
-|:-----|:---------|:-----|:-------|:---------|
-| JSON 整包 | 2.1KB | 1 | 80ms | 4KB（改大缓冲区） |
-| JSON 分帧 | 700B | 3 | 240ms | 1KB（默认缓冲区） |
-| Protobuf 整包 | 280B | 1 | 30ms | 1KB |
+```json
+// 优化前（2.1KB）：
+{"phase_a":{"harmonic_1":220.3,"harmonic_2":1.2,...},"phase_b":{...},"phase_c":{...}}
 
-最终选 Protobuf，单帧传完、耗时最短、内存没涨。
+// 优化后分帧（每帧 ~300B）：
+帧1: {"ph":"A","h":[220.3,1.2,...,0.1]}   // 63个值的数组
+帧2: {"ph":"B","h":[219.8,1.1,...,0.1]}
+帧3: {"ph":"C","h":[221.1,1.0,...,0.1]}
+```
+
+没上 Protobuf——工业内网带宽不是瓶颈，JSON 人可读好调试，云端解析也简单，引入 Protobuf 还要管 `.proto` 文件版本和两端代码生成，不值得。
 
 **坑 4：遗嘱消息没生效**
 
-现象：设备拔网线后，云端迟迟不收到掉线通知，过了 5 分钟才触发。
+现象：设备拔网线后，云端迟迟不收到掉线通知，过了好几分钟才触发。
 
 原因：KeepAlive 设了 60 秒，但 Broker 的遗嘱触发逻辑是 `1.5 × KeepAlive = 90 秒`。加上网络层 TCP 的 keepalive 探测超时（默认 2 小时），实际感知时间更长。
 
-修复：调整 KeepAlive 为 30 秒（ Broker 45 秒内判定掉线），同时在设备端加了**应用层心跳**：每 10 秒发一个空 Publish 到 status topic，云端 30 秒没收到就主动判定离线。两层心跳：MQTT KeepAlive 管 TCP 连接，应用心跳管业务可用性。
+修复：调整 KeepAlive 为 30 秒（Broker 45 秒内判定掉线），同时在设备端加了**应用层心跳**：每 10 秒发一个空 Publish 到 status topic，云端 30 秒没收到就主动判定离线。两层心跳：MQTT KeepAlive 管 TCP 连接，应用心跳管业务可用性。
 
 **核心数据**：
 - 设备部署量：200+ 台仪表
 - 上报频率：测量数据 3s/帧，告警事件触发
-- 单帧大小：Protobuf ~280 字节
+- 单帧大小：JSON ~300-900 字节
 - 日均消息量：~580 万条（200 台 × 28800 帧/天）
 - 断线重连成功率：99.7%（指数退避后）
 - 数据丢失率：< 0.01%（QoS 1 + 幂等去重后）
 
 **面试话术**：
-> 「电力仪表场景下用 MQTT 做数据上云，设备端用 Paho MQTT 的 C 库集成到 ARM M4 上。核心设计是 QoS 分级——测量数据 QoS 1 够用丢了下一帧补，告警数据 QoS 1 + Retain 保证离线设备上线后也能收到。踩过断线重连风暴的坑，200 台设备同时重连把 Broker 打爆，改成指数退避 + 随机抖动解决。内存约束下把 JSON 换成 Protobuf，单帧从 2KB 压到 280B，一帧传完三相谐波数据。最容易被忽略的是遗嘱消息的触发时机——KeepAlive 60 秒意味着最差 90 秒才感知掉线，工业场景不能接受，加了应用层 10 秒心跳兜底。」
+> 「电力仪表场景下用 MQTT 做数据上云。因为设备跑自研 AcuOS，Paho 需要移植 OS 适配层太重，选了 MQTT-C——零依赖，给它两个 send/recv 函数就能跑，和云端讨论好 JSON 格式直接开发。MQTT-C 是同步阻塞的，放 AcuOS 低优先级通信任务里跑，测量任务高优先级不受影响，通过消息队列解耦。踩过断线重连风暴的坑——MQTT-C 没有内置重连，自己写的固定 3 秒重试导致 200 台设备同时重连把 Broker 打爆，改成指数退避 + 随机抖动解决。谐波数据 JSON 太大放不下缓冲区，精简字段名 + 按相分帧解决，没上 Protobuf——工业内网带宽不是瓶颈，JSON 好调试。」
 
 **面试追问预判**：
 
 | 追问 | 回答要点 |
 |:-----|:---------|
 | 为什么不用 HTTP？ | HTTP 是请求/响应模型，设备需要主动拉取指令，不能做实时推送；MQTT 长连接 + 发布订阅，云端随时下发、设备随时上报，协议头才 2 字节 |
-| 为什么不用 CoAP？ | CoAP 是 UDP 协议，工业现场网络质量不稳定，UDP 丢包率高；MQTT 基于 TCP，配合 QoS 1/2 能保证可靠性 |
+| 为什么不用 Paho？ | Paho 需要 OS 抽象层（线程/互斥锁/信号量接口），移植到自研 AcuOS 工作量大；MQTT-C 零依赖，提供 send/recv 就能用，开发更直接 |
+| 同步阻塞怎么不卡测量？ | MQTT-C 放 AcuOS 独立通信任务里，优先级低于测量任务。测量任务算完数据扔消息队列就返回，通信任务从队列取数据调 mqtt_publish。阻塞的是通信任务，调度器保证测量任务优先执行 |
 | QoS 2 为什么不用？ | QoS 2 要 4 次交互（PUBLISH + PUBREC + PUBREL + PUBCOMP），3 秒一帧的测量数据用 QoS 2 带宽浪费 100%；只有配置下发这种「不能重复执行」的指令才用 QoS 2 |
+| 没用 TLS 安全吗？ | 仪表部署在工厂内网，网络层有防火墙隔离；业务层加了 HMAC-SHA256 签名，`sign = HMAC(device_secret, msg_id + ts + data)`，云端验签不通过则丢弃。如果部署到公网会在 socket 层包 mbedTLS |
 | Broker 挂了怎么办？ | 设备端做了本地缓存——Broker 断连期间数据写入 SPI Flash 环形缓冲区（保留最近 24 小时），重连后按序补传；云端做主备 Broker + 负载均衡 |
-| TLS 加密性能影响？ | TLS 握手增加 ~300ms 首次连接延迟，连接建立后对称加密开销 < 1ms/帧；MCU 用硬件加密加速器（如 STM32 的 CRYP 外设），CPU 占用增加 < 2% |
-| 怎么保证数据安全（防篡改）？ | TLS 管传输层安全；业务层加 HMAC 签名，Payload 里带 `sign = HMAC-SHA256(device_secret, msg_id + ts + data)`，云端验签不通过则丢弃 |
+| 为什么不用 Protobuf？ | 工业内网带宽不是瓶颈，JSON 人可读好调试，云端解析也简单。引入 Protobuf 要管 .proto 文件版本和两端代码生成，对这个数据量不值得。如果带宽受限（如 NB-IoT）会考虑 |
 
 ---
 
