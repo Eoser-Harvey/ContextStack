@@ -419,23 +419,30 @@ is_earnings_season = datetime(2026, 7, 22) <= today <= datetime(2026, 8, 5)
 is_monday = today.weekday() == 0
 
 # Yahoo RSS 覆盖的 ticker：持仓股 + 七姐妹 + 半导体/AI相关
-# 每个 ticker 取3条，聚合去重
-capex_ticker_list = ["MRVL", "DRAM", "NVDA", "MSFT", "GOOGL", "AMZN", "META", "SMH"]
+# 每个 ticker 取5条，聚合去重
+capex_ticker_list = ["MRVL", "DRAM", "NVDA", "MSFT", "GOOGL", "AMZN", "META", "SMH", "AVGO", "AMD"]
 if is_earnings_season or is_monday:
     # 财报季或周一加大覆盖
-    capex_ticker_list.extend(["AVGO", "AMD", "INTC", "ARM"])
+    capex_ticker_list.extend(["INTC", "ARM", "TSM", "MU"])
 
 capex_news = []
 for ticker in capex_ticker_list:
-    yahoo_items = fetch_yahoo_finance_rss(ticker, limit=3)
+    yahoo_items = fetch_yahoo_finance_rss(ticker, limit=5)
     capex_news.extend(yahoo_items)
 
-# 财报季/周一额外按关键词筛选高相关度新闻
+# 始终按关键词做宽松筛选（提升相关性），财报季/周一更严格
 if is_earnings_season or is_monday:
     capex_news = filter_by_keywords(capex_news,
-        ['capex', 'capital expenditure', 'ai spend', 'earnings', 'data center', 'gpu', 'chip', 'semiconductor', 'cloud'], limit=10)
+        ['capex', 'capital expenditure', 'ai spend', 'earnings', 'data center', 'gpu', 'chip', 'semiconductor', 'cloud',
+         'revenue', 'guidance', 'upgrade', 'downgrade', 'analyst', 'price target', 'buy', 'sell'], limit=15)
+else:
+    # 非财报季：宽松过滤，保留大部分新闻
+    capex_news = filter_by_keywords(capex_news,
+        ['capex', 'ai', 'chip', 'cloud', 'data center', 'gpu', 'semiconductor', 'earnings', 'revenue',
+         'upgrade', 'downgrade', 'analyst', 'price target', 'buy', 'sell', 'bullish', 'bearish',
+         'guidance', 'growth', 'market', 'stock', 'investor', 'fund', 'etf', 'tech', 'nvidia', 'amd'], limit=15)
 
-capex_news = deduplicate(capex_news)[:12]
+capex_news = deduplicate(capex_news)[:15]
 if not capex_news:
     capex_news.append({"title": "(今日无重大Capex相关新闻)", "source": "", "link": "", "date": ""})
 
@@ -448,27 +455,32 @@ capex_news = translate_news_items(capex_news)
 
 print("\n【线2】抓取ARR新闻...")
 # 策略：从AI/科技相关ticker的新闻中筛选OpenAI/Anthropic相关内容
-arr_ticker_list = ["MSFT", "GOOGL", "META", "NVDA", "AMZN"]
+# 扩大ticker覆盖：加AVGO/AMD/TSM/MU，增加AI产业链新闻量
+arr_ticker_list = ["MSFT", "GOOGL", "META", "NVDA", "AMZN", "AVGO", "AMD", "TSM"]
 arr_news = []
 for ticker in arr_ticker_list:
-    yahoo_items = fetch_yahoo_finance_rss(ticker, limit=4)
+    yahoo_items = fetch_yahoo_finance_rss(ticker, limit=5)
     arr_news.extend(yahoo_items)
 
-# 关键词过滤：OpenAI/Anthropic/ARR/ChatGPT/Claude/AI revenue
+# 关键词过滤：OpenAI/Anthropic/ARR/ChatGPT/Claude/AI revenue（宽松版，limit提升到10）
 arr_news = filter_by_keywords(arr_news,
-    ['openai', 'anthropic', 'arr', 'revenue', 'recurring', 'chatgpt', 'claude', 'ai model', 'llm', 'gemini', 'copilot'], limit=8)
-arr_news = deduplicate(arr_news)[:5]
+    ['openai', 'anthropic', 'arr', 'revenue', 'recurring', 'chatgpt', 'claude', 'ai model', 'llm', 'gemini', 'copilot',
+     'ai ', 'artificial intelligence', 'machine learning', 'cloud', 'data center', 'gpu', 'chip', 'semiconductor',
+     'growth', 'earnings', 'guidance', 'analyst', 'upgrade', 'downgrade', 'price target', 'buy', 'sell',
+     'nvidia', 'amd', 'broadcom', 'google', 'microsoft', 'amazon', 'meta'], limit=12)
+arr_news = deduplicate(arr_news)[:8]
 
-# 如果过滤后仍为空，展示AI行业通用新闻作为替代（至少让用户看到AI动态）
+# 如果过滤后仍为空，展示AI行业通用新闻作为替代（扩大fallback覆盖）
 if not arr_news:
     # 重新抓取不限关键词的AI相关新闻
     arr_fallback = []
-    for ticker in ["MSFT", "NVDA", "GOOGL"]:
-        yahoo_items = fetch_yahoo_finance_rss(ticker, limit=2)
+    for ticker in ["MSFT", "NVDA", "GOOGL", "AMZN", "META", "AVGO", "AMD"]:
+        yahoo_items = fetch_yahoo_finance_rss(ticker, limit=3)
         arr_fallback.extend(yahoo_items)
     arr_fallback = filter_by_keywords(arr_fallback,
-        ['ai ', 'openai', 'anthropic', 'model', 'artificial intelligence', 'chatgpt', 'claude', 'gemini', 'llm'], limit=3)
-    arr_news = deduplicate(arr_fallback)[:3]
+        ['ai ', 'openai', 'anthropic', 'model', 'artificial intelligence', 'chatgpt', 'claude', 'gemini', 'llm',
+         'chip', 'gpu', 'cloud', 'data center', 'revenue', 'growth', 'earnings', 'tech', 'nvidia', 'amd'], limit=6)
+    arr_news = deduplicate(arr_fallback)[:5]
 
 if not arr_news:
     arr_news.append({"title": "(今日无ARR更新新闻，ARR增速为季度数据，下次关键节点9月底)", "source": "", "link": "", "date": ""})
@@ -896,10 +908,10 @@ def build_lark_card():
         "text": {"tag": "lark_md", "content": "\n".join(table_lines)}
     })
 
-    # --- 线1 新闻（前3条，中文翻译优先） ---
+    # --- 线1 新闻（前5条，中文翻译优先） ---
     elements.append({"tag": "hr"})
     news_lines = ["**📰 持仓股新闻**"]
-    for n in capex_news[:3]:
+    for n in capex_news[:5]:
         title_en = n["title"]
         title_zh = n.get("title_zh", "")
         # 飞书卡片优先展示中文翻译，如果翻译不完整则显示英文

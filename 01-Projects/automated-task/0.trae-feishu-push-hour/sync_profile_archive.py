@@ -25,6 +25,16 @@ from pathlib import Path
 
 # ── 路径常量 ──
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent  # ContextStack
+
+# 自校验：确保 PROJECT_ROOT 指向正确位置（存在 01-Projects 子目录）
+if not (PROJECT_ROOT / "01-Projects").is_dir():
+    raise RuntimeError(
+        f"PROJECT_ROOT 解析错误: {PROJECT_ROOT}\n"
+        f"期望 ContextStack 根目录，但该路径下不存在 01-Projects/ 子目录。\n"
+        f"脚本路径: {__file__}\n"
+        f"请检查 parent.parent.parent.parent 层级是否正确。"
+    )
+
 HOLDINGS_PATH = PROJECT_ROOT / "01-Projects" / "family-hub" / "research" / "portfolio" / "holdings.yaml"
 REPORTS_DIR = PROJECT_ROOT / "01-Projects" / "family-hub" / "research" / "portfolio" / "reports"
 CAREER_PATH = PROJECT_ROOT / "02-Knowledge" / "career-development" / "career-strategy" / "个人职业发展分析-端侧AI企业定制攻略.md"
