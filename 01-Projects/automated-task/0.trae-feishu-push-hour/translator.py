@@ -103,13 +103,31 @@ class Translator:
         except Exception:
             return None
 
+    @staticmethod
+    def _is_chinese(text):
+        """检测文本是否主要是中文（跳过翻译）"""
+        if not text:
+            return False
+        chinese_chars = len(re.findall(r'[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff]', text))
+        total_chars = len(text.strip())
+        if total_chars == 0:
+            return False
+        return chinese_chars / total_chars >= 0.3
+
     def translate_tweets(self, tweets):
         """批量翻译推文，优先使用缓存"""
         cache_hits = 0
         pre_translated = 0
+        skipped_chinese = 0
         for tweet in tweets:
             content = tweet.get("content", "")
             tweet_id = tweet.get("id", "")
+
+            # 检测中文原文 → 跳过翻译
+            if self._is_chinese(content):
+                skipped_chinese += 1
+                tweet["translated"] = content  # 直接用原文作为"翻译"
+                continue
 
             # 优先使用 GitHub Actions 预翻译数据
             if tweet.get("translated") and tweet["translated"].strip() and tweet["translated"] != "[翻译失败]":
@@ -123,5 +141,5 @@ class Translator:
                 tweet["translated"] = translated or "[翻译失败]"
             else:
                 tweet["translated"] = ""
-        print(f"[INFO] 翻译完成: GitHub预翻译 {pre_translated} 条, 缓存命中 {cache_hits}/{len(tweets)} 条")
+        print(f"[INFO] 翻译完成: GitHub预翻译 {pre_translated} 条, 中文原文跳过 {skipped_chinese} 条, 缓存命中 {cache_hits}/{len(tweets)} 条")
         return tweets
