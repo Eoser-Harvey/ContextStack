@@ -129,7 +129,7 @@ $dirs = @($files | ForEach-Object {
 
 $exts = @($files | ForEach-Object {
     $path = $_ -replace '^\S+\s+', ''
-    if ($path -match '\.(\w+)$') { ".$($matches[1])" } else { '(no-ext)' }
+    if ($path -match '\.(\w+)$') { ".$($matches[1])" } else { 'no-ext' }
 } | Sort-Object -Unique)
 
 $dirSummary = ($dirs | Select-Object -First 4) -join ", "
