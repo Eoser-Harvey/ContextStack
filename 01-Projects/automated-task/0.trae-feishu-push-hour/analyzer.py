@@ -53,6 +53,40 @@ class ProfileAnalyzer:
             "analysis", "technical", "fundamental", "valuation",
             "ai", "chip", "semi", "semiconductor", "etf",
         ],
+        "qinbafrank": [
+            "ai", "人工智能", "tech", "科技", "trend", "趋势",
+            "macro", "宏观", "capital", "资本", "流动性", "liquidity",
+            "cycle", "周期", "morgan stanley", "大摩", "report", "报告",
+            "stock", "美股", "invest", "投资", "valuation",
+            "crypto", "加密", "bitcoin", "btc", "ethereum",
+            "semiconductor", "半导体", "chip", "芯片", "gpu",
+            "fed", "美联储", "rate", "利率", "inflation", "通胀",
+            "trade", "交易", "position", "仓位", "portfolio",
+        ],
+        "xiaomustock": [
+            "stock", "股票", "market", "市场", "trade", "交易",
+            "xiaomi", "小米", "mi", "lei jun", "雷军", "ev", "su7",
+            "invest", "投资", "valuation", "估值", "earnings", "财报",
+            "china", "中国", "a-share", "a股", "h-share", "港股",
+            "tech", "科技", "semiconductor", "半导体", "chip",
+            "ai", "人工智能", "smartphone", "手机", "iot",
+        ],
+        "xingpt": [
+            "ai", "人工智能", "gpt", "llm", "大模型", "prompt",
+            "agi", "machine learning", "deep learning", "neural",
+            "tech", "科技", "startup", "创业", "innovation",
+            "openai", "anthropic", "google", "meta",
+            "coding", "编程", "software", "软件", "developer",
+            "product", "产品", "growth", "增长", "trend",
+        ],
+        "hibtc37": [
+            "btc", "bitcoin", "比特币", "crypto", "加密", "区块链",
+            "eth", "ethereum", "以太坊", "defi", "web3",
+            "mining", "挖矿", "hash", "哈希", "halving",
+            "price", "价格", "market", "行情", "trade",
+            "altcoin", "山寨", "wallet", "钱包", "exchange",
+            "macro", "宏观", "fed", "美联储", "rate", "利率",
+        ],
     }
 
     def analyze(self, tweets):

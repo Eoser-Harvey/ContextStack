@@ -206,7 +206,11 @@ def build_lark_messages(tweets):
             "elonmusk": "🚀",
             "cz_binance": "₿",
             "realDonaldTrump": "🇺🇸",
-            "aleaborteddit": "👩‍🦳"
+            "aleaborteddit": "👩‍🦳",
+            "qinbafrank": "📊",
+            "xiaomustock": "📱",
+            "xingpt": "🤖",
+            "hibtc37": "₿"
         }
         emoji = emoji_map.get(tweet.get("username", ""), "📢")
 
