@@ -1,0 +1,598 @@
+/* ============================================================
+   个人网站样式 — 极简暗色主题
+   设计参考: Brittany Chiang (暗色) + Lee Robinson (精炼)
+            + Paul Graham (内容优先) + Patrick Collison (分类导航)
+   ============================================================ */
+
+/* === CSS Variables === */
+:root {
+  --bg: #0d1117;
+  --bg-elevated: #161b22;
+  --bg-card: #1c2333;
+  --border: #30363d;
+  --border-hover: #484f58;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --text-dim: #6e7681;
+  --accent: #d4a574;
+  --accent-hover: #e8c49a;
+  --accent-bg: rgba(212, 165, 116, 0.08);
+  --accent-border: rgba(212, 165, 116, 0.3);
+  --link: #79c0ff;
+  --link-hover: #a5d6ff;
+  --red: #f85149;
+  --green: #3fb950;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-mono: 'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+  --max-width: 720px;
+  --radius: 8px;
+  --transition: 0.2s ease;
+}
+
+/* === Reset & Base === */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 2rem;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+/* === Selection === */
+::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+/* === Container === */
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* === Typography === */
+a {
+  color: var(--link);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+a:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
+
+.accent {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ============================================
+   HERO
+   ============================================ */
+.hero {
+  padding: 6rem 0 4rem;
+  text-align: center;
+}
+
+.greeting {
+  font-size: 1.05rem;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.name {
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+
+.tagline {
+  font-size: 1.25rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  font-weight: 400;
+}
+
+.bio-intro {
+  font-size: 0.95rem;
+  color: var(--text-dim);
+  line-height: 1.8;
+  margin-bottom: 2rem;
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Hero Navigation */
+.hero-nav {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.nav-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-muted) !important;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  transition: all var(--transition);
+  text-decoration: none !important;
+}
+
+.nav-pill:hover {
+  color: var(--text) !important;
+  background: var(--bg-card);
+  border-color: var(--accent-border);
+  text-decoration: none !important;
+}
+
+/* ============================================
+   SECTIONS
+   ============================================ */
+.section {
+  padding: 3rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+}
+
+.section-desc {
+  color: var(--text-dim);
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+  line-height: 1.7;
+}
+
+/* ============================================
+   CARD GRID (Writing)
+   ============================================ */
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 600px) {
+  .card-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  transition: border-color var(--transition), transform var(--transition);
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  border-color: var(--accent-border);
+}
+
+.card-icon {
+  font-size: 1.75rem;
+  margin-bottom: 0.75rem;
+  line-height: 1;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+}
+
+.card-tagline {
+  font-size: 0.85rem;
+  color: var(--accent);
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.card-desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+  flex: 1;
+  margin-bottom: 1rem;
+}
+
+.card-status {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+/* ============================================
+   INVESTMENT PHILOSOPHY
+   ============================================ */
+.philosophy-block {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+}
+
+.philosophy-quote {
+  font-size: 1.1rem;
+  color: var(--accent);
+  font-style: italic;
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-bg);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  line-height: 1.6;
+}
+
+.philosophy-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 500px) {
+  .philosophy-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.phil-item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.phil-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+
+.phil-item strong {
+  display: block;
+  font-size: 0.95rem;
+  color: var(--text);
+  margin-bottom: 0.2rem;
+}
+
+.phil-item p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ============================================
+   ABOUT
+   ============================================ */
+.about-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 600px) {
+  .about-content {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 800px) {
+  .about-content {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+.about-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+.about-heading {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.about-card ul {
+  list-style: none;
+  padding: 0;
+}
+
+.about-card li {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  padding: 0.3rem 0;
+}
+
+.about-card li::before {
+  content: '▹';
+  color: var(--accent);
+  margin-right: 0.5rem;
+}
+
+/* ============================================
+   LINKS
+   ============================================ */
+.links-row {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-muted) !important;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  transition: all var(--transition);
+  text-decoration: none !important;
+}
+
+.link-btn:hover {
+  color: var(--text) !important;
+  border-color: var(--accent-border);
+  background: var(--bg-card);
+  text-decoration: none !important;
+}
+
+.link-icon {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   ARTICLES LIST
+   ============================================ */
+.articles-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.article-link {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: border-color var(--transition);
+  text-decoration: none !important;
+}
+
+.article-link:hover {
+  border-color: var(--accent-border);
+}
+
+.article-date {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.article-title {
+  font-size: 0.95rem;
+  color: var(--text) !important;
+  line-height: 1.5;
+}
+
+.article-link-empty {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--text-dim);
+  background: var(--bg-elevated);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+}
+
+.article-link-empty p {
+  margin-bottom: 0.5rem;
+}
+
+.article-link-empty .hint {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.article-link-empty code {
+  background: var(--bg-card);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  color: var(--accent);
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 2rem 0 3rem;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.footer p {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+.footer a {
+  color: var(--text-muted);
+}
+
+.footer a:hover {
+  color: var(--link-hover);
+}
+
+.footer-sub {
+  margin-top: 0.4rem;
+  font-size: 0.8rem !important;
+  color: var(--text-dim) !important;
+}
+
+/* ============================================
+   BACK TO TOP
+   ============================================ */
+.back-to-top {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: all var(--transition);
+  text-decoration: none !important;
+  z-index: 100;
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.back-to-top:hover {
+  border-color: var(--accent-border);
+  color: var(--text);
+  text-decoration: none;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 480px) {
+  .hero {
+    padding: 4rem 0 3rem;
+  }
+
+  .name {
+    font-size: 2.25rem;
+  }
+
+  .tagline {
+    font-size: 1.05rem;
+  }
+
+  .section {
+    padding: 2rem 0;
+  }
+
+  .philosophy-block {
+    padding: 1.25rem;
+  }
+
+  .philosophy-quote {
+    font-size: 0.95rem;
+  }
+
+  .links-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .link-btn {
+    justify-content: center;
+  }
+}
+
+/* ============================================
+   PRINT
+   ============================================ */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+
+  .back-to-top,
+  .hero-nav {
+    display: none;
+  }
+
+  .card,
+  .about-card,
+  .philosophy-block {
+    border: 1px solid #ddd;
+    break-inside: avoid;
+  }
+}

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- ARTICLE_TITLE -->
+  <!-- ARTICLE_DATE -->
+  <!-- ARTICLE_DESCRIPTION -->
+  <title><!-- ARTICLE_TITLE_TEXT --> · Harvey</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    /* 文章页专用样式 */
+    .article-page {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+    .article-back {
+      display: inline-block;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    .article-back:hover {
+      color: var(--accent);
+    }
+    .article-header {
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .article-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+    .article-meta {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+    .article-body {
+      font-size: 1rem;
+      line-height: 1.85;
+      color: var(--text);
+    }
+    .article-body h2 {
+      font-size: 1.3rem;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--text);
+    }
+    .article-body h3 {
+      font-size: 1.1rem;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+      color: var(--text);
+    }
+    .article-body p {
+      margin-bottom: 1.25rem;
+      color: var(--text-muted);
+    }
+    .article-body strong {
+      color: var(--text);
+    }
+    .article-body blockquote {
+      border-left: 3px solid var(--accent);
+      padding: 0.5rem 1rem;
+      margin: 1.5rem 0;
+      background: var(--accent-bg);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+    .article-body code {
+      background: var(--bg-elevated);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      color: var(--accent);
+    }
+    .article-body pre {
+      background: var(--bg-elevated);
+      padding: 1rem;
+      border-radius: var(--radius);
+      overflow-x: auto;
+      margin: 1.5rem 0;
+      border: 1px solid var(--border);
+    }
+    .article-body pre code {
+      background: none;
+      padding: 0;
+      color: var(--text);
+    }
+    .article-body ul, .article-body ol {
+      margin: 1rem 0 1.25rem;
+      padding-left: 1.5rem;
+      color: var(--text-muted);
+    }
+    .article-body li {
+      margin-bottom: 0.5rem;
+    }
+    .article-body img {
+      max-width: 100%;
+      border-radius: var(--radius);
+      margin: 1.5rem 0;
+    }
+    .article-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.9rem;
+    }
+    .article-body th, .article-body td {
+      border: 1px solid var(--border);
+      padding: 0.6rem 0.8rem;
+      text-align: left;
+    }
+    .article-body th {
+      background: var(--bg-elevated);
+      color: var(--text);
+      font-weight: 600;
+    }
+    .article-body td {
+      color: var(--text-muted);
+    }
+    .article-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    .article-footer a {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <main class="article-page">
+    <a href="../index.html" class="article-back">← 返回首页</a>
+
+    <header class="article-header">
+      <h1 class="article-title"><!-- ARTICLE_TITLE_TEXT --></h1>
+      <p class="article-meta">
+        <!-- ARTICLE_DATE_TEXT --> · Harvey
+      </p>
+    </header>
+
+    <div class="article-body">
+      <!-- ARTICLE_CONTENT -->
+    </div>
+
+    <footer class="article-footer">
+      <p>© 2026 Harvey · <a href="../index.html">返回首页</a></p>
+    </footer>
+  </main>
+</body>
+</html>

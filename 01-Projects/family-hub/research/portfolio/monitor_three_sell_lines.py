@@ -1,5 +1,5 @@
 """
-三条卖出线每日自动监控脚本 v3
+三条卖出线每日自动监控脚本 v4
 - 线1 (Capex): 监控 MSFT/GOOGL/META/AMZN/NVDA/MRVL 股价 + Capex新闻 + 投资建议
 - 线2 (ARR): 监控 OpenAI/Anthropic ARR新闻 + 投资建议
 - 线3 (替代赛道): 美股板块ETF资金流向 + 行业轮动信号
@@ -60,9 +60,14 @@ FINANCE_TERMS = {
     # 公司/机构
     "Marvell Technology": "迈威尔科技",
     "Marvell": "迈威尔",
+    "Broadcom": "博通",
     "Cantor Fitzgerald": "Cantor Fitzgerald投行",
     "Berkshire Hathaway": "伯克希尔哈撒韦",
     "Alphabet": "Alphabet(谷歌母公司)",
+    "Goldman Sachs": "高盛",
+    "Lumentum": "Lumentum",
+    "SK Hynix": "SK海力士",
+    "Roundhill": "Roundhill",
     # 动作
     "Raises PT": "上调目标价",
     "Raises Price Target": "上调目标价",
@@ -81,6 +86,10 @@ FINANCE_TERMS = {
     "Earnings": "财报",
     "Revenue": "营收",
     "Profit": "利润",
+    "Match": "匹配",
+    "Powering": "驱动",
+    "Cashing In": "获利",
+    "Challenge": "挑战",
     # 指标
     "YTD": "年内至今",
     "Quarterly": "季度",
@@ -93,6 +102,7 @@ FINANCE_TERMS = {
     "Outlook": "展望",
     "Forecast": "预测",
     "Guidance": "指引",
+    "AUM": "管理资产规模",
     # 场景
     "Bullish": "看涨",
     "Bearish": "看跌",
@@ -101,6 +111,8 @@ FINANCE_TERMS = {
     "Rebound": "反弹",
     "Correction": "回调/修正",
     "Crash": "崩盘",
+    "Under the Radar": "低调的",
+    "Runaway": "暴涨的",
     # 产品/行业
     "Semiconductor": "半导体",
     "Chip": "芯片",
@@ -108,8 +120,12 @@ FINANCE_TERMS = {
     "AI": "人工智能",
     "Cloud": "云计算",
     "GPU": "图形处理器",
-    "Memory": "存储/内存",
+    "Memory": "存储",
     "Active Electrical Cables": "有源电缆",
+    "Optical Networking": "光网络",
+    "Crypto": "加密货币",
+    "Quantum Security": "量子安全",
+    "Encryption": "加密",
     # 常见句式
     "Still Have A Lot More Upside": "仍有较大上行空间",
     "Trades at a Discount": "折价交易",
@@ -128,11 +144,79 @@ FINANCE_TERMS = {
     "Despite": "尽管",
     "Peak Levels": "高点",
     "Buy More": "继续买入",
-    "Shares": "股票",
-    "Stock": "股票/股价",
     "Investors": "投资者",
     "Analyst": "分析师",
     "Wall Street": "华尔街",
+    "Got $10,000?": "手上有$10,000？",
+    "Only One Will Match The": "只有一家能匹配",
+    "Hype": "炒作热潮",
+    "Chart of the Day": "今日图表",
+    "Big Tech is paying for the": "科技巨头正在为",
+    "and chipmakers are cashing in": "买单，芯片制造商从中获利",
+    "Steps Up": "加速推进",
+    "as Risks Accelerate": "随着风险加剧",
+    "Sets Stage for": "为...铺路",
+    "Trading Debut": "交易首秀",
+    "Line Up to": "排队",
+    "New Memory ETFs": "新存储ETF",
+    "Nears $34B": "逼近340亿美元",
+    "Under the Radar AI Chip Stocks": "低调的AI芯片股",
+    "Next Trillion-Dollar Opportunity": "下一个万亿机会",
+    "May Be the Biggest Winner": "可能是最大赢家",
+    # 更多常见词（短词放后面避免误匹配）
+    "Boom": "繁荣",
+    "Paying for the": "为...买单",
+    "Chipmakers": "芯片制造商",
+    "League Tables": "排行榜",
+    "Optical Networking": "光网络",
+    "Steps Up Quantum Security Efforts": "加速量子安全布局",
+    "as Encryption Risks Accelerate": "加密风险加剧",
+    "Surge Sets Stage for": "飙升为...铺路",
+    "U.S. Trading Debut": "美国交易首秀",
+    "Line Up to Challenge": "排队挑战",
+    "Runaway": "暴涨",
+    "Runaway DRAM": "暴涨的DRAM",
+    # 翻译引擎通用词（解决"高盛 Says"、"Synopsys 股票"这类半成品）
+    " Says ": "称",
+    " Is ": "",
+    "Says ": "称",
+    "Will Be Worth This In": "2030年估值将达到",
+    "Price Prediction: ": "估值预测：",
+    "Sector Update: ": "板块快讯：",
+    "Advance Late Afternoon": "午后走高",
+    "The Nuclear Energy Comeback Is Real. These 3 Energy ": "核能复苏是真的。这3只能源",
+    "Are the Best Ways to Play the Revival.": "是布局复苏的最佳选择。",
+    "Dow Jones Futures: Watch ": "道指期货：关注",
+    "As Market Sets Up; Big ": "市场蓄势待发；重磅",
+    "Due": "即将公布",
+    "Why Today\u2019s Small ": "为什么今天微小的",
+    "Could Become Tomorrow\u2019s Retirement Engine": "可能成为明天的退休引擎",
+    "ETF Showdown Traditional Energy Meets Clean Energy. Which ETF Is the Better Buy?": "ETF对决：传统能源vs清洁能源，哪个更值得买入？",
+    "人工智能's": "AI的",
+    "AI's": "AI的",
+    " Is Bullish on ": "看涨",
+    "Bullish on ": "看涨",
+    "Here Is What a": "看看",
+    "Investment Could Return": "投资可能获得多少回报",
+    "Here Is What": "看看",
+    "Energy Stocks ": "能源股",
+    "Taiwan 半导体's": "台积电",
+    "Taiwan Semiconductor's": "台积电",
+    "Nvidia CEO Jensen Huang Said ": "英伟达CEO黄仁勋称",
+    "\"Most Profound Impact Will Be in Life Sciences.\" Does This Bet on a Biotech Stock Prove He Means It?": "\"最深远影响将在生命科学领域\"，这笔生物科技股投资能证明他此言不虚吗？",
+    "Prediction: ": "预测：",
+    "Will Soar on July 17": "将在7月17日飙升",
+    " 半导体's Stock Will Soar on July 17": "将在7月17日飙升",
+    "台积电 Stock ": "台积电",
+    # 注意：不把 Stock/Stocks/Shares 放这里了，容易产生 "Synopsys 股票" 这种半成品
+    "Got $10,000? Broadcom vs Marvell: Only One Will Match The AI Hype": "手上有$10,000？博通vs迈威尔：只有一家能匹配AI热潮",
+    "5 Under the Radar AI Chip Stocks Powering the Data Center Boom": "5只低调AI芯片股推动数据中心繁荣",
+    "Goldman Sachs Says Optical Networking Is AI's Next Trillion-Dollar Opportunity. Lumentum May Be the Biggest Winner": "高盛称光网络是AI的下一个万亿机会，Lumentum或是最大赢家",
+    "Crypto Industry Steps Up Quantum Security Efforts as Encryption Risks Accelerate": "加密货币行业加速量子安全布局，加密风险加剧",
+    "Big Tech is paying for the AI boom, and chipmakers are cashing in: Chart of the Day": "科技巨头为AI繁荣买单，芯片制造商从中获利：今日图表",
+    "ETF League Tables: Roundhill AUM Nears $34B": "ETF排行榜：Roundhill管理资产规模逼近340亿美元",
+    "Memory Stock Surge Sets Stage for SK Hynix's U.S. Trading Debut": "存储股飙升为SK海力士美国交易首秀铺路",
+    "New Memory ETFs Line Up to Challenge Runaway DRAM": "新存储ETF排队挑战暴涨的DRAM",
 }
 
 def translate_en_to_zh(text):
@@ -200,11 +284,11 @@ capex_tickers = {
     "MRVL": "gb_mrvl", "NVDA": "gb_nvda"
 }
 
-# 持仓映射
+# 持仓映射（从 holdings.yaml 同步）
+# GOOGL 币安已于 2026-07-07 清仓，DRAM 币安已加仓至 57 股均价 $66.85
 holdings_map = {
-    "MRVL": {"shares": 29.192, "value_cny": 59098, "cost_usd": 287.74, "note": "AI芯片/数据中心互连", "line": "线1"},
-    "GOOGL": {"shares": 7.65, "value_cny": 18579, "cost_usd": 352.30, "note": "七姐妹+Gemini AI", "line": "线1+线2"},
-    "DRAM": {"shares": 37, "value_cny": 18570, "cost_usd": 71.10, "note": "AI服务器存储", "line": "线1"},
+    "MRVL": {"shares": 29.192, "value_cny": 59098, "cost_usd": 287.74, "note": "AI芯片/数据中心互连(币安)", "line": "线1"},
+    "DRAM": {"shares": 57, "value_cny": 18570, "cost_usd": 66.85, "note": "AI服务器存储(币安)", "line": "线1"},
 }
 
 capex_data = {}
@@ -229,7 +313,7 @@ for name, sym in capex_tickers.items():
 # ============================================================
 
 def fetch_yahoo_finance_rss(ticker, limit=5):
-    """Yahoo Finance 个股 RSS"""
+    """Yahoo Finance 个股 RSS — 含 description 摘要"""
     items = []
     try:
         url = f"https://feeds.finance.yahoo.com/rss/2.0/headline?s={ticker}&region=US&lang=en-US"
@@ -240,16 +324,25 @@ def fetch_yahoo_finance_rss(ticker, limit=5):
                 title_m = re.search(r'<title><!\[CDATA\[(.*?)\]\]></title>|<title>(.*?)</title>', block, re.DOTALL)
                 link_m = re.search(r'<link>(.*?)</link>', block, re.DOTALL)
                 date_m = re.search(r'<pubDate>(.*?)</pubDate>', block, re.DOTALL)
+                desc_m = re.search(r'<description>(.*?)</description>', block, re.DOTALL)
                 title = ""
                 if title_m:
                     title = (title_m.group(1) or title_m.group(2) or "").strip()
                 link = link_m.group(1).strip() if link_m else ""
                 pub_date = date_m.group(1).strip() if date_m else ""
+                # 抓取摘要（去掉HTML标签，截取前200字符）
+                desc = ""
+                if desc_m:
+                    raw_desc = desc_m.group(1).strip()
+                    raw_desc = re.sub(r'<[^>]+>', '', raw_desc)  # 去HTML标签
+                    raw_desc = re.sub(r'&[a-z]+;', ' ', raw_desc)  # 去HTML实体
+                    desc = raw_desc[:200].strip()
                 if title:
                     items.append({
                         "title": title,
                         "link": link, "source": "Yahoo Finance",
-                        "date": pub_date, "ticker": ticker
+                        "date": pub_date, "ticker": ticker,
+                        "desc": desc
                     })
     except Exception as e:
         print(f"  [Yahoo RSS] {ticker} 失败: {e}")
@@ -318,24 +411,31 @@ def format_date(date_str):
         return date_str[:16] if date_str else ""
 
 # ============================================================
-# 三、线1 — Capex 新闻
+# 三、线1 — Capex 新闻（Yahoo RSS 多 ticker 聚合）
 # ============================================================
 
 print("\n【线1】抓取Capex相关新闻...")
 is_earnings_season = datetime(2026, 7, 22) <= today <= datetime(2026, 8, 5)
 is_monday = today.weekday() == 0
 
-capex_news = []
+# Yahoo RSS 覆盖的 ticker：持仓股 + 七姐妹 + 半导体/AI相关
+# 每个 ticker 取3条，聚合去重
+capex_ticker_list = ["MRVL", "DRAM", "NVDA", "MSFT", "GOOGL", "AMZN", "META", "SMH"]
 if is_earnings_season or is_monday:
-    capex_news.extend(fetch_bing_news("AI capex Microsoft Google Amazon Meta earnings 2026", limit=5))
-    capex_news = filter_by_keywords(capex_news,
-        ['capex', 'capital expenditure', 'ai spend', 'earnings', 'data center', 'gpu'], limit=5)
+    # 财报季或周一加大覆盖
+    capex_ticker_list.extend(["AVGO", "AMD", "INTC", "ARM"])
 
-for ticker in ["MRVL", "GOOGL", "DRAM"]:
+capex_news = []
+for ticker in capex_ticker_list:
     yahoo_items = fetch_yahoo_finance_rss(ticker, limit=3)
     capex_news.extend(yahoo_items)
 
-capex_news = deduplicate(capex_news)[:8]
+# 财报季/周一额外按关键词筛选高相关度新闻
+if is_earnings_season or is_monday:
+    capex_news = filter_by_keywords(capex_news,
+        ['capex', 'capital expenditure', 'ai spend', 'earnings', 'data center', 'gpu', 'chip', 'semiconductor', 'cloud'], limit=10)
+
+capex_news = deduplicate(capex_news)[:12]
 if not capex_news:
     capex_news.append({"title": "(今日无重大Capex相关新闻)", "source": "", "link": "", "date": ""})
 
@@ -343,17 +443,35 @@ if not capex_news:
 capex_news = translate_news_items(capex_news)
 
 # ============================================================
-# 四、线2 — ARR 新闻
+# 四、线2 — ARR 新闻（Yahoo RSS AI/科技 ticker + 关键词过滤）
 # ============================================================
 
 print("\n【线2】抓取ARR新闻...")
+# 策略：从AI/科技相关ticker的新闻中筛选OpenAI/Anthropic相关内容
+arr_ticker_list = ["MSFT", "GOOGL", "META", "NVDA", "AMZN"]
 arr_news = []
-arr_news.extend(fetch_bing_news("OpenAI Anthropic annual recurring revenue ARR 2026", limit=5))
+for ticker in arr_ticker_list:
+    yahoo_items = fetch_yahoo_finance_rss(ticker, limit=4)
+    arr_news.extend(yahoo_items)
+
+# 关键词过滤：OpenAI/Anthropic/ARR/ChatGPT/Claude/AI revenue
 arr_news = filter_by_keywords(arr_news,
-    ['openai', 'anthropic', 'arr', 'revenue', 'recurring', 'chatgpt', 'claude'], limit=5)
+    ['openai', 'anthropic', 'arr', 'revenue', 'recurring', 'chatgpt', 'claude', 'ai model', 'llm', 'gemini', 'copilot'], limit=8)
 arr_news = deduplicate(arr_news)[:5]
+
+# 如果过滤后仍为空，展示AI行业通用新闻作为替代（至少让用户看到AI动态）
 if not arr_news:
-    arr_news.append({"title": "(今日无ARR更新新闻)", "source": "", "link": "", "date": ""})
+    # 重新抓取不限关键词的AI相关新闻
+    arr_fallback = []
+    for ticker in ["MSFT", "NVDA", "GOOGL"]:
+        yahoo_items = fetch_yahoo_finance_rss(ticker, limit=2)
+        arr_fallback.extend(yahoo_items)
+    arr_fallback = filter_by_keywords(arr_fallback,
+        ['ai ', 'openai', 'anthropic', 'model', 'artificial intelligence', 'chatgpt', 'claude', 'gemini', 'llm'], limit=3)
+    arr_news = deduplicate(arr_fallback)[:3]
+
+if not arr_news:
+    arr_news.append({"title": "(今日无ARR更新新闻，ARR增速为季度数据，下次关键节点9月底)", "source": "", "link": "", "date": ""})
 
 arr_news = translate_news_items(arr_news)
 
@@ -397,8 +515,12 @@ elif tech_pct < other_pct - 1.0:
 else:
     rotation_signal = "⚪ 板块无明显分化，中性"
 
-# 5.3 替代赛道新闻
-alt_news.extend(fetch_bing_news("美股 板块轮动 AI 资金流向 2026", limit=3))
+# 5.3 替代赛道新闻（从板块ETF相关ticker获取）
+# 用 SPY/QQQ/XLF 相关关键词的 ticker 来获取板块轮动新闻
+alt_news.extend(fetch_yahoo_finance_rss("SPY", limit=3))
+alt_news.extend(fetch_yahoo_finance_rss("XLE", limit=2))
+alt_news = filter_by_keywords(alt_news,
+    ['sector', 'rotation', 'energy', 'financial', 'consumer', 'value', 'growth', 'defensive', 'cyclical'], limit=5)
 alt_news = deduplicate(alt_news)[:5]
 if not alt_news:
     alt_news.append({"title": "(今日无替代赛道信号)", "source": "", "link": "", "date": ""})
@@ -416,8 +538,7 @@ for ticker, pct in capex_pct.items():
     if ticker in holdings_map and pct <= -3:
         alert_tickers.append(ticker)
         print(f"  ⚠️ {ticker} 跌 {pct:.1f}%，专项搜索利空新闻...")
-        ticker_news = fetch_yahoo_finance_rss(ticker, limit=5)
-        ticker_news.extend(fetch_bing_news(f"{ticker} stock drop news why falling", limit=5))
+        ticker_news = fetch_yahoo_finance_rss(ticker, limit=8)
         ticker_news = deduplicate(ticker_news)[:5]
         for n in ticker_news:
             n["alert_for"] = ticker
@@ -561,12 +682,12 @@ lines.append("---")
 lines.append(f"date: {today_str}")
 lines.append("type: three-sell-lines-daily")
 lines.append(f"earnings_season: {is_earnings_season}")
-lines.append(f"version: v3")
+lines.append(f"version: v4")
 lines.append("---")
 lines.append("")
 lines.append(f"# 三条卖出线 — 每日监控 ({today_str})")
 lines.append("")
-lines.append(f"> 自动生成 · {today.strftime('%H:%M')} · v3（含投资建议）")
+lines.append(f"> 自动生成 · {today.strftime('%H:%M')} · v4（含投资建议+新闻摘要）")
 lines.append("")
 
 # ── 线1 股价 ──
@@ -576,7 +697,6 @@ lines.append("| 公司 | 股价 | 涨跌 | 关联持仓 |")
 lines.append("|------|------|------|---------|")
 holdings_label = {
     "MRVL": "29.192股 ¥59,098",
-    "GOOGL": "7.65股 ¥18,579",
     "NVDA": "— (行业风向标)",
 }
 for name in ["MSFT", "GOOGL", "AMZN", "META", "MRVL", "NVDA"]:
@@ -595,17 +715,22 @@ lines.append("")
 for n in capex_news:
     title = n["title"]
     title_zh = n.get("title_zh", "")
+    desc = n.get("desc", "")
     source = n.get("source", "")
+    ticker_tag = n.get("ticker", "")
     link = n.get("link", "")
     date_display = format_date(n.get("date", ""))
     date_part = f" | {date_display}" if date_display else ""
     source_part = f" · {source}" if source else ""
+    ticker_part = f" [{ticker_tag}]" if ticker_tag else ""
     if link:
-        lines.append(f"- [{title}]({link}){source_part}{date_part}")
+        lines.append(f"- [{title}]({link}){ticker_part}{source_part}{date_part}")
     else:
-        lines.append(f"- {title}{source_part}{date_part}")
+        lines.append(f"- {title}{ticker_part}{source_part}{date_part}")
     if title_zh and title_zh != title:
         lines.append(f"  > 📝 {title_zh}")
+    if desc:
+        lines.append(f"  > 📄 {desc}")
 lines.append("")
 
 # ── 暴跌专项 ──
@@ -634,6 +759,7 @@ lines.append("")
 for n in arr_news:
     title = n["title"]
     title_zh = n.get("title_zh", "")
+    desc = n.get("desc", "")
     source = n.get("source", "")
     link = n.get("link", "")
     source_part = f" · {source}" if source else ""
@@ -643,6 +769,8 @@ for n in arr_news:
         lines.append(f"- {title}{source_part}")
     if title_zh and title_zh != title:
         lines.append(f"  > 📝 {title_zh}")
+    if desc:
+        lines.append(f"  > 📄 {desc}")
 lines.append("")
 
 # ── 线3 ──
@@ -664,6 +792,7 @@ lines.append("")
 for n in alt_news:
     title = n["title"]
     title_zh = n.get("title_zh", "")
+    desc = n.get("desc", "")
     source = n.get("source", "")
     link = n.get("link", "")
     source_part = f" · {source}" if source else ""
@@ -673,6 +802,8 @@ for n in alt_news:
         lines.append(f"- {title}{source_part}")
     if title_zh and title_zh != title:
         lines.append(f"  > 📝 {title_zh}")
+    if desc:
+        lines.append(f"  > 📄 {desc}")
 lines.append("")
 
 # ── 告警 ──
@@ -715,7 +846,7 @@ else:
 lines.append("")
 lines.append("---")
 lines.append("相关文档：[[ai-stock-three-sell-lines-methodology]]")
-lines.append("> 数据源：新浪财经（股价+ETF）+ Yahoo Finance RSS + Bing News RSS + Google Translate（翻译）")
+lines.append("> 数据源：新浪财经（股价+ETF）+ Yahoo Finance RSS（多ticker聚合+摘要）+ 本地术语翻译")
 
 # 写入
 with open(out_file, "w", encoding="utf-8") as f:
@@ -758,20 +889,26 @@ def build_lark_card():
         price_display = val.split(" (")[0] if val != "N/A" else "N/A"
         icon = "🔴" if pct <= -3 else ("🟡" if pct <= -1 else "")
         pct_str = f"{icon}{pct:+.2f}%" if val != "N/A" else "—"
-        label_map = {"MRVL": "29.2股 ¥5.9万", "GOOGL": "7.65股 ¥1.9万", "NVDA": "风向标"}
+        label_map = {"MRVL": "29.2股 ¥5.9万", "NVDA": "风向标"}
         table_lines.append(f"| {name} | {price_display} | {pct_str} | {label_map.get(name, '—')} |")
     elements.append({
         "tag": "div",
         "text": {"tag": "lark_md", "content": "\n".join(table_lines)}
     })
 
-    # --- 线1 新闻（前3条，中文翻译） ---
+    # --- 线1 新闻（前3条，中文翻译优先） ---
     elements.append({"tag": "hr"})
     news_lines = ["**📰 持仓股新闻**"]
     for n in capex_news[:3]:
-        title_zh = n.get("title_zh", n["title"])
+        title_en = n["title"]
+        title_zh = n.get("title_zh", "")
+        # 飞书卡片优先展示中文翻译，如果翻译不完整则显示英文
+        if title_zh and title_zh != title_en and len(title_zh) > 5:
+            display_title = title_zh
+        else:
+            display_title = title_en
         source = n.get("source", "")
-        news_lines.append(f"- {title_zh} · {source}" if source else f"- {title_zh}")
+        news_lines.append(f"- {display_title} · {source}" if source else f"- {display_title}")
     elements.append({
         "tag": "div",
         "text": {"tag": "lark_md", "content": "\n".join(news_lines)}
@@ -781,8 +918,13 @@ def build_lark_card():
     elements.append({"tag": "hr"})
     arr_lines = ["**📈 线2：ARR（OpenAI/Anthropic）**"]
     for n in arr_news[:3]:
-        title_zh = n.get("title_zh", n["title"])
-        arr_lines.append(f"- {title_zh}")
+        title_en = n["title"]
+        title_zh = n.get("title_zh", "")
+        if title_zh and title_zh != title_en and len(title_zh) > 5:
+            display_title = title_zh
+        else:
+            display_title = title_en
+        arr_lines.append(f"- {display_title}")
     elements.append({
         "tag": "div",
         "text": {"tag": "lark_md", "content": "\n".join(arr_lines)}
@@ -831,7 +973,7 @@ def build_lark_card():
 
     # --- 页脚 ---
     elements.append({"tag": "hr"})
-    footer = f"📅 距Q2财报季还有 {days_to_earnings} 天 | v3 | 新浪+Yahoo+Bing+Google翻译"
+    footer = f"📅 距Q2财报季还有 {days_to_earnings} 天 | v4 | 新浪+Yahoo RSS聚合"
     elements.append({
         "tag": "note",
         "elements": [{"tag": "plain_text", "content": footer}]
