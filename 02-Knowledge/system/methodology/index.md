@@ -6,6 +6,8 @@
 
 - [[debug-methodology|调试方法论]] — 系统化的问题定位与解决框架，涵盖网络设备与嵌入式调试
   - `#methodology` `#debugging` `#network` `#embedded`
+- [[ai-collaboration-methodology|AI协作与产品方法论]] — 让AI泼冷水、井比湖好、收集抱怨，来自刘小排超级个体实践
+  - `#methodology` `#ai-collaboration` `#product` `#super-individual`
 
 ## 相关
 
