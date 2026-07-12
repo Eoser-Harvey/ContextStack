@@ -1,5 +1,5 @@
 """
-三条卖出线每日自动监控脚本 v4
+三条卖出线每日自动监控脚本 v5
 - 线1 (Capex): 监控 MSFT/GOOGL/META/AMZN/NVDA/MRVL 股价 + Capex新闻 + 投资建议
 - 线2 (ARR): 监控 OpenAI/Anthropic ARR新闻 + 投资建议
 - 线3 (替代赛道): 美股板块ETF资金流向 + 行业轮动信号
@@ -929,7 +929,7 @@ def build_lark_card():
     # --- 线2 ARR ---
     elements.append({"tag": "hr"})
     arr_lines = ["**📈 线2：ARR（OpenAI/Anthropic）**"]
-    for n in arr_news[:3]:
+    for n in arr_news[:5]:
         title_en = n["title"]
         title_zh = n.get("title_zh", "")
         if title_zh and title_zh != title_en and len(title_zh) > 5:
