@@ -11,8 +11,8 @@ holdings_history:
     all_time_low_date: '2026-07-01'
   eth_onchain:
     name: 以太坊NFT(链上)
-    all_time_high_price: 1862.06
-    all_time_high_date: '2026-06-02'
+    all_time_high_price: 1925.99
+    all_time_high_date: '2026-07-16'
     all_time_low_price: 1606.72
     all_time_low_date: '2026-07-01'
   btc_binance:
@@ -23,8 +23,8 @@ holdings_history:
     all_time_low_date: '2026-07-01'
   eth_binance:
     name: 以太坊(币安)
-    all_time_high_price: 1862.06
-    all_time_high_date: '2026-06-02'
+    all_time_high_price: 1925.99
+    all_time_high_date: '2026-07-16'
     all_time_low_price: 1606.72
     all_time_low_date: '2026-07-01'
   crcl_yan:
@@ -69,8 +69,8 @@ holdings_history:
     name: 迈威尔(币安)
     all_time_high_price: 297.89
     all_time_high_date: '2026-07-01'
-    all_time_low_price: 228.38
-    all_time_low_date: '2026-07-08'
+    all_time_low_price: 206.26
+    all_time_low_date: '2026-07-16'
   bitgo:
     name: BitGo(韩伟长桥)
     all_time_high_price: 6.16
@@ -81,14 +81,14 @@ holdings_history:
     name: 小米集团(港股通)
     all_time_high_price_hkd: 28.58
     all_time_high_date: '2026-06-02'
-    all_time_low_price_hkd: 26.32
-    all_time_low_date: '2026-06-11'
+    all_time_low_price_hkd: 25.86
+    all_time_low_date: '2026-07-16'
   ubt_ht:
     name: 优必选(港股通)
     all_time_high_price_hkd: 112.4
     all_time_high_date: '2026-07-01'
-    all_time_low_price_hkd: 112.4
-    all_time_low_date: '2026-07-01'
+    all_time_low_price_hkd: 85.75
+    all_time_low_date: '2026-07-16'
     all_time_high_price: 12.64
     all_time_low_price: 12.64
   ts_xiaoan:
@@ -107,8 +107,8 @@ holdings_history:
     name: nok_han
     all_time_high_price: 14.8
     all_time_high_date: '2026-06-14'
-    all_time_low_price: 11.63
-    all_time_low_date: '2026-07-08'
+    all_time_low_price: 11.25
+    all_time_low_date: '2026-07-16'
   crcl_binance:
     name: Circle(韩伟币安)
     all_time_high_price: 62.9
@@ -159,3 +159,6 @@ net_worth_snapshots:
 - date: '2026-07-08'
   net_worth_cny: 1001580
   total_assets_cny: 1401580
+- date: '2026-07-16'
+  net_worth_cny: 998772
+  total_assets_cny: 1398772

@@ -243,7 +243,7 @@ def fetch_us_stock(sym):
     return None
 
 stock_prices = {}
-for label, sym in [("MRVL","mrvl"), ("CRCL","crcl"), ("BTGO","btgo"), ("NOK","nok")]:
+for label, sym in [("MRVL","mrvl"), ("CRCL","crcl"), ("BTGO","btgo")]:
     try:
         val = fetch_us_stock(sym)
         if val is not None:
@@ -252,9 +252,15 @@ for label, sym in [("MRVL","mrvl"), ("CRCL","crcl"), ("BTGO","btgo"), ("NOK","no
     except Exception as e:
         print(f"  {label} 失败: {e}")
 
-# 港股 (Sina)
-def fetch_hk_stock(sym):
-    parts = fetch_sina_stock(f"hk{sym.replace('.HK','').replace('HK','')}")
+# 港股 (Sina) — 使用 rt_hk 格式，5位代码
+def fetch_hk_stock(code):
+    """code: 4位数字如 '1810', 自动补零为5位"""
+    padded = code.zfill(5)
+    parts = fetch_sina_stock(f"rt_hk{padded}")
+    if len(parts) > 6 and parts[6]:
+        return float(parts[6])
+    # 回退：旧格式 hk+代码
+    parts = fetch_sina_stock(f"hk{code}")
     if len(parts) > 6 and parts[6]:
         return float(parts[6])
     return None
@@ -481,7 +487,7 @@ summary = {
     "prices": {
         "BTC": btc, "ETH": eth,
         "CRCL": stock_prices.get("CRCL"), "MRVL": stock_prices.get("MRVL"),
-        "BTGO": stock_prices.get("BTGO"), "NOK": stock_prices.get("NOK"),
+        "BTGO": stock_prices.get("BTGO"),
         "XIAOMI": hk_prices.get("XIAOMI"), "UBT": hk_prices.get("UBT"),
     },
     "cat_sum": cat_sum,
@@ -643,7 +649,6 @@ price_labels = [
     ("CRCL", "crcl_yan", "usd", "all_time_low_price"),
     ("MRVL", "mrvl_han", "usd", "all_time_low_price"),
     ("BTGO", "bitgo", "usd", "all_time_low_price"),
-    ("NOK", "nok_han", "usd", "all_time_low_price"),
     ("小米", "xiaomi_ht", "hkd", "all_time_low_price_hkd"),
     ("优必选", "ubt_ht", "hkd", "all_time_low_price_hkd"),
 ]
@@ -702,7 +707,7 @@ pid_map = {
     "eth_onchain": "ETH", "eth_binance": "ETH",
     "crcl_yan": "CRCL", "crcl_han": "CRCL", "crcl_cb": "CRCL",
     "crcl_hst": "CRCL", "crcl_hf": "CRCL",
-    "mrvl_han": "MRVL", "bitgo": "BTGO", "nok_han": "NOK",
+    "mrvl_han": "MRVL", "bitgo": "BTGO",
     "xiaomi_ht": "XIAOMI", "ubt_ht": "UBT",
     "ts_xiaoan": "XIAOAN", "ts_wufan": "WUFAN",
 }
@@ -813,7 +818,7 @@ if ANNUAL_PATH.exists():
         ("Circle(燕蒙古)", "crcl_yan", "usd"), ("Circle(韩伟蒙古)", "crcl_han", "usd"),
         ("Circle(韩伟长桥)", "crcl_cb", "usd"), ("Circle(华盛通)", "crcl_hst", "usd"),
         ("Circle(韩芳)", "crcl_hf", "usd"), ("迈威尔(币安)", "mrvl_han", "usd"),
-        ("诺基亚(币安)", "nok_han", "usd"), ("BitGo(韩伟长桥)", "bitgo", "usd"),
+        ("BitGo(韩伟长桥)", "bitgo", "usd"),
         ("小米集团(港股通)", "xiaomi_ht", "hkd"), ("优必选(港股通)", "ubt_ht", "hkd"),
         ("小安时间", "ts_xiaoan", "usd"), ("午饭老师时间", "ts_wufan", "usd"),
     ]
