@@ -10,6 +10,7 @@
 - [[./ninebot-questions|九号-FreeRTOS面经]] — 牛客网14题
 - `ninebot-prep.docx` — 九号二面备战文档
 - `silang-records.docx` — 思朗科技面试记录
+- [[./qingniao-prep|青鸟消防面试准备]] — 嵌入式岗(传感器/无线方向)，含公司深度研究+自研"朱鹮"芯片
 
 ## 关联
 - [[../02-interview-prep/|面试准备]] — 通用面试训练
