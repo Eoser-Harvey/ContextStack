@@ -12,10 +12,10 @@ from datetime import datetime
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from translator import Translator
-from analyzer import analyze_tweets
+# from analyzer import analyze_tweets  # 已屏蔽
 from fetcher_web import build_tweets_from_fetch
 from push_lark import push_to_lark
-from profile_loader import load_latest_profile_or_exit
+# from profile_loader import load_latest_profile_or_exit  # 已屏蔽
 
 
 def load_history(history_path):
@@ -117,10 +117,12 @@ def main():
     translator = Translator(config)
     new_tweets = translator.translate_tweets(new_tweets)
 
-    # 6. AI分析 (个人画像从 profile_archive 动态加载)
-    print("[INFO] 开始AI分析...")
-    profile = load_latest_profile_or_exit()
-    new_tweets = analyze_tweets(new_tweets, profile)
+    # 6. AI分析 (已屏蔽 — 不加载个人画像，不生成个性化评论)
+    # profile = load_latest_profile_or_exit()
+    # new_tweets = analyze_tweets(new_tweets, profile)
+    # 为每条推文添加空分析字段，兼容后续推送流程
+    for t in new_tweets:
+        t["analysis"] = {}
 
     # 7. 保存结果到本地文件
     result_path = os.path.join(os.path.dirname(__file__), "latest_tweets.json")

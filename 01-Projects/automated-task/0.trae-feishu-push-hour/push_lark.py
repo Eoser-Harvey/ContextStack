@@ -10,12 +10,11 @@
 """
 import json
 import os
-import re
 import time
 import yaml
 import requests
 from datetime import datetime
-from profile_loader import load_latest_profile
+# from profile_loader import load_latest_profile  # 已屏蔽，不再需要个人画像
 
 
 # ====== 默认值（优先从 .secrets.yaml 或环境变量读取） ======
@@ -199,7 +198,7 @@ def build_lark_messages(tweets):
         username = tweet.get("display_name", tweet.get("username", ""))
         content = tweet.get("content", "")
         translated = tweet.get("translated", "")
-        analysis = tweet.get("analysis", {})
+        # analysis = tweet.get("analysis", {})  # 已屏蔽，不再使用分析评论
         published = tweet.get("published_at", "")
 
         emoji_map = {
@@ -225,27 +224,12 @@ def build_lark_messages(tweets):
             msg += f"翻译: {translated}\n"
             msg += "━━━━━━━━━━━━━━━━━━━━\n"
 
-        if analysis.get("summary"):
-            # 非关键推文 → 只显示摘要
-            msg += f"\n💡 {analysis['summary']}\n"
-        else:
-            # 关键推文 → 显示完整建议
-            if analysis.get("investment"):
-                msg += f"\n💰 投资:\n{analysis['investment']}\n"
-            if analysis.get("career"):
-                msg += f"\n💼 职业:\n{analysis['career']}\n"
-            if analysis.get("life"):
-                msg += f"\n🧘 生活:\n{analysis['life']}\n"
-            if analysis.get("family"):
-                msg += f"\n👨‍👩‍👧 家庭:\n{analysis['family']}\n"
+        # 分析评论已屏蔽 — 不再显示个性化投资/职业/生活/家庭建议
 
         msg += "\n━━━━━━━━━━━━━━━━━━━━"
         msgs.append(msg)
 
-    # 最后一条: 行动清单（从 profile_archive 动态生成）
-    profile = load_latest_profile()
-    checklist = _build_dynamic_checklist(profile)
-    msgs.append(checklist)
+    # 行动清单已屏蔽 — 不再推送个人画像相关提醒
 
     return msgs
 
