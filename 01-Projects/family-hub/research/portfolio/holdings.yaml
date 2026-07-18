@@ -5,7 +5,7 @@
 #   manual        = 预IPO代币/小众平台, 需手动更新当月价格
 
 meta:
-  last_updated: "2026-07-16"
+  last_updated: "2026-07-17"
   usd_cny: 6.773
   hkd_cny: 0.864
 
@@ -80,14 +80,38 @@ holdings:
   - id: mrvl_han
     symbol: MRVL
     name: 迈威尔(币安)
-    quantity: 29.192
-    cost_basis_usd: 287.74
+    quantity: 34.344
+    cost_basis_usd: 273.72
     category: us_stock
     storage: 韩伟蒙古币安
     price_source: manual
     manual_price_usd: 297.89
     manual_price_date: "2026-07-01"
-    note: 2026-06-05买入6.87股@$291($2,000); 06-18买入5.384股@$297.85($1,604); 06-22买入4.42股@$315.16($1,393); 06-24买入5.78股@~$270.93($1,566); 06-24买入6.738股@$273($1,839); 总成本$8,401, 均价$287.74/股
+    note: 06-05买入6.87@$291($2,000); 06-18买入5.384@$297.85($1,604); 06-22买入4.42@$315.16($1,393); 06-24买入5.78@~$270.93($1,566); 06-24买入6.738@$273($1,839); 07-17买入5.152@$194.10($1,000); 总成本$9,401, 均价$273.72/股
+
+  - id: crcl_yan_binance
+    symbol: CRCL
+    name: Circle(燕币安)
+    quantity: 17
+    cost_basis_usd: 60.80
+    category: us_stock_tokenized
+    storage: 燕币安
+    price_source: manual
+    manual_price_usd: 62.63
+    manual_price_date: "2026-07-01"
+    note: 2026-07-17 新建仓 17股@$60.80, 总成本$1,033.60; 资金来自韩伟币安USDT
+
+  - id: mrvl_yan_binance
+    symbol: MRVL
+    name: 迈威尔(燕币安)
+    quantity: 5.8323
+    cost_basis_usd: 185.17
+    category: us_stock
+    storage: 燕币安
+    price_source: manual
+    manual_price_usd: 297.89
+    manual_price_date: "2026-07-01"
+    note: 2026-07-17 新建仓 5.8323股@$185.17, 总成本$1,080.00; 资金来自韩伟币安USDT
 
   # dram_han 2026-06-22 清仓: 27.4股成本$72.60, 卖出$80.68, 盈利$221(+11.1%), 资金换仓CRCL
 
@@ -253,9 +277,10 @@ cash:
     amount_hkd: 146060
     note: 含13W家庭内部调配, 其余为打新盈利
   - name: 币安USDT余额
-    amount_usd: 10940
+    amount_usd: 7826.40
     note: >
-       07-07: 卖出GOOGL +$2,817, 买入DRAM -$1,180, 净+$1,637; 余额$10,940
+       07-07: 卖出GOOGL +$2,817, 买入DRAM -$1,180, 净+$1,637; 余额$10,940;
+       07-17: 转出燕币安买CRCL -$1,033.60, 转出燕币安买MRVL -$1,080, 韩伟币安买MRVL -$1,000; 余额$7,826.40
 
 # ============================================================
 # 固定资产
