@@ -26,6 +26,9 @@ users:
   - username: hibtc37
     display_name: HiBTC
     user_id: ""
+  - username: supezen
+    display_name: Supezen
+    user_id: ""
 
 # 推文获取配置
 fetch:

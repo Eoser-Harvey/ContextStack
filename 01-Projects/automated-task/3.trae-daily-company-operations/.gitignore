@@ -1,0 +1,5 @@
+# Git 忽略规则
+.secrets.yaml
+.lark_token_cache.json
+__pycache__/
+*.pyc
