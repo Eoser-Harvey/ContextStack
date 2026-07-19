@@ -71,7 +71,7 @@ def parse_args() -> argparse.Namespace:
         "--model",
         type=Path,
         default=None,
-        help="Keras model path. Default: best_model.keras first, then model.keras.",
+        help="Keras model path. Default: model.keras first, then best_model.keras.",
     )
     parser.add_argument(
         "--features",
@@ -170,7 +170,9 @@ def resolve_input_paths(args: argparse.Namespace) -> Tuple[Path, Path, Path]:
     if args.model is not None:
         model_path = args.model.resolve()
     else:
-        preferred = [day14_output / "best_model.keras", day14_output / "model.keras"]
+        # PPT 第 22 页使用 day14_training_output/model.keras。
+        # 如果某次训练只保留了最佳检查点，仍兼容 best_model.keras。
+        preferred = [day14_output / "model.keras", day14_output / "best_model.keras"]
         model_path = next((p for p in preferred if p.exists()), preferred[-1])
     if not model_path.exists():
         raise FileNotFoundError(f"Keras model does not exist: {model_path}")
@@ -251,7 +253,8 @@ def stratified_split(
     return np.array(train_idx), np.array(val_idx), np.array(test_idx)
 
 
-def prepare_day15_data(features_csv: Path, day14_output: Path, seed: int) -> Day15Data:
+def load_features(features_csv: Path, day14_output: Path, seed: int) -> Day15Data:
+    """对应 PPT 的 load_features：读取特征表和 Day14 预处理参数。"""
     feature_columns = load_feature_columns(day14_output)
     scaler_mean, scaler_std = load_scaler(day14_output)
     label_to_id, id_to_label = load_label_map(day14_output)
@@ -301,6 +304,11 @@ def prepare_day15_data(features_csv: Path, day14_output: Path, seed: int) -> Day
     )
 
 
+def prepare_day15_data(features_csv: Path, day14_output: Path, seed: int) -> Day15Data:
+    """兼容旧版本函数名；实际加载流程见 load_features。"""
+    return load_features(features_csv, day14_output, seed)
+
+
 def import_tensorflow():
     tmp_dir = find_course_root() / ".tmp_day15_tensorflow"
     tmp_dir.mkdir(parents=True, exist_ok=True)
@@ -322,6 +330,46 @@ def import_tensorflow():
     except Exception:
         pass
     return tf
+
+
+def load_model(tf, resolved_model_path: Path) -> Any:
+    """使用 PPT 第 22 页的三行代码加载 Day14 Keras 模型。"""
+    expected_model = resolved_model_path.parent / "model.keras"
+    if resolved_model_path.resolve() == expected_model.resolve():
+        previous_work_dir = Path.cwd()
+        try:
+            os.chdir(resolved_model_path.parent.parent)
+
+            model_path = Path('day14_training_output/model.keras')
+            model = tf.keras.models.load_model(model_path)
+            model.summary()
+        finally:
+            os.chdir(previous_work_dir)
+        return model
+
+    # 仅当学员通过 --model 指定其他文件时使用该兼容分支。
+    model_path = resolved_model_path
+    model = tf.keras.models.load_model(model_path)
+    model.summary()
+    return model
+
+
+def verify_model_input(model: Any, data: Day15Data) -> None:
+    """确认模型输入维度与 feature_columns.json 完全一致。"""
+    input_shape = model.input_shape
+    if isinstance(input_shape, list):
+        input_shape = input_shape[0]
+    model_feature_count = int(input_shape[-1])
+    feature_column_count = len(data.feature_columns)
+    print(
+        "Model input check: "
+        f"model={model_feature_count}, feature_columns={feature_column_count}"
+    )
+    if model_feature_count != feature_column_count:
+        raise ValueError(
+            "Model input dimension does not match feature_columns.json: "
+            f"model={model_feature_count}, feature_columns={feature_column_count}"
+        )
 
 
 def make_representative_dataset(
@@ -609,29 +657,30 @@ def main() -> None:
     out_dir = (args.out or (Path(__file__).resolve().parent / "day15_quantization_output")).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    print("Preparing Day15 data...")
-    data = prepare_day15_data(features_csv, day14_output, args.seed)
-    if args.validation_samples and args.validation_samples > 0:
-        limit = min(args.validation_samples, len(data.x_test))
-        data.x_test = data.x_test[:limit]
-        data.y_test = data.y_test[:limit]
-        data.test_info = data.test_info.iloc[:limit].reset_index(drop=True)
-
-    print("Importing TensorFlow...")
+    print("1/6 Importing TensorFlow...")
     tf = import_tensorflow()
     try:
         tf.keras.utils.set_random_seed(args.seed)
     except Exception:
         pass
 
-    print(f"Loading Keras model: {model_path}")
-    model = tf.keras.models.load_model(model_path, compile=False)
+    print(f"2/6 Loading Keras model: {model_path}")
+    model = load_model(tf, model_path)
 
-    print("Converting float TFLite...")
+    print(f"3/6 Loading feature data: {features_csv}")
+    data = load_features(features_csv, day14_output, args.seed)
+    verify_model_input(model, data)
+    if args.validation_samples and args.validation_samples > 0:
+        limit = min(args.validation_samples, len(data.x_test))
+        data.x_test = data.x_test[:limit]
+        data.y_test = data.y_test[:limit]
+        data.test_info = data.test_info.iloc[:limit].reset_index(drop=True)
+
+    print("4/6 Converting float TFLite...")
     float_path = out_dir / "model_float32.tflite"
     convert_float_tflite(tf, model, float_path)
 
-    print("Converting full integer int8 TFLite...")
+    print("5/6 Converting full integer int8 TFLite...")
     representative_dataset, representative_count = make_representative_dataset(
         data.x_train,
         args.representative_samples,
@@ -651,7 +700,7 @@ def main() -> None:
         print("Writing C header for TensorFlow Lite Micro style integration...")
         write_c_header(int8_path, out_dir / "model_int8_data.h", "g_day15_action_model_int8")
 
-    print("Validating Keras, float TFLite and int8 TFLite on the same test samples...")
+    print("6/6 Validating Keras, float TFLite and int8 TFLite on the same test samples...")
     keras_probs = model.predict(data.x_test.astype(np.float32), verbose=0)
     keras_pred = np.argmax(keras_probs, axis=1)
 
