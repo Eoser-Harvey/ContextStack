@@ -824,3 +824,51 @@ Month 3   →  面试能答：工业鲁棒性、全链路项目经验、个人�
 ```
 
 > 每道题的参考答案均基于8年工业嵌入式背景 + ESP32-S3学习路径定制，拒绝空泛背书，全部落地到实操细节，面试时可直接复用。
+
+---
+
+## 🔧 扩展：X-CUBE-AI（STM32Cube.AI）支持的算子与 TFLM 对照
+
+> 归档日期：2026-07-20。X-CUBE-AI 现已演进为 **STM32Cube.AI / STEdgeAI**（旧 X-CUBE-AI 标记为 NRND），定位是面向 STM32 的**模型优化 + C 代码生成工具链**，而 TFLM 是通用 MCU 推理引擎库。两者在端侧落地时经常对比，面试高频考点。
+
+### 支持的前端框架
+
+| 框架 | 导入方式 |
+|:------|:---------|
+| **Keras / TensorFlow** | `.h5` / SavedModel 导入 |
+| **TensorFlow Lite** | `.tflite`（含 int8 量化模型） |
+| **ONNX** | 直接导入（覆盖大量 CV/音频算子） |
+| **PyTorch** | 先转 ONNX 再导入 |
+| **scikit-learn / XGBoost** | 传统 ML 模型（决策树、SVM、线性回归等） |
+
+### 神经网络算子清单（UM2526 §12 Supported toolboxes and layers）
+
+| 类别 | 支持的算子 |
+|:------|:-----------|
+| **卷积类** | `Conv2D`、`DepthwiseConv2D`、`SeparableConv2D`、`Conv1D`(新版)、`TransposeConv2D`(新版) |
+| **池化类** | `MaxPooling2D`、`AveragePooling2D`、`GlobalMaxPooling2D`、`GlobalAveragePooling2D` |
+| **激活函数** | `ReLU`、`ReLU6`、`Sigmoid`、`Tanh`、`Softmax`、`ELU`、`LeakyReLU`、`PReLU`、`ThresholdedReLU`、`Linear` |
+| **归一化/正则** | `BatchNormalization`、`Dropout`(推理时剥离)、`LayerNormalization`(新版)、`L2Normalization`(新版) |
+| **全连接/形状** | `Dense`、`Flatten`、`Reshape`、`Permute`、`Cropping1D/2D`、`ZeroPadding1D/2D`、`UpSampling2D` |
+| **张量运算/融合** | `Add`、`Multiply`、`Subtract`、`Average`、`Concatenate`、`Maximum`、`Minimum`、`ArgMax` |
+| **循环网络(RNN)** | `LSTM`、`GRU`(新版)、`SimpleRNN`(有限支持) |
+| **量化相关** | `Quantize`/`Dequantize`(int8 推理)、`Cast` |
+| **其他** | `DepthToSpace`/`SpaceToDepth`、`Embedding`、`Resize`(部分) |
+
+### 与 TFLM 的关键差异
+
+| 维度 | TFLM | X-CUBE-AI / Cube.AI |
+|:------|:-----|:---------------------|
+| **LSTM/GRU** | 需手动集成（示例有限） | **原生支持** |
+| **量化** | int8 为主 | int8 为主，额外支持 float16 |
+| **定位** | 通用 MCU 推理引擎**库** | 面向 STM32 的**模型优化 + 代码生成工具链** |
+| **算子覆盖面** | 较小、固定 | 更宽（含 RNN、更多融合算子） |
+| **STM32N6 NPU** | 需自行适配 | 用 STEdgeAI 工具链生成 Neural-ART 加速核专用代码 |
+
+### 重要注意事项
+
+1. **int8 量化**：X-CUBE-AI 原生支持 per-channel int8 量化（与 TFLM 一致），可在 Cortex-M 跑定点推理，大幅省 RAM/Flash。
+2. **STM32N6 专用 NPU**：N6 内置 Neural-ART 加速核，算子支持范围与软件版 Cube.AI 略有差异（更偏 CNN/Transformer），需 STEdgeAI 单独生成。
+3. **不支持/需 workaround**：动态 shape、控制流（`if`/`while`）、自定义 CUDA 算子、部分 ONNX 高级 op 需拆图或改用等价实现。
+
+> **面试加分话术**：「X-CUBE-AI 不只是推理库，而是把 Keras/ONNX 模型优化成 STM32 专用 C 代码的工具链，原生支持 int8 量化和 LSTM——这点比纯 TFLM 在 MCU 落地更省事。但 TFLM 的优势是框架无关、可深度定制，适合非 STM32 平台或需要完全掌控推理流程的场景。」
