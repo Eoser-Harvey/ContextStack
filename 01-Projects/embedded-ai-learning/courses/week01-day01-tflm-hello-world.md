@@ -56,6 +56,42 @@ class MicroMutableOpResolver : public MicroOpResolver {
 >
 > 效果：`hello_world` 把 `1` 传给了 `tOpCount`，于是编译器在编译期就把数组定成 `registrations_[1]` + `builtin_codes_[1]`——栈上固定 1 个槽位，零堆分配。
 >
+> **原理：模板实例化（Template Instantiation）**——编译器在编译期把 `tOpCount` 替换为具体数字，生成一份「定制版」的类代码。
+>
+> 源码证据（`micro_mutable_op_resolver.h` 第 768-775 行）：
+> ```cpp
+> template <unsigned int tOpCount>                       // tOpCount 是编译期占位符
+> class MicroMutableOpResolver {
+>     TFLMRegistration registrations_[tOpCount];         // 第 768 行
+>     BuiltinOperator builtin_codes_[tOpCount];          // 第 773 行
+>     TfLiteBridgeBuiltinParseFunction builtin_parsers_[tOpCount]; // 第 774 行
+> };
+> ```
+>
+> 当你写 `MicroMutableOpResolver<1>`，编译器**自动生成**等价于：
+> ```cpp
+> class GeneratedByCompiler_For_1 {   // 编译器实例化出的版本
+>     TFLMRegistration registrations_[1];     // tOpCount → 1
+>     BuiltinOperator builtin_codes_[1];      // tOpCount → 1
+>     builtin_parsers_[1];                    // tOpCount → 1
+> };
+> ```
+>
+> 如果你再写 `MicroMutableOpResolver<5>`，编译器就**再生成一份** `registrations_[5]` 的版本。每个不同的 `<N>` 都会触发一次独立的模板实例化。
+>
+> 「栈上固定 1 个槽位，零堆分配」的实现路径：
+> ```cpp
+> HelloWorldOpResolver op_resolver;  // 栈上声明对象
+> //          ↓ 成员数组直接嵌入对象的栈帧，无指针、无 malloc
+> //   registrations_[1]   — 栈上  sizeof(TFLMRegistration) × 1
+> //   builtin_codes_[1]   — 栈上  sizeof(BuiltinOperator) × 1
+> //   builtin_parsers_[1] — 栈上  sizeof(函数指针) × 1
+> ```
+>
+> 因为数组大小 `[1]` 在编译期已知，编译器直接把数组嵌在对象的栈帧里——**不存在指针、不存在 `malloc`、不存在间接访问**。对象析构时也不会有 `delete[]`。全程零堆操作。
+>
+> **嵌入式类比**：裸机 C 的 `static uint8_t task_stack[512];` 编译期就知大小、链接到 `.bss`。「模板 NTP = 把『手工算大小改 `#define`』的工作交给编译器自动做，同时附带类型安全检查」。
+>
 > 用你熟悉的 C 语言对照：
 >
 > | C 语言做法 | C++ 模板 NTP 做法 | 区别 |
