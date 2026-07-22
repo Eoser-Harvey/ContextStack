@@ -112,6 +112,25 @@ class MicroMutableOpResolver : public MicroOpResolver {
 
 **`1` 是 custom + builtin 算子总数上限**（它们在内部共享同一个计数器 `registrations_len_`）。hello_world 只有 1 个 builtin（全连接层），所以 `<1>` 刚好。
 
+> **关键认知：`<N>` = 算子类型数量，不是模型层数**（新手高频踩坑）
+>
+> `OpResolver` 存的是「算子类型 → 实现函数」的映射表，不是每层单独注册。模型有 100 层 Conv2D + 50 层 FC，只要只用了 `Conv2D`、`FullyConnected`、`Softmax` 这 3 种算子类型，`<3>` 就够：
+> ```cpp
+> MicroMutableOpResolver<3> op_resolver;
+> op_resolver.AddConv2D();           // 注册 1 次，管所有 Conv2D 层
+> op_resolver.AddFullyConnected();   // 注册 1 次，管所有 FC 层
+> op_resolver.AddSoftmax();          // 注册 1 次，管所有 Softmax 层
+> // → 3 种算子类型，<3> 刚好；但模型可以有几十上百层
+> ```
+>
+> | 概念 | 数量 | 举例 |
+> |:-----|:-----|:-----|
+> | 模型有几**层** | 可能几十上百 | 50 层 Conv2D + 10 层 FC = 60 层 |
+> | 模型用了几种**算子类型** | 通常 3~8 种 | Conv2D、FC、Softmax、MaxPool → 4 种 → `<4>` 就够 |
+> | `<N>` 的值 | = 算子类型数（偶尔 +1 留余量） | hello_world 只用 FULLY_CONNECTED → `<1>` 刚好 |
+>
+> **实操技巧**：用 [Netron](https://netron.app) 打开 `.tflite` 文件，数一下左侧算子列表里有几种不同的 op 类型，就是 `<N>` 的值。留 1~2 个余量也不浪费多少内存，写少了会初始化报错。
+
 **如果写 `<5>` 但只注册了 3 个？** → 编译器分配了 5 个槽位但只用 3 个，内存略浪费但不影响功能。**反过来写 `<1>` 但注册 2 个？** → 第二个注册返回 `kTfLiteError`（安全失败，不会数组越界）。
 
 ### 算子注册详解（2026-06-29 基于本地源码核实）
