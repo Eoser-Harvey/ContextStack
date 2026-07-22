@@ -4,8 +4,11 @@
 """
 import json
 import os
+import re
 import sys
 from datetime import date, timedelta
+
+import requests
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from push_lark import send_interactive_card, load_secrets
@@ -76,6 +79,189 @@ def in_window(dl: date) -> bool:
 
 def days_until(dl: date) -> int:
     return (dl - TODAY).days
+
+
+# ==================== 政策新闻 ====================
+
+def fetch_policy_news() -> list:
+    """
+    从多个可靠 API 获取公司相关政策新闻，严格按标题关键词匹配。
+    每个源最多取 1 条，确保来源多样性。
+    返回 [(标题, 摘要, 来源, 链接), ...] 列表，最多 4 条。
+    """
+    import html
+    import xml.etree.ElementTree as ET
+
+    news_items = []
+    seen_titles = set()
+    source_count = {}  # 每源最多取 1 条
+
+    # 严格政策关键词 —— 必须出现在【标题】中才算匹配
+    title_keywords = [
+        # 税务
+        "减税", "降费", "税收优惠", "税率", "关税", "免税",
+        "增值税", "企业所得税", "个税", "税务",
+        # 社保/公积金
+        "社保", "公积金", "养老金", "医保",
+        # 扶持/补贴
+        "补贴", "扶持", "纾困", "奖补", "专项资金",
+        # 营商/准入
+        "营商环境", "市场准入", "证照分离", "放管服",
+        # 企业类型
+        "小微企业", "中小微", "民营企业", "个体工商户",
+        # 文化
+        "文化产业", "文化事业",
+        # 知识产权
+        "知识产权", "专利", "商标",
+        # 监管/法规
+        "市场监管", "反垄断", "数据安全", "个人信息保护",
+        # 政府动作
+        "国务院常务", "政策发布", "政策解读", "新规",
+        "财政部", "税务总局", "人社部", "发改委", "工信部",
+        # 其他
+        "最低工资", "工伤", "失业保险", "生育保险",
+    ]
+
+    # 国内政策优先关键词（命中则排序靠前）
+    domestic_keywords = [
+        "国务院", "财政部", "税务总局", "人社部", "发改委", "工信部",
+        "小微企业", "中小微", "民营企业", "个体工商户",
+        "减税", "降费", "社保", "公积金", "补贴", "扶持",
+        "营商环境", "市场准入", "放管服", "文化产业",
+        "增值税", "个税", "企业所得税",
+        "最低工资", "知识产权", "市场监管",
+    ]
+
+    # 排除关键词 —— 标题含这些词则跳过
+    exclude_keywords = [
+        "IPO", "港股", "A股", "减持", "增持", "配售",
+        "财报", "股价", "涨跌", "涨停", "跌停", "盘前",
+        "游资", "龙虎榜", "招股", "上市", "退市",
+        "基金净值", "理财", "私募", "公募",
+        "评级", "目标价", "买入", "卖出",
+        # 国际新闻排除（用户要国内政策）
+        "特朗普", "美联储", "欧盟", "英国", "法国",
+        "德国", "日本", "韩国", "俄罗斯", "乌克兰",
+        "北约", "中东", "印度", "巴西",
+        "美国经济", "美股", "日经", "欧股",
+        "美国", "国际观察", "国际",
+    ]
+
+    fetch_headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    }
+
+    def _is_policy_relevant(title: str) -> bool:
+        """严格判断标题是否与公司政策相关"""
+        if not title or len(title) < 5:
+            return False
+        for ex in exclude_keywords:
+            if ex in title:
+                return False
+        for kw in title_keywords:
+            if kw in title:
+                return True
+        return False
+
+    def _is_domestic(title: str) -> bool:
+        """判断是否为国内政策新闻"""
+        return any(kw in title for kw in domestic_keywords)
+
+    def _clean_summary(raw_desc: str, max_len: int = 300) -> str:
+        """清理 HTML 并截断摘要"""
+        clean = re.sub(r'<[^>]+>', '', raw_desc or "")
+        clean = html.unescape(clean)
+        clean = re.sub(r'\s+', ' ', clean).strip()
+        if len(clean) > max_len:
+            return clean[:max_len] + "…"
+        return clean
+
+    def _add_item(title, raw_desc, source_name, link):
+        """去重 + 每源限 1 条 + 加入列表"""
+        dedup = title[:15]
+        if dedup in seen_titles:
+            return
+        # 每源最多取 1 条
+        if source_count.get(source_name, 0) >= 1:
+            return
+        seen_titles.add(dedup)
+        source_count[source_name] = source_count.get(source_name, 0) + 1
+        summary = _clean_summary(raw_desc)
+        is_dom = _is_domestic(title)
+        # 国内政策优先排序：(is_domestic, source_count) → 国内排前
+        news_items.append((title, summary, source_name, link, is_dom))
+
+    # ============================================================
+    # 源 1: 36氪 RSS
+    # ============================================================
+    try:
+        resp = requests.get("https://36kr.com/feed", headers=fetch_headers, timeout=10)
+        resp.encoding = "utf-8"
+        if resp.text.startswith("<?xml"):
+            root = ET.fromstring(resp.text)
+            items = root.findall(".//item")
+            print(f"  [INFO] 36氪 RSS 获取到 {len(items)} 条")
+            for item in items:
+                title = item.findtext("title", "").strip()
+                desc = item.findtext("description", "") or ""
+                link = item.findtext("link", "").strip() or item.findtext("guid", "")
+                if _is_policy_relevant(title):
+                    _add_item(title, desc, "36氪", link)
+        else:
+            print(f"  [WARN] 36氪 RSS 返回非 XML 格式")
+    except Exception as e:
+        print(f"  [WARN] 36氪 RSS 失败: {e}")
+
+    # ============================================================
+    # 源 2: 新浪财经宏观 API
+    # ============================================================
+    try:
+        resp = requests.get(
+            "https://feed.mix.sina.com.cn/api/roll/get?pageid=153&lid=2509&num=30",
+            headers=fetch_headers, timeout=10
+        )
+        data = resp.json()
+        items = data.get("result", {}).get("data", [])
+        print(f"  [INFO] 新浪财经 API 获取到 {len(items)} 条")
+        for item in items:
+            title = item.get("title", "").strip()
+            intro = item.get("intro", "") or ""
+            link = item.get("url", "")
+            if _is_policy_relevant(title):
+                _add_item(title, intro, "新浪财经", link)
+    except Exception as e:
+        print(f"  [WARN] 新浪财经 API 失败: {e}")
+
+    # ============================================================
+    # 源 3: 新浪国内 API
+    # ============================================================
+    try:
+        resp = requests.get(
+            "https://feed.mix.sina.com.cn/api/roll/get?pageid=153&lid=2517&num=30",
+            headers=fetch_headers, timeout=10
+        )
+        data = resp.json()
+        items = data.get("result", {}).get("data", [])
+        print(f"  [INFO] 新浪国内 API 获取到 {len(items)} 条")
+        for item in items:
+            title = item.get("title", "").strip()
+            intro = item.get("intro", "") or ""
+            link = item.get("url", "")
+            if _is_policy_relevant(title):
+                _add_item(title, intro, "新浪国内", link)
+    except Exception as e:
+        print(f"  [WARN] 新浪国内 API 失败: {e}")
+
+    # ============================================================
+    # 源 4: 人民网 RSS —— 已移除（RSS 内容过时，多为数月前旧闻）
+    # ============================================================
+
+    # 国内政策优先排序
+    news_items.sort(key=lambda x: (not x[4],))  # is_dom=True 排前
+
+    print(f"  [INFO] 政策新闻匹配到 {len(news_items)} 条（国内优先）")
+    # 返回时去掉 is_dom 标记
+    return [(t, s, src, l) for t, s, src, l, _ in news_items[:4]]
 
 
 # ==================== 截止日期定义 ====================
@@ -315,6 +501,56 @@ def build_card_json():
                 })
 
     elements.append({"tag": "hr"})
+
+    # ===== 政策新闻 =====
+    news_items = fetch_policy_news()
+    if news_items:
+        elements.append({
+            "tag": "div",
+            "text": {
+                "tag": "lark_md",
+                "content": "📰 **今日政策要闻**",
+            },
+        })
+        for title, summary, source, link in news_items:
+            # 每条新闻独立 div，完整展示标题+摘要+来源
+            content_parts = [f"**{title}**"]
+            if summary:
+                content_parts.append(summary)
+            if source:
+                content_parts.append(f"[{source}]")
+            elements.append({
+                "tag": "div",
+                "text": {
+                    "tag": "lark_md",
+                    "content": "\n".join(content_parts),
+                },
+            })
+        elements.append({"tag": "hr"})
+    else:
+        # 无国内政策新闻时，展示近期政策要点（基于当前有效政策）
+        elements.append({
+            "tag": "div",
+            "text": {
+                "tag": "lark_md",
+                "content": "📰 **近期政策要点**（今日暂无最新政策新闻，以下为当前有效政策提醒）",
+            },
+        })
+        policy_highlights = [
+            "**小微企业税收优惠延续至2027年底**\n5%企业所得税低税负、六税两费减半、小规模月销10万免增值税等优惠明确延续。金税四期「以数治税」全面上线，需注意合规申报。",
+            "**《增值税法》2026年1月1日起施行**\n财政部税务总局公告2026年第10号将小规模纳税人优惠锁定至2027年12月31日。月销售额≤10万、季销售额≤30万免征增值税。",
+            "**社保补贴政策延续至2026年底**\n中小微企业招用2026届高校毕业生、失业半年以上人员等重点群体，可申领社保补贴。税务部门正严查社保足额缴纳。",
+            "**人社新规7月实施**\n多项社保权益变化生效，包括养老保险全国统筹落地、社保费检查套用税收执法程序和标准。",
+        ]
+        for highlight in policy_highlights:
+            elements.append({
+                "tag": "div",
+                "text": {
+                    "tag": "lark_md",
+                    "content": highlight,
+                },
+            })
+        elements.append({"tag": "hr"})
 
     # 关键风险提示
     elements.append({
