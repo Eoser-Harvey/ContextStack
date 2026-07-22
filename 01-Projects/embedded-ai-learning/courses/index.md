@@ -15,16 +15,22 @@
 
 | 日期 | 课时 | 主题 | 状态 |
 |------|------|------|------|
-| Day 1 | [[week01-day01-tflm-hello-world]] | 从 TFLM hello_world 理解神经网络 | 🔄 进行中 |
-| Day 2 | - | 待定 | ⬜ 未开始 |
+| Day 1 | [[week01-day01-tflm-hello-world]] | 从 TFLM hello_world 理解神经网络 | ✅ 已完成 |
+| Day 2 | - | W1 延伸（架构/内存/算子，见 STATE 1.2/1.3） | ⬜ 未开始 |
 | Day 3 | - | 待定 | ⬜ 未开始 |
 | Day 4 | - | 待定 | ⬜ 未开始 |
 | Day 5 | - | 待定 | ⬜ 未开始 |
 
-## Week 2-12
+## Week 2：模型转换全流程与 PyTorch 工具入门
+
+| 日期 | 课时 | 主题 | 状态 |
+|------|------|------|------|
+| 周课 | [[week02-model-conversion-pytorch]] | 模型转换全流程：Keras→TFLite 主线（必做）+ PyTorch→ONNX 可选/延后 + Netron | 🔄 已排（待学） |
+
+## Week 3-12
 
 待后续补充。
 
 ---
 
-**最后更新**：2026-05-22
+**最后更新**：2026-07-22

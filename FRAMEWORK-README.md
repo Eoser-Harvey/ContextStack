@@ -87,6 +87,9 @@ ContextStack/
 │   ├── tencent-cloud-training/
 │   ├── wechat-radar/
 │   ├── family-hub/
+│   ├── personal-agents/
+│   ├── personal-website/
+│   ├── automated-task/
 │   └── topics/
 ├── 02-Knowledge/                # 知识库
 │   ├── system/
@@ -204,7 +207,7 @@ ContextStack/
 
 **框架版本**: v3.0
 **创建时间**: 2026-04-30
-**最后更新**: 2026-06-10
+**最后更新**: 2026-07-22
 **变更**: family-investment→family-hub 升级为家庭决策枢纽；目录树同步实际结构；补全 wechat-radar 项目、images/ 目录；移除已合并的 system/templates/；03-Memory/ 子目录完善
 **设计原则**: 独立于AI助手、分层Context、持久化Memory、工作台驱动
 **文件规范**: 英文目录/文件名，中文文件内容
@@ -215,10 +218,10 @@ ContextStack/
 | 阶段 | 状态 | 要点 |
 |------|------|------|
 | L1 全局规则 | ✅ 完成 | GLOBAL-RULES.md + Skills rules |
-| L2 项目规则 | ✅ 完成 | 6个项目均有 PROJECT-RULES.md |
+| L2 项目规则 | ✅ 完成 | 6个主要项目均有 PROJECT-RULES.md（另 automated-task/personal-website/personal-agents/topics 为任务型目录，未建） |
 | L3 规范文档 | 🔄 充实中 | methodology / SOP / 调研框架已具，待深化 |
 | L4 Memory | ✅ 可用 | MEMORY.md 索引 + 03-Memory/ 结构化记忆 |
-| 工作台系统 | ✅ 运行中 | 6个活跃项目、6标准文件模板 |
+| 工作台系统 | ✅ 运行中 | 10 个项目目录（6 主要 + automated-task/personal-website/personal-agents/topics）、6标准文件模板 |
 | 模板层 | ✅ 完成 | 04-Templates/ 统一管理所有模板 |
 | 工具链 | ✅ 完备 | 备份自动化 / 编码修复 / Git同步 |
 

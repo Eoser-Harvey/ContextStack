@@ -189,6 +189,15 @@ Switch Topics        Load Workbench            Update Status
 - 记录配置位置和作用
 - 包含变更历史
 
+### 路径描述规范
+- 描述文件路径时一律以 ContextStack 为根目录使用相对路径（如 `01-Projects/embedded-ai-learning/`），不写绝对路径
+- 工具调用所需的绝对路径除外（仅内部执行使用）
+
+### 单一事实源
+- 本文件（GLOBAL-RULES.md）为所有 AI 行为规则的**唯一权威源**
+- MEMORY.md 仅作跨 session 索引与历史教训引用，不重复定义规则
+- always-applied 治理 Skills 为加载兜底的安全网，内容应与本文件保持一致
+
 ## 🎯 协作模式
 
 ### 我的工作模式

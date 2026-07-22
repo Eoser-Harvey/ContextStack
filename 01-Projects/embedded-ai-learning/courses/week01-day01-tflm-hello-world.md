@@ -1,7 +1,8 @@
 # Week 1 Day 1：从 TFLM hello_world 理解神经网络
 
-> **日期**：2026-05-09
-> **状态**：进行中
+> **日期**：2026-07-22（初建 2026-05-09）
+> **状态**：已完成
+> **考核**：AI 助教评分 ≈7/10（思考题 Q1 架构类比、Q3 报错机制已补强；任务1-3 参考版已齐，文件自洽）
 > **主线**：TFLM 源码阅读
 > **辅线**：DL 基础概念（围绕 TFLM 讲解）
 > **源码根目录**：`source/tflite-micro-main/`
@@ -203,16 +204,16 @@ hello_world 模型功能：**输入 x，输出 sin(x) 的近似值**
 输出: ≈ sin(x)                  （误差 < 0.05）
 ```
 
-**关键理解**：不是用 `sin()` 函数算的，而是通过大量"神经元"的乘加运算逼近出来的。这就是神经网络的本质 —— **用简单数学运算逼近任意复杂函数**。
+**关键理解**：不是用 `sin()` 函数算的，而是通过大量"神经元"的乘加运算逼近出来的。这就是神经网络的本质 —— **用简单数学运算逼近任意复杂函数**。泰勒级数是「解析函数用固定幂基逼近」，神经网络是「任意函数用可学习的简单运算组合逼近」——目的一样，手段一个死板一个灵活。
 
 ---
 
 ## 三、一个神经元在 TFLM 里的实现
 
-打开 `tensorflow/lite/micro/kernels/fully_connected.cc`，核心计算：
+下面用简化代码展示核心计算（**真实的乘加循环位于 `tensorflow/lite/kernels/internal/reference/fully_connected.h` 的 `FullyConnected()` 函数里；`kernels/fully_connected.cc` 只是调度器/注册表，本身不含循环**）：
 
 ```cpp
-// 全连接层 = 矩阵乘法 + 偏置 + 激活函数
+// 全连接层(FullyConnected) = 矩阵乘法 + 偏置 + 激活函数
 // output = activation(input × weights + bias)
 
 for (int i = 0; i < output_dim; i++) {
@@ -225,6 +226,8 @@ for (int i = 0; i < output_dim; i++) {
 ```
 
 **两层 for 循环，和普通矩阵运算没有区别。**
+在 MCU 上，TFLM 推理 = 拿着 .tflite 里的权重数字，跑这些 for 循环做加减乘。和你写个普通程序算 y = Wx + b 没有本质区别。差别只在于：①权重是训练好的、存在二进制文件里；②可能用 int8 量化替代 float；③要在一块极小内存的芯片上高效跑。
+全连接层 = FullyConnected 算子；这个算子的核心就是「两层 for 循环做矩阵乘加 + 一个激活函数」，跟普通矩阵运算完全相同——这就是神经网络推理的全部底牌。
 
 ---
 
@@ -241,20 +244,6 @@ for (int i = 0; i < output_dim; i++) {
 
 ---
 
-## 今日任务
-
-- [ ] 通读 `hello_world_test.cc`，找到 `LoadFloatModelAndPerformInference()` 函数，理解 6 步流程
-- [ ] 打开 `models/` 目录，找到 `.tflite` 文件，感受"模型就是二进制数据"
-- [ ] 打开 `tensorflow/lite/micro/kernels/fully_connected.cc`，找到矩阵乘法核心循环
-
-## 思考题
-
-1. `MicroInterpreter` 的 `Invoke()` 做了什么？和 RTOS 任务调度有什么相似？
-2. 为什么 TFLM 需要 `tensor_arena`（预分配内存），而 PC 上的 TensorFlow 不需要？
-3. `OpResolver` 是什么？如果模型有卷积层但没注册 `AddConv2D()`，会发生什么？
-
----
-
 ## 关键概念速查
 
 | 概念 | 一句话解释 |
@@ -268,6 +257,33 @@ for (int i = 0; i < output_dim; i++) {
 
 ---
 
+
+## 今日任务
+
+- [ ] 通读 `hello_world_test.cc`，找到 `LoadFloatModelAndPerformInference()` 函数，理解 6 步流程
+- [ ] 打开 `models/` 目录，找到 `.tflite` 文件，感受"模型就是二进制数据"
+- [ ] 打开 `tensorflow/lite/kernels/internal/reference/fully_connected.h`，找到 `FullyConnected()` 里 `for (int d = 0; d < accum_depth; ++d)` 这个**内层乘加循环**（即 `total += input_data[...] * weights_data[...]`）；注意 `kernels/fully_connected.cc` 只是调度器，不含核心循环，别找错文件
+
+## 思考题
+
+1. `MicroInterpreter` 的 `Invoke()` 做了什么？和 RTOS 任务调度有什么相似？
+>> MicroInterpreter 是模型相关的初始化挂载，Invoke 是模型推理;
+> **优化/参考**：`MicroInterpreter` 是 TFLM 的「模型执行器」对象——构造时绑定 model（`.tflite` 二进制）、`tensor_arena`（内存池）、`OpResolver`（算子登记表）；`AllocateTensors()` 一次性划分好 arena；`Invoke()` 执行推理 = 按模型里的算子序列**依次调用每个算子的 `Eval`**（如 `FullyConnectedEval`），完成整网前向传播。
+> 与 RTOS 调度的相似：**两者都是「分发器(dispatch)」模式**——一个中央循环按既定顺序遍历「已注册的处理单元」并逐个调用。RTOS 调度器遍历就绪任务、调用各自任务函数；`Invoke()` 遍历节点列表、调用各自算子的 `Eval`。无硬依赖，但**架构同构：注册表 + 遍历分发**。这也正是 `OpResolver` 可插拔解耦设计的体现。（你原答"没必然关系"漏掉了这层设计类比。）
+
+2. 为什么 TFLM 需要 `tensor_arena`（预分配内存），而 PC 上的 TensorFlow 不需要？
+>> 因为一方面MCU内存有限，而且如果动态分配容易出现内存碎片; PC上内存大不需要考虑内存不足的问题;
+> **优化/参考**：主因你答对了，补两点：①**确定性时延**——MCU 无 OS 托管堆，若推理中 `malloc/free` 会导致执行时间不可预测、违背嵌入式实时性；arena 在启动期**一次性预分配**连续缓冲，推理全程零动态分配。②arena 装的不只是权重（权重在 Flash/`.tflite` 里），更重要的是**层间中间激活张量**（瞬时占用最大）。PC 有 GB 内存 + 虚拟内存 + 成熟堆管理，动态分配代价可忽略，故 TF 不需要 arena。
+
+3. `OpResolver` 是什么？如果模型有卷积层但没注册 `AddConv2D()`，会发生什么？
+>> OpResolver 是注册算子;没有注册就使用应该是会报错吧，但是具体是哪里报错，啥机制实现的？
+> **优化/参考**：`OpResolver` = 算子登记表，内部 `registrations_[]` 数组把「算子类型码 builtin_code → `TFLMRegistration`（含 init/prepare/invoke 函数指针）」映射起来，用 `AddConv2D()` 等登记。
+> 没注册的报错机制（已核实源码）：①MicroInterpreter 准备节点时对每个模型算子调 `GetRegistrationFromOpCode()`（`micro_interpreter.cc:124`）；②它内部调 `op_resolver.FindOp(builtin_code)`（`micro_op_resolver.cc:35`），`FindOp` 线性扫描 `registrations_`；③没找到→返回 `nullptr`→打印 `Didn't find op for builtin opcode 'CONV_2D'`（`micro_op_resolver.cc:37`）→返回 `kTfLiteError`；④报错发生在 **Prepare/AllocateTensors 阶段（模型装载期）**，不是推理跑到那层才崩，`Invoke()` 根本跑不起来。
+
+4. 「层=算子」「推理=for循环做乘加」
+
+---
+
 ## ✍️ 思考题答题区
 
 ### 问题1：`MicroInterpreter` 的 `Invoke()` 做了什么？和 RTOS 任务调度有什么相似？
@@ -278,7 +294,7 @@ for (int i = 0; i < output_dim; i++) {
 3. 嵌入式系统中为什么需要避免动态调度？`Invoke()` 的调用是静态确定的吗？
 
 > **作答（2026-06-09）：**
-> 
+>
 > `Invoke()` 做的事：**按模型图拓扑顺序，逐个调用注册的算子，完成一次完整的前向推理。**
 > 
 > 源码证据：`MicroInterpreter` 内部持有 `MicroInterpreterGraph`（见 `micro_interpreter.h` 第 34 行 `#include`），`Invoke()` 会遍历图的节点列表，对每个节点查 `OpResolver` 找到对应的 `TfLiteRegistration`，然后调用 `registration->invoke()`。
@@ -374,15 +390,36 @@ for (int i = 0; i < output_dim; i++) {
 3. `golden_inputs` 数组的值是什么？模型在做什么数学运算？
 4. `RegisterOps(op_resolver)` 内部调用了什么函数？为什么要注册算子？
 
+> **参考/优化：** 真实 6 步可见 `hello_world_test.cc:69-100`：
+> 1. `GetModel(g_hello_world_float_model_data)`（70-71）：把 `.tflite` C 数组映射成 `tflite::Model` 视图，**不拷贝不解析**，轻量。↔ 嵌入式"固件镜像映射"。
+> 2. `TFLITE_CHECK_EQ(model->version(), TFLITE_SCHEMA_VERSION)`（72）：模型 schema 版本与库版本校验。↔ bootloader/兼容性检查。
+> 3. `RegisterOps(op_resolver)` → `AddFullyConnected()`（32-35,74-75）：注册算子。↔ 外设驱动/中断向量注册。
+> 4. `uint8_t tensor_arena[3000]`（79-80）：栈上一次性分配内存池。↔ 启动期静态内存分配（bss/全局区）。
+> 5. `MicroInterpreter interpreter(...)`（82-83）：把 model+op_resolver+arena 绑成运行时对象。↔ 系统/运行时初始化。
+> 6. `interpreter.AllocateTensors()`（84）：在 arena 内划分各层输入/输出/中间激活内存。↔ 资源就绪、进主循环前最后一步。
+> 之后 `for` 循环：`input(0)->data.f[0]=golden; Invoke();` 读 `output(0)` 与 `sin()` 比对（误差<0.05）。
+> **Q2 arena 为何 3000**：注释明说"just a round number"（77-78），由 `RecordingMicroInterpreter` 实测得出，非魔法数。hello_world 网络极小（1 入、几个 FC 隐藏层、1 出），3000 字节够；真实项目用它量出峰值再留余量。
+> **Q3 golden_inputs**：`{0,1,3,5}`（90）；模型在逼近 `sin(x)`（96 行用 `sin()` 做基准）= "用神经网络拟合 sin"。
+> **Q4 RegisterOps 内部**：调 `op_resolver.AddFullyConnected()`（33）。注册目的：让 OpResolver 持有该算子的 init/prepare/invoke 实现，解释器靠 `FindOp` 查表调用；只注册用到的算子可**减小二进制体积**（不链接无用算子）。
+
 > （记录你的理解和发现）
 
 ### 任务2：查看 `models/` 目录下的 `.tflite` 文件
 
 **提示问题：**
 1. 文件大小是多少？（浮点模型 vs INT8 量化模型）
+>> 分别是4kb 3kb;为什么不是4倍?
 2. 为什么模型文件可以直接嵌入到 C 代码中（通过 `#include "model_data.h"`）？
+>> 因为模型文件是二进制数据，直接用 `#include` 引入就行了，不需要特殊处理。
 3. 这种“模型即数组”的方式对嵌入式部署有什么好处？
+>> 方便嵌入到嵌入式代码
 4. 尝试用文本编辑器打开 `.tflite` 文件，你看到了什么？
+>> 乱码；是二进制
+> **参考/优化（任务2，你的答案基本正确，补强如下）：**
+> Q1 大小 4KB/3KB ✓。**为何不是 4 倍**：`.tflite` 是 FlatBuffer，含**固定结构开销**（文件头、schema 引用、张量元数据、计算图结构），这部分**不随权重精度缩小**；且 int8 模型反而**多出量化参数**（每张量 scale/zero_point，甚至 per-channel），float 模型没有。hello_world 权重在总体积中占比小，故 4KB→3KB 仅缩 ~25%，远非 4 倍。
+> Q2 ✓ 正确：模型经 `xxd` 转成 `unsigned char` 数组（`model_data.h`），`#include` 即编入固件，无需文件系统/加载器。
+> Q3 ✓ 方向对，说透：①无需文件系统与运行时加载器；②与代码同处 Flash，单固件即可部署；③地址确定、可纳入版本管理；④启动即用、无 I/O 延迟。即"模型即数组"对嵌入式部署的核心价值。
+> Q4 ✓ 观察正确。`.tflite` 是 FlatBuffer **二进制序列化**格式，文本编辑器按字符解码自然成乱码；看结构要用 Netron 或代码解析，不能拿记事本硬开。
 
 > （记录你的感受）
 
@@ -393,6 +430,12 @@ for (int i = 0; i < output_dim; i++) {
 2. 注意代码中的 `#ifdef` 分支，TFLM 如何支持浮点、INT8、INT4 等不同数据类型的？
 3. 为什么嵌入式实现要避免动态内存分配（`malloc`）？
 4. 全连接层的两层 for 循环的时间复杂度是多少？对于嵌入式设备这意味着什么？
+
+> **参考/优化（任务3，你未作答，补全）：**
+> Q1 `FullyConnectedEval`（fully_connected.cc:108）本身不做乘加，而是**调度**——按 `input->type` 分流（float/int8/int16，见 139 行 switch），调 `reference_ops::FullyConnected` / `reference_integer_ops::FullyConnected`。真正的 `output=activation(input×weights+bias)` 在那里的三层 for 循环（`reference/fully_connected.h:50-64`，我们此前定位）。
+> Q2 多数据类型支持：同一 `Eval` 用 `switch(input->type)` + 子 `switch(filter->type, is_per_channel)` 分发到 float/int8/int4/int16 等 reference 实现；另有厂商优化版（`cmsis_nn/` `xtensa/` `arc_mli/` 等）为**独立 .cc 文件**，编译期按平台选用（非本文件 #ifdef）。即"通用分发 + 平台特化内核"两级结构。
+> Q3 避免 malloc：MCU 无 OS 托管堆。动态分配会①产生**内存碎片**、长期运行可能分配失败；②执行时间**不可预测**，违背实时性。故 TFLM 全程用 arena + scratch buffer 静态分配（呼应思考题 Q2）。
+> Q4 时间复杂度：单层 FC 约 **O(input_dim × output_dim)** 次乘加（MAC）。对嵌入式：计算量随网络宽度平方增长，大模型=巨量 MAC=慢/高功耗。应对：①小网络；②int8 量化（内存~1/4、常可 SIMD 加速）；③用 CMSIS-NN 等优化内核在 Cortex-M 上加速。
 
 > （记录核心代码片段和理解）
 
@@ -448,6 +491,7 @@ for (int i = 0; i < output_dim; i++) {
 ## 🎯 AI 助教反馈
 
 > （AI 批改后填写）
+打分7分，总分10分
 
 ---
 

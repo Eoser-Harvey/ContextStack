@@ -4,6 +4,16 @@
 
 ---
 
+## 2026-07-22
+
+### ✅ Week 1 完成 + 🔄 Week 2 已排
+- Week 1（TFLM 四组件架构 + hello_world 源码剖析）已完成；课程文件 `week01-day01-tflm-hello-world.md` 状态→已完成，AI 助教考核 ≈7/10
+- 思考题（4 题）+ 任务 1-3 参考版已补全，文件自洽；关键认知：层=算子、推理=for 循环乘加、OpResolver 缺算子报 `Didn't find op`、arena 静态分配
+- Week 2 文档已建：`courses/week02-model-conversion-pytorch.md`（PyTorch→ONNX→TFLite→TFLM 全链路 + Netron，含理论/代码/习题/面试/补充）
+- 下一步：执行 Week 2（自训 sin 模型→转换→Netron→跑通 TFLM）
+
+---
+
 ## 2026-07-21
 
 ### 🔄 重启（响应"不能停滞不前"）
