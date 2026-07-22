@@ -129,7 +129,9 @@ class MicroMutableOpResolver : public MicroOpResolver {
 > | 模型用了几种**算子类型** | 通常 3~8 种 | Conv2D、FC、Softmax、MaxPool → 4 种 → `<4>` 就够 |
 > | `<N>` 的值 | = 算子类型数（偶尔 +1 留余量） | hello_world 只用 FULLY_CONNECTED → `<1>` 刚好 |
 >
-> **实操技巧**：用 [Netron](https://netron.app) 打开 `.tflite` 文件，数一下左侧算子列表里有几种不同的 op 类型，就是 `<N>` 的值。留 1~2 个余量也不浪费多少内存，写少了会初始化报错。
+> **实操技巧**：用 [Netron](https://netron.app) 打开 `.tflite` 文件，看**画布上每个节点盒子的标签**（盒子里的字就是算子类型，如 `Conv2D`/`Relu`/`Reshape`）；点节点后**右侧 Properties 面板的 `type` 字段**也会明确写出算子类型。Netron 没有「自动统计算子种类」的面板，所以要把所有节点标签**去重计数**才是 `<N>`（图大时肉眼易漏，见下「精确法」）。留 1~2 个余量也不浪费多少内存，写少了会初始化报错。
+>
+> **精确法（推荐）**：把 `.tflite` 文件路径给 AI，用 flatbuffer schema 直接解析出「算子种类数 + 每种次数」，一步得到 `<N>`，比肉眼扫准。
 
 **如果写 `<5>` 但只注册了 3 个？** → 编译器分配了 5 个槽位但只用 3 个，内存略浪费但不影响功能。**反过来写 `<1>` 但注册 2 个？** → 第二个注册返回 `kTfLiteError`（安全失败，不会数组越界）。
 
