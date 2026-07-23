@@ -39,7 +39,7 @@
 | **User**   | 习惯和偏好                  | 简洁直接、自动化脚本、配置备份                                                   | 全部            | 2026-04-27 |
 | **User**   | 路径和配置                  | 项目关键路径映射                                                               | 全部            | 2026-05-23 |
 | **User**   | 当前薪资                    | 30K×16=53W/年，底线65-70W                                                      | 全部            | 2026-06-10 |
-| **Project** | 嵌入式AI学习                | TFLM 源码驱动学习，Week 1 Day 1 完成                                            | 01-Projects/embedded-ai-learning | 2026-05-13 |
+| **Project** | 嵌入式AI学习                | TFLM 源码驱动学习。Week 1 ✅已完成；Week 2/3 课程材料已建（待学）；总计 3 课文件，1833 个 TFLM 源码文件 | 01-Projects/embedded-ai-learning | 2026-07-24 |
 | **Project** | 网络设备调试                | 工业交换机问题排查（IE4120/IE4300/IE4500）                                        | 01-Projects/network-device-debug | 2026-05-07 |
 | **Project** | 腾讯云AI编程培训             | 培训资料归档                                                                   | 01-Projects/tencent-cloud-training | 2026-05-07 |
 | **Project** | BTC温度仪表盘               | 加密货币市场可视化                                                              | 01-Projects/btc-temperature-gauge | 2026-05-07 |
@@ -132,11 +132,11 @@
 ### Project — 活跃项目
 
 #### 嵌入式AI学习
-- 状态: 学习阶段
-- TFLM源码: 本地 TFLM 源码目录
-- 技术栈: TensorFlow Lite Micro, C/C++, 嵌入式开发
+- 状态: 学习阶段（Week 1 ✅已完成，Week 2/3 课程材料已建待学）
+- TFLM源码: `01-Projects/embedded-ai-learning/source/tflite-micro-main`（1833 个文件）
+- 技术栈: TensorFlow Lite Micro, C/C++, 嵌入式开发, PyTorch（辅）
 - 学习原则: TFLM为主,PyTorch为辅
-- 当前进展: Week 1 Day 1 完成
+- 课程进度: Week 1 ✅ (TFLM四组件+hello_world) | Week 2 🔄 (模型转换) | Week 3 🔄 (CNN+数据+训练) — 均待学习
 - GitHub: https://github.com/Eoser-Harvey/ContextStack
 
 #### 网络设备调试

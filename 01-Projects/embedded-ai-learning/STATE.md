@@ -4,6 +4,17 @@
 
 ---
 
+## 2026-07-24
+
+### 📌 Week 3 课程材料已建（待学习）
+- 课程文件 `courses/week03-data-training-cnn.md`（~830 行，v1.0）
+- 内容覆盖：CNN 三算子源码剖析（conv/pooling/softmax）、数据预处理与归一化、数据增强（图像 5 件套 + 工业时序特有）、训练三件套（LR调度/EarlyStopping/Dropout）、SGD vs Adam、CIFAR-10 完整训练模板
+- 含 4 道思考题 + 2 道扩展思考题（ESP32-S3 容量检验 / 1D CNN 深度选型）+ TFLM 部署准备 Checklist
+- Week 4 衔接预告：INT8 量化 + 剪枝 + 蒸馏 + ESP32-S3 全链路部署
+- ⚠️ **Rule 4 触发**：项目状态变更，已同步更新 STATE / MEMORY.md / ACTIONS / index.md
+
+---
+
 ## 2026-07-22
 
 ### ✅ Week 1 完成 + 🔄 Week 2 已排
