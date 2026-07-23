@@ -56,6 +56,14 @@
 
 ---
 
+### 2026-07-23: 梁文锋四小时投资人会议实录 — 52条核心语录
+- **来源**: https://mp.weixin.qq.com/s/AWsSjcT9NYbj1W8SWXgb_w
+- **公众号**: elsewhere
+- **整理产物**: `../role-model/liangwenfeng-deepseek-four-hour-investor-meeting-2026-07.md`
+- **概要**: DeepSeek创始人梁文锋四小时投资人会议52条语录提炼为6大模块（一条主线/技术路线图/商业化遥远/开源sweet point/团队稳定性/克制战略）。与已有role-model（老薛/王川/秋兴/兰启昌/J哥）做交叉映射，结合harve个人情况（6项目→砍到2、职业主线定义、成本第一竞争观）给出行动建议。
+
+---
+
 ## 财富认知 / 个人成长
 
 ### 2026-05-29: 不懂经回归第1更 — 范式转移时代的财富游戏

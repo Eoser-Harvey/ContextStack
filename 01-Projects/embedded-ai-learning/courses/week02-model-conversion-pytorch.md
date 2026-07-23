@@ -162,7 +162,9 @@ open("model.tflite", "wb").write(tflite_model)
 ### 任务2：Netron + TFLM 集成
 1. 在 Netron 里数出你模型的算子种类，它们是否都在 TFLM 的 `AddXxx()` 里有对应？
 2. 把 `.tflite` 转成 C 数组后，烧进 MCU 还需要什么才能跑？（回顾 W1 六步）
+>> 分配内存？
 3. 自训模型在 TFLM 上 `Invoke()` 输出和 Python 端差很多，可能原因？（至少列 3 条）
+>> 训练和部署使用的算子不同；量化参数不一致；
 
 ### 任务3（可选 / 延后）：PyTorch→ONNX
 1. 为什么路径 B 要经过 ONNX，而路径 A 不用？
