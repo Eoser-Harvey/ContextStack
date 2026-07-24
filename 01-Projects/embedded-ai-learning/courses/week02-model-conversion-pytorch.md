@@ -69,6 +69,24 @@ TFLite / .tflite → TFLM C 数组
 >
 > 一句话记：**前向 = 用模型，反向+优化器 = 造模型**。部署岗日常是"用"，但天花板在"不懂造"。
 
+> 🔑 **前置概念：Converter 三个入口的原理（接上框）**
+>
+> **"转换"本质是同一流水线**：无论哪个入口，Converter 内部都走 `读取模型 → 得到一张 TF 计算图(tf.Graph) → 图变换(算子映射/常量折叠/死代码消除) → (可选)量化 float32→int8 → 序列化成 FlatBuffer(.tflite)`。**"跳过 ONNX"只是第 1 步的来源不同**，第 2-4 步完全一样。
+>
+> **为什么 Keras/SavedModel 不需要 ONNX**：Keras 模型底层就是 TensorFlow 的 `tf.Graph`；SavedModel 是 Keras/TF 的**磁盘标准格式**（`saved_model.pb` 计算图 + `variables/` 权重）。TFLite Converter 是 **TensorFlow 官方出品**，对这两种格式是"母语直读"——同团队、同框架、同一种内部表示，无需翻译。
+> - `from_keras_model(model)`：直接拿**内存中** Keras 模型对象 → 内部降格/固化为 `tf.Graph` → 转 TFLite。
+> - `from_saved_model(path)`：从**磁盘**读回 SavedModel → 反序列化为 `tf.Graph` → 转 TFLite。
+>
+> **对比：PyTorch 为什么必须 ONNX**：PyTorch 是另一套框架（Meta），内部表示与 TF 完全不同、Converter 不认。必须先经 **ONNX（开放神经网络交换格式，跨框架通用标准）**翻译成 Converter 能读的外语。即路径 B：PyTorch → ONNX（翻译桥）→ TFLite。**ONNX 是"跨框架翻译桥"：同框架不用翻译，跨框架必须翻译。**
+>
+> | 入口                | 输入               | 读取方式            | 是否需 ONNX | 内部动作                          |
+> |:--------------------|:-------------------|:--------------------|:------------|:----------------------------------|
+> | `from_keras_model`  | 内存中 Keras 模型对象 | 直接访问 Python 对象  | ❌         | Keras 模型降为 tf.Graph → 转 TFLite |
+> | `from_saved_model`  | 磁盘 SavedModel 目录 | 从 .pb + variables/ | ❌         | 反序列化 SavedModel 为 tf.Graph     |
+> | `from_onnx_model`   | 磁盘 .onnx 文件     | 解析 ONNX 格式       | ✅(本身即是) | ONNX 图映射成 TF 图 → 转 TFLite     |
+>
+> **工程提醒**：两个 API **终点完全相同**，只是入口不同（一个吃内存对象、一个吃磁盘文件）。部署流水线更推荐 `from_saved_model`——模型已落盘，不依赖当时的 Python 环境/对象状态。"跳过 ONNX"≠"永远不用学 PyTorch 路径"：真正要部署的开源模型多在 PyTorch 生态，ONNX 桥届时绕不掉。
+
 ### 2.1 最小训练循环（Keras，模板）
 
 ```python
