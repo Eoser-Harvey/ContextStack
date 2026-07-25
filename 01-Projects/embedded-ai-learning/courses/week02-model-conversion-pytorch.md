@@ -144,6 +144,8 @@ converter = tf.lite.TFLiteConverter.from_saved_model("mnist_model")  # 同 from_
 ## 四、把自训模型跑进 TFLM（实践，衔接 W1）
 
 1. 用 `xxd -i model.tflite > model_data.h` 生成 C 数组（或 TFLM 的 `generate_cc_arrays` 工具）。
+>>
+>> 两种工具产物相同（都是 C 数组头文件）：`xxd` 是纯命令行工具（Windows 需装 Git for Windows）；`generate_cc_arrays` 是 TFLM 的 Python 脚本，底层也调 xxd，make 构建系统会自带 xxd。
 2. 把 `model_data.h` 替换进 W1 的 `hello_world_test.cc` 同款工程（或 `examples/` 下的 minimal）。
 3. `RegisterOps` 里按需 `AddFullyConnected()` / `AddSoftmax()` / `AddReshape()`。
 4. `AllocateTensors` → `Invoke` → 打印输出，与 Python 端推理结果对比（误差应极小）。
@@ -201,6 +203,7 @@ open("model.tflite", "wb").write(tflite_model)
 ### 任务1：Keras 训练 + TFLite 转换（主线，必做）
 1. `model.fit()` 内部做了什么？为什么部署时这些步骤都不需要？
 2. `from_keras_model` 和 `from_saved_model` 入口区别？为什么路径 A 不需要 ONNX？
+>> 区别在于是否使用原生TF训练模型；一个是内存，一个是磁盘获取；TF直接可以转换成TFLite，不需要经过ONNX。
 3. 转换时报"op not supported by TFLite"，有哪些解法？（3 种以上）
 
 ### 任务2：Netron + TFLM 集成
