@@ -144,7 +144,6 @@ converter = tf.lite.TFLiteConverter.from_saved_model("mnist_model")  # 同 from_
 ## 四、把自训模型跑进 TFLM（实践，衔接 W1）
 
 1. 用 `xxd -i model.tflite > model_data.h` 生成 C 数组（或 TFLM 的 `generate_cc_arrays` 工具）。
->>
 >> 两种工具产物相同（都是 C 数组头文件）：`xxd` 是纯命令行工具（Windows 需装 Git for Windows）；`generate_cc_arrays` 是 TFLM 的 Python 脚本，底层也调 xxd，make 构建系统会自带 xxd。
 2. 把 `model_data.h` 替换进 W1 的 `hello_world_test.cc` 同款工程（或 `examples/` 下的 minimal）。
 3. `RegisterOps` 里按需 `AddFullyConnected()` / `AddSoftmax()` / `AddReshape()`。
@@ -209,7 +208,6 @@ open("model.tflite", "wb").write(tflite_model)
 ### 任务2：Netron + TFLM 集成
 1. 在 Netron 里数出你模型的算子种类，它们是否都在 TFLM 的 `AddXxx()` 里有对应？
 2. 把 `.tflite` 转成 C 数组后，烧进 MCU 还需要什么才能跑？（回顾 W1 六步）
->> 分配内存？
 3. 自训模型在 TFLM 上 `Invoke()` 输出和 Python 端差很多，可能原因？（至少列 3 条）
 >> 训练和部署使用的算子不同；量化参数不一致；
 
@@ -223,10 +221,20 @@ open("model.tflite", "wb").write(tflite_model)
 2. 路径 A 和路径 B 最终产出的 `.tflite` 本质是否相同？区别在哪一步？
 
 > **参考/优化（学习时展开）：**
-> **任务1**：①`fit()` = 前向(乘加)+算 loss+反向(算梯度)+优化器更新权重，循环多轮；部署只做前向，无需梯度/优化器。②`from_keras_model` 直接吃内存中模型对象，`from_saved_model` 吃磁盘 SavedModel 目录；两者都跳过 ONNX 是因为 Keras 原生就属于 TF 生态，Converter 能直接解析，不需中间标准桥。③解法：a. `target_spec.supported_ops` 含对应 builtin 或 `SELECT_TF_OPS`；b. `allow_custom_ops=True` + 自己实现 TFLM 算子；c. 回训练端把不支持的算子替换成 TFLM 支持的等价结构再重导。
-> **任务2**：①逐一对照 TFLM `micro_mutable_op_resolver.h` 的 `AddXxx` 清单，缺哪个就 `Add` 哪个，否则 `Invoke` 前 Prepare 阶段报 "Didn't find op"（见 W1 思考题 #3）。②还需：Arena 内存够、OpResolver 注册齐全、输入张量正确填充、输出张量读取（W1 六步）。③a. 权重/输入未做同样的预处理（归一化）不一致；b. 量化参数(scale/zero_point)不匹配（若用了 int8）；c. 输入数据 layout/shape 与训练时不同；d. 算子版本/数值精度(float vs double)差异累积。
-> **任务3**：①ONNX 是开放中间标准，解耦 PyTorch 私有格式与 TF Converter；路径 A 的 Keras 本就是 TF 格式，Converter 直读无需中转。②`dynamic_axes` 让 batch 维可变，否则导出图 batch 维被固定为 1，换 batch 大小会 shape 不匹配。③查算子是否在 PyTorch→ONNX 支持列表；调 `opset_version`；自定义算子写 symbolic；或绕路用等价算子组合。
-> **任务4**：①常见原因：未量化（仍是 float32，比 int8 大 4×）；图含 TFLM 不支持算子被降级成更大的 TF 算子；metadata/签名信息膨胀——用 Netron 比对节点数与大小。②本质相同——都是 FlatBuffer 推理图，TFLM 都认；区别只在"来源格式不同导致转换中间步骤不同"，最终 `.tflite` 结构等价。
+> **任务1**：
+①`fit()` = 前向(乘加)+算 loss+反向(算梯度)+优化器更新权重，循环多轮；部署只做前向，无需梯度/优化器。②`from_keras_model` 直接吃内存中模型对象，`from_saved_model` 吃磁盘 SavedModel 目录；两者都跳过 ONNX 是因为 Keras 原生就属于 TF 生态，Converter 能直接解析，不需中间标准桥。
+③解法：a. `target_spec.supported_ops` 含对应 builtin 或 `SELECT_TF_OPS`；b. `allow_custom_ops=True` + 自己实现 TFLM 算子；c. 回训练端把不支持的算子替换成 TFLM 支持的等价结构再重导。
+> **任务2**：
+①逐一对照 TFLM `micro_mutable_op_resolver.h` 的 `AddXxx` 清单，缺哪个就 `Add` 哪个，否则 `Invoke` 前 Prepare 阶段报 "Didn't find op"（见 W1 思考题 #3）。
+②还需：Arena 内存够、OpResolver 注册齐全、输入张量正确填充、输出张量读取（W1 六步）。
+③a. 权重/输入未做同样的预处理（归一化）不一致；b. 量化参数(scale/zero_point)不匹配（若用了 int8）；c. 输入数据 layout/shape 与训练时不同；d. 算子版本/数值精度(float vs double)差异累积。
+> **任务3**：
+①ONNX 是开放中间标准，解耦 PyTorch 私有格式与 TF Converter；路径 A 的 Keras 本就是 TF 格式，Converter 直读无需中转。
+②`dynamic_axes` 让 batch 维可变，否则导出图 batch 维被固定为 1，换 batch 大小会 shape 不匹配。
+③查算子是否在 PyTorch→ONNX 支持列表；调 `opset_version`；自定义算子写 symbolic；或绕路用等价算子组合。
+> **任务4**：
+①常见原因：未量化（仍是 float32，比 int8 大 4×）；图含 TFLM 不支持算子被降级成更大的 TF 算子；metadata/签名信息膨胀——用 Netron 比对节点数与大小。
+②本质相同——都是 FlatBuffer 推理图，TFLM 都认；区别只在"来源格式不同导致转换中间步骤不同"，最终 `.tflite` 结构等价。
 
 ---
 
@@ -244,6 +252,39 @@ open("model.tflite", "wb").write(tflite_model)
 4. 为什么嵌入式部署偏爱"静态图"而非"动态图"？
 
 > （你的答案写在这里）
+
+### 7.2 参考答案（AI 整理，供对照）
+
+**① 训练框架 → TFLite → TFLM 各阶段"丢掉/保留"（路径 A）**
+
+| 阶段 | 保留 | 丢掉 |
+|:-----|:-----|:-----|
+| 训练框架（Keras/TF） | 前向图、权重、反向、优化器、autograd、训练管线 | —（全有） |
+| TFLite（转换后） | 前向计算图、权重（可量化 int8）、I/O 签名、metadata | 反向/梯度、优化器、autograd、训练循环、Python 运行时 |
+| TFLM（部署端） | 前向算子实现、量化权重、C 数组、静态内存 arena | 动态 shape/控制流灵活性、未注册算子、Host OS/Python 依赖、动态分配 |
+
+> 一句话：训练侧"全栈"，TFLite 砍到"只前向"，TFLM 再砍到"只认已注册前向算子 + 裸机可跑"。
+
+**② FlatBuffer 相比 JSON/Protobuf 在嵌入式端的 3 个优势**
+
+1. **零拷贝/零解析**：数据序列化后可直接内存映射（`mmap`）按偏移访问字段，不必整体反序列化成对象树。JSON 要全解析成对象、Protobuf 也要 decode——都吃 RAM 和 CPU，MCU 扛不住。
+2. **体积极小 + 无反射依赖**：二进制紧凑，无 JSON 那种"每字段名重复存字符串"的开销；读取**不需要 schema/反射库**也能按已知偏移取部分字段 → 代码体积更小，适合 MCU。
+3. **随机访问 + 向前兼容**：可只读取需要的子图/张量而不加载全部；新增字段向后兼容、不破坏旧解析逻辑 → OTA 升级模型时不必强制更新固件解析代码。
+
+> 注：Protobuf 也二进制紧凑，但**必须反序列化成对象才能访问**且需代码生成/反射；FlatBuffer 的差异化优势正是"免解析 + 免反射"。
+
+**③ 转 TFLite 后体积反而变大的 3 种可能原因**
+
+1. **未量化**：默认仍是 float32（4 字节）。若对比基准是训练时的 float16/混合精度、或已压缩的 checkpoint/量化 onnx，未量化 tflite 反而大（约 4× int8）。
+2. **算子降级膨胀**：TFLM 不支持的算子被 fallback 成更大的通用 TF 算子或拆成多个基础算子（如复杂激活/自定义层展开），节点数与常量成倍膨胀。
+3. **未融合/冗余保留**：BatchNorm 未折叠进 Conv（多一套参数）、保留 metadata/signature_defs/控制流中间张量、或转换优化被关掉导致死代码/常量未折叠。用 Netron 比对节点数与大小即可定位。
+
+**④ 为什么嵌入式部署偏爱"静态图"而非"动态图"**
+
+1. **内存可预测**：静态图结构在转换期就固定，编译期已知每层 I/O 张量大小 → TFLM 用静态 arena 一次性分配，总 RAM 可确定，不会运行时爆栈/碎片。动态图需运行时建图+动态分配，MCU 资源紧张承受不起。
+2. **可离线优化 + 可部署**：静态图能做算子融合、常量折叠、量化校准；动态图（PyTorch eager）每步解释执行、依赖 autograd 与 Python，无法在裸 MCU 跑、耗时也不可预测。
+3. **无重运行时依赖**：静态图序列化后只需轻量解释器（TFLM），不依赖 Python/autograd/动态调度；动态图框架太重，跑不了。
+4. **确定性时延**：静态执行路径固定，实时性可控——工业/控制场景的关键诉求。
 
 ---
 
