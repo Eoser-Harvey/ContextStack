@@ -10,11 +10,12 @@
 """
 import json
 import os
+import re
 import time
 import yaml
 import requests
 from datetime import datetime
-# from profile_loader import load_latest_profile  # 已屏蔽，不再需要个人画像
+from profile_loader import load_latest_profile
 
 
 # ====== 默认值（优先从 .secrets.yaml 或环境变量读取） ======
@@ -198,7 +199,7 @@ def build_lark_messages(tweets):
         username = tweet.get("display_name", tweet.get("username", ""))
         content = tweet.get("content", "")
         translated = tweet.get("translated", "")
-        # analysis = tweet.get("analysis", {})  # 已屏蔽，不再使用分析评论
+        analysis = tweet.get("analysis", {})
         published = tweet.get("published_at", "")
 
         emoji_map = {
@@ -224,12 +225,28 @@ def build_lark_messages(tweets):
             msg += f"翻译: {translated}\n"
             msg += "━━━━━━━━━━━━━━━━━━━━\n"
 
-        # 分析评论已屏蔽 — 不再显示个性化投资/职业/生活/家庭建议
+        # 分析评论 — 基于个人画像的个性化建议
+        if analysis.get("investment"):
+            msg += f"📈 投资: {analysis['investment']}\n"
+            msg += "━━━━━━━━━━━━━━━━━━━━\n"
+        if analysis.get("career"):
+            msg += f"💼 职业: {analysis['career']}\n"
+            msg += "━━━━━━━━━━━━━━━━━━━━\n"
+        if analysis.get("life"):
+            msg += f"🧘 生活: {analysis['life']}\n"
+            msg += "━━━━━━━━━━━━━━━━━━━━\n"
+        if analysis.get("family"):
+            msg += f"👨‍👩‍👧 家庭: {analysis['family']}\n"
+            msg += "━━━━━━━━━━━━━━━━━━━━\n"
 
         msg += "\n━━━━━━━━━━━━━━━━━━━━"
         msgs.append(msg)
 
-    # 行动清单已屏蔽 — 不再推送个人画像相关提醒
+    # 行动清单 — 基于个人画像动态生成
+    profile = load_latest_profile()
+    if profile:
+        checklist = _build_dynamic_checklist(profile)
+        msgs.append(checklist)
 
     return msgs
 
