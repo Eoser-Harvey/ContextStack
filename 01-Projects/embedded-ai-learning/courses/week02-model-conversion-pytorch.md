@@ -358,6 +358,11 @@ open("model.tflite", "wb").write(tflite_model)
 
 - **工具**：`netron`（可视化）、`xxd`/`generate_cc_arrays`（转 C 数组）、`tensorflowjs_converter`（若涉及 Web）、`onnx-simplifier`（路径 B 导出后图化简）。
 - **常见坑**：PyTorch 默认 NCHW、TFLite 常用 NHWC，路径 B 转完要在输入前做 `permute`；动态 shape 必须 `dynamic_axes`；ONNX opset 版本与转换端要匹配。路径 A（Keras）默认 NHWC，坑更少。
+  > **坑点详解（路径 B = PyTorch→ONNX→TFLite 比路径 A 坑多，根子是跨框架约定不一致）：**
+  > - **① NCHW vs NHWC = 图片在内存里的排列顺序不同**：4 维张量 [N,C,H,W] 的维度次序。NCHW=[批次,通道,高,宽]（PyTorch 默认，先排完所有 R 再 G 再 B）；NHWC=[批次,高,宽,通道]（TFLite/TF 默认，每像素 R,G,B 交错）。**坑**：PyTorch 训的模型转 TFLite 后，输入须按 NHWC 喂，否则模型把通道当宽高读、输出变垃圾；转完要在喂数据前做 `permute(0,2,3,1)` 重排。路径 A（Keras）本就 NHWC，无此重排坑 → 坑更少。
+  > - **② dynamic shape / `dynamic_axes` = 导出时声明哪些维度可变**：ONNX 默认把形状写死。输入尺寸会变的模型（图片大小/序列长度可变）导出须用 `dynamic_axes` 声明可变维；不声明 → ONNX 锁死形状 → 推理喂不同尺寸报错。路径 A 一般固定输入，此坑不突出。
+  > - **③ ONNX opset 版本 = 两端"方言版本"要兼容**：ONNX 算子按 opset 版本定义，PyTorch 导出端与 TFLite 转换端须识别同一兼容版本；版本对不上 → 出现对方不认识的算子 → 转换失败。路径 A 同生态（TF）转换，无跨"方言版本"问题。
+  > - **一句话**：三个坑本质都是跨框架约定不一致（布局顺序 / 形状可变性 / 算子版本）。没必须部署 PyTorch 模型时，先吃透路径 A（Keras/TF 原生部署）。
 - **延伸阅读**：TFLM `examples/` 下每个示例都自带 `train_*.ipynb` 或 `convert_*.py`，是"训练→转换→部署"的最佳范本，建议读 `hello_world` 和 `mnist` 两个。
 - **与 W4 衔接**：W2 的 sin 拟合 + MNIST 训练脚本，W4 直接拿去做"MCU 上跑 MNIST"实战，省去从头写训练代码。
 - **PyTorch 何时学**：当你要部署的模型来源是 PyTorch（HuggingFace/论文复现/团队已有 .pth）时，再回头学第五节。否则先把 TFLite 原生部署吃透。
