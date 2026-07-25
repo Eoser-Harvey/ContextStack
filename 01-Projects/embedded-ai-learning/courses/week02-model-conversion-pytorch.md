@@ -322,6 +322,26 @@ open("model.tflite", "wb").write(tflite_model)
 - int8 量化在哪个阶段做？转换时量化 vs 训练时量化（QAT）区别？（预演 W2.2）
 - 如何用 `RecordingMicroInterpreter` 精确测出 arena 大小？
 
+> **深度追问参考答：**
+> **① 绕过不支持的算子（如 LayerNorm），不改效果：**
+> - 等价子图替换：在导出/转换端把该算子重写成 TFLM 支持的**基础算子组合**（如 LayerNorm 可拆成 Mean/Sub/Div/Scale），属等价变换、数值一致。
+> - 自定义算子（custom op）：用 C 实现该算子并注册进 `MicroMutableOpResolver`（`allow_custom_ops=True`），效果一致；量化场景须自己保证 int8 内核精度。
+> - ❌ 避免 Flex/Select fallback：需链接完整 TF 运行时，裸 MCU 基本跑不了，非真解。
+> - 注：若训练时把 LayerNorm 换成 BatchNorm（可折叠进前层），属"改结构"，仅在确认效果近似时才用；违背"不改效果"前提时需谨慎。
+>
+> **② int8 量化阶段 + PTQ vs QAT：**
+> - **阶段**：量化在**转换阶段**由 `TFLiteConverter` 固化。PTQ 全程在转换时；QAT 的"伪量化"在**训练时**插入，但最终 int8 固化仍在转换时。
+> - **PTQ（训练后量化）**：float32 模型直接转换时量化，需**校准集**跑一遍收集激活分布定 scale/zero-point。优：简单快、不动训练。缺：小模型/激活范围大时精度损失明显。
+> - **QAT（量化感知训练）**：训练时插伪量化节点，让模型"提前适应"量化噪声，转换时固化为真 int8。优：精度保持远好于 PTQ（int8/int4 必备）。缺：需重训/微调、流程复杂。
+> - 策略：**先 PTQ，不达标再 QAT**（预演 W4 量化实战）。
+>
+> **③ `RecordingMicroInterpreter` 测 arena：**
+> 1. 开一个**故意偏大**的 `tensor_arena` 缓冲（如数十 KB）。
+> 2. 用 `tflite::RecordingMicroInterpreter` 替代 `MicroInterpreter` 构造（同套 op resolver / arena / profiler）。
+> 3. 调 `AllocateTensors()`。
+> 4. 取 `interpreter.GetTensorArenaUsedBytes()` → 即该模型**真实峰值占用**；部署时把 arena 设为该值（留余量）。
+> 5. 意义：避免拍脑袋定 arena 导致溢出（OOM）或浪费 RAM；可纳入 CI 自动测。
+
 ---
 
 ## 九、补充与扩展（可选）
