@@ -1,0 +1,17 @@
+{
+  "model_key": "time_only",
+  "delivery_folder": "模型A_无频域",
+  "feature_count": 40,
+  "int8_tflite_bytes": 5840,
+  "int8_tflite_sha256": "7682790411740c1ad0204b524f296f6ee54e5f68fc0c61941594aa06080feccb",
+  "input_quantization": [
+    0.042351435869932175,
+    -3
+  ],
+  "output_quantization": [
+    0.00390625,
+    -128
+  ],
+  "test_vector_count": 9,
+  "test_vectors_all_correct": false
+}

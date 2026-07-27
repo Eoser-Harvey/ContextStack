@@ -1,0 +1,17 @@
+{
+  "model_key": "time_frequency",
+  "delivery_folder": "模型B_含频域",
+  "feature_count": 56,
+  "int8_tflite_bytes": 6352,
+  "int8_tflite_sha256": "180c9d2145022bfa99c8810822515e1240c4abf18b6a84fcf3e5c28d9d2c54d0",
+  "input_quantization": [
+    0.046315137296915054,
+    -13
+  ],
+  "output_quantization": [
+    0.00390625,
+    -128
+  ],
+  "test_vector_count": 9,
+  "test_vectors_all_correct": true
+}

@@ -1,0 +1,10 @@
+﻿vector_id,source_test_index,expected_id,expected_label,predicted_id,predicted_label,probability_idle,probability_walk,probability_stairs
+0,0,0,idle,0,idle,0.99609375,0.0,0.0
+1,1,0,idle,0,idle,0.99609375,0.0,0.0
+2,2,0,idle,0,idle,0.99609375,0.0,0.0
+3,101,1,walk,1,walk,0.0,0.99609375,0.0
+4,102,1,walk,1,walk,0.0,0.99609375,0.00390625
+5,103,1,walk,1,walk,0.0,0.99609375,0.00390625
+6,242,2,stairs,2,stairs,0.0,0.3515625,0.6484375
+7,243,2,stairs,2,stairs,0.0,0.046875,0.953125
+8,244,2,stairs,2,stairs,0.0,0.05859375,0.94140625

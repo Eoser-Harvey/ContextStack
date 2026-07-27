@@ -1,0 +1,95 @@
+{
+  "contract_version": "V2.1-strict-parity",
+  "recommended_model": {
+    "name": "time_frequency",
+    "file": "../模型B_含频域/model_int8.tflite",
+    "sha256": "180c9d2145022bfa99c8810822515e1240c4abf18b6a84fcf3e5c28d9d2c54d0",
+    "input_shape": [1, 56],
+    "input_type": "int8",
+    "output_shape": [1, 3],
+    "output_type": "int8"
+  },
+  "class_order": [
+    "idle",
+    "walk",
+    "stairs"
+  ],
+  "sampling": {
+    "target_rate_hz": 40.0,
+    "target_period_ms": 25,
+    "window_samples": 64,
+    "window_duration_seconds": 1.6,
+    "hop_samples": 16,
+    "hop_duration_seconds": 0.4,
+    "deployment_requirement": "Use a fixed 25 ms scheduler. UART and LCD work must not define the sample period."
+  },
+  "recorded_data_is_numeric_authority": {
+    "reason": "The recorded CSV files contain the exact numeric values used for training and are authoritative when comments in old Day11 source copies disagree.",
+    "idle_acc_norm_median_after_divide_1000": 0.998,
+    "acceleration_driver_unit_required": "g",
+    "gyroscope_driver_unit_required": "rad/s",
+    "forbidden_conversion": "Do not multiply acceleration by 9.807 before the model pipeline."
+  },
+  "day11_provenance_audit": {
+    "day11_source_formula": "acc_raw = raw_acc * 9.807 / sensitivity, documented as m/s^2",
+    "day11_release_object_evidence": "The qmi8658.o built on 2026-07-21 contains the float literal 9.807 and a floating-point multiply in qmi8658_read_sensor_data.",
+    "gui_numeric_transform": "None. parse_day11_line only splits comma-separated text, and CaptureWriters.write_row only replaces label_id and label.",
+    "recorded_csv_evidence": {
+      "idle_raw_acc_norm_median": 0.998433272682757,
+      "idle_clean_acc_norm_median": 0.998,
+      "walk_clean_acc_norm_median": 0.996,
+      "stairs_clean_acc_norm_median": 0.997
+    },
+    "finding": "The saved CSV values cannot have been produced unchanged by the inspected Day11 Release object. The original UART log is not retained, so the exact flashed producer cannot be reconstructed from the current files.",
+    "deployment_decision": "Match the saved CSV and the trained model. Day16 acceleration must be in g at the cleaner input and acc_norm_x1000 must be near 1000 while stationary."
+  },
+  "day11_cleaning_must_match": {
+    "low_pass_alpha": 0.25,
+    "gravity_alpha": 0.02,
+    "adaptive_gravity_realign": false,
+    "acc_clip_integer_limit": 196140,
+    "gyro_clip_integer_limit": 4000,
+    "integer_to_model_scale": 0.001,
+    "calibration": "Keep the first-100-sample software offset behavior and keep the board motionless during startup.",
+    "current_qmi8658_c_sha256": "fbb9435b7c563d3f21da6402dbb6a0f355357cb640eceeeff3c1bc7df74d81d6",
+    "current_main_c_sha256": "60209727e2d3eed285e10dd161d816c1f9e72a46443edaac5cbee553efe4065c"
+  },
+  "stairs_to_walk_relabel": {
+    "estimated_switch_center_ms": 293968.0,
+    "transition_start_ms": 290768.0,
+    "transition_end_ms": 297168.0,
+    "original_rows": 11430,
+    "stairs_core_rows": 9926,
+    "transition_excluded_rows": 236,
+    "tail_relabelled_as_walk_rows": 1268
+  },
+  "feature_pipeline": {
+    "selected_feature_count": 56,
+    "time_features": "The first 40 features are identical to Model A.",
+    "frequency_features": "64-point Hann-window RFFT at 40 Hz; mean removed; DC removed; selected dominant-frequency, centroid, entropy and normalized band-energy features.",
+    "preprocessing_order": "clean samples -> 64-sample window -> exact feature order -> clip -> normalize -> int8 quantize",
+    "feature_implementation_sha256": "722fd095c72cc42a36c8e88763ab6a362abf911cd535eaf2615154d3fb333db8",
+    "application_implementation_sha256": "b3c7fe55fff3e51b2b008772b43b7b0b7775b924d80d534bc91ee91d810fb15f"
+  },
+  "int8_formula": {
+    "input_scale": 0.046315137296915054,
+    "input_zero_point": -13,
+    "output_scale": 0.00390625,
+    "output_zero_point": -128,
+    "input": "q = clamp(round_half_away_from_zero(normalized / input_scale + zero_point), -128, 127)",
+    "output": "probability = (q - output_zero_point) * output_scale"
+  },
+  "runtime_decision": {
+    "probabilities": "Never overwrite model probabilities.",
+    "label_smoothing": "EMA alpha 0.45, minimum probability 0.50, minimum top-two margin 0.08, two consecutive windows to switch.",
+    "out_of_distribution_guard": "If more than 10 selected features are clipped, keep the previous stable label and report the clip count."
+  },
+  "boot_self_test": {
+    "expected_terminal_line": "[AI] PARITY_PASS,input_diff_gt1=0",
+    "pass_condition": "All three fixed cleaned model-channel windows produce the expected class and no quantized input differs from Python by more than one int8 count.",
+    "covered_chain": "cleaned 7-channel model input -> 56 features -> clip/normalize -> int8 input -> X-CUBE-AI output",
+    "not_covered": "QMI8658 register conversion and the Day16 low-pass/gravity cleaner",
+    "sensor_chain_runtime_check": "DAY16_SAMP must report an near 1000 while stationary. A value near 9807 means the wrong m/s^2 driver was generated or flashed.",
+    "vectors_header": "day16_parity_vectors.h"
+  }
+}
