@@ -76,6 +76,12 @@
 
 ## AI / 技术
 
+### 2026-07-28: Codex 自动化视频剪辑工作流 — 从0到1实现 AI 混剪日更30条
+- **来源**: https://mp.weixin.qq.com/s/QHGW1UPIP-WDTjKuHkVJsg
+- **作者**: 周行（公众号「周行今天AI了吗」）
+- **整理产物**: `../codex-auto-video-editing-workflow.md`
+- **概要**: 作者开源的 AI 视频混剪工作流，已通过 Codex 在抖音赚到 5W+。核心四步：拆解参考视频（recipe.json）→ 视觉特征匹配素材（fragment_plan.json + matches.json）→ 豆包/VoxCPM 配音+音画对齐 → 生成剪映草稿。效率从 2-3小时/条 压缩至 5-30分钟/条，日均从 6 条提升到 30 条。提炼剪映草稿 ID 冲突/路径失效等关键坑点及对策。完成后可封装为 Codex Skill 复用。
+
 ### 2026-07-08: 端侧AI研究 — ESP32生态三件套（esp-claw/esp-dl/环境监测站）
 - **来源**: 用户分享（github.com/espressif/esp-claw + github.com/espressif/esp-dl + CSDN/电子发烧友 2026-06）
 - **整理产物**: `../professional-technology/edge-ai-esp32-ecosystem-research-2026-07.md`
