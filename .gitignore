@@ -12,6 +12,7 @@ venv/
 .vscode/
 .idea/
 .codebuddy/
+.workbuddy/
 
 # OS
 Thumbs.db
