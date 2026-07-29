@@ -123,12 +123,12 @@ $files = @($status -split "`n" | ForEach-Object { $_.Trim() } | Where-Object { $
 $fileCount = $files.Count
 
 $dirs = @($files | ForEach-Object {
-    $path = $_ -replace '^\S+\s+', ''
+    $path = $_ -replace '^\S+\s+', '' -replace '"', ''   # git 对中文/空格文件名加引号，必须清洗否则 commit message 混入引号导致 pathspec 错误
     if ($path -match '^(.+?)/') { $matches[1] } else { '(root)' }
 } | Sort-Object -Unique)
 
 $exts = @($files | ForEach-Object {
-    $path = $_ -replace '^\S+\s+', ''
+    $path = $_ -replace '^\S+\s+', '' -replace '"', ''   # 同上：去引号防 commit message 被切碎
     if ($path -match '\.(\w+)$') { ".$($matches[1])" } else { 'no-ext' }
 } | Sort-Object -Unique)
 
