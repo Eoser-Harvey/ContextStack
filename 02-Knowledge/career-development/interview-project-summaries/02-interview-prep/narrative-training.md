@@ -316,40 +316,11 @@ b. 优先级天花板机制：将持有资源（互斥锁）的所有任务，�
 
 ---
 
-**问答：Systick 与 PendSV 中断优先级设计**
-
-Q1: FreeRTOS 为什么用 PendSV 做上下文切换，而不是直接在 Systick 里切？
-
-Systick 负责"通知"，PendSV 负责"执行"。PendSV 优先级设为最低，确保所有 ISR 执行完后再切换，不会在中断处理中途抢占。Systick 中断里只触发 PendSV 异常登记（`portNVIC_INT_CTRL_REG = portNVIC_PENDSVSET_BIT`），等 CPU 退出所有 ISR 后，PendSV 才执行真正的上下文切换。一句话总结：**「Systick 负责通知，PendSV 负责执行，保证上下文切换发生在所有中断处理完成之后。」**
-
-> 🔍 追问：PendSV 上下文切换过程中被高优先级中断打断怎么办？
-
-**可以被打断，而且这正是刻意设计的。** 流程如下：
-
-| 阶段 | 发生了什么 |
-|:-----|:-----------|
-| PendSV 正在保存当前任务上下文 | 高优先级中断来了 → NVIC 立即抢占 PendSV |
-| ISR 执行（如串口收到数据） | ISR 调用 `xSemaphoreGiveFromISR()`，唤醒了一个更高优先级的任务 |
-| ISR 退出 | NVIC 回到 PendSV 继续执行 |
-| PendSV 恢复执行 | 重新调用 `vTaskSwitchContext()`，选 ISR 唤醒的那个更高优先级任务 |
-
-**为什么不会乱？** Cortex-M 的双栈机制保证安全：PendSV 用 PSP（进程栈）保存任务寄存器，ISR 用 MSP（主栈），两个栈物理分离，ISR 的压栈不会破坏 PendSV 正在保存的任务上下文。PendSV 恢复后从 PSP 指向的位置继续干活，毫发无损。
-
-> 一句话：**「PendSV 优先级最低是刻意为之——宁可上下文切换被打断，也不能让紧急硬件中断等。被打断后恢复时，重新评估最高优先级任务，不丢不重。」**
-
-Q2: Systick 和 PendSV 的中断优先级怎么配？为什么？
-
-| 异常 | 优先级 | 原因 |
-|:-----|:-------|:-----|
-| Systick | 最低（通常 15，`configKERNEL_INTERRUPT_PRIORITY = 255`） | 不能让 OS 时钟中断抢占硬件 ISR（如串口、定时器） |
-| PendSV | 最低（通常 15，与 Systick 同级） | 确保在所有 ISR 执行完毕后、回到线程模式前，才执行上下文切换 |
-
-如果 Systick 优先级高于外设 ISR，外设数据可能丢失。Cortex-M 中 `configKERNEL_INTERRUPT_PRIORITY` 通常设为 `255`（最低），所有不调用 FreeRTOS API 的 ISR 优先级可以设得更高，不受限制。
-
 ### Systick 和 PendSV 中断优先级
 
-**核心结论**：Systick 和 PendSV 必须设为**最低优先级（但是具体Systick 和 PendSV 哪个更低或者相等与设计有关）
-**（FreeRTOS 中两者同为 `configKERNEL_INTERRUPT_PRIORITY` = 0xFF，并非 PendSV 比 Systick 更低）。
+**核心结论**：Systick 和 PendSV 必须设为**最低优先级**（具体哪个更低或相等与 RTOS 设计有关——FreeRTOS 中两者同为 `configKERNEL_INTERRUPT_PRIORITY` = 0xFF，并非 PendSV 比 Systick 更低；uCOS 等才有分级做法）。
+
+**分工逻辑（一句话记住）**：SysTick 负责"通知"（置位 PENDSVSET），PendSV 负责"执行"（真正的上下文切换）——所有切换请求统一 pend，延迟到所有 ISR 完成后合并执行。
 
 **常见疑问**（2026-07-28 讨论）：PendSV 优先级最低，执行中被高优中断打断，上下文切换不就执行不完了？
 → **被打断 ≠ 执行不完**。Cortex-M 中断嵌套是硬件机制：PendSV 被抢占时，硬件自动把 PendSV 现场（xPSR/PC/LR/R0-R3/R12）压入 MSP 栈；ISR 执行完 `bx lr` 后，硬件自动恢复 PendSV 现场，从断点继续执行直到完成。异常返回由 EXC_RETURN 机制 + 压栈/出栈硬件逻辑保证，不存在"丢失执行"，只是被推迟。
@@ -384,6 +355,56 @@ PendSV 开始 → 保存旧任务 R4-R11 到旧任务栈
 - PendSV 操作 TCB 链表的关键段有 BASEPRI 临界区保护；能打断它的只有不调 FreeRTOS API 的超高优中断（`configMAX_SYSCALL_INTERRUPT_PRIORITY` 以上），那些中断不碰内核数据结构 → 被打断是安全的
 
 **面试标准答法**：三层递进（硬件→系统→实时）+ 收尾一句"被打断不影响正确性：硬件嵌套保证断点续行，关键段有 BASEPRI 保护"。超过 90% 候选人停在"为了不影响中断响应"的浅层答案。
+### 🎯 三段链复述话术（2026-07-29 考核修正版，背诵用）
+
+**① PendSV 为什么最低（三层递进）**
+- **硬件上**：Cortex-M 规定存在其他活跃异常时不能返回线程模式（PSP），切换只能发生在最后一个异常里
+- **系统上**：所有切换请求只 pend，等 ISR 全做完，基于最新状态合并切换一次（延迟 + 合并 + 最新化）
+- **实时上**：切换耗时几十~几百周期，不能让它抢占 FOC 这类硬实时中断
+
+**② tick 为什么同级（价值观选择，不是对错）**
+- **FreeRTOS**：tick ISR 干活多、耗时不确定，压低只损失一点 jitter——**不丢**（pending 位硬件锁存）**不漂**（硬件周期准时到期）；赌应用中断实时性优先
+- **uCOS**：tick ISR 极短（活在 tick task 里），所以敢设高；赌时间基准确定性
+
+**③ 我的设计方案为什么在专用系统成立**
+- **方案**：外设(0~13) > tick(14) > PendSV(15)（Cortex-M 数值越小优先级越高）
+- **前提**：外设谱系简单、全部可置于 tick 之上（如 AcuOS 面向单一产品线，谱系完全自控）
+- **代价**：内核多占一级优先级，M0+ 只有 4 级的平台玩不起；tick/PendSV 互斥从天然串行降为依赖临界区
+- **FreeRTOS 不采纳原因**：通用内核无权替用户决定外设能用几级，只能全压最低保持中立
+
+---
+
+### 🎯 启动流程 + Boot 跳转复述话术（2026-07-29 考核修正版，背诵用）
+
+**① 上电启动（四句话说清）**
+1. 硬件从 Flash 读 **MSP**（栈顶，向量表第 0 项）→ 读 **PC = Reset_Handler**（向量表第 1 项，bit0=1 是 Thumb 标记）——第 0 项不是复位向量
+2. Reset_Handler 四步：**.data 拷贝**（Flash→RAM）→ **.bss 清零** → **SystemInit**（时钟）→ main()
+3. `int x=5` 走 .data；`int y` 走 .bss 清零 = 0；局部变量在**栈上 = 随机值**（⚠️ 曾错：误以为启动清零）
+4. **MSP 设错** = 压栈 Fault → Fault 嵌套 → Lockup → 复位-死机循环
+
+**② Boot 跳 App（五步曲 + 各步死法）**
+| 步 | 操作 | 不做的后果 |
+|:---|:-----|:-----------|
+| ① 关中断 | `__disable_irq()` | ⚠️ 中断按旧向量表找 Boot ISR（已 deinit/逻辑过期）→ 死机 |
+| ② deinit | 停 SysTick/外设 | App HAL 面对脏现场（SysTick 双心跳 → HAL_GetTick 错乱） |
+| ③ `__set_MSP` | 设 App 栈顶 | App 第一条 PUSH 压到 Boot 栈区 → 污染/HardFault |
+| ④ `SCB->VTOR` | 重定向向量表 | App 中断全指 Boot → ISR 空/过期 → 中断全废 |
+| ⑤ 函数指针 | `((void(*)(void))app_reset)()` | — |
+
+本质 = 软件重演硬件启动，唯一多一步 **VTOR**。
+
+**③ 升级标志存放（分方案回答）**
+- ⚠️ **不能放普通 .bss 全局变量**——软复位后启动代码**清零 .bss**（不是"掉电丢失"）
+- **方案 1**（固件预存 Flash）：标志放 Flash 标志页，断电安全
+- **方案 2**（在线升级）：标志放 **no-init RAM**（NOLOAD/UNINIT，双端工程都要配，用魔数防上电随机值）/ **RTC 备份寄存器**（`0x40002850`，开 DBP）/ **备份 SRAM**（`0x40024000`，4KB）
+- 面试加分：报得出物理地址
+
+**④ 链接脚本核心**
+- `.data` 两个家：LMA=Flash（初值），VMA=RAM（运行）；`.bss` 只有 VMA
+- `> RAM AT> FLASH` = 段在 RAM 运行，初值存 Flash
+- `_sdata / _edata` 不是变量，是链接器算的**地址常量**（`&_sdata` 取地址）
+- `KEEP()` 保向量表不被 `--gc-sections` 回收
+- Keil/GCC/IAR 的关键差异：`.data` 拷贝是库自动（Keil）还是手动（GCC）
 
 ### FreeRTOS vs uCOS：tick/PendSV 优先级设计对比（2026-07-28 讨论）
 
@@ -954,7 +975,7 @@ int reconnect_delay(int retry_count) {
 
 | 模块 | 覆盖天数 | 重点子主题 |
 |------|:--:|------|
-| **ARM 架构** | Day 1, 5 | 流水线/工作模式/寄存器/中断向量表/Cache/MPU/MMU |
+| **ARM 架构** | Day 1, 5 | 流水线/工作模式/寄存器/中断向量表/Cache/MPU/MMU | ✅ **2026-07-29 已完成**：启动流程+Boot跳转+链接脚本三节深度学习，见 tech-interview-notes.md §9 + 本文件启动流程话术 |
 | **C 语言底层** | Day 2, 6 | volatile/static/const/字节对齐/指针函数/sizeof陷阱 |
 | **RTOS / OS** | Day 3, 7 | 调度算法/上下文切换/死锁/内存管理/进程线程 |
 | **CPU 底层** | Day 4 | Cache一致性/DMA协同/内存屏障/原子操作 |
