@@ -119,7 +119,7 @@ converter.inference_output_type = tf.int8
 }
 ```
 - 量化公式：`q = clamp(round_half_away_from_zero(normalized/scale + zp), -128, 127)`
-- 模型大小：6352 字节（INT8） vs ~27KB（FP32），4.3× 压缩
+- 模型大小：6352 字节（INT8） vs 11880 字节（FP32），文件级 1.9× 压缩（理论权重 4×，TFLite 固定格式开销摊薄）
 - Keras ↔ TFLite INT8 逐样本一致率：**99.73%**
 
 ### 环节6：TFLM 端侧部署（Day5/Day1）
