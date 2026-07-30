@@ -5,9 +5,9 @@
 > **核心目标**：能手写 Keras 训一个小模型 → `TFLiteConverter` 转 TFLite → 用 Netron 看结构 → 跑通 TFLM 推理（PyTorch→ONNX 作为可选/延后模块，仅当你手上的模型是 PyTorch 时才需要）
 > **学习策略**：部署岗的核心是"转换 + 落地"，不是训练。Keras 几行就能造模型并导出，优先吃透 TFLite 原生路径；PyTorch 训练可延后到真有 PyTorch 模型要部署时再学。
 
-**状态**：🔄 进行中（已排，待学习）
-**日期**：2026-07-22（排期）
-**周期**：Week 2（覆盖计划 W2 Day1-Day5：模型转换 + Keras 主线 + 集成验证 + PyTorch 可选）
+**状态**：✅ 核心完成（2026-07-30 AI 教学：模型转换本质/TFLiteConverter/xxd原理/Netron验证/SELECT_TF_OPS陷阱/MLP选型5论据；PyTorch可选模块延后）
+**日期**：2026-07-22（排期）→ 2026-07-30（核心完成）
+**周期**：Week 2（已完成：模型转换 + Keras 主线 + 集成验证；延后：PyTorch→ONNX 可选模块）
 
 ---
 
