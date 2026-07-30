@@ -353,6 +353,67 @@ void IRQ_Handler() {
 > "我不是算法科学家，我是算法与硬件之间的桥梁工程师。
 > 能做模型部署、能做性能优化、能保证实时性和稳定性。"
 
+### 8.4 模型转换（Keras→TFLite→TFLM）核心概念（2026-07-30 学习）
+
+**训练态 vs 部署态**：
+| | 训练时模型 | 部署时模型 |
+|:---|:---|:---|
+| 前向计算 | ✅ | ✅（唯一需要的） |
+| loss / 反向传播 / 优化器 | ✅ | ❌ 全部砍掉 |
+| Python 环境 | ✅ | ❌ MCU 跑不了 Python |
+| 最终载体 | .h5/.keras（含训练态） | .tflite（纯推理图 FlatBuffer 二进制） |
+
+**xxd / generate_cc_arrays 工作原理**：
+- 本质 = 逐字节读取 .tflite → 写成 `0x??,` 格式的 C 数组字面量
+- 源码文件 ~38KB（每个字节展成 6 个 ASCII 字符），**编译后 Flash 占用 ≈ 原始 .tflite 大小**（编译器将 `0x??` 还原为单字节，唯一额外开销 = 4 字节长度变量 + 对齐填充）
+- 为什么 hex 不用十进制：2 位 hex（`ff`）换 1 字节，与二进制天然 4:1 位映射，是嵌入式通用视觉语言
+- 为什么统一 6 字节（`0x00, `）：语法上 0~15 的值只需 4 字节（`0xa,`），但统一置零为 `0x0a,` 保持列对齐——**代码写给人 debug 用的**
+
+**面试话术**（xxd → Flash 全流程）：
+> "用 xxd 把 .tflite 逐字节序列化成 C 数组头文件——本质就是把二进制数据写成 `0x??,` 格式的数组字面量，编译后模型待在 Flash 里。TFLM 通过 FlatBuffer 机制直接按偏移访问字段，零拷贝零反序列化。源码看着 38KB 只是文本膨胀，Flash 实际占用 ≈ 原始 .tflite。"
+
+### 8.5 TFLM 算子约束——SELECT_TF_OPS 为什么是陷阱（2026-07-30 学习）
+
+**核心事实**：TFLite（不含 M）和 TFLM 是**两个东西**，算子支持不同。
+
+**SELECT_TF_OPS 的本质**：不是"一组轻量算子"，而是让 TFLite 回头调**完整 TensorFlow 运行时**的粘合层（Flex delegate）。TF 原生算子需要动态内存（malloc）、文件系统（fopen）、Python 运行时、流式 I/O——MCU 全都没有。
+
+**TFLM 的三条底层假设（被 SELECT_TF_OPS 全部打破）**：
+
+| TFLM 假设 | SELECT_TF_OPS 需要的 | 冲突 |
+|:----------|:--------------------|:-----|
+| 静态内存（tensor_arena 预分配，零 malloc） | 算子内部动态 new/delete | ❌ 崩 |
+| 无 OS / 无文件系统 | fopen / 流式 I/O | ❌ 不存在 |
+| 极小 Flash 占用（几十~几百 KB） | TF 算子库几百 KB~几 MB | ❌ 放不下 |
+
+**真遇到 TFLM 不支持的算子，解法不是开 Flex**：
+
+| 解法 | 说明 |
+|:-----|:-----|
+| ① 等价算子替换 | 训练时把 LayerNorm 拆成 Mean→Sub→Mul→Add（TFLM 全支持），重新导出 |
+| ② 自定义算子 | 手写 C 实现 + 注册进 OpResolver（⚠️ INT8 场景需保证内核精度） |
+| ❌ SELECT_TF_OPS | MCU 上不可能——不是"还没实现"，是实现出来就不是 TFLM 了 |
+
+**面试话术**：
+> "SELECT_TF_OPS 不是让 TFLite 支持更多算子，是让 TFLite 借完整 TF 运行时当后盾——这需要动态内存、文件系统和 Python 环境。TFLM 的静态 arena、无 OS、极小 Flash 三条设计前提与它根本不相容。选 TFLM 部署的模型，训练时就要用 TFLM 支持的算子——部署的约束必须前推。"
+
+### 8.6 Netron 验证实操 — 模型B 三层结构实锤（2026-07-30 用 Python TFLite Interpreter 读取验证）
+
+```
+模型B (含频域) INT8, 6352 字节
+
+输入: [1, 56]
+
+Dense1 (56→32, ReLU融合):  MatMul[32,56]=1,792 + Bias[32]=32  = 1,824
+Dense2 (32→16, ReLU融合):  MatMul[16,32]=  512 + Bias[16]=16  =   528
+Dense3 (16→3, Softmax):    MatMul[3,16] =   48 + Bias[3] =3   =    51
+                                                          总计 = 2,403 ✅
+```
+
+**两个面试加分发现**：
+1. **ReLU 在 TFLite 里消失了**：Converter 把 MatMul+BiasAdd+ReLU 算子融合成一个 `FULLY_CONNECTED`——不是 bug，是 TFLite 的图优化（减少内存读写）。所以 TFLM 只需注册 FullyConnected + Softmax 两种算子
+2. **权重形状是"反的"**：`[32, 56]` 而非 `[56, 32]`——TFLite 内部做了权重重排，比 Keras 布局快一步 Transpose。面试看到别以为错了
+
 ---
 
 **关联文档**：
