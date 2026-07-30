@@ -11,6 +11,8 @@
 | 秋兴 | [./qiuxing/](./qiuxing/) | MA120策略+信息差×执行力+All-in AI赛道 |
 | 兰启昌 | [./lanqichang/](./lanqichang/) | 复旦→腾讯裸辞→千万营收私董会；13年写作复利 |
 | 刘小排 | [./liuxiaopai-r/](./liuxiaopai-r/) | AI超级个体，单人200万月活产品RuffleAI |
+| 仙道 | [./0-xiandao/](./0-xiandao/) | 自由潜世界冠军+AI投资；多维人生设计+运气论 |
+| 午饭投资 | [./0.wufantouzi/](./0.wufantouzi/) | CRCL正EV下注+西天取经比喻+孟母三迁 |
 
 ## 顶层分析文档
 

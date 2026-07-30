@@ -7,7 +7,7 @@
 - 投资建议: 基于方法论场景A/B/C，止盈止损 + 上车信号
 
 用法: python monitor_three_sell_lines.py
-输出: reports/three-sell-lines-daily-YYYY-MM-DD.md + 飞书推送
+输出: 飞书推送（本地不留缓存，推送后自动删除）
 """
 
 import requests, json, re, sys, time, os, hashlib
@@ -55,172 +55,447 @@ def _load_translation_cache():
 def _save_translation_cache(cache):
     TRANSLATION_CACHE_FILE.write_text(json.dumps(cache, ensure_ascii=False, indent=2), encoding="utf-8")
 
-# 金融术语映射表（英→中）
+# 金融术语映射表（英→中）— v2 大幅扩展，按长度降序排序确保长短语优先匹配
 FINANCE_TERMS = {
-    # 公司/机构
-    "Marvell Technology": "迈威尔科技",
-    "Marvell": "迈威尔",
-    "Broadcom": "博通",
-    "Cantor Fitzgerald": "Cantor Fitzgerald投行",
-    "Berkshire Hathaway": "伯克希尔哈撒韦",
-    "Alphabet": "Alphabet(谷歌母公司)",
+    # ========== 完整标题句式（整句匹配，最高优先级）==========
+    "Big Tech is paying for the AI boom, and chipmakers are cashing in: Chart of the Day": "科技巨头为AI繁荣买单，芯片制造商从中获利：今日图表",
+    "Crypto Industry Steps Up Quantum Security Efforts as Encryption Risks Accelerate": "加密行业加速量子安全布局，加密风险加剧",
+    "Goldman Sachs Says Optical Networking Is AI's Next Trillion-Dollar Opportunity": "高盛称光网络是AI的下一个万亿机会",
+    "Memory Stock Surge Sets Stage for SK Hynix's U.S. Trading Debut": "存储股飙升为SK海力士美国交易首秀铺路",
+    "\"Most Profound Impact Will Be in Life Sciences.\" Does This Bet on a Biotech Stock Prove He Means It?": "「最深远影响将在生命科学领域」，这笔生物科技投资能证明他此言不虚吗？",
+    "ETF Showdown Traditional Energy Meets Clean Energy. Which ETF Is the Better Buy?": "ETF对决：传统能源vs清洁能源，哪个更值得买入？",
+
+    # ========== 公司/机构（中文名 + 股票代码）==========
+    "Marvell Technology": "迈威尔科技(MRVL)",
+    "Taiwan Semiconductor Manufacturing": "台积电(TSM)",
+    "Taiwan Semiconductor": "台积电(TSM)",
+    "JPMorgan Chase": "摩根大通",
+    "Morgan Stanley": "摩根士丹利",
+    "Bank of America": "美国银行",
+    "Citigroup": "花旗集团",
+    "Wells Fargo": "富国银行",
     "Goldman Sachs": "高盛",
-    "Lumentum": "Lumentum",
+    "Deutsche Bank": "德意志银行",
+    "UBS Group": "瑞银集团",
+    "HSBC Holdings": "汇丰控股",
+    "Barclays": "巴克莱",
+    "Credit Suisse": "瑞士信贷",
+    "Mizuho Securities": "瑞穗证券",
+    "Nomura Holdings": "野村控股",
+    "Jefferies": "杰富瑞",
+    "Piper Sandler": "派珀桑德勒",
+    "Wolfe Research": "沃尔夫研究",
+    "Susquehanna": "萨斯奎哈纳",
+    "Bernstein": "伯恩斯坦",
+    "Monness Crespi": "蒙尼斯·克里斯皮",
+    "Needham": "尼德汉姆",
+    "Rosenblatt": "罗森布拉特",
+    "Cantor Fitzgerald": "康托菲茨杰拉德",
+    "Loop Capital": "卢普资本",
+    "MoffettNathanson": "莫菲特纳桑森",
+    "TD Cowen": "TD考恩",
+    "Truist Securities": "信托证券",
+    "Evercore ISI": "艾弗考尔ISI",
+    "Raymond James": "雷蒙德詹姆斯",
+    "Baird": "贝尔德",
+    "KeyBanc": "基班克",
+    "Stifel": "斯蒂费尔",
+    "RBC Capital": "加拿大皇家银行资本",
+    "BMO Capital": "蒙特利尔银行资本",
+    "Oppenheimer": "奥本海默",
+    "Wedbush": "韦德布什",
+    "New Street Research": "新街研究",
+    "Melius Research": "梅利乌斯研究",
+    "William Blair": "威廉布莱尔",
+    "Tigress Financial": "泰格雷斯金融",
+    "Northland Capital": "诺斯兰资本",
+    "DA Davidson": "DA戴维森",
+    "Craig-Hallum": "克雷格-哈勒姆",
+    "Roth MKM": "罗斯MKM",
+    "H.C. Wainwright": "HC温赖特",
+    "Berkshire Hathaway": "伯克希尔哈撒韦",
+    "SoftBank Group": "软银集团",
+    "Samsung Electronics": "三星电子",
     "SK Hynix": "SK海力士",
-    "Roundhill": "Roundhill",
-    # 动作
-    "Raises PT": "上调目标价",
+    "Micron Technology": "美光科技(MU)",
+    "Western Digital": "西部数据",
+    "Seagate Technology": "希捷科技",
+    "Applied Materials": "应用材料(AMAT)",
+    "Lam Research": "泛林研究(LRCX)",
+    "KLA Corporation": "科磊(KLAC)",
+    "ASML Holding": "阿斯麦(ASML)",
+    "Tokyo Electron": "东京电子",
+    "Synopsys": "新思科技(SNPS)",
+    "Cadence Design": "楷登电子(CDNS)",
+    "ARM Holdings": "安谋控股(ARM)",
+    "Analog Devices": "亚德诺半导体(ADI)",
+    "Texas Instruments": "德州仪器(TXN)",
+    "Qualcomm": "高通(QCOM)",
+    "Intel Corporation": "英特尔(INTC)",
+    "Super Micro Computer": "超微电脑(SMCI)",
+    "Arista Networks": "阿里斯塔网络(ANET)",
+    "Palantir Technologies": "帕兰提尔(PLTR)",
+    "CrowdStrike": "CrowdStrike(CRWD)",
+    "Snowflake": "Snowflake(SNOW)",
+    "Datadog": "Datadog(DDOG)",
+    "MongoDB": "MongoDB(MDB)",
+    "Cloudflare": "Cloudflare(NET)",
+    "ServiceNow": "ServiceNow(NOW)",
+    "Salesforce": "赛富时(CRM)",
+    "Oracle": "甲骨文(ORCL)",
+    "SAP": "思爱普(SAP)",
+    "Workday": "Workday(WDAY)",
+    "Atlassian": "Atlassian(TEAM)",
+    "Adobe": "奥多比(ADBE)",
+    "Cisco Systems": "思科(CSCO)",
+    "Juniper Networks": "瞻博网络(JNPR)",
+    "Ciena Corporation": "希纳(CIEN)",
+    "Infinera": "英飞朗(INFN)",
+    "Coherent Corp": "相干公司(COHR)",
+    "Fabrinet": "法布里内特(FN)",
+    "Celestica": "天弘(CLS)",
+    "Vertiv Holdings": "维谛技术(VRT)",
+    "Modine Manufacturing": "莫丁制造(MOD)",
+    "Generac Holdings": "杰纳拉克(GNRC)",
+    "Vistra Corp": "维斯特拉(VST)",
+    "Constellation Energy": "星座能源(CEG)",
+    "Talen Energy": "塔伦能源(TLN)",
+    "GE Vernova": "通用电气韦尔诺瓦(GEV)",
+    "NuScale Power": "纽斯凯尔电力(SMR)",
+    "Oklo Inc": "Oklo(OKLO)",
+    "Marvell": "迈威尔(MRVL)",
+    "Broadcom": "博通(AVGO)",
+    "Alphabet": "谷歌母公司Alphabet",
+    "Nvidia": "英伟达(NVDA)",
+    "Lumentum": "鲁门特姆(LITE)",
+    "Roundhill": "圆山投资",
+
+    # ========== 动作/事件（分析师行为 + 市场行为）==========
+    "Reiterates Outperform Rating": "重申跑赢大盘评级",
+    "Reiterates Buy Rating": "重申买入评级",
+    "Reiterates Overweight Rating": "重申超配评级",
+    "Reiterates Market Perform": "重申与大盘持平",
+    "Reiterates Neutral Rating": "重申中性评级",
+    "Maintains Outperform Rating": "维持跑赢大盘评级",
+    "Maintains Overweight Rating": "维持超配评级",
+    "Maintains Buy Rating": "维持买入评级",
+    "Maintains Hold Rating": "维持持有评级",
+    "Maintains Sell Rating": "维持卖出评级",
+    "Maintains Market Perform": "维持与大盘持平",
+    "Initiates Coverage With Buy": "首次覆盖给予买入评级",
+    "Initiates Coverage With Outperform": "首次覆盖给予跑赢大盘评级",
+    "Initiates Coverage With Overweight": "首次覆盖给予超配评级",
+    "Initiates Coverage With Hold": "首次覆盖给予持有评级",
+    "Initiates Coverage With Sell": "首次覆盖给予卖出评级",
+    "Initiates Coverage With Neutral": "首次覆盖给予中性评级",
+    "Initiates With Buy": "首次覆盖给予买入",
+    "Initiates With Outperform": "首次覆盖给予跑赢大盘",
+    "Initiates Coverage On": "首次覆盖",
+    "Raises Price Target to": "目标价上调至",
+    "Raises Price Target From": "目标价上调",
+    "Raises PT From": "目标价上调",
+    "Raises PT to": "目标价上调至",
+    "Lowers Price Target to": "目标价下调至",
+    "Lowers Price Target From": "目标价下调",
+    "Lowers PT From": "目标价下调",
+    "Lowers PT to": "目标价下调至",
     "Raises Price Target": "上调目标价",
+    "Lowers Price Target": "下调目标价",
+    "Raises PT": "上调目标价",
     "Lowers PT": "下调目标价",
+    "Upgrades to Buy": "上调评级至买入",
+    "Upgrades to Outperform": "上调评级至跑赢大盘",
+    "Upgrades to Overweight": "上调评级至增持",
+    "Upgrades to Strong Buy": "上调评级至强烈买入",
+    "Downgrades to Hold": "下调评级至持有",
+    "Downgrades to Sell": "下调评级至卖出",
+    "Downgrades to Underperform": "下调评级至跑输大盘",
+    "Downgrades to Underweight": "下调评级至减持",
+    "Downgrades to Market Perform": "下调评级至与大盘持平",
     "Upgrades": "上调评级",
     "Downgrades": "下调评级",
     "Strong Buy": "强烈买入",
-    "Buy More": "增持",
+    "Outperform": "跑赢大盘",
+    "Underperform": "跑输大盘",
+    "Market Perform": "与大盘持平",
+    "Overweight": "超配",
+    "Underweight": "低配",
     "Sell-Off": "抛售",
-    "Rally": "上涨/反弹",
     "Pullback": "回调",
-    "Surge": "飙升",
     "Plunge": "暴跌",
-    "Beat": "超预期",
-    "Miss": "不及预期",
-    "Earnings": "财报",
-    "Revenue": "营收",
-    "Profit": "利润",
-    "Match": "匹配",
+    "Beat Expectations": "超预期",
+    "Missed Expectations": "不及预期",
+    "Beat Estimates": "超预期",
+    "Missed Estimates": "不及预期",
+    "Top Line Beat": "营收超预期",
+    "Bottom Line Beat": "利润超预期",
     "Powering": "驱动",
-    "Cashing In": "获利",
-    "Challenge": "挑战",
-    # 指标
-    "YTD": "年内至今",
-    "Quarterly": "季度",
-    "Annual": "年度",
+    "Cashing In": "获利套现",
+    "Line Up to Challenge": "排队挑战",
+    "Line Up to": "排队",
+    "Sets Stage for": "为...铺路",
+    "Steps Up Quantum Security Efforts": "加速量子安全布局",
+    "as Encryption Risks Accelerate": "因加密风险加剧",
+    "Surge Sets Stage for": "飙升为...铺路",
+    "U.S. Trading Debut": "美国上市首秀",
+    "Trading Debut": "交易首秀",
+    "Steps Up": "加速推进",
+    "as Risks Accelerate": "随着风险加剧",
+    "Nears $34B": "逼近340亿美元",
+
+    # ========== 指标/术语 ==========
+    "Capital Expenditure": "资本支出(CapEx)",
+    "Annual Recurring Revenue": "年度经常性收入(ARR)",
+    "Free Cash Flow": "自由现金流",
+    "Gross Margin": "毛利率",
+    "Operating Margin": "营业利润率",
+    "Price-to-Earnings": "市盈率",
+    "Enterprise Value": "企业价值",
     "Market Cap": "市值",
-    "Dividend": "股息",
+    "Dividend Yield": "股息率",
+    "Earnings Per Share": "每股收益(EPS)",
+    "Revenue Growth": "营收增长",
+    "Earnings Growth": "盈利增长",
     "P/E Ratio": "市盈率",
-    "Growth": "增长",
-    "Decline": "下降",
-    "Outlook": "展望",
-    "Forecast": "预测",
-    "Guidance": "指引",
-    "AUM": "管理资产规模",
-    # 场景
+    "Price Target": "目标价",
+    "Market Capitalization": "市值",
+    "Total Addressable Market": "总可寻址市场(TAM)",
+    "Return on Equity": "净资产收益率(ROE)",
+    "Return on Invested Capital": "投资资本回报率(ROIC)",
+    "Debt-to-Equity": "负债权益比",
+    "YTD": "年内至今",
+    "AUM": "管理资产规模(AUM)",
+    "TAM": "总可寻址市场",
+    "Bookings": "订单额",
+    "Backlog": "积压订单",
+    "Pipeline": "项目储备",
+    "Churn Rate": "流失率",
+    "Net Retention": "净留存率",
+
+    # ========== 产品/行业/赛道 ==========
+    "Semiconductor": "半导体",
+    "Data Center": "数据中心",
+    "Artificial Intelligence": "人工智能(AI)",
+    "Machine Learning": "机器学习",
+    "Generative AI": "生成式AI",
+    "Large Language Model": "大语言模型(LLM)",
+    "Graphic Processing Unit": "图形处理器(GPU)",
+    "Central Processing Unit": "中央处理器(CPU)",
+    "Tensor Processing Unit": "张量处理器(TPU)",
+    "Application-Specific Integrated Circuit": "专用集成电路(ASIC)",
+    "High Bandwidth Memory": "高带宽内存(HBM)",
+    "Double Data Rate": "双倍数据速率(DDR)",
+    "Solid State Drive": "固态硬盘(SSD)",
+    "Hard Disk Drive": "机械硬盘(HDD)",
+    "Optical Networking": "光网络",
+    "Active Electrical Cables": "有源电缆(AEC)",
+    "Co-Packaged Optics": "共封装光学(CPO)",
+    "Quantum Computing": "量子计算",
+    "Quantum Security": "量子安全",
+    "Self-Driving": "自动驾驶",
+    "Autonomous Vehicle": "自动驾驶汽车",
+    "Electric Vehicle": "电动车",
+    "Renewable Energy": "可再生能源",
+    "Nuclear Energy": "核能",
+    "Clean Energy": "清洁能源",
+    "Cloud Computing": "云计算",
+    "Edge Computing": "边缘计算",
+    "Cyber Security": "网络安全",
+    "Encryption": "加密",
+    "Blockchain": "区块链",
+    "GPU": "GPU",
+    "CPU": "CPU",
+    "ASIC": "ASIC芯片",
+    "HBM": "高带宽内存",
+    "DDR5": "DDR5内存",
+    "DRAM": "DRAM存储",
+    "NAND": "NAND闪存",
+    "SSD": "固态硬盘",
+
+    # ========== 场景/情绪 ==========
     "Bullish": "看涨",
     "Bearish": "看跌",
-    "Volatility": "波动",
+    "Volatility": "波动率",
     "Momentum": "动能",
+    "Correction": "回调修正",
     "Rebound": "反弹",
-    "Correction": "回调/修正",
+    "Rally": "上涨",
+    "Surge": "飙升",
     "Crash": "崩盘",
     "Under the Radar": "低调的",
     "Runaway": "暴涨的",
-    # 产品/行业
-    "Semiconductor": "半导体",
-    "Chip": "芯片",
-    "Data Center": "数据中心",
-    "AI": "人工智能",
-    "Cloud": "云计算",
-    "GPU": "图形处理器",
-    "Memory": "存储",
-    "Active Electrical Cables": "有源电缆",
-    "Optical Networking": "光网络",
-    "Crypto": "加密货币",
-    "Quantum Security": "量子安全",
-    "Encryption": "加密",
-    # 常见句式
+    "Boom": "繁荣/爆发",
+    "Frenzy": "狂热",
+    "Meltdown": "熔断/暴跌",
+    "Rout": "溃败",
+
+    # ========== 财报/季度 ==========
+    "Fiscal Year": "财年",
+    "Fourth Quarter": "第四季度",
+    "Third Quarter": "第三季度",
+    "Second Quarter": "第二季度",
+    "First Quarter": "第一季度",
+    "Q4 Earnings": "Q4财报",
+    "Q3 Earnings": "Q3财报",
+    "Q2 Earnings": "Q2财报",
+    "Q1 Earnings": "Q1财报",
+    "Quarterly Results": "季度业绩",
+    "Annual Results": "年度业绩",
+    "Earnings Call": "财报电话会",
+    "Earnings Report": "财报报告",
+    "Earnings Season": "财报季",
+    "Pre-Earnings": "财报前",
+    "Post-Earnings": "财报后",
+    "Earnings Preview": "财报前瞻",
+    "Earnings Recap": "财报回顾",
+    "Guidance": "业绩指引",
+    "Forward Guidance": "前瞻指引",
+    "Revenue Guidance": "营收指引",
+    "Profit Guidance": "利润指引",
+    "Consensus Estimate": "市场一致预期",
+    "Top and Bottom Line": "营收和利润",
+    "Revenue": "营收",
+    "Profit": "利润",
+    "Outlook": "展望",
+    "Forecast": "预测",
+
+    # ========== 常见句式/短语 ==========
     "Still Have A Lot More Upside": "仍有较大上行空间",
     "Trades at a Discount": "折价交易",
-    "Why Arm Is a Strong Buy Despite the": "为何Arm在经历...后仍值得买入",
-    "How Much": "到底押注了多少",
+    "Next Trillion-Dollar Opportunity": "下一个万亿美元机会",
+    "May Be the Biggest Winner": "可能是最大赢家",
+    "Only One Will Match The": "只有一家能匹配",
+    "Here Is What a $10,000 Investment Could Return": "看看$10,000投资能获得多少回报",
+    "Top Stock Picks for 2026": "2026年首选股票",
+    "Best Stocks to Buy Now": "当前最佳买入标的",
+    "Why It's Time to Buy": "为什么现在是买入时机",
+    "Why It's Time to Sell": "为什么现在是卖出时机",
+    "Should You Buy the Dip": "是否应该逢低买入",
+    "Should You Buy": "是否应该买入",
+    "Is It Too Late to Buy": "是否已错过买入时机",
+    "Here's Why Shares Are Moving Today": "股价今日波动原因",
+    "Here's Why Shares Popped Today": "股价今日大涨原因",
+    "Here's Why Shares Fell Today": "股价今日下跌原因",
+    "Here's What Analysts Are Saying": "以下是分析师观点",
+    "Here's What to Expect": "以下是预期",
+    "Here's What You Need to Know": "以下是你需要了解的",
+    "What Wall Street Is Saying": "华尔街怎么看",
+    "What Analysts Are Saying": "分析师怎么看",
+    "Street Says Buy": "华尔街建议买入",
+    "Is a Strong Buy": "是强力买入标的",
+    "Is a Buy Right Now": "当下是否值得买入",
+    "Is It a Buy": "是否值得买入",
+    "Got $10,000?": "手上有$10,000？",
+    "How Much": "押注了多少",
     "Are You Really Betting On": "你到底在押注什么",
     "Reveals Why He Still Likes": "透露为何仍看好",
-    "Here Are": "以下是",
     "Possible Reasons Why": "可能的原因",
+    "Chart of the Day": "今日图表",
     "ETF Inflows Top": "ETF资金流入突破",
     "at the Halfway Point of": "在...年中节点",
     "Is the Memory Rally Still Alive After": "存储芯片反弹在...后是否仍在",
+    "New Memory ETFs": "新存储ETF",
+    "Under the Radar AI Chip Stocks": "低调的AI芯片股",
     "Thoughts on": "对...的看法",
     "Why It May": "为何它可能",
     "Driving": "推动",
     "Despite": "尽管",
-    "Peak Levels": "高点",
+    "Peak Levels": "历史高点",
     "Buy More": "继续买入",
     "Investors": "投资者",
     "Analyst": "分析师",
     "Wall Street": "华尔街",
-    "Got $10,000?": "手上有$10,000？",
-    "Only One Will Match The": "只有一家能匹配",
-    "Hype": "炒作热潮",
-    "Chart of the Day": "今日图表",
-    "Big Tech is paying for the": "科技巨头正在为",
-    "and chipmakers are cashing in": "买单，芯片制造商从中获利",
-    "Steps Up": "加速推进",
-    "as Risks Accelerate": "随着风险加剧",
-    "Sets Stage for": "为...铺路",
-    "Trading Debut": "交易首秀",
-    "Line Up to": "排队",
-    "New Memory ETFs": "新存储ETF",
-    "Nears $34B": "逼近340亿美元",
-    "Under the Radar AI Chip Stocks": "低调的AI芯片股",
-    "Next Trillion-Dollar Opportunity": "下一个万亿机会",
-    "May Be the Biggest Winner": "可能是最大赢家",
-    # 更多常见词（短词放后面避免误匹配）
-    "Boom": "繁荣",
-    "Paying for the": "为...买单",
     "Chipmakers": "芯片制造商",
     "League Tables": "排行榜",
-    "Optical Networking": "光网络",
-    "Steps Up Quantum Security Efforts": "加速量子安全布局",
-    "as Encryption Risks Accelerate": "加密风险加剧",
-    "Surge Sets Stage for": "飙升为...铺路",
-    "U.S. Trading Debut": "美国交易首秀",
-    "Line Up to Challenge": "排队挑战",
-    "Runaway": "暴涨",
-    "Runaway DRAM": "暴涨的DRAM",
-    # 翻译引擎通用词（解决"高盛 Says"、"Synopsys 股票"这类半成品）
+    "Paying for the": "为...买单",
+    "Big Tech is paying for the": "科技巨头正在为",
+    "and chipmakers are cashing in": "买单，芯片制造商从中获利",
+
+    # ========== 翻译引擎通用词（放在最后，短词优先度低）==========
+    # 注意：这些是辅助替换，解决半翻译残留
     " Says ": "称",
-    " Is ": "",
     "Says ": "称",
-    "Will Be Worth This In": "2030年估值将达到",
-    "Price Prediction: ": "估值预测：",
-    "Sector Update: ": "板块快讯：",
-    "Advance Late Afternoon": "午后走高",
-    "The Nuclear Energy Comeback Is Real. These 3 Energy ": "核能复苏是真的。这3只能源",
+    " Is ": "",
     "Are the Best Ways to Play the Revival.": "是布局复苏的最佳选择。",
+    "The Nuclear Energy Comeback Is Real. These 3 Energy ": "核能复苏是真的。这3只能源",
     "Dow Jones Futures: Watch ": "道指期货：关注",
     "As Market Sets Up; Big ": "市场蓄势待发；重磅",
-    "Due": "即将公布",
-    "Why Today\u2019s Small ": "为什么今天微小的",
-    "Could Become Tomorrow\u2019s Retirement Engine": "可能成为明天的退休引擎",
-    "ETF Showdown Traditional Energy Meets Clean Energy. Which ETF Is the Better Buy?": "ETF对决：传统能源vs清洁能源，哪个更值得买入？",
-    "人工智能's": "AI的",
-    "AI's": "AI的",
-    " Is Bullish on ": "看涨",
-    "Bullish on ": "看涨",
+    "Why Today's Small ": "为什么今天微小的",
+    "Could Become Tomorrow's Retirement Engine": "可能成为明天的退休引擎",
+    "Here Are": "以下是",
     "Here Is What a": "看看",
-    "Investment Could Return": "投资可能获得多少回报",
     "Here Is What": "看看",
+    "Investment Could Return": "投资可能获得多少回报",
     "Energy Stocks ": "能源股",
-    "Taiwan 半导体's": "台积电",
-    "Taiwan Semiconductor's": "台积电",
-    "Nvidia CEO Jensen Huang Said ": "英伟达CEO黄仁勋称",
-    "\"Most Profound Impact Will Be in Life Sciences.\" Does This Bet on a Biotech Stock Prove He Means It?": "\"最深远影响将在生命科学领域\"，这笔生物科技股投资能证明他此言不虚吗？",
+    "Will Be Worth This In": "估值将达到",
+    "Price Prediction: ": "股价预测：",
+    "Sector Update: ": "板块快讯：",
+    "Advance Late Afternoon": "午后走高",
     "Prediction: ": "预测：",
+    "Nvidia CEO Jensen Huang Said ": "英伟达CEO黄仁勋称",
+    "Is Bullish on ": "看涨",
+    "Bullish on ": "看涨",
+    "Taiwan Semiconductor's": "台积电的",
     "Will Soar on July 17": "将在7月17日飙升",
-    " 半导体's Stock Will Soar on July 17": "将在7月17日飙升",
-    "台积电 Stock ": "台积电",
-    # 注意：不把 Stock/Stocks/Shares 放这里了，容易产生 "Synopsys 股票" 这种半成品
     "Got $10,000? Broadcom vs Marvell: Only One Will Match The AI Hype": "手上有$10,000？博通vs迈威尔：只有一家能匹配AI热潮",
     "5 Under the Radar AI Chip Stocks Powering the Data Center Boom": "5只低调AI芯片股推动数据中心繁荣",
     "Goldman Sachs Says Optical Networking Is AI's Next Trillion-Dollar Opportunity. Lumentum May Be the Biggest Winner": "高盛称光网络是AI的下一个万亿机会，Lumentum或是最大赢家",
-    "Crypto Industry Steps Up Quantum Security Efforts as Encryption Risks Accelerate": "加密货币行业加速量子安全布局，加密风险加剧",
-    "Big Tech is paying for the AI boom, and chipmakers are cashing in: Chart of the Day": "科技巨头为AI繁荣买单，芯片制造商从中获利：今日图表",
     "ETF League Tables: Roundhill AUM Nears $34B": "ETF排行榜：Roundhill管理资产规模逼近340亿美元",
-    "Memory Stock Surge Sets Stage for SK Hynix's U.S. Trading Debut": "存储股飙升为SK海力士美国交易首秀铺路",
     "New Memory ETFs Line Up to Challenge Runaway DRAM": "新存储ETF排队挑战暴涨的DRAM",
+    "Runaway DRAM": "暴涨的DRAM",
 }
 
+# 正则句式翻译模式（处理：主体 + 动词 + 宾语 的标准财经标题结构）
+FINANCE_PATTERNS = [
+    # "XXX Stock Surges/Plunges/Rallies After YYY"
+    (re.compile(r'(.+?)\s+(?:Stock|Shares|Share Price)\s+(Surge|Plunge|Rally|Jump|Drop|Fall|Sink|Climb|Tumble|Soar|Slide|Slip)\s*(?:After|On|Following|As|Amid)?\s*(.*)', re.I),
+     lambda m: f"{m.group(1)}股价{m.group(2)}，因{m.group(3) if m.group(3) else '市场波动'}"),
+    # "XXX Surges/Plunges/Rallies After YYY"
+    (re.compile(r'^(.+?)\s+(Surges|Plunges|Rallies|Jumps|Drops|Falls|Sinks|Climbs|Tumbles|Soars|Slides|Slips)\s*(?:After|On|Following|As|Amid)?\s*(.*)', re.I),
+     lambda m: f"{m.group(1)}{m.group(2)}，因{m.group(3) if m.group(3) else '市场波动'}"),
+    # "Why XXX Stock Is Falling/Surging/Rallying Today"
+    (re.compile(r'Why\s+(.+?)\s+(?:Stock|Shares)?\s*(?:Is|Are)\s+(Falling|Surging|Rallying|Dropping|Jumping|Sliding)\s*(Today|Now|Monday|Tuesday|Wednesday|Thursday|Friday)?', re.I),
+     lambda m: f"为何{m.group(1)}今日{m.group(2)}"),
+    # "XXX Reports Q2 Earnings, Revenue Beat/Miss"
+    (re.compile(r'(.+?)\s+Reports?\s+(Q[1-4]|Fourth|Third|Second|First)\s*(Quarter)?\s*(Earnings|Results)', re.I),
+     lambda m: f"{m.group(1)}发布{m.group(2)}季度财报"),
+    # "XXX Beats/Misses Q2 Estimates"
+    (re.compile(r'(.+?)\s+(Beats?|Misses?)\s+(Q[1-4]|Fourth|Third|Second|First)\s*(Quarter)?\s*(Estimates?|Expectations?)', re.I),
+     lambda m: f"{m.group(1)}{m.group(2)}了{m.group(3)}季度预期"),
+    # "XXX Raises/Lowers Full-Year Guidance"
+    (re.compile(r'(.+?)\s+(Raises?|Lowers?|Cuts?|Boosts?)\s+(Full-Year|FY\d*|Annual|Quarterly|Q[1-4])\s+(Guidance|Outlook|Forecast|Revenue|Profit)', re.I),
+     lambda m: f"{m.group(1)}{m.group(2)}{m.group(3)}{m.group(4)}"),
+    # "Is XXX Stock a Buy/Sell/Hold Before Earnings?"
+    (re.compile(r'Is\s+(.+?)\s+(?:Stock|Shares?)\s+a\s+(Buy|Sell|Hold)\s*(?:Before|Ahead of|After)\s*(Earnings|Q[1-4])?', re.I),
+     lambda m: f"{m.group(1)}在{m.group(3) or '当前'}是否值得{m.group(2)}"),
+    # "XXX Stock: Buy, Sell, or Hold?"
+    (re.compile(r'(.+?)\s+(?:Stock|Shares?):\s*(Buy|Sell|Hold)\s*(?:,|or)?\s*(Buy|Sell|Hold)?\s*,?\s*(Buy|Sell|Hold)?\?', re.I),
+     lambda m: f"{m.group(1)}：买入、卖出还是持有？"),
+    # "XXX Announces YYY" / "XXX Unveils YYY"
+    (re.compile(r'(.+?)\s+(Announces?|Unveils?|Launches?|Reveals?|Introduces?)\s+(.+)', re.I),
+     lambda m: f"{m.group(1)}{m.group(2)}：{m.group(3)}"),
+    # "XXX Gets/Receives Upgrade/Downgrade from YYY"
+    (re.compile(r'(.+?)\s+(?:Gets?|Receives?|Sees?)\s+(?:an?\s+)?(Upgrade|Downgrade|Price Target)\s*(?:from|by)?\s*(.+)?', re.I),
+     lambda m: f"{m.group(1)}获{m.group(3) or '分析师'}{m.group(2)}"),
+    # "XXX PT Raised/Lowered/Cut at YYY"
+    (re.compile(r'(.+?)\s+(?:PT|Price Target)\s+(Raised|Lowered|Cut|Boosted|Increased|Slashed)\s*(?:at|by)?\s*(.+)?', re.I),
+     lambda m: f"{m.group(3) or '分析师'}{m.group(2)}了{m.group(1)}目标价"),
+    # "Here's Why It's (Not) Too Late to Buy XXX"
+    (re.compile(r"Here.s\s+Why\s+(?:It.s|It\s+Is)\s+(?:Not\s+)?Too\s+Late\s+to\s+Buy\s+(.+)", re.I),
+     lambda m: f"为什么现在买入{m.group(1)}仍为时不晚"),
+    # "What XXX's Q2 Earnings Mean for YYY"
+    (re.compile(r"What\s+(.+?)(?:'s)?\s+(Q[1-4]|Fourth|Third|Second|First)\s*(?:Quarter)?\s*Earnings\s*(?:Mean|Say)\s*(?:for|about)\s*(.+)", re.I),
+     lambda m: f"{m.group(1)}{m.group(2)}季度财报对{m.group(3)}意味着什么"),
+    # "XXX Is Down/Up X%: Should You Buy?"
+    (re.compile(r'(.+?)\s+(?:Is|Stock\s+Is)\s+(Down|Up)\s+(\d+[\.,]?\d*%?)\s*(?:Should|Is\s+It)', re.I),
+     lambda m: f"{m.group(1)}{m.group(2)}{m.group(3)}，是否应该买入？"),
+    # "XXX vs YYY: Which Is the Better Buy?"
+    (re.compile(r'(.+?)\s+vs\.?\s+(.+?):\s*Which\s+(?:Is|Stock\s+Is)\s*(?:the\s+)?Better\s+Buy\??', re.I),
+     lambda m: f"{m.group(1)} vs {m.group(2)}：哪个更值得买入？"),
+]
+
 def translate_en_to_zh(text):
-    """翻译英文标题到中文：先查缓存，再用本地术语映射"""
+    """翻译英文标题到中文：先查缓存 → 正则句式匹配 → 术语映射 → 后处理"""
     if not text:
         return text
     if not any(c.isascii() and c.isalpha() for c in text):
@@ -232,15 +507,37 @@ def translate_en_to_zh(text):
         return cache[cache_key]
 
     result = text
-    # 按术语长度降序替换（长术语优先，避免部分匹配）
+
+    # 第1步：正则句式匹配（优先尝试完整句式翻译）
+    for pattern, replacer in FINANCE_PATTERNS:
+        m = pattern.search(result)
+        if m:
+            try:
+                result = replacer(m)
+                # 句式匹配成功后，继续用术语映射处理剩余英文
+                break
+            except:
+                pass
+
+    # 第2步：术语映射（按长度降序，长术语优先）
     sorted_terms = sorted(FINANCE_TERMS.items(), key=lambda x: len(x[0]), reverse=True)
     for en_term, zh_term in sorted_terms:
         result = result.replace(en_term, zh_term)
 
+    # 第3步：后处理 — 清理残留
     # 去掉多余空格
     result = re.sub(r'\s+', ' ', result).strip()
+    # 处理残留的 "Stock" / "Shares" 单词（如果前面已经是中文公司名）
+    result = re.sub(r'股票\s+股票', '股票', result)
+    result = re.sub(r'股票\s*(飙升|下跌|上涨|暴跌|大涨)', r'\1', result)
+    result = re.sub(r'(?<=[\u4e00-\u9fff])\s+(Stock|Shares|Share)', '', result)
+    result = re.sub(r'\s+(股票|股价)', '', result)
+    # 处理 "称XXX" 后面多余空格
+    result = re.sub(r'称\s+', '称', result)
+    # 处理句首句尾空白
+    result = result.strip()
 
-    if result != text:
+    if result != text and any('\u4e00' <= c <= '\u9fff' for c in result):
         cache[cache_key] = result
         _save_translation_cache(cache)
         return result
@@ -379,21 +676,119 @@ def fetch_bing_news(query, limit=5):
     return items
 
 def deduplicate(items, key="title"):
+    """去重：完全匹配 + 子串包含（阈值60%）"""
     seen = []
     result = []
     for item in items:
-        title = item.get(key, "").lower()
+        title = item.get(key, "").lower().strip()
+        if not title or len(title) < 15:
+            continue  # 跳过过短标题
         is_dup = False
         for s in seen:
-            if title == s or (len(title) > 20 and title in s) or (len(s) > 20 and s in title):
+            # 完全匹配 或 子串包含度>60%
+            if title == s:
                 is_dup = True
                 break
+            if len(title) > 30 and len(s) > 30:
+                shorter = title if len(title) < len(s) else s
+                longer = s if len(title) < len(s) else title
+                if shorter in longer:
+                    is_dup = True
+                    break
         if not is_dup:
             seen.append(title)
             result.append(item)
     return result
 
+# 低质量新闻标题模式（负向过滤）
+LOW_QUALITY_PATTERNS = [
+    r'(?:Is|Are)\s+(?:It|They)\s+(?:Too\s+Late|Time)\s+to\s+(?:Buy|Sell|Invest)',  # 泛泛的"是否太晚买入"
+    r'Here.s\s+Why\s+\w+\s+(?:Stock\s+)?(?:Is|Are)\s+(?:Moving|Falling|Rising|Up|Down)\s+Today',  # 每日涨跌解释（内容空洞）
+    r'What.s\s+(?:Going\s+On|Happening)\s+With',  # "XX怎么回事"（clickbait）
+    r'Should\s+You\s+(?:Buy|Sell)\s+\w+\s+(?:Stock|Shares)\s+(?:Right\s+)?Now',  # 泛泛买入建议
+    r'(?:Better\s+Buy|Better\s+Stock)\s*(?::|,)\s*\w+\s+vs',  # 泛A vs B对比
+    r'Top\s+\d+\s+(?:Stocks?|Picks?|Investment)',  # "Top N Stock" 列表文
+    r'Best\s+\w+\s+(?:Stocks?|to\s+Buy)',  # "Best X Stocks"
+    r'(?:A|The)\s+\d+\s+(?:Best|Top)\s+\w+\s+(?:Stocks?|Picks?)',  # 列表类标题
+    r'Prediction:\s+.+\s+(?:Will|Could|Might|May)\s+(?:Surge|Soar|Skyrocket|Plunge|Crash)',  # 预测性标题
+    r'\$\d+,?\d*\s+Investment\s+(?:Could|Would|Might)\s+(?:Become|Be\s+Worth|Turn\s+Into)',  # "$X investment could become..."
+    r"Here.s\s+How\s+Much\s+(?:\$?\d+)?\s*(?:You|An?\s+Investor)",  # "Here's how much..."
+    r'(?:If\s+)?You\s+(?:Invested|Bought)\s+\$?\d+',  # "If you invested $X"
+    r'(?:Missed\s+the\s+Boat|Too\s+Late\s+to\s+Buy)',  # FOMO标题
+    r'(?:Billionaire|Millionaire)\s+(?:Investor\s+)?Says',  # 亿万富翁说...
+    r'\d+\s+(?:Reasons?|Things?)\s+(?:Why|You|To)',  # "5 Reasons Why..."
+    r'(?:Bubble|Crash|Meltdown)\s+(?:Is\s+)?(?:Coming|Near|Imminent|Here)',  # 崩溃/泡沫恐慌文
+]
+
+def score_news_quality(item, tier1_keywords, tier2_keywords=None):
+    """
+    新闻质量评分（0-10分）
+    - tier1: 必须关键词，命中1个+3分，命中2个+5分
+    - tier2: 加分关键词，每个+1分（上限3分）
+    - 标题长度: 30-80字符 +1分, >80字符 +2分（太短或太长扣分）
+    - 来源加分: Yahoo Finance +1分
+    - 负向过滤: 命中低质量模式 -5分
+    - 有description摘要 +1分
+    """
+    if tier2_keywords is None:
+        tier2_keywords = []
+
+    title = item.get("title", "").strip()
+    title_lower = title.lower()
+    score = 0
+
+    # 1) 标题长度评分
+    tlen = len(title)
+    if tlen < 20:
+        score -= 3  # 太短，可能是碎片/垃圾
+    elif tlen < 30:
+        score -= 1
+    elif 30 <= tlen <= 100:
+        score += 1
+    else:
+        score += 0  # 超长标题不加分
+
+    # 2) 负向过滤
+    for pattern in LOW_QUALITY_PATTERNS:
+        if re.search(pattern, title, re.I):
+            score -= 4
+            break
+
+    # 3) Tier1 必须关键词
+    t1_hits = sum(1 for kw in tier1_keywords if kw.lower() in title_lower)
+    if t1_hits >= 2:
+        score += 5
+    elif t1_hits >= 1:
+        score += 3
+    else:
+        score -= 2  # 关键主题词一个都没命中
+
+    # 4) Tier2 加分关键词
+    if tier2_keywords:
+        t2_hits = sum(1 for kw in tier2_keywords if kw.lower() in title_lower)
+        score += min(t2_hits, 3)
+
+    # 5) 有摘要 +1
+    if item.get("desc", "").strip():
+        score += 1
+
+    # 6) 来源加分
+    source = item.get("source", "")
+    if "yahoo" in source.lower():
+        score += 0  # Yahoo中性，不加不扣
+
+    return score
+
+def filter_quality(items, min_score=3, max_items=15):
+    """按质量分排序，取Top N"""
+    scored = [(score_news_quality(item, [], []), item) for item in items]
+    # 先计算临时分用于粗筛，保留>0的
+    scored = [(s, item) for s, item in scored if s > -3]
+    scored.sort(key=lambda x: x[0], reverse=True)
+    return [item for _, item in scored[:max_items]]
+
 def filter_by_keywords(items, keywords, limit=5):
+    """简单关键词过滤（保留兼容，但主逻辑用 score_news_quality）"""
     filtered = []
     for item in items:
         title_lower = item["title"].lower()
@@ -411,79 +806,136 @@ def format_date(date_str):
         return date_str[:16] if date_str else ""
 
 # ============================================================
-# 三、线1 — Capex 新闻（Yahoo RSS 多 ticker 聚合）
+# 三、线1 — Capex 新闻（Yahoo RSS + Bing聚合，质量评分筛选）
 # ============================================================
 
 print("\n【线1】抓取Capex相关新闻...")
 is_earnings_season = datetime(2026, 7, 22) <= today <= datetime(2026, 8, 5)
 is_monday = today.weekday() == 0
 
-# Yahoo RSS 覆盖的 ticker：持仓股 + 七姐妹 + 半导体/AI相关
-# 每个 ticker 取5条，聚合去重
-capex_ticker_list = ["MRVL", "DRAM", "NVDA", "MSFT", "GOOGL", "AMZN", "META", "SMH", "AVGO", "AMD"]
+# Tier1 必须关键词：高价值信号词（财报/评级/目标价/CapEx/指引）
+CAPEX_TIER1 = ['earnings', 'revenue', 'guidance', 'upgrade', 'downgrade', 'price target',
+               'capex', 'capital expenditure', 'data center', 'gpu', 'chip', 'semiconductor',
+               'ai spend', 'outlook', 'forecast', 'beat', 'miss', 'profit']
+# Tier2 加分关键词：主题相关但不强制
+CAPEX_TIER2 = ['cloud', 'nvidia', 'amd', 'broadcom', 'mrvl', 'marvell', 'dram',
+               'microsoft', 'google', 'amazon', 'meta', 'analyst', 'bullish', 'bearish',
+               'growth', 'hbm', 'memory', 'server', 'optical', 'networking']
+
+# 数据源1：Yahoo RSS（多ticker聚合）
+capex_ticker_list = ["MRVL", "NVDA", "MSFT", "GOOGL", "AMZN", "META", "SMH", "AVGO", "AMD", "DRAM"]
 if is_earnings_season or is_monday:
-    # 财报季或周一加大覆盖
     capex_ticker_list.extend(["INTC", "ARM", "TSM", "MU"])
 
 capex_news = []
 for ticker in capex_ticker_list:
-    yahoo_items = fetch_yahoo_finance_rss(ticker, limit=5)
+    yahoo_items = fetch_yahoo_finance_rss(ticker, limit=4)
     capex_news.extend(yahoo_items)
 
-# 始终按关键词做宽松筛选（提升相关性），财报季/周一更严格
-if is_earnings_season or is_monday:
-    capex_news = filter_by_keywords(capex_news,
-        ['capex', 'capital expenditure', 'ai spend', 'earnings', 'data center', 'gpu', 'chip', 'semiconductor', 'cloud',
-         'revenue', 'guidance', 'upgrade', 'downgrade', 'analyst', 'price target', 'buy', 'sell'], limit=15)
-else:
-    # 非财报季：宽松过滤，保留大部分新闻
-    capex_news = filter_by_keywords(capex_news,
-        ['capex', 'ai', 'chip', 'cloud', 'data center', 'gpu', 'semiconductor', 'earnings', 'revenue',
-         'upgrade', 'downgrade', 'analyst', 'price target', 'buy', 'sell', 'bullish', 'bearish',
-         'guidance', 'growth', 'market', 'stock', 'investor', 'fund', 'etf', 'tech', 'nvidia', 'amd'], limit=15)
+# 数据源2：Bing News 补充（搜索芯片/AI/CapEx相关）
+try:
+    bing_queries = ["AI chip capex", "data center spending", "semiconductor earnings"]
+    for q in bing_queries:
+        bing_items = fetch_bing_news(q, limit=3)
+        for item in bing_items:
+            item["source"] = "Bing News"
+        capex_news.extend(bing_items)
+except Exception as e:
+    print(f"  [Bing News] 补充搜索失败: {e}")
 
-capex_news = deduplicate(capex_news)[:15]
+# 质量评分筛选（使用tier1/tier2关键词）
+scored_capex = []
+for item in capex_news:
+    s = score_news_quality(item, CAPEX_TIER1, CAPEX_TIER2)
+    # Capex新闻要求更严：至少命中tier1或分>2
+    title_lower = item.get("title", "").lower()
+    t1_hit = any(kw.lower() in title_lower for kw in CAPEX_TIER1)
+    if s >= 2 or t1_hit:
+        scored_capex.append((s, item))
+
+# 按分数排序取Top N，财报季取更多
+scored_capex.sort(key=lambda x: x[0], reverse=True)
+top_n = 15 if is_earnings_season or is_monday else 12
+capex_news = [item for _, item in scored_capex[:top_n]]
+capex_news = deduplicate(capex_news)[:top_n]
+
 if not capex_news:
     capex_news.append({"title": "(今日无重大Capex相关新闻)", "source": "", "link": "", "date": ""})
+else:
+    print(f"  Capex新闻评分范围: {scored_capex[0][0] if scored_capex else 0} ~ {scored_capex[-1][0] if scored_capex else 0}")
 
 # 翻译
 capex_news = translate_news_items(capex_news)
 
 # ============================================================
-# 四、线2 — ARR 新闻（Yahoo RSS AI/科技 ticker + 关键词过滤）
+# 四、线2 — ARR 新闻（严格筛选：必须命中ARR/OpenAI/Anthropic核心关键词）
 # ============================================================
 
 print("\n【线2】抓取ARR新闻...")
-# 策略：从AI/科技相关ticker的新闻中筛选OpenAI/Anthropic相关内容
-# 扩大ticker覆盖：加AVGO/AMD/TSM/MU，增加AI产业链新闻量
-arr_ticker_list = ["MSFT", "GOOGL", "META", "NVDA", "AMZN", "AVGO", "AMD", "TSM"]
+
+# Tier1 ARR核心关键词：必须命中至少1个（严格）
+ARR_TIER1 = ['openai', 'anthropic', 'chatgpt', 'claude', 'copilot', 'gemini',
+             'llm', 'large language model', 'ai model', 'annual recurring revenue',
+             'arr ', 'subscription revenue', 'recurring revenue']
+# Tier2 加分关键词：AI商业变现相关
+ARR_TIER2 = ['revenue', 'growth', 'enterprise', 'business', 'pricing', 'monetization',
+             'adoption', 'api', 'enterprise ai', 'ai agent', 'agentic']
+
 arr_news = []
+
+# 数据源1：Yahoo RSS（从AI产业链ticker中筛选）
+arr_ticker_list = ["MSFT", "GOOGL", "META", "NVDA", "AMZN", "AVGO", "AMD", "TSM"]
 for ticker in arr_ticker_list:
     yahoo_items = fetch_yahoo_finance_rss(ticker, limit=5)
     arr_news.extend(yahoo_items)
 
-# 关键词过滤：OpenAI/Anthropic/ARR/ChatGPT/Claude/AI revenue（宽松版，limit提升到10）
-arr_news = filter_by_keywords(arr_news,
-    ['openai', 'anthropic', 'arr', 'revenue', 'recurring', 'chatgpt', 'claude', 'ai model', 'llm', 'gemini', 'copilot',
-     'ai ', 'artificial intelligence', 'machine learning', 'cloud', 'data center', 'gpu', 'chip', 'semiconductor',
-     'growth', 'earnings', 'guidance', 'analyst', 'upgrade', 'downgrade', 'price target', 'buy', 'sell',
-     'nvidia', 'amd', 'broadcom', 'google', 'microsoft', 'amazon', 'meta'], limit=12)
-arr_news = deduplicate(arr_news)[:8]
+# 数据源2：Bing News 直接搜索 OpenAI/Anthropic/ARR
+try:
+    for q in ["OpenAI revenue ARR", "Anthropic Claude enterprise", "ChatGPT subscription"]:
+        bing_items = fetch_bing_news(q, limit=3)
+        for item in bing_items:
+            item["source"] = "Bing News"
+        arr_news.extend(bing_items)
+except Exception as e:
+    print(f"  [Bing News] ARR搜索失败: {e}")
 
-# 如果过滤后仍为空，展示AI行业通用新闻作为替代（扩大fallback覆盖）
+# 严格质量评分：必须命中ARR_TIER1
+scored_arr = []
+for item in arr_news:
+    title_lower = item.get("title", "").lower()
+    t1_hit = any(kw.lower() in title_lower for kw in ARR_TIER1)
+    if not t1_hit:
+        continue  # 核心关键词不命中直接跳过
+    s = score_news_quality(item, ARR_TIER1, ARR_TIER2)
+    if s >= 1:
+        scored_arr.append((s, item))
+
+scored_arr.sort(key=lambda x: x[0], reverse=True)
+arr_news = [item for _, item in scored_arr[:8]]
+arr_news = deduplicate(arr_news)[:6]
+
+# Fallback：如果严格筛选后为空，用AI+revenue宽松筛选
 if not arr_news:
-    # 重新抓取不限关键词的AI相关新闻
+    print("  [ARR] 严格筛选无结果，使用宽松fallback...")
     arr_fallback = []
-    for ticker in ["MSFT", "NVDA", "GOOGL", "AMZN", "META", "AVGO", "AMD"]:
+    for ticker in ["MSFT", "NVDA", "GOOGL", "AMZN", "META"]:
         yahoo_items = fetch_yahoo_finance_rss(ticker, limit=3)
         arr_fallback.extend(yahoo_items)
-    arr_fallback = filter_by_keywords(arr_fallback,
-        ['ai ', 'openai', 'anthropic', 'model', 'artificial intelligence', 'chatgpt', 'claude', 'gemini', 'llm',
-         'chip', 'gpu', 'cloud', 'data center', 'revenue', 'growth', 'earnings', 'tech', 'nvidia', 'amd'], limit=6)
-    arr_news = deduplicate(arr_fallback)[:5]
+    fallback_tier1 = ['openai', 'anthropic', 'chatgpt', 'claude', 'ai model', 'ai ',
+                       'artificial intelligence', 'llm', 'gemini', 'copilot']
+    fallback_tier2 = ['revenue', 'growth', 'enterprise', 'earnings', 'subscription']
+    scored_fb = []
+    for item in arr_fallback:
+        s = score_news_quality(item, fallback_tier1, fallback_tier2)
+        if s >= 1:
+            scored_fb.append((s, item))
+    scored_fb.sort(key=lambda x: x[0], reverse=True)
+    arr_news = [item for _, item in scored_fb[:5]]
 
 if not arr_news:
     arr_news.append({"title": "(今日无ARR更新新闻，ARR增速为季度数据，下次关键节点9月底)", "source": "", "link": "", "date": ""})
+else:
+    print(f"  ARR新闻评分范围: {scored_arr[0][0] if scored_arr else 'N/A'} ~ {scored_arr[-1][0] if scored_arr else 'N/A'}")
 
 arr_news = translate_news_items(arr_news)
 
@@ -1020,6 +1472,12 @@ if LARK_AVAILABLE:
             app_id=secrets["app_id"], app_secret=secrets["app_secret"]
         )
         print(f"  ✅ 飞书推送成功！message_id: {message_id}")
+        # 推送成功后删除本地日报，不留缓存
+        try:
+            out_file.unlink()
+            print(f"  🗑️ 本地日报已删除: {out_file.name}")
+        except Exception as e:
+            print(f"  ⚠️ 删除本地日报失败: {e}")
     except Exception as e:
         print(f"  ❌ 飞书推送失败: {e}")
 else:
