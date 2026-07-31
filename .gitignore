@@ -72,6 +72,7 @@ Thumbs.db
 01-Projects/automated-task/5.three-sell-lines-daily/.secrets.yaml
 01-Projects/family-hub/research/portfolio/.secrets.yaml
 01-Projects/family-hub/research/portfolio/.translation_cache.json
+01-Projects/automated-task/5.three-sell-lines-daily/.translation_cache.json
 
 # Test temp files (auto-push script will also auto-cleanup)
 .test*.txt
