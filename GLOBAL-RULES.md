@@ -193,6 +193,12 @@ Switch Topics        Load Workbench            Update Status
 - 描述文件路径时一律以 ContextStack 为根目录使用相对路径（如 `01-Projects/embedded-ai-learning/`），不写绝对路径
 - 工具调用所需的绝对路径除外（仅内部执行使用）
 
+### 记忆系统分工（2026-07-31 确立）
+- **`.workbuddy/memory/`**：AI 当前工作记忆（每日流水账、临时决策），随 AI 工具迁移（CodeBuddy/WorkBuddy）
+- **`03-Memory/`**：框架长期资产（可复用经验、方法论、维护记录），独立于 AI 工具，换 AI 也能用
+- **`MEMORY.md`**：索引层，四类记忆快速检索
+- **同步规则**：`.workbuddy/memory/` 中有价值的内容（工具修复、架构决策、维护经验）**必须同步沉淀到 `03-Memory/`**，不是两边各写各的
+
 ### 单一事实源
 - 本文件（GLOBAL-RULES.md）为所有 AI 行为规则的**唯一权威源**
 - MEMORY.md 仅作跨 session 索引与历史教训引用，不重复定义规则

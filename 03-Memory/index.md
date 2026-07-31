@@ -6,7 +6,7 @@
 
 | 目录 | 用途 | 状态 |
 |------|------|------|
-| [knowledge/](./knowledge/) | 通用知识记忆（框架架构、模型选型、API参考） | ✅ 活跃 |
+| [knowledge/](./knowledge/) | 通用知识记忆（框架架构、模型选型、API参考、维护经验） | ✅ 活跃 |
 | [projects/](./projects/) | 项目记忆归档（ADR、问题总结） | 📦 待归档 |
 | [sessions/](./sessions/) | 会话记忆归档（重要决策记录） | 📦 待归档 |
 | [personal/](./personal/) | 个人相关记忆（待办事项等） | ✅ 活跃 |
