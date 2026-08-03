@@ -51,6 +51,8 @@
 | Skill | 功能 | 安装名 |
 |-------|------|--------|
 | **agent-browser** | 浏览器自动化：打开网页、滚动、点击、截图、提取内容 | `@skill://agent-browser` |
+| **playwright-cli** | 浏览器自动化：Playwright 内核，表单填充、复杂交互、测试 | `@skill://playwright-cli` |
+| **BrowserSkill (bsk)** | 腾讯开源（MIT）：复用已登录真实浏览器，免重复登录 | [[browser-automation/index\|安装指南]] |
 | **pdf** | PDF 读写：提取文本/表格、合并/拆分、加水印、OCR | `@skill://pdf` |
 | **docx** | Word 文档：创建/读取/编辑 .docx，支持格式、目录、页眉页脚 | `@skill://docx` |
 | **pptx** | PPT 演示：创建/读取/编辑 .pptx，支持模板、备注、批量操作 | `@skill://pptx` |
