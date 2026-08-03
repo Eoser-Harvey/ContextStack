@@ -36,44 +36,52 @@
 | 浏览器已连接（1 个） | ✅ |
 | 协议兼容（1.0） | ✅ |
 
+### 已知限制（v0.1.9）
+
+- **每次新开 Agent Window**：bsk 控制独立的 Chrome 窗口，非用户日常浏览器——安全隔离设计。`tab borrow`（复用已登录标签页）在 Roadmap 上但当前版本未实现
+- **Session 生命周期**：浏览器关闭后 session 自动释放，每次使用需 `bsk session start` 重新创建
+
+### 正确的使用流程
+
+```bash
+bsk session start                    # ① 创建 session（返回 ID，如 ismr）
+bsk navigate "https://xxx.com" --session ismr  # ② 导航
+bsk screenshot --session ismr        # ③ 截图
+bsk session stop --session ismr      # ④ 用完释放
+```
+
 ### 常用命令
 
 ```bash
-bsk --version     # 版本检查
-bsk doctor        # 环境诊断
-bsk daemon        # 启动后台进程
-bsk browse <url>  # 打开 URL
-bsk click <sel>   # 点击元素
-bsk snapshot      # 截图
-bsk console       # 执行 JS 控制台命令
+bsk --version       # 版本检查
+bsk doctor          # 环境诊断
+bsk daemon          # 启动后台进程（launcher skill 自动）
+bsk session start   # 创建浏览器会话
+bsk session list    # 查看活跃会话
+bsk session stop    # 释放会话
+bsk navigate <url> --session <ID>  # 导航
+bsk click <sel> --session <ID>     # 点击元素
+bsk fill <sel> --value "..." --session <ID>  # 填表
+bsk screenshot --session <ID>      # 截图
+bsk snapshot --session <ID>        # 获取页面 aria 结构
+bsk console --session <ID>         # 执行 JS
 ```
+
+### 离线安装（目标电脑无法访问 GitHub/Chrome 商店）
+
+| 组件 | 源路径 | 拷贝方式 |
+|:-----|:-----|:---------|
+| bsk CLI | `D:\Tools\bsk\bsk.exe`（10.6MB，单文件） | 复制到目标电脑任意目录 → 加 PATH |
+| Chrome 扩展 | `D:\Tools\bsk\bsk-extension-0.1.5.zip`（315KB） | 解压 → Chrome `chrome://extensions/` → 开发者模式 → 加载已解压 |
+| launcher skill | `~/.workbuddy/skills-marketplace/skills/bsk-browser-launcher/` | 整个文件夹拷贝到目标电脑同路径 |
+
+> Chrome 扩展 ID：`hhcmgoofomhgciiibhipgmgkgnoenaoi`，版本 0.1.5
 
 ---
 
 ## 子目录
 
 - [web-pack/](./web-pack/) — 网页内容打包采集工具
-
----
-
-## 相关
-
-- [GitHub 仓库](https://github.com/Tencent/BrowserSkill)
-- [内置 Skills 索引](../index.md)
-
-### 常用命令
-
-```bash
-bsk --version     # 版本检查
-bsk doctor        # 环境诊断
-bsk daemon        # 启动后台进程
-bsk start         # 启动浏览器控制会话
-bsk stop          # 停止
-bsk browse <url>  # 打开 URL
-bsk click <sel>   # 点击元素
-bsk snapshot      # 截图
-bsk console       # 执行 JS 控制台命令
-```
 
 ---
 
