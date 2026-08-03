@@ -19,7 +19,7 @@
 | [[wechat-push/x-tweets-wechat-push-方案说明\|微信推送方案]] | X推文→微信推送方案演进：WeChat MCP vs Server酱 vs Bun JSON-RPC | `#wechat` `#push` `#automation` `#json-rpc` |
 | [[0.wechat-push/README\|X推文推送系统]] | 完整代码归档：抓取→翻译→分析→推送，Bun JSON-RPC 直连 | `#wechat` `#push` `#x-tweets` `#automation` |
 | [[ai-berkshire/index\|AI Berkshire投资研究]] | 投资研究AI助手：公司研究/财报分析/行业筛选/组合回顾 | `#investment-research` `#financial-analysis` `#ai-assistant` |
-| [[web-pack/index\|Web-Pack素材采集]] | 网页主题完整素材包采集，超越传统剪藏工具 | `#web-crawling` `#knowledge-management` `#content-collection` |
+| [[browser-automation/web-pack/index\|Web-Pack素材采集]] | 网页主题完整素材包采集，超越传统剪藏工具（已归入浏览器自动化目录） | `#web-crawling` `#knowledge-management` `#content-collection` |
 | [[wechat-cli/index\|WeChat CLI本地查询]] | 命令行查询本地微信数据（聊天记录/联系人/群成员/统计/收藏/导出），AI Agent 友好 JSON 输出 | `#wechat` `#local-data` `#agent-tool` `#json` `#sqlcipher` |
 
 ### AI 编码与治理 Skills（2026-05-13）
@@ -52,7 +52,7 @@
 |-------|------|--------|
 | **agent-browser** | 浏览器自动化：打开网页、滚动、点击、截图、提取内容 | `@skill://agent-browser` |
 | **playwright-cli** | 浏览器自动化：Playwright 内核，表单填充、复杂交互、测试 | `@skill://playwright-cli` |
-| **BrowserSkill (bsk)** | 腾讯开源（MIT）：复用已登录真实浏览器，免重复登录 | [[browser-automation/index\|安装指南]] |
+| **BrowserSkill (bsk)** | 腾讯开源（MIT）：复用已登录真实浏览器，免重复登录（含 web-pack 素材采集） | [[browser-automation/index\|安装指南]] |
 | **pdf** | PDF 读写：提取文本/表格、合并/拆分、加水印、OCR | `@skill://pdf` |
 | **docx** | Word 文档：创建/读取/编辑 .docx，支持格式、目录、页眉页脚 | `@skill://docx` |
 | **pptx** | PPT 演示：创建/读取/编辑 .pptx，支持模板、备注、批量操作 | `@skill://pptx` |
@@ -89,11 +89,11 @@
 
 | 日期 | 新增技能 | 来源 | 数量变化 |
 |------|----------|------|----------|
-| 2026-07-06 | [[ai-berkshire/index\|AI Berkshire 投资研究]]、[[web-pack/index\|Web-Pack 素材采集]] | 微信公众号「JackCui」投资研究文章、微信公众号「Ai学习的老章」原创 Skills 文章 | 14 → 16 |
+| 2026-07-06 | [[ai-berkshire/index\|AI Berkshire 投资研究]]、[[browser-automation/web-pack/index\|Web-Pack 素材采集]] | 微信公众号「JackCui」投资研究文章、微信公众号「Ai学习的老章」原创 Skills 文章 | 14 → 16 |
 | 2026-07-26 | [[wechat-cli/index\|WeChat CLI 本地查询]] | GitHub [huohuoer/wechat-cli](https://github.com/huohuoer/wechat-cli)，本地微信数据命令行查询工具 | 17 → 18 |
 
 - **AI Berkshire**（投资研究）：5 个子技能（investment-research / investment-team / earnings-review / industry-funnel / portfolio-review）。源文：https://mp.weixin.qq.com/s/rN6gmls_hbTWVHHSDhN3-Q
-- **Web-Pack**（网页素材采集）：深度采集 + 图片本地化 + 结构化输出。源文：https://mp.weixin.qq.com/s/U1nICI87xfBZ86Bh_Dj5kw
+- **Web-Pack**（网页素材采集，已归入 browser-automation）：深度采集 + 图片本地化 + 结构化输出。源文：https://mp.weixin.qq.com/s/U1nICI87xfBZ86Bh_Dj5kw
 
 ---
 

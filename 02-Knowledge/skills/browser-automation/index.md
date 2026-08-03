@@ -17,14 +17,49 @@
 
 ---
 
-## BrowserSkill (bsk) 安装记录
+## BrowserSkill (bsk) 安装记录（2026-08-03 实操）
 
-- **版本**：bsk CLI 0.1.9（2026-07-29 Release）
-- **下载**：`bsk-v0.1.9-x86_64-pc-windows-msvc.zip`（4.3MB）
-- **安装路径**：`D:\Tools\bsk\bsk.exe`
-- **扩展**：已从 Chrome 商店安装 ✅
-- **launcher skill**：已从 SkillHub 安装 `bsk-browser-launcher` → `~/.workbuddy/skills-marketplace/skills/bsk-browser-launcher/` ✅
-- **启动**：`bsk daemon`（后台驻留，监听 WebSocket，launcher skill 自动拉起）
+### 安装过程
+
+1. **下载 CLI**：GitHub Release `bsk-v0.1.9-x86_64-pc-windows-msvc.zip`（4.3MB）→ 解压到 `D:\Tools\bsk\`
+2. **加 PATH**：`D:\Tools\bsk` 加入用户环境变量
+3. **安装扩展**：Chrome 商店搜索"BrowserSkill"
+4. **安装 launcher**：从 SkillHub 下载 `bsk-browser-launcher` → `~/.workbuddy/skills-marketplace/skills/bsk-browser-launcher/`（含 SKILL.md / launch_browser.py / bsk_notes.md / _meta.json）
+5. **启动 daemon**：`bsk daemon`（后台驻留，launcher skill 自动拉起）
+
+### 验证结果（bsk doctor）
+
+| 检查项 | 状态 |
+|:-------|:----:|
+| CLI v0.1.9 | ✅ |
+| daemon 运行中（pid 42772, ws://127.0.0.1:52800） | ✅ |
+| 浏览器已连接（1 个） | ✅ |
+| 协议兼容（1.0） | ✅ |
+
+### 常用命令
+
+```bash
+bsk --version     # 版本检查
+bsk doctor        # 环境诊断
+bsk daemon        # 启动后台进程
+bsk browse <url>  # 打开 URL
+bsk click <sel>   # 点击元素
+bsk snapshot      # 截图
+bsk console       # 执行 JS 控制台命令
+```
+
+---
+
+## 子目录
+
+- [web-pack/](./web-pack/) — 网页内容打包采集工具
+
+---
+
+## 相关
+
+- [GitHub 仓库](https://github.com/Tencent/BrowserSkill)
+- [内置 Skills 索引](../index.md)
 
 ### 常用命令
 
