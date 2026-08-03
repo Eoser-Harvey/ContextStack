@@ -22,8 +22,9 @@
 - **版本**：bsk CLI 0.1.9（2026-07-29 Release）
 - **下载**：`bsk-v0.1.9-x86_64-pc-windows-msvc.zip`（4.3MB）
 - **安装路径**：`D:\Tools\bsk\bsk.exe`
-- **扩展**：需从 Chrome/Edge 商店安装"BrowserSkill"扩展（待安装）
-- **启动**：`bsk daemon`（后台驻留，监听 WebSocket）
+- **扩展**：已从 Chrome 商店安装 ✅
+- **launcher skill**：已从 SkillHub 安装 `bsk-browser-launcher` → `~/.workbuddy/skills-marketplace/skills/bsk-browser-launcher/` ✅
+- **启动**：`bsk daemon`（后台驻留，监听 WebSocket，launcher skill 自动拉起）
 
 ### 常用命令
 
