@@ -1,4 +1,0 @@
-文件名、目录名或卷标语法不正确。
-处理: $env:USERPROFILE\.workbuddy\skills-marketplace\skills\bsk-browser-launcher 时出错。
-无法创建目录或文件。
-处理: $sh=New-Object -ComObject Shell.Application; $z=$sh.NameSpace('C:\Users\h31280\AppData\Local\Temp\bsk-launcher.zip'); $d=$sh.NameSpace($env:USERPROFILE+'\.workbuddy\skills-marketplace\skills\bsk-browser-launcher'); $d.CopyHere($z.Items(),16); Start-Sleep 2; cmd /c 'dir /b '+$env:USERPROFILE+'\.workbuddy\skills-marketplace\skills\bsk-browser-launcher' 时出错。
