@@ -13,11 +13,18 @@
 """
 from .base import BaseIndicator
 from .crcl_indicator import CRCLIndicator
+from .prediction_market_indicator import PredictionMarketIndicator
 
 # 指标注册表 — 新增指标在此注册即可
 # 顺序决定卡片中各指标的展示顺序
 INDICATOR_REGISTRY = [
     CRCLIndicator,
+    PredictionMarketIndicator,
 ]
 
-__all__ = ["BaseIndicator", "CRCLIndicator", "INDICATOR_REGISTRY"]
+__all__ = [
+    "BaseIndicator",
+    "CRCLIndicator",
+    "PredictionMarketIndicator",
+    "INDICATOR_REGISTRY",
+]

@@ -10,3 +10,7 @@ __pycache__/
 
 # 运行时数据缓存（本地生成，无需提交）
 data_cache/
+
+# 代理运行时文件（mihomo 二进制 + 临时配置）
+proxy/mihomo.exe
+proxy/clash_runtime.yaml
