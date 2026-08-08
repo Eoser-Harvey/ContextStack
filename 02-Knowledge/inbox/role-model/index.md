@@ -13,6 +13,7 @@
 | 刘小排 | [./liuxiaopai-r/](./liuxiaopai-r/) | AI超级个体，单人200万月活产品RuffleAI |
 | 仙道 | [./0-xiandao/](./0-xiandao/) | 自由潜世界冠军+AI投资；多维人生设计+运气论 |
 | 午饭投资 | [./0.wufantouzi/](./0.wufantouzi/) | CRCL正EV下注+西天取经比喻+孟母三迁 |
+| 宝哥 | [./baoge/](./baoge/) | 躺赢社区；道氏理论+3+2突破确认+六大赚钱方法 |
 
 ## 顶层分析文档
 
