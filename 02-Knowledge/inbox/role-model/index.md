@@ -15,6 +15,7 @@
 | 午饭投资 | [./0.wufantouzi/](./0.wufantouzi/) | CRCL正EV下注+西天取经比喻+孟母三迁 |
 | 宝哥 | [./baoge/](./baoge/) | 躺赢社区；道氏理论+3+2突破确认+六大赚钱方法 |
 | 七爷（张一二） | [./zhangyier-qiye/](./zhangyier-qiye/) | 币圈转美股；守财三故事（洛克菲勒/段永平）+贝版三层配置+"不为清单" |
+| OCG Capital | [./OCG/](./OCG/) | 6层漏斗框架；Beta80%/Alpha20%；心态6条；CRCL/HYPE/SPACEX深度分析 |
 
 ## 顶层分析文档
 
