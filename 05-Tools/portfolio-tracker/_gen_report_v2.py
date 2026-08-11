@@ -8,12 +8,17 @@ import requests, json, time, yaml, io, re, sys
 from pathlib import Path
 from datetime import datetime, timedelta
 
-# Windows GBK 兼容：强制 UTF-8 输出
-if sys.platform == "win32":
+# Windows GBK 兼容：强制 UTF-8 输出（reconfigure 需 Py3.7+，3.6 跳过）
+if sys.platform == "win32" and hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
     sys.stderr.reconfigure(encoding="utf-8")
 
-BASE = Path("e:/ProjectGroup/AI/ContextStack/01-Projects/family-hub/research/portfolio")
+# 跨机器路径自适应：家里(e:/ProjectGroup) / 公司(d:/MyFile)
+_BASE_CANDIDATES = [
+    Path("e:/ProjectGroup/AI/ContextStack/01-Projects/family-hub/research/portfolio"),
+    Path("d:/MyFile/AI/ContextStack/01-Projects/family-hub/research/portfolio"),
+]
+BASE = next((p for p in _BASE_CANDIDATES if p.exists()), _BASE_CANDIDATES[0])
 HY_PATH = BASE / "holdings.yaml"
 # 自动识别当前月份，若当月报告文件不存在则复制上月报告
 _current_month = datetime.now().strftime("%Y-%m")
@@ -30,7 +35,8 @@ PH_PATH = BASE / "portfolio_history.yaml"
 IDX_PATH = BASE / "index.md"
 
 today = datetime.now().strftime("%Y-%m-%d")
-today_display = datetime.now().strftime("%Y年%m月%d日")
+_now = datetime.now()
+today_display = "%d年%02d月%02d日" % (_now.year, _now.month, _now.day)
 
 # ============================================================
 # 1. 从 holdings.yaml 读取全部数据（唯一事实源）
@@ -507,10 +513,10 @@ cat_names = {
 
 L = []
 L.append("---")
-L.append("date: 2026-06-11")
+L.append(f"date: {today}")
 L.append("tags: [family, finance, portfolio, auto-generated]")
 L.append("---\n")
-L.append("# 家庭资产月度报告 (2026-06-11)\n")
+L.append(f"# 家庭资产月度报告 ({today})\n")
 L.append(f"> 自动生成 · {today}  |  数据源: holdings.yaml + Gate.io + Sina + Exchangerate")
 L.append(f"> USD/CNY={uc:.4f}  HKD/CNY={hc:.4f}\n")
 
@@ -607,7 +613,7 @@ except:
     prev_nw, prev_ta = net_worth, total_assets
     nw_delta = ta_delta = 0
 
-L.append("| 指标 | 上期 | 本期({today}) | 变动 |")
+L.append(f"| 指标 | 上期 | 本期({today}) | 变动 |")
 L.append("|------|------|-------------|------|")
 ta_sign = "+" if ta_delta >= 0 else ""
 nw_sign = "+" if nw_delta >= 0 else ""
