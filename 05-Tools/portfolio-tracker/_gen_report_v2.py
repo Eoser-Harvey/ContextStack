@@ -249,7 +249,7 @@ def fetch_us_stock(sym):
     return None
 
 stock_prices = {}
-for label, sym in [("MRVL","mrvl"), ("CRCL","crcl"), ("BTGO","btgo")]:
+for label, sym in [("MRVL","mrvl"), ("CRCL","crcl"), ("BTGO","btgo"), ("DRAM","dram")]:
     try:
         val = fetch_us_stock(sym)
         if val is not None:
@@ -333,6 +333,8 @@ def get_price(holding, prices_dict):
             return stock_prices.get("MRVL"), "USD"
         if "btgo" in sina_sym.lower() or sym == "BTGO":
             return stock_prices.get("BTGO"), "USD"
+        if "dram" in sina_sym.lower() or sym == "DRAM":
+            return stock_prices.get("DRAM"), "USD"
         if "nok" in sina_sym.lower() or sym == "NOK":
             return stock_prices.get("NOK"), "USD"
 
@@ -493,7 +495,7 @@ summary = {
     "prices": {
         "BTC": btc, "ETH": eth,
         "CRCL": stock_prices.get("CRCL"), "MRVL": stock_prices.get("MRVL"),
-        "BTGO": stock_prices.get("BTGO"),
+        "BTGO": stock_prices.get("BTGO"), "DRAM": stock_prices.get("DRAM"),
         "XIAOMI": hk_prices.get("XIAOMI"), "UBT": hk_prices.get("UBT"),
     },
     "cat_sum": cat_sum,
@@ -655,6 +657,7 @@ price_labels = [
     ("CRCL", "crcl_yan", "usd", "all_time_low_price"),
     ("MRVL", "mrvl_han", "usd", "all_time_low_price"),
     ("BTGO", "bitgo", "usd", "all_time_low_price"),
+    ("DRAM", "dram_binance", "usd", "all_time_low_price"),
     ("小米", "xiaomi_ht", "hkd", "all_time_low_price_hkd"),
     ("优必选", "ubt_ht", "hkd", "all_time_low_price_hkd"),
 ]
@@ -714,6 +717,7 @@ pid_map = {
     "crcl_yan": "CRCL", "crcl_han": "CRCL", "crcl_cb": "CRCL",
     "crcl_hst": "CRCL", "crcl_hf": "CRCL",
     "mrvl_han": "MRVL", "bitgo": "BTGO",
+    "dram_binance": "DRAM",
     "xiaomi_ht": "XIAOMI", "ubt_ht": "UBT",
     "ts_xiaoan": "XIAOAN", "ts_wufan": "WUFAN",
 }
@@ -824,7 +828,7 @@ if ANNUAL_PATH.exists():
         ("Circle(燕蒙古)", "crcl_yan", "usd"), ("Circle(韩伟蒙古)", "crcl_han", "usd"),
         ("Circle(韩伟长桥)", "crcl_cb", "usd"), ("Circle(华盛通)", "crcl_hst", "usd"),
         ("Circle(韩芳)", "crcl_hf", "usd"), ("迈威尔(币安)", "mrvl_han", "usd"),
-        ("BitGo(韩伟长桥)", "bitgo", "usd"),
+        ("BitGo(韩伟长桥)", "bitgo", "usd"), ("DRAM(韩伟币安)", "dram_binance", "usd"),
         ("小米集团(港股通)", "xiaomi_ht", "hkd"), ("优必选(港股通)", "ubt_ht", "hkd"),
         ("小安时间", "ts_xiaoan", "usd"), ("午饭老师时间", "ts_wufan", "usd"),
     ]

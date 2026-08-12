@@ -125,8 +125,8 @@ holdings_history:
     name: DRAM(韩伟币安)
     all_time_high_price: 73.85
     all_time_high_date: '2026-07-01'
-    all_time_low_price: 71.1
-    all_time_low_date: '2026-07-01'
+    all_time_low_price: 50.89
+    all_time_low_date: '2026-08-12'
 net_worth_snapshots:
 - date: '2026-06-02'
   net_worth_cny: 1361859.46
@@ -168,3 +168,6 @@ net_worth_snapshots:
 - date: '2026-08-11'
   net_worth_cny: 1012695
   total_assets_cny: 1412695
+- date: '2026-08-12'
+  net_worth_cny: 1029928
+  total_assets_cny: 1429928

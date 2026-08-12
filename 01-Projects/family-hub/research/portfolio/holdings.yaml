@@ -5,8 +5,8 @@
 #   manual        = 无公开行情源的资产(DRAM/TS时间代币), 需每月手动更新 manual_price_usd
 
 meta:
-  last_updated: "2026-08-11"
-  usd_cny: 6.753
+  last_updated: "2026-08-12"
+  usd_cny: 6.748
   hkd_cny: 0.860
 
 # ============================================================
@@ -52,10 +52,8 @@ holdings:
     cost_basis_usd: 66.85
     category: us_stock
     storage: 韩伟蒙古币安
-    price_source: manual
-    manual_price_usd: 73.85
-    manual_price_date: "2026-07-01"
-    note: 06-30 37股@$71.10($2,630.70); 07-07 加仓20股@$59.00($1,180); 总成本$3,810.70, 均价$66.85/股
+    price_source: sina
+    note: 内存美股ETF(缩写DRAM);
 
   # ── 链上证券 · 燕蒙古WEB3 ──
   # 成本计算: 总CRCL 480股(含代持60), 总盈利22750U, 代持成本83U
