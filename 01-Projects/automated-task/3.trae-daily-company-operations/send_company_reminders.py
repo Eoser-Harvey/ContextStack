@@ -9,6 +9,7 @@ import sys
 from datetime import date, timedelta
 
 import requests
+import yaml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from push_lark import send_interactive_card, load_secrets
@@ -21,23 +22,215 @@ WEEKDAY = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
 ADVANCE_DAYS = 7  # 提前 7 天开始提醒
 DEADLINE_END = TODAY + timedelta(days=ADVANCE_DAYS)
 
-# 公司关键日期
-COMPANY_REGISTER_DATE = date(2026, 7, 9)
-# 阶段判断：2026年9月前为筹备期，之后为有员工运转期
-EMPLOYEE_STAGE_START = date(2026, 10, 1)  # 预计10月完成入职三件套+首次发薪
+
+# ==================== 公司配置动态加载 ====================
+
+# 公司社保公积金计划文档（唯一数据源，用户每日更新）
+COMPANY_DOC_PATH = os.path.normpath(os.path.join(
+    SCRIPT_DIR, "..", "..", "family-hub", "company-setup",
+    "beijing-company-social-insurance-plan.md"
+))
+
+# 内置默认值（所有回退路径最终兜底）
+BUILTIN_DEFAULTS = {
+    "company": {
+        "name": "燕知行",
+        "register_date": "2026-07-09",
+        "industry": "文艺创作与表演",
+    },
+    "stage": {"current": ""},
+    "special_events_2026": [],
+    "policy_highlights": [
+        "**小微企业税收优惠延续至2027年底**\n5%企业所得税低税负、六税两费减半、小规模月销10万免增值税等优惠明确延续。金税四期「以数治税」全面上线，需注意合规申报。",
+        "**《增值税法》2026年1月1日起施行**\n财政部税务总局公告2026年第10号将小规模纳税人优惠锁定至2027年12月31日。月销售额≤10万、季销售额≤30万免征增值税。",
+        "**社保补贴政策延续至2026年底**\n中小微企业招用2026届高校毕业生、失业半年以上人员等重点群体，可申领社保补贴。税务部门正严查社保足额缴纳。",
+        "**人社新规7月实施**\n多项社保权益变化生效，包括养老保险全国统筹落地、社保费检查套用税收执法程序和标准。",
+    ],
+}
+
+
+def _parse_date(date_str: str) -> date:
+    """解析 YYYY-MM-DD 格式日期字符串"""
+    parts = date_str.strip().split("-")
+    return date(int(parts[0]), int(parts[1]), int(parts[2]))
+
+
+def _parse_timeline_date(raw_date: str, fallback_month: int, fallback_year: int) -> date | None:
+    """解析时间线表格中的日期格式：9/15前、8/30、月末 等"""
+    if not raw_date or not fallback_month:
+        return None
+    raw_date = re.sub(r'前$', '', raw_date).strip()  # 去掉"前"后缀
+    if "月末" in raw_date:
+        if fallback_month == 12:
+            return date(fallback_year, 12, 31)
+        return date(fallback_year, fallback_month + 1, 1) - timedelta(days=1)
+    m = re.match(r'(\d+)/(\d+)', raw_date)
+    if m:
+        return date(fallback_year, int(m.group(1)), int(m.group(2)))
+    return None
+
+
+def _parse_timeline_table(table_text: str, base_year: int = 2026) -> list:
+    """
+    解析时间线 Markdown 表格，提取事件列表。
+    表格格式：| **8月** | 8/14 | 签劳动合同 | 待办 |
+    """
+    events = []
+    current_month = None
+    for line in table_text.strip().split("\n"):
+        if ":--" in line or not line.startswith("|"):
+            continue
+        cells = [c.strip() for c in line.split("|")[1:-1]]
+        if len(cells) < 3:
+            continue
+        month_cell = re.sub(r'\*', '', cells[0]).strip()
+        date_cell = re.sub(r'\*', '', cells[1]).strip() if len(cells) > 1 else ""
+        desc_cell = re.sub(r'\*', '', cells[2]).strip() if len(cells) > 2 else ""
+
+        month_match = re.match(r'(\d+)月', month_cell)
+        if month_match:
+            current_month = int(month_match.group(1))
+        if not date_cell or not desc_cell:
+            continue
+
+        event_date = _parse_timeline_date(date_cell, current_month, base_year)
+        if event_date is None:
+            continue
+
+        # 跳过已完成事件（含 ✅ 标记）
+        if "✅" in desc_cell:
+            continue
+
+        # 清理描述
+        desc_clean = re.sub(r'[✅⚠️🔶⭐]', '', desc_cell).strip()
+        desc_clean = re.sub(r'[（(][^）)]*[）)]', '', desc_clean).strip()
+        if not desc_clean or len(desc_clean) < 3:
+            continue
+
+        name = desc_clean[:40] if len(desc_clean) > 40 else desc_clean
+        events.append({
+            "date": event_date.strftime("%Y-%m-%d"),
+            "name": name,
+            "description": desc_clean,
+        })
+    return events
+
+
+def _parse_company_document(content: str) -> dict:
+    """
+    从公司社保公积金计划文档中提取最新运营状态。
+    文档是唯一数据源，用户每日更新，脚本自动读取。
+    """
+    config = {
+        "company": {"name": "燕知行", "register_date": "2026-07-09", "industry": "文艺创作与表演"},
+        "stage": {"current": ""},
+        "special_events_2026": [],
+        "policy_highlights": BUILTIN_DEFAULTS["policy_highlights"],
+        "doc_last_updated": "",
+    }
+
+    # 1. 文档更新时间
+    m = re.search(r'最新整理时间:\s*(.+)', content)
+    if m:
+        config["doc_last_updated"] = m.group(1).strip()
+
+    # 2. 当前状态文本
+    m = re.search(r'当前状态:\s*(.+?)(?:\n|$)', content)
+    status_text = m.group(1).strip() if m else ""
+
+    # 3. 判断运营阶段（基于状态文本中的里程碑完成情况）
+    has_shebao = "社保增员完成" in status_text
+    has_gjj = "公积金增员完成" in status_text
+    has_contract = "劳动合同" in status_text and "签订" in status_text
+
+    if has_shebao and has_gjj:
+        if has_contract:
+            config["stage"]["current"] = "有员工运转期"
+        else:
+            config["stage"]["current"] = "入职过渡期"
+    else:
+        config["stage"]["current"] = "筹备期"
+
+    # 4. 公司基本信息
+    m = re.search(r'注册日期\s*\|\s*(\d{4}-\d{2}-\d{2})', content)
+    if m:
+        config["company"]["register_date"] = m.group(1)
+    m = re.search(r'行业\s*\|\s*\*{0,2}(.+?)\*{0,2}\s*\|', content)
+    if m:
+        config["company"]["industry"] = m.group(1).strip()
+
+    # 5. 解析时间线表格
+    timeline_match = re.search(
+        r'完整时间线（2026年8月-12月）.*?\n\n((?:\|.+\|.*\n)+)',
+        content
+    )
+    if timeline_match:
+        config["special_events_2026"] = _parse_timeline_table(timeline_match.group(1))
+
+    return config
+
+
+def load_company_config() -> dict:
+    """
+    每日运行时自动获取最新公司运营状态。
+    优先级：公司社保公积金计划文档 > company_config.yaml > 内置默认值
+    """
+    # 优先1：从公司社保公积金计划文档解析（真正的数据源）
+    if os.path.exists(COMPANY_DOC_PATH):
+        try:
+            with open(COMPANY_DOC_PATH, "r", encoding="utf-8") as f:
+                content = f.read()
+            config = _parse_company_document(content)
+            updated = config.get("doc_last_updated", "未知")
+            stage = config["stage"]["current"]
+            events_count = len(config.get("special_events_2026", []))
+            print(f"[INFO] 从公司社保公积金计划文档解析配置（每日自动读取最新）")
+            print(f"       文档更新时间: {updated}")
+            print(f"       当前阶段: {stage}")
+            print(f"       时间线事件: {events_count} 条")
+            return config
+        except Exception as e:
+            print(f"[WARN] 文档解析失败: {e}，尝试回退")
+
+    # 优先2：从 company_config.yaml 读取
+    config_path = os.path.join(SCRIPT_DIR, "company_config.yaml")
+    if os.path.exists(config_path):
+        try:
+            with open(config_path, "r", encoding="utf-8") as f:
+                config = yaml.safe_load(f)
+            print("[INFO] 从 company_config.yaml 加载公司配置")
+            for section in BUILTIN_DEFAULTS:
+                if section not in config or config[section] is None:
+                    config[section] = BUILTIN_DEFAULTS[section]
+            return config
+        except Exception as e:
+            print(f"[WARN] 读取 company_config.yaml 失败: {e}")
+
+    # 优先3：内置默认值
+    print("[INFO] 使用内置默认配置")
+    return BUILTIN_DEFAULTS
+
+
+# 加载配置（每次运行自动读取最新）
+COMPANY_CONFIG = load_company_config()
+COMPANY_REGISTER_DATE = _parse_date(COMPANY_CONFIG["company"]["register_date"])
 
 
 # ==================== 状态判断 ====================
 
 def get_current_stage() -> str:
-    """判断当前公司运营阶段"""
-    if TODAY < EMPLOYEE_STAGE_START:
-        return "筹备期"
-    return "有员工运转期"
+    """判断当前公司运营阶段（从文档状态行自动判定）"""
+    stage_cfg = COMPANY_CONFIG.get("stage", {})
+    direct_stage = stage_cfg.get("current", "")
+    if direct_stage in ("筹备期", "入职过渡期", "有员工运转期"):
+        return direct_stage
+    return "筹备期"
 
 
 def is_employee_stage() -> bool:
-    return TODAY >= EMPLOYEE_STAGE_START
+    """入职过渡期及之后视为有员工阶段"""
+    stage = get_current_stage()
+    return stage in ("入职过渡期", "有员工运转期")
 
 
 # ==================== 截止日期计算 ====================
@@ -348,17 +541,12 @@ def get_all_deadlines():
         if in_window(dl_tax):
             deadlines.append((dl_tax, "个人所得税综合所得年度汇算", "员工个人通过个税APP办理，公司提供收入明细协助。"))
 
-    # ===== 2026年特殊时间线（一次性事件）=====
-    special_2026 = [
-        (date(2026, 8, 15), "个税零申报（7月）", "7月工资薪金个税零申报。筹备期无员工，做零申报即可。"),
-        (date(2026, 9, 15), "个税零申报（8月）", "8月工资薪金个税零申报。"),
-        (date(2026, 10, 15), "入职三件套 + 个税零申报（9月）+ Q3季报", "签劳动合同→社保增员→公积金增员。个税零申报。Q3季报：增值税(2子目)+企税+城建税+教附+地教附，共6项零申报。"),
-        (date(2026, 11, 15), "首次个税实报（10月工资）", "申报10月工资个税。爱人约30.58元/月，弟弟约15.58元/月，合计约46.16元/月。"),
-        (date(2026, 12, 15), "个税实报（11月）+ 账务处理", "申报11月工资个税。月末完成账务处理：计提工资+单位社保公积金+银行手续费。"),
-    ]
-    for dl, name, desc in special_2026:
+    # ===== 2026年特殊时间线（从 company_config.yaml 动态加载）=====
+    special_events = COMPANY_CONFIG.get("special_events_2026", [])
+    for evt in special_events:
+        dl = _parse_date(evt["date"])
         if in_window(dl):
-            deadlines.append((dl, name, desc))
+            deadlines.append((dl, evt["name"], evt["description"]))
 
     # 去重、排序
     seen = set()
@@ -383,11 +571,14 @@ def build_card_json():
     elements = []
 
     # 头部信息
+    company_name = COMPANY_CONFIG["company"]["name"]
+    company_reg = COMPANY_CONFIG["company"]["register_date"]
+    company_industry = COMPANY_CONFIG["company"]["industry"]
     elements.append({
         "tag": "div",
         "text": {
             "tag": "lark_md",
-            "content": f"**当前阶段**：{stage}  |  **公司注册日期**：2026-07-09  |  **行业**：文艺创作与表演",
+            "content": f"**当前阶段**：{stage}  |  **公司注册日期**：{company_reg}  |  **行业**：{company_industry}",
         },
     })
 
@@ -406,6 +597,23 @@ def build_card_json():
                     "• 首次季报：**2026年10月15日前**（Q3，共6项零申报）\n"
                     "• 首次个税实报：**2026年11月15日前**（申报10月工资）\n"
                     "• **Q4启动（10月）**：为法人发工资 + 缴纳社保公积金"
+                ),
+            },
+        })
+    elif stage == "入职过渡期":
+        elements.append({"tag": "hr"})
+        elements.append({
+            "tag": "div",
+            "text": {
+                "tag": "lark_md",
+                "content": (
+                    "📌 **入职过渡期核心任务**\n"
+                    "• 社保增员 ✅ 公积金增员 ✅ 个税增员 ✅\n"
+                    "• 签劳动合同（预计8月14日）\n"
+                    "• 首次发工资缴社保（8月底，实发约5,560元）\n"
+                    "• 首次个税实报：**9月15日前**（申报8月工资，约17.30元）\n"
+                    "• 首次社保/公积金缴费：**9月15日前**\n"
+                    "• Q3季报：**10月15日前**（6项零申报）"
                 ),
             },
         })
@@ -536,12 +744,7 @@ def build_card_json():
                 "content": "📰 **近期政策要点**（今日暂无最新政策新闻，以下为当前有效政策提醒）",
             },
         })
-        policy_highlights = [
-            "**小微企业税收优惠延续至2027年底**\n5%企业所得税低税负、六税两费减半、小规模月销10万免增值税等优惠明确延续。金税四期「以数治税」全面上线，需注意合规申报。",
-            "**《增值税法》2026年1月1日起施行**\n财政部税务总局公告2026年第10号将小规模纳税人优惠锁定至2027年12月31日。月销售额≤10万、季销售额≤30万免征增值税。",
-            "**社保补贴政策延续至2026年底**\n中小微企业招用2026届高校毕业生、失业半年以上人员等重点群体，可申领社保补贴。税务部门正严查社保足额缴纳。",
-            "**人社新规7月实施**\n多项社保权益变化生效，包括养老保险全国统筹落地、社保费检查套用税收执法程序和标准。",
-        ]
+        policy_highlights = COMPANY_CONFIG.get("policy_highlights", [])
         for highlight in policy_highlights:
             elements.append({
                 "tag": "div",
