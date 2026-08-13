@@ -171,3 +171,6 @@ net_worth_snapshots:
 - date: '2026-08-12'
   net_worth_cny: 1029928
   total_assets_cny: 1429928
+- date: '2026-08-14'
+  net_worth_cny: 1061649
+  total_assets_cny: 1461649
