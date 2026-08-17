@@ -21,7 +21,7 @@
 | **行为约束** | 批判性立场（铁律第5条） | 不偏向/每次先讲用户可改点，权威见GLOBAL-RULES.md | 2026-07-19 |
 | **行为约束** | 学习讨论收尾纪律（费曼复述） | ≥3层后提醒复述+面试官考核（权威见GLOBAL-RULES.md） | 2026-07-29 |
 | **行为约束** | 小修改不频繁推送 | 积累到量再统一推 | 2026-07-07 |
-| **行为约束** | TODO-DASHBOARD 双向同步 | 新增待办同步到看板/完成打勾同步回源文件，权威见GLOBAL-RULES.md | 2026-08-11 |
+| **行为约束** | TODO-DASHBOARD 双向同步 | 新增待办同步到看板/完成打勾同步回源文件；个人待办统一整合进看板（不再单独维护 personal/todo.md，2026-08-17 已删除），权威见GLOBAL-RULES.md | 2026-08-17 |
 
 ### 二、知识与项目状态（技能 / 项目 / 参考资料 / 知识条目）
 
@@ -42,6 +42,7 @@
 | **Project** | 个人网站                  | 静态个人站点：文章发布与一键部署脚本                                              | 01-Projects/personal-website | 2026-07-22 |
 | **Project** | 话题工作台(topics)         | 特定技术话题讨论暂存（PBR策略路由分析/TSN协议分析）                               | 01-Projects/topics | 2026-07-22 |
 | **Project** | 求职面试-今日宜休ISHO        | 面试讨论中，已完成全面匹配度分析                                                  | career-development | 2026-05-29 |
+| **Project** | 求职面试-活跃推进           | 已面7家后仍在推进：盖洛普落地/简历改写/话术加才干句。核心弹药库 tech-interview-notes.md（44KB）+ career-strategy/（盖洛普测评+行动计划） | career-development | 2026-08-11 |
 | **Project** | 个性化Agent开发              | 待规划：李笑来认知蒸馏Agent、健康Agent等                                           | 01-Projects/personal-agents | 2026-06-17 |
 | **Reference** | S5120V8逻辑寄存器手册       | 硬件参考                                                                      | network-device-debug | —         |
 | **Reference** | Wireshark 抓包             | 网络分析工具                                                                   | network-device-debug | —         |
@@ -66,6 +67,8 @@
 | **Knowledge** | X推文自动化研究归档          | 闲鱼自动化/封号风险、全流程自动化可行性、24小时微信推送方案、飞书AI配置、信息源推荐。含7项待办        | 全部 | 2026-06-20 |
 | **Knowledge** | AI Berkshire投资研究Skills    | 投资研究AI助手：公司研究/财报分析/行业筛选/组合回顾等5个核心技能                                 | 全部            | 2026-07-06 |
 | **Knowledge** | Web-Pack素材采集Skill        | 网页主题完整素材包采集，超越传统剪藏工具，支持深度抓取和图片本地化                                  | 全部            | 2026-07-06 |
+| **Knowledge** | 技术面试笔记（tech-interview-notes） | 面试技术弹药库：Tickless/PendSV/CNN算子/Dropout翻转补偿/启动流程等，TODO看板多项复述作业引用 | career-development | 2026-08-10 |
+| **Knowledge** | 盖洛普测评与落地行动计划    | Harvey盖洛普优势测评 + 三主线落地（求职/投资/家庭）+ 才干检查清单 | career-development | 2026-08-11 |
 
 ---
 
