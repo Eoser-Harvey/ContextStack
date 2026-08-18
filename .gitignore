@@ -89,7 +89,7 @@ Thumbs.db
 # AI Stock三线卖出每日监控日报（自动生成，不跟踪）
 01-Projects/family-hub/research/portfolio/reports/three-sell-lines-daily-*.md
 
-"*.html"  
+*.html
 
 # send_embedded_ai_daily.py (本地保留，含密钥)
 01-Projects/automated-task/2.trae-embedded-ai-daily/send_embedded_ai_daily.py
