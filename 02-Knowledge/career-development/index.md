@@ -22,6 +22,10 @@
   - [[interview-project-summaries/03-project-design/|03-项目设计]] — CI/CD流程 + 架构图
   - [[interview-project-summaries/04-embedded-fundamentals/|04-嵌入式基础]] — C++/RTOS/嵌入式AI笔记
 
+### 公司相关材料
+- [[company/|company/]] — 公司内部相关材料（分享会 / 技术汇报 / 工作笔记 / 流程改进）：
+  - [[company/ai-dev-practice-sharing-2026|AI 开发实践分享大纲（15 分钟）]] — 长处/短处/方法/体系 完整大纲
+
 ### 关键入口
 - [[interview-project-summaries/01-company-interviews/career-profile|完整职业画像]] — 简历提取 v1.0
 - [[interview-project-summaries/02-interview-prep/narrative-training|叙事化训练计划]] — 7天训练方案
