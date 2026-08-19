@@ -22,6 +22,9 @@
 
 ## P1（本月要做）
 
+### 框架治理（2026-08-20 起）
+- [ ] **AI 行为约束自检清单 Skill 化**：把 GLOBAL-RULES.md v3.3 的 6 项会话开始自检清单抽取为 `02-Knowledge/skills/ai-self-check/` Skill，配置为 always-applied（类似 karpathy-guidelines），让每次会话开始时自动注入到 system prompt，对抗"加载规则 ≠ 遵守规则"漏洞（已记录 4 次违规教训）。配套用户抽查机制兜底。→ [详情](GLOBAL-RULES.md#-ai-行为约束自检清单2026-08-20-新增)
+
 ### 嵌入式AI项目
 - [ ] **UCI HAR 公开数据集交叉验证**（补"单人单天"数据短板）→ [详情](01-Projects/embedded-ai-learning/courses/嵌入式AI课程全链路总结-MS版.md#112-p1-级短板深挖必问)
 - [ ] **低功耗方案设计**（40Hz 常开推理的功耗预算 + 动作唤醒占空比设计）→ 同上

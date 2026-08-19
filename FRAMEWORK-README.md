@@ -205,10 +205,10 @@ ContextStack/
 
 ---
 
-**框架版本**: v3.0
+**框架版本**: v3.2（与 GLOBAL-RULES.md 同步）
 **创建时间**: 2026-04-30
-**最后更新**: 2026-07-22
-**变更**: family-investment→family-hub 升级为家庭决策枢纽；目录树同步实际结构；补全 wechat-radar 项目、images/ 目录；移除已合并的 system/templates/；03-Memory/ 子目录完善
+**最后更新**: 2026-08-20
+**变更**: 2026-08-20 框架全量学习审计 + 索引同步 + AI 自检清单；2026-07-22 目录树同步；2026-07-31 记忆系统三层分工；2026-07-28 费曼复述纪律+考核机制
 **设计原则**: 独立于AI助手、分层Context、持久化Memory、工作台驱动
 **文件规范**: 英文目录/文件名，中文文件内容
 **核心价值**: 积累您自己的通用协作框架，提升长期协作效率
@@ -220,8 +220,10 @@ ContextStack/
 | L1 全局规则 | ✅ 完成 | GLOBAL-RULES.md + Skills rules |
 | L2 项目规则 | ✅ 完成 | 6个主要项目均有 PROJECT-RULES.md（另 automated-task/personal-website/personal-agents/topics 为任务型目录，未建） |
 | L3 规范文档 | 🔄 充实中 | methodology / SOP / 调研框架已具，待深化 |
-| L4 Memory | ✅ 可用 | MEMORY.md 索引 + 03-Memory/ 结构化记忆 |
+| L4 Memory | ✅ 可用 | MEMORY.md 索引 + 03-Memory/ 结构化记忆（2026-08-20 新增框架审计资产） |
 | 工作台系统 | ✅ 运行中 | 10 个项目目录（6 主要 + automated-task/personal-website/personal-agents/topics）、6标准文件模板 |
+| TODO 看板 | ✅ 运行中 | TODO-DASHBOARD.md 跨项目 P0/P1/P2 看板，双向同步（2026-08-11 建立） |
+| 自检清单 | ✅ 已建 | AI 行为约束自检清单（2026-08-20 新增，见 GLOBAL-RULES.md） |
 | 模板层 | ✅ 完成 | 04-Templates/ 统一管理所有模板 |
 | 工具链 | ✅ 完备 | 备份自动化 / 编码修复 / Git同步 |
 

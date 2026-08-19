@@ -89,7 +89,14 @@ Thumbs.db
 # AI Stock三线卖出每日监控日报（自动生成，不跟踪）
 01-Projects/family-hub/research/portfolio/reports/three-sell-lines-daily-*.md
 
-*.html
+# HTML 忽略策略（2026-08-20 修订）：
+# 原 `*.html` 全局忽略会导致框架内有价值的 .html（健康分析报告/排盘海报/项目页面/Learning notes）
+# 新增时被意外忽略而无法 commit。
+# 改为白名单制：只忽略明确不需要跟踪的特定路径下 .html，其余默认入库。
+01-Projects/automated-task/**/*.html
+02-Knowledge/skills/*/cache/**/*.html
+**/profile_archive/**/*.html
+**/.cache/**/*.html
 
 # send_embedded_ai_daily.py (本地保留，含密钥)
 01-Projects/automated-task/2.trae-embedded-ai-daily/send_embedded_ai_daily.py

@@ -47,7 +47,8 @@
 | **Reference** | S5120V8逻辑寄存器手册       | 硬件参考                                                                      | network-device-debug | —         |
 | **Reference** | Wireshark 抓包             | 网络分析工具                                                                   | network-device-debug | —         |
 | **Knowledge** | ContextStack四层架构        | 框架说明                                                                     | 全部            | 2026-04-29 |
-| **Knowledge** | 框架审计报告 2026-06-10     | 全量审计：3严重+5中等+3轻微问题，附优先级行动清单                                    | 全部            | 2026-06-10 |
+| **Knowledge** | 框架审计报告 2026-06-10     | 全量审计：3严重+5中等+3轻微，附优先级行动清单                                    | 全部            | 2026-06-10 |
+| 框架结构审计 2026-08-20     | 索引滞后修复/.gitignore 修订/AI 自检清单 v3.3/CodeBuddy vs 03-Memory 同步                                    | 全部            | 2026-08-20 |
 | **Knowledge** | 九号公司 FreeRTOS 面经      | 牛客网14题完整答案                                                             | career-development | 2026-06-10 |
 | **Knowledge** | note-organizer Skill        | 智能笔记整理，5种类型识别                                                        | 全部            | 2026-05-26 |
 | **Knowledge** | 自主自我改进循环研究         | Hermes Agent四层记忆+三层飞轮                                                     | 全部            | 2026-06-03 |
@@ -58,6 +59,8 @@
 | **Knowledge** | 面试经验总库               | 7家公司完整面试记录+教训+5条红线+赛道P0考点+提问策略                                   | career-development | 2026-06-10 |
 | **Knowledge** | interview-prep Skill       | 输入公司名自动生成8模块面试准备清单                                                 | 全部            | 2026-06-10 |
 | **Knowledge** | framework-maintenance      | 工具修复/框架演进决策/记忆系统分工（.workbuddy vs 03-Memory）                        | 全部            | 2026-07-31 |
+| **Knowledge** | framework-structure-audit-2026-08-20 | 框架结构审计：索引滞后修复/.gitignore 修订/AI 自检清单/CodeBuddy vs 03-Memory 同步问题 | 全部 | 2026-08-20 |
+| **Knowledge** | framework-audit-2026-06-10     | 全量审计：3严重+5中等+3轻微问题（2026-08-20 已从 knowledge/ 迁至 sessions/）                                    | 全部            | 2026-06-10 |
 | **Knowledge** | Academic Research Skills 深度分析 | Claude Code 学术研究Skill套件：32+Agent、完整性门、引用验证、反讨好机制                      | 全部            | 2026-06-11 |
 | **Knowledge** | OpenSquilla MetaSkill 分析   | Agent自组织技能新范式：动态发现+自动编排工作流，解决「组合灾难」                                  | 全部            | 2026-06-11 |
 | **Knowledge** | ClawHunt Agent众包市场分析    | Agent任务众包平台：需求方挂任务→Agent竞标→法币结算。当前收入微薄，适合观察学习                      | 全部            | 2026-06-16 |
@@ -178,7 +181,8 @@
 | 条目                     | 说明                                               | 位置                                                                          |
 |:-------------------------|:---------------------------------------------------|:------------------------------------------------------------------------------|
 | ContextStack四层架构      | 框架完整说明                                        | `03-Memory/knowledge/contextstack-four-layer-framework.md`                   |
-| 框架审计报告 2026-06-10   | 全量审计：3严重+5中等+3轻微                          | `03-Memory/knowledge/framework-audit-2026-06-10.md`                          |
+| 框架审计报告 2026-06-10   | 全量审计：3严重+5中等+3轻微（已迁至 sessions/）        | `03-Memory/sessions/session-20260610-framework-audit.md`                          |
+| 框架结构审计 2026-08-20   | 索引滞后修复/.gitignore 修订/AI 自检清单 v3.3         | `03-Memory/sessions/session-20260820-framework-audit.md`                          |
 | 九号公司 FreeRTOS 面经   | 牛客网14题完整答案                                   | `02-Knowledge/career-development/interview-project-summaries/01-company-interviews/ninebot-questions.md` |
 | note-organizer Skill     | 智能笔记整理，5种内容类型识别                         | `.codebuddy/skills/note-organizer/`                                            |
 | 自主自我改进循环研究      | Hermes Agent四层记忆+三层飞轮                          | `02-Knowledge/inbox/autonomous-self-improving-loops-research.md`              |
