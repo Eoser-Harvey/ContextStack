@@ -18,6 +18,23 @@
 
 ## 工具维护记录
 
+### Git 仓库治理 + auto_push 编码加固（2026-08-18）
+
+**背景**：框架体检发现 `.git` 有 23 个垃圾对象 + 21 个孤儿 .idx、size-pack 336MB；全历史有 1 条中文乱码 commit。
+
+**修复三处**：
+1. `git gc --prune=now`：垃圾对象 23→0，4 个 pack 合并为 1 个
+2. `.gitignore` `"*.html"` 引号 bug → `*.html`（gitignore 不支持引号包裹，原 pattern 从未生效，html 被误跟踪）
+3. `auto_push.ps1` 提交改 `git commit -m` → `git commit -F` + UTF-8 消息文件（`[System.IO.File]::WriteAllText(..., UTF8Encoding($false))`），杜绝 GBK 控制台把中文写乱码
+
+**乱码根因**：仅 1 条（80bc201，`docs:` 前缀），非 auto_push 产生，是某台电脑 GBK 控制台手动 `git commit -m "中文"` 所致。历史修复需 rebase+force push，仅 1 条不值得，留着当纪念。
+
+**体积根因（未解决，待决策）**：373MB 非垃圾而是二进制入库——>500KB blob 共 153 个（腾讯云培训 44MB PDF / 13MB zip、role-model 277 个 PDF）。瘦身需 `git filter-repo` 重写历史 + force push + 家里电脑重新克隆，已给用户 A/B 方案待选。
+
+**教训**：①git 仓库健康度纳入定期体检；②大文件（PDF/图片/zip）入库前先判断是否进 `.gitignore` 或走外部存储，不无脑 `git add -A`。
+
+---
+
 ### auto_push.ps1 中文文件名 commit 失败 bug（2026-07-29 修复）
 
 **根因**：脚本 Step 4 从 `git status --porcelain` 提取目录名时未清洗引号——git 对中文文件名加引号输出（`M  "01-Projects/.../嵌入式AI笔记...md"`），残留引号混入 commit message，PowerShell 传参时引号边界被破坏，git 把 message 片段 `(no-ext)` 误认为 pathspec。
