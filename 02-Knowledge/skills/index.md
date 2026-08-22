@@ -21,6 +21,8 @@
 | [[ai-berkshire/index\|AI Berkshire投资研究]] | 投资研究AI助手：公司研究/财报分析/行业筛选/组合回顾 | `#investment-research` `#financial-analysis` `#ai-assistant` |
 | [[browser-automation/web-pack/index\|Web-Pack素材采集]] | 网页主题完整素材包采集，超越传统剪藏工具（已归入浏览器自动化目录） | `#web-crawling` `#knowledge-management` `#content-collection` |
 | [[wechat-cli/index\|WeChat CLI本地查询]] | 命令行查询本地微信数据（聊天记录/联系人/群成员/统计/收藏/导出），AI Agent 友好 JSON 输出 | `#wechat` `#local-data` `#agent-tool` `#json` `#sqlcipher` |
+| [[arm-cortex-microcontrollers/index\|ARM Cortex-M固件开发]] | ARM Cortex-M 固件专家知识库：内存屏障/DMA/中断/Hardfault/栈保护，覆盖 STM32/nRF52/Teensy/SAMD | `#embedded` `#cortex-m` `#firmware` `#driver` |
+| [[tailored-resume-generator/index\|定制简历生成]] | 分析 JD 生成定制简历：ATS 优化/量化成果/差距分析/面试建议 | `#resume` `#job-search` `#ats` |
 
 ### AI 编码与治理 Skills（2026-05-13）
 
@@ -78,10 +80,10 @@
 
 | 类别 | 数量 | 位置 |
 |------|------|------|
-| ContextStack 自定义 | 18 | `02-Knowledge/skills/` |
+| ContextStack 自定义 | 20 | `02-Knowledge/skills/` |
 | CodeBuddy 内置 | 6 | CodeBuddy 预装 + `.codebuddy/skills/note-organizer/` |
 | 用户级安装 | 1 | `~/.codebuddy/skills/obsidian/` |
-| **合计** | **23** | — |
+| **合计** | **25** | — |
 
 ---
 
@@ -91,6 +93,7 @@
 |------|----------|------|----------|
 | 2026-07-06 | [[ai-berkshire/index\|AI Berkshire 投资研究]]、[[browser-automation/web-pack/index\|Web-Pack 素材采集]] | 微信公众号「JackCui」投资研究文章、微信公众号「Ai学习的老章」原创 Skills 文章 | 14 → 16 |
 | 2026-07-26 | [[wechat-cli/index\|WeChat CLI 本地查询]] | GitHub [huohuoer/wechat-cli](https://github.com/huohuoer/wechat-cli)，本地微信数据命令行查询工具 | 17 → 18 |
+| 2026-08-21 | [[arm-cortex-microcontrollers/index\|ARM Cortex-M固件开发]]、[[tailored-resume-generator/index\|定制简历生成]] | GitHub [wshobson/agents](https://github.com/wshobson/agents)、[composio-community/awesome-codex-skills](https://github.com/composio-community/awesome-codex-skills) | 18 → 20 |
 
 - **AI Berkshire**（投资研究）：5 个子技能（investment-research / investment-team / earnings-review / industry-funnel / portfolio-review）。源文：https://mp.weixin.qq.com/s/rN6gmls_hbTWVHHSDhN3-Q
 - **Web-Pack**（网页素材采集，已归入 browser-automation）：深度采集 + 图片本地化 + 结构化输出。源文：https://mp.weixin.qq.com/s/U1nICI87xfBZ86Bh_Dj5kw

@@ -8,6 +8,8 @@
   - `#tool-config` `#vscode` `#backup`
 - [[codebuddy-editor-multi-tab-fix|CodeBuddy 编辑器多标签修复]] — 打开新文件自动关闭旧页签的根因与修复
   - `#codebuddy` `#editor` `#troubleshooting`
+- [[codebuddy-history-management|CodeBuddy 历史记录管理]] — 历史按 Workspace 维度存储的机制、恢复方法、导出导入
+  - `#codebuddy` `#history` `#workspace` `#data-recovery`
 - [[wechat-download|微信公众号批量下载工具 wechatDownload]] — 基于 PC 微信登录态批量抓取公众号全部历史文章（GUI，人工取 key+导出）
   - `#tool-config` `#wechat` `#crawler`
 
