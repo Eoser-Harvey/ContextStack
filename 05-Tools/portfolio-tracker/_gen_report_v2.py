@@ -65,6 +65,8 @@ def load_holdings_yaml():
             "storage": h.get("storage", ""),
             "price_source": h.get("price_source", "manual"),
             "note": h.get("note", ""),
+            "value_eth": h.get("value_eth"),
+            "cn_sina_code": h.get("cn_sina_code", ""),
         }
         # 成本处理
         cb_total = h.get("cost_is_total", False)
@@ -249,12 +251,43 @@ def fetch_us_stock(sym):
     return None
 
 stock_prices = {}
-for label, sym in [("MRVL","mrvl"), ("CRCL","crcl"), ("BTGO","btgo"), ("DRAM","dram")]:
+for label, sym in [("MRVL","mrvl"), ("CRCL","crcl"), ("BTGO","btgo"), ("DRAM","dram"),
+                   ("MSTR","mstr"), ("SOXL","soxl")]:
     try:
         val = fetch_us_stock(sym)
         if val is not None:
             stock_prices[label] = val
             print(f"  {label}=${val:.2f}")
+    except Exception as e:
+        print(f"  {label} 失败: {e}")
+
+# ONDO/UNI 加密代币 (Gate.io, USDT计价→USD)
+for pair, label in [("ONDO_USDT","ONDO"), ("UNI_USDT","UNI")]:
+    try:
+        r = requests.get(f"https://api.gateio.ws/api/v4/spot/tickers?currency_pair={pair}", timeout=10)
+        if r.ok:
+            stock_prices[label] = float(r.json()[0]["last"])
+            print(f"  {label}=${stock_prices[label]:.4f}")
+        else:
+            print(f"  {label} 失败: Gate返回{r.status_code}")
+    except Exception as e:
+        print(f"  {label} 失败: {e}")
+
+# A股 (Sina, 人民币计价)
+def fetch_cn_stock(sym):
+    parts = fetch_sina_stock(sym)
+    if len(parts) > 3 and parts[3]:
+        return float(parts[3])
+    return None
+cn_prices = {}
+for label, sym in [("科创50","sh588000"), ("创新药","sz159971")]:
+    try:
+        val = fetch_cn_stock(sym)
+        if val is not None:
+            cn_prices[label] = val
+            print(f"  {label}=¥{val:.3f}")
+        else:
+            print(f"  {label} 失败: Sina未返回")
     except Exception as e:
         print(f"  {label} 失败: {e}")
 
@@ -324,6 +357,21 @@ def get_price(holding, prices_dict):
     if ps == "cryptocompare":
         if sym == "BTC": return btc, "USD"
         if sym == "ETH": return eth, "USD"
+    if ps == "gate":
+        if sym == "ONDO": return stock_prices.get("ONDO"), "USD"
+        if sym == "UNI": return stock_prices.get("UNI"), "USD"
+    # Milady NFT: 按 value_eth × ETH 计价
+    if ps == "eth_value":
+        v = holding.get("value_eth")
+        if v and eth:
+            return v * eth, "USD"
+        return None, "USD"
+    # A股 (Sina, 人民币)
+    if ps == "sina_cn":
+        code = holding.get("cn_sina_code", "")
+        if code == "sh588000": return cn_prices.get("科创50"), "CNY"
+        if code == "sz159971": return cn_prices.get("创新药"), "CNY"
+        return None, "CNY"
 
     # 美股 (Sina)
     if ps == "sina":
@@ -335,6 +383,10 @@ def get_price(holding, prices_dict):
             return stock_prices.get("BTGO"), "USD"
         if "dram" in sina_sym.lower() or sym == "DRAM":
             return stock_prices.get("DRAM"), "USD"
+        if sym == "MSTR":
+            return stock_prices.get("MSTR"), "USD"
+        if sym == "SOXL":
+            return stock_prices.get("SOXL"), "USD"
         if "nok" in sina_sym.lower() or sym == "NOK":
             return stock_prices.get("NOK"), "USD"
 
@@ -349,6 +401,10 @@ def mv_in_cny(holding, price, uc_val, hc_val):
     sym = holding["symbol"].upper() if holding["symbol"] else ""
     sina_sym = holding.get("sina_symbol", "")
     yahoo_sym = holding.get("yahoo_symbol", "")
+
+    # A股：价格已是人民币，直接乘数量
+    if ps == "sina_cn":
+        return qty * price
 
     # 判断是否为港股标的
     is_hk = (ps in ("sina", "yahoo") and (
@@ -371,6 +427,8 @@ def price_display_str(holding, price):
     sym = holding["symbol"].upper() if holding["symbol"] else ""
     sina_sym = holding.get("sina_symbol", "")
     yahoo_sym = holding.get("yahoo_symbol", "")
+    if ps == "sina_cn":
+        return f"¥{price:,.3f}"
     is_hk = (ps in ("sina", "yahoo") and (
         sina_sym.startswith("hk") or 
         yahoo_sym.endswith(".HK") or 
@@ -438,6 +496,8 @@ for h in yd["holdings"]:
 
     items.append({
         "name": h["name"],
+        "symbol": h.get("symbol", ""),
+        "unit": h.get("unit", "股"),
         "qty_str": qty_str,
         "price_str": price_display_str(h, price),
         "mv_cny": mv_cny,
@@ -540,18 +600,59 @@ L.append(f"| **投资净资产** | **¥{investment_total - liab_total:,.0f}** | 
 # 二、投资明细
 L.append("## 二、投资资产明细（含盈亏）\n")
 L.append("| 标的 | 数量 | 当前单价 | 市值(CNY) | 成本单价(CNY) | 成本总价(CNY) | 盈亏(CNY) | 占投资比 | 存放 |")
-L.append("|------|------|----------|-----------|---------------|---------------|----------|---------|------|")
+L.append("|:-----|-----:|---------:|----------:|--------------:|--------------:|---------:|--------:|:----|")
 for r in rows:
     L.append(f"| {r['name']} | {r['qty_str']} | {r['price_str']} | ¥{r['mv_cny']:,.0f} | ¥{r['cost_unit']:.2f} | ¥{r['cost_cny']:,.0f} | {r['pnl_str']} | {r['pct_inv']} | {r['storage']} |")
 L.append(f"| **投资合计** | — | — | **¥{investment_total:,.0f}** | — | — | — | **100%** | — |\n")
 
-# 三、存放位置
-L.append("## 三、按存放位置分布\n")
-L.append("| 位置 | 市值(CNY) | 占投资比 |")
-L.append("|------|----------|---------|")
-for st, val in sorted(storage_sum.items(), key=lambda x: -x[1]):
+# 三、资产统计（按标的合并，跨账户）
+ASSET_LABEL = {
+    "CRCL": "Circle(CRCL)", "BTC": "比特币", "ETH": "以太坊",
+    "DRAM": "DRAM内存ETF", "MSTR": "MicroStrategy", "ONDO": "ONDO",
+    "UNI": "Uniswap", "SOXL": "半导体3倍ETF", "BTGO": "BitGo",
+    "1810.HK": "小米(1810)", "9880.HK": "优必选(9880)",
+    "588000": "科创50ETF", "159971": "创新药ETF",
+    "XIAOAN": "小安时间", "WUFAN": "午饭时间",
+}
+asset_sum = {}
+asset_cost = {}
+asset_qty = {}
+asset_cat = {}
+asset_unit = {}
+for it in items:
+    sym = it.get("symbol", "").upper() if it.get("symbol") else it.get("name", "")
+    asset_sum[sym] = asset_sum.get(sym, 0) + it["mv_cny"]
+    asset_cost[sym] = asset_cost.get(sym, 0) + it["cost_cny"]
+    asset_qty[sym] = asset_qty.get(sym, 0) + it["qty"]
+    asset_cat.setdefault(sym, it.get("cat", ""))
+    asset_unit.setdefault(sym, it.get("unit", "股"))
+L.append("## 三、按资产统计\n")
+L.append("| 资产 | 数量 | 均价 | 市值(CNY) | 占投资比 |")
+L.append("|:-----|------:|-----:|----------:|--------:|")
+for sym in sorted(asset_sum, key=lambda x: -asset_sum[x]):
+    label = ASSET_LABEL.get(sym, sym)
+    val = asset_sum[sym]
+    cost = asset_cost[sym]
+    qty = asset_qty[sym]
+    unit = asset_unit.get(sym, "股")
     pct = val / investment_total * 100
-    L.append(f"| {st} | ¥{val:,.0f} | {pct:.1f}% |")
+    cat = asset_cat.get(sym, "")
+    if unit == "秒":
+        qty_disp = f"{qty:,.0f}秒"
+    elif qty == int(qty):
+        qty_disp = f"{qty:,.0f}{unit if unit != '股' else ''}"
+    else:
+        qty_disp = f"{qty:,.4f}".rstrip("0").rstrip(".") + (unit if unit != "股" else "")
+    if qty:
+        if cat == "a_stock":
+            avg = f"¥{cost/qty:,.2f}"
+        elif cat == "hk_stock":
+            avg = f"HK${cost/qty/hc:,.2f}"
+        else:
+            avg = f"${cost/qty/uc:,.2f}"
+    else:
+        avg = "—"
+    L.append(f"| {label} | {qty_disp} | {avg} | ¥{val:,.0f} | {pct:.1f}% |")
 L.append("")
 
 # 四、负债
@@ -639,49 +740,79 @@ for i, s in enumerate(snaps):
 # 当前行
 L.append(f"| {today} | ¥{net_worth:,.0f} | {nw_sign}¥{nw_delta:,.0f} ({nw_sign}{nw_delta/prev_nw*100:.1f}%) | 本次更新 |\n")
 
-# 九、本期变动（从 trade_log 读取或保留手动区）
+# 九、本期变动（从 trade_log 读取本月交易，自动生成）
 L.append("## 九、本期持仓变动\n")
-L.append("| 标的 | 变动 | 说明 |")
-L.append("|------|------|------|")
-L.append("> ⚠️ 本节需根据实际交易手动更新，或由AI助手在记录交易时自动追加\n")
+_trades = []
+try:
+    _tl_path = BASE / "trade_log.md"
+    with open(_tl_path, encoding="utf-8") as _f:
+        for _line in _f:
+            _m = re.match(
+                r"\|\s*(\d{4}-\d{2}-\d{2})\s*\|\s*(买入|卖出)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|",
+                _line
+            )
+            if _m:
+                _d, _act, _asset, _qty, _price, _amt = _m.groups()
+                if _d.startswith(_current_month):
+                    _trades.append((_d, _act, _asset.strip(), _qty.strip(), _price.strip(), _amt.strip()))
+except Exception as _e:
+    L.append(f"> ⚠️ trade_log 读取失败: {_e}\n")
+if _trades:
+    L.append("| 日期 | 操作 | 标的 | 数量 | 单价 | 金额 |")
+    L.append("|------|------|------|------|------|------|")
+    for _t in _trades:
+        L.append(f"| {_t[0]} | {_t[1]} | {_t[2]} | {_t[3]} | {_t[4]} | {_t[5]} |")
+else:
+    L.append("> 本期无交易记录（数据源: trade_log.md，需在交易后及时记录）\n")
 
-# 十、价格变动
+# 十、本期价格变动 — 从当前持仓动态生成，上期价格解析自上一期报告
+# symbol -> 上一期报告显示名（用于匹配上期价格）
+LEGACY_LABEL = {
+    "BTC": "BTC", "CRCL": "CRCL", "ETH": "ETH", "MRVL": "MRVL",
+    "BTGO": "BTGO", "DRAM": "DRAM", "1810.HK": "小米", "9880.HK": "优必选",
+}
+# 解析上一期报告的本期价格作为上期
+_prev_prices = {}
+try:
+    _prev_report = BASE / f"reports/家庭资产报告-{_prev_month}.md"
+    with open(_prev_report, encoding="utf-8") as _f:
+        _ptxt = _f.read()
+    _sec = re.search(r"本期价格变动.*?\n(?:\|[^\n]*\n){2}((?:\|[^\n]*\n)+)", _ptxt, re.S)
+    if _sec:
+        for _row in _sec.group(1).strip().split("\n"):
+            _pm = re.match(r"\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|", _row)
+            if _pm:
+                _prev_prices[_pm.group(1).strip()] = _pm.group(3).strip()
+except Exception:
+    pass
 L.append("## 十、本期价格变动\n")
 L.append("| 标的 | 上期价格 | 本期价格 | 涨跌 |")
 L.append("|------|---------|---------|------|")
-# 从history读上期价格
-hh = ph_data.get("holdings_history", {})
-price_labels = [
-    ("BTC", "btc_onchain", "usd", "all_time_low_price"),
-    ("ETH", "eth_onchain", "usd", "all_time_low_price"),
-    ("CRCL", "crcl_yan", "usd", "all_time_low_price"),
-    ("MRVL", "mrvl_han", "usd", "all_time_low_price"),
-    ("BTGO", "bitgo", "usd", "all_time_low_price"),
-    ("DRAM", "dram_binance", "usd", "all_time_low_price"),
-    ("小米", "xiaomi_ht", "hkd", "all_time_low_price_hkd"),
-    ("优必选", "ubt_ht", "hkd", "all_time_low_price_hkd"),
-]
-for label, pid, cur, key in price_labels:
-    entry = hh.get(pid, {})
-    prev_p = entry.get(key)
-    if cur == "hkd":
-        cur_p = hk_prices.get(label)
-        if label == "小米": cur_p = hk_prices.get("XIAOMI")
-        elif label == "优必选": cur_p = hk_prices.get("UBT")
-        if cur_p and prev_p:
-            chg = (cur_p - prev_p) / prev_p * 100
-            ar = "↑" if chg > 0 else "↓"
-            L.append(f"| {label} | HK${prev_p:,.2f} | HK${cur_p:,.2f} | {ar}{abs(chg):.1f}% |")
-        elif cur_p:
-            L.append(f"| {label} | — | HK${cur_p:,.2f} | 新 |")
+_seen = set()
+for it in items:
+    sym = it.get("symbol", "").upper() if it.get("symbol") else it.get("name", "")
+    if not sym or sym in _seen or it.get("price") is None:
+        continue
+    _seen.add(sym)
+    label = ASSET_LABEL.get(sym, sym)
+    cat = it.get("cat", "")
+    cur_p = it["price"]
+    cur_disp = f"HK${cur_p:,.2f}" if cat == "hk_stock" else (f"¥{cur_p:,.3f}" if cat == "a_stock" else f"${cur_p:,.2f}")
+    prev_key = LEGACY_LABEL.get(sym, label)
+    prev_str = _prev_prices.get(prev_key)
+    prev_num = None
+    if prev_str:
+        try:
+            prev_num = float(re.sub(r"[$,HK¥\s]", "", prev_str))
+        except Exception:
+            prev_num = None
+    if prev_num is not None and prev_num != 0:
+        chg = (cur_p - prev_num) / prev_num * 100
+        ar = "↑" if chg >= 0 else "↓"
+        L.append(f"| {label} | {prev_str} | {cur_disp} | {ar}{abs(chg):.1f}% |")
     else:
-        cur_p = summary["prices"].get(label)
-        if cur_p and prev_p:
-            chg = (cur_p - prev_p) / prev_p * 100
-            ar = "↑" if chg > 0 else "↓"
-            L.append(f"| {label} | ${prev_p:,.2f} | ${cur_p:,.2f} | {ar}{abs(chg):.1f}% |")
-        elif cur_p:
-            L.append(f"| {label} | — | ${cur_p:,.2f} | 新 |")
+        prev_disp = prev_str if prev_str else "—"
+        L.append(f"| {label} | {prev_disp} | {cur_disp} | — |")
 L.append("")
 
 # 写入月度报告

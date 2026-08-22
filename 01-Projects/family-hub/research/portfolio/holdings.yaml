@@ -2,7 +2,7 @@
 # 价格来源:
 #   cryptocompare = Gate.io API 实时价 (BTC/ETH)
 #   sina          = 新浪财经实时价 (美股/港股)
-#   manual        = 无公开行情源的资产(DRAM/TS时间代币), 需每月手动更新 manual_price_usd
+#   manual        = 无公开行情源的资产(TS时间代币), 需每月手动更新 manual_price_usd
 
 meta:
   last_updated: "2026-08-22"
@@ -12,6 +12,7 @@ meta:
 # ============================================================
 # 投资持仓 (每个标的必须含: quantity, cost_basis, price_source)
 # cost_basis 为 null 且 cost_unknown=true 表示成本待补充 ⚠️
+# 账户合并(2026-08-22): 燕币安=燕交易所+燕WEB3; 韩伟币安=韩伟交易所+韩伟WEB3
 # ============================================================
 
 holdings:
@@ -25,99 +26,101 @@ holdings:
     category: crypto
     storage: 链上钱包
     price_source: cryptocompare
-    note: 上个周期持仓, 成本已归零; 实时价Gate.io
+    note: 上个周期持仓, 成本已归零(信仰仓,永久不卖); 实时价Gate.io
 
   # eth_onchain 2026-06-24 清仓: 1.35个ETH, 链上ETH全部清仓
 
-  # ── 交易所 · 韩伟蒙古币安 ──
-  # btc_binance 2026-06-24 头脑发热清仓: 0.51247个均价$58,550, 卖出约$30,006, 违反A8纪律 ❌
-  # eth_binance 2026-06-02 MA120策略清仓卖出6.9677个@$2008, 剩余0.0003为dust
-
-  - id: crcl_binance
-    symbol: CRCL
-    name: Circle(韩伟币安)
-    quantity: 85.4
-    cost_basis_usd: 62.90
-    category: us_stock_tokenized
-    storage: 韩伟蒙古币安
-    price_source: sina
-    note: 2026-06-30 新建仓 85.4股@$62.90, 总成本$5,371.66; 实时价Sina
-
-  # googl_binance 2026-07-07 清仓: 7.65股成本$352.30, 卖出$368.20, 盈利$121.63(+4.5%), 资金部分换仓DRAM
-
-  - id: dram_binance
-    symbol: DRAM
-    name: DRAM(韩伟币安)
-    quantity: 57
-    cost_basis_usd: 66.85
-    category: us_stock
-    storage: 韩伟蒙古币安
-    price_source: sina
-    note: 内存美股ETF(缩写DRAM);
-
-  # ── 链上证券 · 燕蒙古WEB3 ──
-  # 成本计算: 总CRCL 480股(含代持60), 总盈利22750U, 代持成本83U
-  # 自持420股成本 = 480*113.07-22750-60*83 = 26543.60U, 均价63.20U/股
-  - id: crcl_yan
-    symbol: CRCL
-    name: Circle(燕蒙古)
-    quantity: 351.22
-    cost_basis_usd: 24423.76
+  - id: milady_nft
+    symbol: MILADY
+    name: Milady NFT(链上)
+    quantity: 1
+    unit: 个
+    value_eth: 1.14
+    cost_basis_usd: 0
     cost_is_total: true
-    category: us_stock_tokenized
-    storage: 燕蒙古WEB3
-    price_source: sina
-    note: 原288.85股成本$20,082.76均价$69.53; 06-24加仓+62.37@$69.60($4,341), 新均价$69.54/股
+    category: crypto
+    storage: 链上钱包
+    price_source: eth_value
+    note: 链上NFT, 价值按1.14 ETH折算, 随ETH波动
 
-  - id: mrvl_han
-    symbol: MRVL
-    name: 迈威尔(币安)
-    quantity: 34.344
-    cost_basis_usd: 273.72
-    category: us_stock
-    storage: 韩伟蒙古币安
-    price_source: sina
-    note: 06-05买入6.87@$291($2,000); 06-18买入5.384@$297.85($1,604); 06-22买入4.42@$315.16($1,393); 06-24买入5.78@~$270.93($1,566); 06-24买入6.738@$273($1,839); 07-17买入5.152@$194.10($1,000); 总成本$9,401, 均价$273.72/股
-
-  - id: crcl_yan_binance
+  # ── 燕币安 (原燕交易所+燕WEB3合并) ──
+  # 合并前: crcl_yan_binance 17@60.80 + crcl_yan 351.22@69.54 = 368.22股
+  # 2026-08 加仓 +12.78@60.71 → 现 381股, 加权均价$68.85
+  - id: crcl_yan_combined
     symbol: CRCL
     name: Circle(燕币安)
-    quantity: 17
-    cost_basis_usd: 60.80
+    quantity: 381
+    cost_basis_usd: 68.85
     category: us_stock_tokenized
     storage: 燕币安
     price_source: sina
-    note: 2026-07-17 新建仓 17股@$60.80, 总成本$1,033.60; 资金来自韩伟币安USDT
+    note: 账户合并; 原368.22@69.13 + 加仓12.78@60.71, 总成本$26,233, 均价$68.85; 现价Sina
 
-  - id: mrvl_yan_binance
-    symbol: MRVL
-    name: 迈威尔(燕币安)
-    quantity: 5.8323
-    cost_basis_usd: 185.17
-    category: us_stock
-    storage: 燕币安
-    price_source: sina
-    note: 2026-07-17 新建仓 5.8323股@$185.17, 总成本$1,080.00; 资金来自韩伟币安USDT
-
-  # dram_han 2026-06-22 清仓: 27.4股成本$72.60, 卖出$80.68, 盈利$221(+11.1%), 资金换仓CRCL
-
-  # spcx_han 2026-06-18 清仓: 15.52股成本$204.96, 卖出$179.50, 亏损$396(-12.4%), 看不懂趋势撤离
-
-  # nok_han 2026-06-24 清仓: 134.41股成本$14.88, 卖出$1,840, 亏损~$160(-8%), 情绪化操作止损离场
-
-  # ── 链上证券 · 韩伟蒙古WEB3 ──
-  # 成本计算: 总CRCL 480股(含代持60), 总盈利22750U, 代持成本83U
-  # 自持420股成本 = 480*113.07-22750-60*83 = 26543.60U, 均价63.20U/股
-  - id: crcl_han
+  # ── 韩伟币安 (原韩伟交易所+韩伟WEB3合并) ──
+  # 合并前: crcl_binance 85.4@62.90 + crcl_han 334.198@67.69 = 419.598股
+  # 2026-08 加仓 22.78@59.04 + 12.622@63 → 现 455股, 加权均价$66.23
+  - id: crcl_han_combined
     symbol: CRCL
-    name: Circle(韩伟蒙古)
-    quantity: 334.198
-    cost_basis_usd: 22621.84
-    cost_is_total: true
+    name: Circle(韩伟币安)
+    quantity: 455
+    cost_basis_usd: 66.23
     category: us_stock_tokenized
-    storage: 韩伟蒙古WEB3
+    storage: 韩伟币安
     price_source: sina
-    note: 成本均价$67.69/股; 原始250.7股@$63.20; 06-04加仓+17.55@$89.80; 06-22加仓+28.748@$76.87; 06-23加仓+37.2@$80.43
+    note: 账户合并; 原419.598@66.71 + 加仓22.78@59.04 + 12.622@63, 总成本$30,134, 均价$66.23
+
+  - id: dram_han_combined
+    symbol: DRAM
+    name: DRAM(韩伟币安)
+    quantity: 81.2
+    cost_basis_usd: 66.00
+    category: us_stock
+    storage: 韩伟币安
+    price_source: sina
+    note: 内存美股ETF(缩写DRAM); 原57@66.85 + 加仓24.2@66, 现81.2股@66
+
+  - id: mstr_han_combined
+    symbol: MSTR
+    name: MicroStrategy(韩伟币安)
+    quantity: 50.3
+    cost_basis_usd: 106.98
+    category: us_stock
+    storage: 韩伟币安
+    price_source: sina
+    note: 30.1股@111.66 + 20.2股@100, 加权均价$106.98, 总成本$5,381
+
+  - id: ondo_han_combined
+    symbol: ONDO
+    name: ONDO(韩伟币安)
+    quantity: 5893
+    cost_basis_usd: 0.341
+    category: crypto
+    storage: 韩伟币安
+    price_source: gate
+    note: 2868@0.3528 + 3030@0.33, 总成本约$2,012
+
+  - id: uni_han_combined
+    symbol: UNI
+    name: Uniswap(韩伟币安)
+    quantity: 550
+    cost_basis_usd: 3.44
+    category: crypto
+    storage: 韩伟币安
+    price_source: gate
+    note: 304@3.29 + 220@4.057, 总成本约$1,893
+
+  - id: soxl_han_combined
+    symbol: SOXL
+    name: 半导体3倍做多ETF(韩伟币安)
+    quantity: 7.426
+    cost_basis_usd: 135.00
+    category: us_stock
+    storage: 韩伟币安
+    price_source: sina
+    note: 7.426股@135, 总成本约$1,003
+
+  # mrvl_han 2026-08 全部清仓 (亏损换仓至 MSTR/ONDO/UNI/SOXL)
+  # mrvl_yan_binance 2026-08 全部清仓
 
   # ── 美股 · HK券商 ──
   - id: crcl_cb
@@ -133,12 +136,12 @@ holdings:
   - id: crcl_hst
     symbol: CRCL
     name: Circle(华盛通)
-    quantity: 45
-    cost_basis_usd: 63.20
+    quantity: 67
+    cost_basis_usd: 62.48
     category: us_stock
     storage: 华盛通证券
     price_source: sina
-    note: 成本均价$63.20/股
+    note: 韩伟华盛通; 原45@63.20 + 加仓22@61, 整仓67股均价$62.48
 
   - id: crcl_hf
     symbol: CRCL
@@ -161,19 +164,47 @@ holdings:
     note: ⚠️垃圾股, 后续有机会清仓, IPO价$18/股
 
   # ── A股/港股 · 东方财富 ──
-  # robot_etf 2026-06-11 全部清仓卖出 ¥1.203, 换仓至 优必选
-
   - id: ubt_ht
     symbol: "9880.HK"
     name: 优必选(港股通)
-    quantity: 50
-    cost_basis_hkd: 109.00
+    quantity: 250
+    cost_basis_hkd: 99.3
     category: hk_stock
     storage: 东方财富港股通
     price_source: sina
-    note: 2026-06-11 卖出机器人ETF换仓买入, 看好港股AI机器人龙头; 实时价Sina港股
+    note: 2026-08 更新为 250股均价HK$99.3
 
-  # xiaomi_ht 2026-06-22 清仓: 1400股成本HKD$29.61, 卖出~HKD$23.69, 亏损~20%, 资金待换仓AI大模型股
+  - id: xiaomi_ht
+    symbol: "1810.HK"
+    name: 小米集团(港股通)
+    quantity: 200
+    cost_basis_hkd: 30.0
+    category: hk_stock
+    storage: 东方财富港股通
+    price_source: sina
+    note: 2026-08 买回 200股@HK$30
+
+  - id: kc50_etf
+    symbol: "588000"
+    name: 科创50ETF(东方财富A股)
+    quantity: 8500
+    cost_basis_cny: 1.988
+    category: a_stock
+    storage: 东方财富证券
+    price_source: sina_cn
+    cn_sina_code: "sh588000"
+    note: 2026-08 新建仓 8500股@¥1.988
+
+  - id: hk_innov_drug_etf
+    symbol: "159971"
+    name: HK创新药ETF(东方财富A股)
+    quantity: 3900
+    cost_basis_cny: 1.3
+    category: a_stock
+    storage: 东方财富证券
+    price_source: sina_cn
+    cn_sina_code: "sz159971"
+    note: 2026-08 新建仓 3900股@¥1.3
 
   # ── TS平台 · KOL时间代币 ──
   - id: ts_xiaoan
@@ -249,10 +280,11 @@ cash:
     amount_hkd: 146060
     note: 含13W家庭内部调配, 其余为打新盈利
   - name: 币安USDT余额
-    amount_usd: 7826.40
-    note: >
-       07-07: 卖出GOOGL +$2,817, 买入DRAM -$1,180, 净+$1,637; 余额$10,940;
-       07-17: 转出燕币安买CRCL -$1,033.60, 转出燕币安买MRVL -$1,080, 韩伟币安买MRVL -$1,000; 余额$7,826.40
+    amount_usd: 1436
+    note: 燕币安USDT $1,436; 韩伟币安USDT=0
+  - name: 华盛通现金
+    amount_usd: 1046
+    note: 韩伟华盛通账户现金 $1,046
 
 # ============================================================
 # 固定资产

@@ -5,7 +5,7 @@
 holdings_history:
   btc_onchain:
     name: 比特币(链上)
-    all_time_high_price: 78107.2
+    all_time_high_price: 78563.0
     all_time_high_date: '2026-08-22'
     all_time_low_price: 58644.0
     all_time_low_date: '2026-07-01'
@@ -17,7 +17,7 @@ holdings_history:
     all_time_low_date: '2026-07-01'
   btc_binance:
     name: 比特币(币安)
-    all_time_high_price: 78107.2
+    all_time_high_price: 78563.0
     all_time_high_date: '2026-08-22'
     all_time_low_price: 59794.2
     all_time_low_date: '2026-07-01'
@@ -181,5 +181,5 @@ net_worth_snapshots:
   net_worth_cny: 1128401
   total_assets_cny: 1528401
 - date: '2026-08-22'
-  net_worth_cny: 1155813
-  total_assets_cny: 1555813
+  net_worth_cny: 1244660
+  total_assets_cny: 1644660
