@@ -5,26 +5,26 @@
 holdings_history:
   btc_onchain:
     name: 比特币(链上)
-    all_time_high_price: 73790.3
-    all_time_high_date: '2026-08-21'
+    all_time_high_price: 78107.2
+    all_time_high_date: '2026-08-22'
     all_time_low_price: 58644.0
     all_time_low_date: '2026-07-01'
   eth_onchain:
     name: 以太坊NFT(链上)
-    all_time_high_price: 2347.32
-    all_time_high_date: '2026-08-21'
+    all_time_high_price: 2523.32
+    all_time_high_date: '2026-08-22'
     all_time_low_price: 1606.72
     all_time_low_date: '2026-07-01'
   btc_binance:
     name: 比特币(币安)
-    all_time_high_price: 73790.3
-    all_time_high_date: '2026-08-21'
+    all_time_high_price: 78107.2
+    all_time_high_date: '2026-08-22'
     all_time_low_price: 59794.2
     all_time_low_date: '2026-07-01'
   eth_binance:
     name: 以太坊(币安)
-    all_time_high_price: 2347.32
-    all_time_high_date: '2026-08-21'
+    all_time_high_price: 2523.32
+    all_time_high_date: '2026-08-22'
     all_time_low_price: 1606.72
     all_time_low_date: '2026-07-01'
   crcl_yan:
@@ -73,8 +73,8 @@ holdings_history:
     all_time_low_date: '2026-07-30'
   bitgo:
     name: BitGo(韩伟长桥)
-    all_time_high_price: 6.6
-    all_time_high_date: '2026-08-21'
+    all_time_high_price: 6.84
+    all_time_high_date: '2026-08-22'
     all_time_low_price: 4.83
     all_time_low_date: '2026-07-08'
   xiaomi_ht:
@@ -180,3 +180,6 @@ net_worth_snapshots:
 - date: '2026-08-21'
   net_worth_cny: 1128401
   total_assets_cny: 1528401
+- date: '2026-08-22'
+  net_worth_cny: 1155813
+  total_assets_cny: 1555813
