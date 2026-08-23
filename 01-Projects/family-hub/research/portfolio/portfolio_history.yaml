@@ -183,3 +183,18 @@ net_worth_snapshots:
 - date: '2026-08-22'
   net_worth_cny: 1244660
   total_assets_cny: 1644660
+- date: '2026-08-23'
+  net_worth_cny: 1239229
+  total_assets_cny: 1639229
+external_signals:
+- date: '2026-08-23'
+  crcl:
+    price: '87.98'
+    ma120: '90.46'
+    ps: 7.69x
+    rsi: '69.5'
+    score: '19'
+  btc:
+    price: 77,043
+    ma120: 68,308
+    trigger: 底部信号·当日触发

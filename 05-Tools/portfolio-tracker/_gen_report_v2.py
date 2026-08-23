@@ -815,6 +815,105 @@ for it in items:
         L.append(f"| {label} | {prev_disp} | {cur_disp} | — |")
 L.append("")
 
+# ============================================================
+# 十一、外部信号看板 (seanzhao.ai CRCL/BTC 买卖信号)
+# 数据源: https://crcl.seanzhao.ai/  +  https://btc.seanzhao.ai/
+# ============================================================
+def _extract_signal(url, tag):
+    """抓取信号看板，返回关键指标 dict（容错，失败返回 ok=False）"""
+    info = {"tag": tag, "ok": False, "price": None, "ma120": None,
+            "rsi": None, "ps": None, "score": None, "verdict": None,
+            "trigger": None, "note": ""}
+    try:
+        r = requests.get(url, timeout=15, headers={"User-Agent": "Mozilla/5.0"})
+        if r.status_code != 200:
+            info["note"] = f"HTTP {r.status_code}"
+            return info
+        t = r.text
+        # 现价
+        m = re.search(r'hero-price[^>]*>\s*\$([\d,\.]+)', t)
+        if not m:
+            m = re.search(r'class="big"[^>]*>\s*\$([\d,\.]+)', t)
+        if m:
+            info["price"] = m.group(1)
+        if tag == "CRCL":
+            m = re.search(r'MA120[^0-9]*\$([\d,\.]+)', t)
+            if m: info["ma120"] = m.group(1)
+            m = re.search(r'P/S \(TTM\)</div><div class="v">([\d\.]+x)', t)
+            if m: info["ps"] = m.group(1)
+            m = re.search(r'class="score-num"[^>]*>(\d+)</div>', t)
+            if m: info["score"] = m.group(1)
+            m = re.search(r'class="score-zone"[^>]*>([^<]+)</div>', t)
+            if m: info["verdict"] = m.group(1).strip()
+            m = re.search(r'RSI\s*14?\s*([\d\.]+)', t)
+            if m: info["rsi"] = m.group(1)
+        else:
+            m = re.search(r'MA120</span><b>\s*\$([\d,\.]+)', t)
+            if m: info["ma120"] = m.group(1)
+            if "底部信号" in t: info["trigger"] = "底部信号"
+            if "当日触发" in t: info["trigger"] = (info["trigger"] or "") + "·当日触发"
+        info["ok"] = True
+    except Exception as e:
+        info["note"] = str(e)[:60]
+    return info
+
+_crcl_sig = _extract_signal("https://crcl.seanzhao.ai/", "CRCL")
+_btc_sig = _extract_signal("https://btc.seanzhao.ai/", "BTC")
+
+L.append("## 十一、外部信号看板（seanzhao.ai 买卖信号）\n")
+L.append("> 数据源: [CRCL看板](https://crcl.seanzhao.ai/) + [BTC看板](https://btc.seanzhao.ai/)；每次刷新资产时抓取记录。\n")
+
+# ---- CRCL ----
+L.append("### CRCL（Circle）\n")
+L.append("**数据源**：股价=**Yahoo Finance**；市值快照=**Nasdaq**；USDC/USDT/稳定币总量=**DefiLlama**（净流通量口径）；10Y国债=**美国财政部**；季度财务=**Circle IR新闻稿 + SEC EDGAR(10-Q/10-K/424B4)**。信号分=估值层(P/S,0-80) + 恐慌层(RSI,0-20) + 基本面层(USDC 90天供应/市占率,0-30)，满分100、超频上限130。\n")
+if _crcl_sig["ok"]:
+    L.append("| 指标 | 数值 |")
+    L.append("|:-----|------|")
+    L.append(f"| 当前价 | ${_crcl_sig['price'] or 'N/A'} |")
+    L.append(f"| MA120 | ${_crcl_sig['ma120'] or 'N/A'} |")
+    L.append(f"| P/S(TTM) | {_crcl_sig['ps'] or 'N/A'} |")
+    L.append(f"| RSI14 | {_crcl_sig['rsi'] or 'N/A'} |")
+    L.append(f"| 买入信号分 | {_crcl_sig['score'] or 'N/A'}/130 |")
+    _vd = _crcl_sig.get("verdict")
+    _sc = int(_crcl_sig["score"]) if _crcl_sig["score"] and _crcl_sig["score"].isdigit() else None
+    if _vd:
+        _adv = f"看板建议【{_vd}】"
+        if _sc is not None and _sc < 40:
+            _adv += "；当前估值偏高+RSI超买，看板判定非买点。持仓者(占净资产47.9%): CRCL为上升标的,破MA120($90.46)可阶梯止盈降集中度,回调低估区($50-70)再评估。"
+        elif _sc is not None and _sc >= 40:
+            _adv += "；估值进入可买区，可小额分批。"
+        else:
+            _adv += "；信号分获取失败，按MA120/估值人工判断。"
+    elif _sc is not None:
+        if _sc < 40:
+            _adv = "看板建议【观望·不买】；当前估值偏高+RSI超买，非买点。持仓者可阶梯止盈降集中度，回调低估区($50-70)再评估。"
+        elif _sc < 55:
+            _adv = "看板建议【偏低估·小额分批】"
+        elif _sc < 65:
+            _adv = "看板建议【低估·加倍投入】"
+        else:
+            _adv = "看板建议【极度低估·重手分批】"
+    else:
+        _adv = "信号分获取失败，按MA120/估值人工判断"
+    L.append(f"| 买卖建议 | {_adv} |")
+    L.append("")
+else:
+    L.append(f"> ⚠️ 抓取失败: {_crcl_sig['note'] or '未知'}\n")
+
+# ---- BTC ----
+L.append("### BTC（比特币）\n")
+L.append("**数据源**：①链上数据=**Glassnode**（短期持有者成本STH、长期持有者成本LTH、MVRV、相对未实现损失、已实现利润、资金净变化约30天延迟）；②BTC实时价格（计算MA120/200）；③恐慌贪婪指数。底部信号=多指标交叉验证（S1 LTH成本/S3相对未实现损失/S5恐慌贪婪等），综合评分≥60分触发。\n")
+if _btc_sig["ok"]:
+    L.append("| 指标 | 数值 |")
+    L.append("|:-----|------|")
+    L.append(f"| 当前价 | ${_btc_sig['price'] or 'N/A'} |")
+    L.append(f"| MA120 | ${_btc_sig['ma120'] or 'N/A'} |")
+    L.append(f"| 信号状态 | {_btc_sig['trigger'] or 'N/A'} |")
+    L.append("| 买卖建议 | 看板: 周期底部右侧确认，分批建仓勿一把梭；第一档加仓约$69,500(短期成本/MA120)，第二档$52,000-48,000(历史大底区)；现价追高需谨慎 |")
+    L.append("")
+else:
+    L.append(f"> ⚠️ 抓取失败: {_btc_sig['note'] or '未知'}\n")
+
 # 写入月度报告
 text = "\n".join(L)
 OUT.write_text(text, encoding="utf-8")
@@ -893,6 +992,19 @@ if PH_PATH.exists():
 
     ph["holdings_history"] = hh
     ph["net_worth_snapshots"] = snaps
+
+    # ── external_signals 历史（seanzhao.ai 看板快照，保留最近60天）──
+    esig = {"date": today}
+    if _crcl_sig.get("ok"):
+        esig["crcl"] = {k: _crcl_sig.get(k) for k in ("price", "ma120", "ps", "rsi", "score")}
+    if _btc_sig.get("ok"):
+        esig["btc"] = {k: _btc_sig.get(k) for k in ("price", "ma120", "trigger")}
+    if esig.get("crcl") or esig.get("btc"):
+        ext_list = ph.get("external_signals", [])
+        # 当天已有记录则覆盖（避免同日重跑重复追加）
+        _kept = [x for x in ext_list if x.get("date") != esig["date"]]
+        _kept.append(esig)
+        ph["external_signals"] = _kept[-60:]
 
     buf = io.StringIO()
     yaml.dump(ph, buf, default_flow_style=False, allow_unicode=True, sort_keys=False)

@@ -7,7 +7,7 @@
 
 | 文件 | 类型 | 主题 | 更新 |
 |:-----|:-----|:-----|:-----|
-| [ai-dev-practice-sharing-2026.md](./ai-dev-practice-sharing-2026.md) | 内部分享 | AI 开发实践分享大纲（15 分钟） | 2026-08-20 |
+| [ai-dev-practice-sharing-2026.md](./ai-dev-practice-sharing-2026.md) | 内部分享 | AI 开发实践分享大纲 + 完整逐字稿（v1.1，案例待填充） | 2026-08-23 |
 
 ---
 
