@@ -1,6 +1,6 @@
 # 家里自动同步脚本 — 每日凌晨 3:00 执行
 # 用法: Windows 任务计划程序 → 每日 3:00 → powershell -File "...\auto_push_home.ps1"
-# 网络容错: 3次重试 + 指数退避 + VPN代理清理 + HTTPS→SSH回退
+# 网络容错: 3次重试 + 指数退避 + VPN代理清理 + SSH→HTTPS回退（家里环境优先走 SSH over 443）
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repoPath  = Split-Path -Parent (Split-Path -Parent $scriptDir)
@@ -112,7 +112,36 @@ function Invoke-GitPull {
         $gitExtraArgs = @("-c", "http.proxy=", "-c", "https.proxy=")
     }
 
-    # Phase A: Try HTTPS
+    # Phase A: Try SSH over port 443 (家里环境优先)
+    if (Test-SshReachable) {
+        Add-Content -Path $logFile -Value "Step 1: git pull (SSH over 443)..."
+
+        for ($i = 0; $i -lt $maxRetries; $i++) {
+            if ($i -gt 0) {
+                Add-Content -Path $logFile -Value "Step 1: SSH retry $i after $($retryDelays[$i-1])s..."
+                Start-Sleep -Seconds $retryDelays[$i-1]
+            }
+
+            Add-Content -Path $logFile -Value "Step 1: git pull (SSH)..."
+            $pullOutput = & git pull origin-ssh master 2>&1
+            $ec = $LASTEXITCODE
+
+            if ($ec -eq 0) {
+                if ($pullOutput -match "Already up to date") {
+                    Add-Content -Path $logFile -Value "Pull (SSH): Already up to date."
+                } else {
+                    Add-Content -Path $logFile -Value "Pull (SSH): $pullOutput"
+                }
+                Add-Content -Path $logFile -Value "Step 1: SSH pull SUCCESS"
+                return $true
+            }
+            Add-Content -Path $logFile -Value "Pull SSH failed (attempt $($i+1)/$maxRetries): $($pullOutput -replace '\n',' ')"
+        }
+    } else {
+        Add-Content -Path $logFile -Value "Step 1: SSH port 443 unreachable, falling back to HTTPS"
+    }
+
+    # Phase B: Fallback to HTTPS
     for ($i = 0; $i -lt $maxRetries; $i++) {
         if ($i -gt 0) {
             Add-Content -Path $logFile -Value "Step 1: HTTPS retry $i after $($retryDelays[$i-1])s..."
@@ -134,41 +163,13 @@ function Invoke-GitPull {
             } else {
                 Add-Content -Path $logFile -Value "Pull: $pullOutput"
             }
+            Add-Content -Path $logFile -Value "Step 1: HTTPS fallback SUCCESS"
             return $true
         }
         Add-Content -Path $logFile -Value "Pull HTTPS failed (attempt $($i+1)/$maxRetries): $($pullOutput -replace '\n',' ')"
     }
 
-    # Phase B: Fallback to SSH over port 443
-    if (Test-SshReachable) {
-        Add-Content -Path $logFile -Value "Step 1: HTTPS exhausted, trying SSH over port 443..."
-
-        for ($i = 0; $i -lt $maxRetries; $i++) {
-            if ($i -gt 0) {
-                Add-Content -Path $logFile -Value "Step 1: SSH retry $i after $($retryDelays[$i-1])s..."
-                Start-Sleep -Seconds $retryDelays[$i-1]
-            }
-
-            Add-Content -Path $logFile -Value "Step 1: git pull (SSH)..."
-            $pullOutput = & git pull origin-ssh master 2>&1
-            $ec = $LASTEXITCODE
-
-            if ($ec -eq 0) {
-                if ($pullOutput -match "Already up to date") {
-                    Add-Content -Path $logFile -Value "Pull (SSH): Already up to date."
-                } else {
-                    Add-Content -Path $logFile -Value "Pull (SSH): $pullOutput"
-                }
-                Add-Content -Path $logFile -Value "Step 1: SSH fallback SUCCESS"
-                return $true
-            }
-            Add-Content -Path $logFile -Value "Pull SSH failed (attempt $($i+1)/$maxRetries): $($pullOutput -replace '\n',' ')"
-        }
-    } else {
-        Add-Content -Path $logFile -Value "Step 1: SSH port 443 also unreachable, giving up"
-    }
-
-    Add-Content -Path $logFile -Value "PULL FAILED after exhausting HTTPS + SSH"
+    Add-Content -Path $logFile -Value "PULL FAILED after exhausting SSH + HTTPS"
     Add-Content -Path $logFile -Value ""
     return $false
 }
@@ -191,13 +192,7 @@ if ($commitsAhead -gt 0) {
     $gitExtraArgs = @()
     if (-not $script:vpnProxy) { $gitExtraArgs = @("-c", "http.proxy=", "-c", "https.proxy=") }
     try {
-        $pushOutput = & git @gitExtraArgs -c http.lowSpeedLimit=0 -c http.lowSpeedTime=60 push origin master 2>&1
-        if ($LASTEXITCODE -eq 0) {
-            Add-Content -Path $logFile -Value "Push OK: $pushOutput"
-            Add-Content -Path $logFile -Value ""
-            exit 0
-        }
-        # HTTPS failed, try SSH
+        # SSH over port 443 优先（家里环境）
         if (Test-SshReachable) {
             $pushOutput = & git push origin-ssh master 2>&1
             if ($LASTEXITCODE -eq 0) {
@@ -205,6 +200,13 @@ if ($commitsAhead -gt 0) {
                 Add-Content -Path $logFile -Value ""
                 exit 0
             }
+        }
+        # SSH failed, fallback to HTTPS
+        $pushOutput = & git @gitExtraArgs -c http.lowSpeedLimit=0 -c http.lowSpeedTime=60 push origin master 2>&1
+        if ($LASTEXITCODE -eq 0) {
+            Add-Content -Path $logFile -Value "Push OK (HTTPS): $pushOutput"
+            Add-Content -Path $logFile -Value ""
+            exit 0
         }
         Add-Content -Path $logFile -Value "Push of ahead commits FAILED: $($pushOutput -replace '\n',' ')"
     } catch {
@@ -288,71 +290,71 @@ if (-not $script:vpnProxy) {
     $gitExtraArgs = @("-c", "http.proxy=", "-c", "https.proxy=")
 }
 
-# Phase A: Try HTTPS
+# Phase A: Try SSH over port 443 (家里环境优先)
 $httpsPushed = $false
-for ($i = 0; $i -lt $maxPushRetries; $i++) {
-    if ($i -gt 0) {
-        Add-Content -Path $logFile -Value "Step 5: HTTPS retry $i after $($pushRetryDelays[$i-1])s..."
-        Start-Sleep -Seconds $pushRetryDelays[$i-1]
-    }
+if (Test-SshReachable) {
+    Add-Content -Path $logFile -Value "Step 5: git push (SSH over 443)..."
 
-    if (-not (Test-GitHubReachable)) {
-        Add-Content -Path $logFile -Value "Step 5: GitHub HTTPS unreachable (attempt $($i+1)/$maxPushRetries)"
-        continue
-    }
-
-    try {
-        $pushOutput = & git @gitExtraArgs -c http.lowSpeedLimit=0 -c http.lowSpeedTime=60 push origin master 2>&1
-        if ($LASTEXITCODE -eq 0) {
-            Add-Content -Path $logFile -Value "Commit: $commitMsg"
-            Add-Content -Path $logFile -Value "Push OK (HTTPS): $pushOutput"
-            Add-Content -Path $logFile -Value ""
-            $httpsPushed = $true
-            break
-        } else {
-            Add-Content -Path $logFile -Value "Push HTTPS failed (attempt $($i+1)/$maxPushRetries): $($pushOutput -replace '\n',' ')"
+    for ($i = 0; $i -lt $maxPushRetries; $i++) {
+        if ($i -gt 0) {
+            Add-Content -Path $logFile -Value "Step 5: SSH retry $i after $($pushRetryDelays[$i-1])s..."
+            Start-Sleep -Seconds $pushRetryDelays[$i-1]
         }
-    } catch {
-        Add-Content -Path $logFile -Value "Push HTTPS failed (attempt $($i+1)/$maxPushRetries): $_"
+
+        try {
+            $pushOutput = & git push origin-ssh master 2>&1
+            if ($LASTEXITCODE -eq 0) {
+                Add-Content -Path $logFile -Value "Commit: $commitMsg"
+                Add-Content -Path $logFile -Value "Push OK (SSH): $pushOutput"
+                git fetch origin-ssh master:refs/remotes/origin/master 2>&1 | Out-Null
+                Add-Content -Path $logFile -Value ""
+                $httpsPushed = $true
+                break
+            } else {
+                Add-Content -Path $logFile -Value "Push SSH failed (attempt $($i+1)/$maxPushRetries): $($pushOutput -replace '\n',' ')"
+            }
+        } catch {
+            Add-Content -Path $logFile -Value "Push SSH failed (attempt $($i+1)/$maxPushRetries): $_"
+        }
     }
+} else {
+    Add-Content -Path $logFile -Value "Step 5: SSH port 443 unreachable, falling back to HTTPS"
 }
 
 if (-not $httpsPushed) {
-    # Phase B: Fallback to SSH over port 443
-    if (Test-SshReachable) {
-        Add-Content -Path $logFile -Value "Step 5: HTTPS exhausted, trying SSH over port 443..."
-
-        for ($i = 0; $i -lt $maxPushRetries; $i++) {
-            if ($i -gt 0) {
-                Add-Content -Path $logFile -Value "Step 5: SSH retry $i after $($pushRetryDelays[$i-1])s..."
-                Start-Sleep -Seconds $pushRetryDelays[$i-1]
-            }
-
-            try {
-                $pushOutput = & git push origin-ssh master 2>&1
-                if ($LASTEXITCODE -eq 0) {
-                    Add-Content -Path $logFile -Value "Commit: $commitMsg"
-                    Add-Content -Path $logFile -Value "Push OK (SSH): $pushOutput"
-                    git fetch origin-ssh master:refs/remotes/origin/master 2>&1 | Out-Null
-                    Add-Content -Path $logFile -Value ""
-                    $httpsPushed = $true
-                    break
-                } else {
-                    Add-Content -Path $logFile -Value "Push SSH failed (attempt $($i+1)/$maxPushRetries): $($pushOutput -replace '\n',' ')"
-                }
-            } catch {
-                Add-Content -Path $logFile -Value "Push SSH failed (attempt $($i+1)/$maxPushRetries): $_"
-            }
+    # Phase B: Fallback to HTTPS
+    for ($i = 0; $i -lt $maxPushRetries; $i++) {
+        if ($i -gt 0) {
+            Add-Content -Path $logFile -Value "Step 5: HTTPS retry $i after $($pushRetryDelays[$i-1])s..."
+            Start-Sleep -Seconds $pushRetryDelays[$i-1]
         }
-    } else {
-        Add-Content -Path $logFile -Value "Step 5: SSH port 443 also unreachable, giving up"
+
+        if (-not (Test-GitHubReachable)) {
+            Add-Content -Path $logFile -Value "Step 5: GitHub HTTPS unreachable (attempt $($i+1)/$maxPushRetries)"
+            continue
+        }
+
+        try {
+            $pushOutput = & git @gitExtraArgs -c http.lowSpeedLimit=0 -c http.lowSpeedTime=60 push origin master 2>&1
+            if ($LASTEXITCODE -eq 0) {
+                Add-Content -Path $logFile -Value "Commit: $commitMsg"
+                Add-Content -Path $logFile -Value "Push OK (HTTPS): $pushOutput"
+                Add-Content -Path $logFile -Value ""
+                $httpsPushed = $true
+                break
+            } else {
+                Add-Content -Path $logFile -Value "Push HTTPS failed (attempt $($i+1)/$maxPushRetries): $($pushOutput -replace '\n',' ')"
+            }
+        } catch {
+            Add-Content -Path $logFile -Value "Push HTTPS failed (attempt $($i+1)/$maxPushRetries): $_"
+        }
     }
 }
 
 if ($httpsPushed) {
     exit 0
 } else {
-    Add-Content -Path $logFile -Value "PUSH FAILED after exhausting HTTPS + SSH"
+    Add-Content -Path $logFile -Value "PUSH FAILED after exhausting SSH + HTTPS"
     Add-Content -Path $logFile -Value ""
     exit 1
 }
