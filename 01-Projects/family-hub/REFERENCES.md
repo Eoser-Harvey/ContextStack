@@ -18,3 +18,6 @@
 
 ## 资产参考
 - [Crypto-A8计划](./research/portfolio/reports/Crypto-A8计划-2026至2028.md)
+
+## 投资方法论
+- [贝版《一年只需出手两三次》整理笔记](../../02-Knowledge/inbox/bayfamily-one-year-two-three-trades-2026-08-24.md) — 承认无知/大部分Beta+小部分Alpha/等带血筹码/止损纪律（2026-08-24 入库）

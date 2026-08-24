@@ -6,6 +6,7 @@
 
 | 文件 | 类型 | 内容 | 更新 |
 |:-----|:-----|:-----|:-----|
+| [session-20260824-bayfamily-invest-methodology.md](./session-20260824-bayfamily-invest-methodology.md) | 投资方法论 | 贝版《一年只需出手两三次》入库+与 family-hub 纪律对照+三级索引同步 | 2026-08-24 |
 | [session-20260823-framework-relarn.md](./session-20260823-framework-relarn.md) | 框架学习 | 深度重新学习四层架构（WorkBuddy 接入）+ 双工作区记忆分工 | 2026-08-23 |
 | [session-20260820-framework-audit.md](./session-20260820-framework-audit.md) | 框架审计 | 索引滞后修复/.gitignore 修订/AI 自检清单 v3.3/CodeBuddy vs 03-Memory 同步 | 2026-08-20 |
 | [session-20260822-framework-relarn.md](./session-20260822-framework-relarn.md) | 框架学习 | 完整重读四层架构+常驻规则固化+会话沉淀补闭环 | 2026-08-22 |
@@ -17,5 +18,5 @@
 
 ---
 
-**最后更新**: 2026-08-23
+**最后更新**: 2026-08-24
 **维护规则**: 新增会话产出文件时同步到此表 + recent-sessions.md 索引

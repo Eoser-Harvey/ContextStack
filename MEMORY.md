@@ -73,6 +73,7 @@
 | **Knowledge** | Web-Pack素材采集Skill        | 网页主题完整素材包采集，超越传统剪藏工具，支持深度抓取和图片本地化                                  | 全部            | 2026-07-06 |
 | **Knowledge** | 技术面试笔记（tech-interview-notes） | 面试技术弹药库：Tickless/PendSV/CNN算子/Dropout翻转补偿/启动流程等，TODO看板多项复述作业引用 | career-development | 2026-08-10 |
 | **Knowledge** | 盖洛普测评与落地行动计划    | Harvey盖洛普优势测评 + 三主线落地（求职/投资/家庭）+ 才干检查清单 | career-development | 2026-08-11 |
+| **Knowledge** | 贝版投资方法论《一年只需出手两三次》 | 承认无知/大部分Beta+小部分Alpha/等带血筹码/止损纪律/抄系统不抄代码；与 family-hub 纪律对照 | family-hub | 2026-08-24 |
 
 ---
 
