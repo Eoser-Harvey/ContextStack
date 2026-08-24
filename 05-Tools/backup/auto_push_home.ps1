@@ -272,7 +272,11 @@ foreach ($key in ($groups.Keys | Sort-Object)) {
 $commitMsg = if ($parts.Count -gt 0) { "auto: " + ($parts -join ", ") } else { "auto: changes" }
 
 git add -A
-$commitOutput = & git commit -m $commitMsg 2>&1
+# 用 -F + UTF-8 文件提交，避免 GBK 控制台把中文 commit message 写成乱码（-m 途经控制台编码不可控）
+$msgFile = Join-Path $env:TEMP "ctxstack_commit_msg.txt"
+[System.IO.File]::WriteAllText($msgFile, $commitMsg, (New-Object System.Text.UTF8Encoding($false)))
+$commitOutput = & git commit -F $msgFile 2>&1
+Remove-Item $msgFile -ErrorAction SilentlyContinue
 if ($LASTEXITCODE -eq 0) {
     Add-Content -Path $logFile -Value "Commit OK: $commitMsg"
 } else {
