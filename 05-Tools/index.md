@@ -4,14 +4,15 @@ ContextStack 维护工具脚本库，提供编码处理、备份管理、诊断�
 
 ## 分类目录
 
-| 目录 | 用途 |
-|------|------|
-| [backup/](./backup/) | 备份管理和自动化同步脚本 |
-| [diagnostics/](./diagnostics/) | 系统诊断和问题排查工具 |
-| [encoding/](./encoding/) | 文件编码和乱码修复工具 |
-| [fileops/](./fileops/) | 文件管理和批量处理工具 |
-| [media-tools/](./media-tools/) | 视频下载 + 语音转文字工具链 |
-| [vscode-config/](./vscode-config/) | VSCode 配置文件管理 |
+| 目录                                              | 用途                                 |
+|:--------------------------------------------------|:-------------------------------------|
+| [backup/](./backup/)                              | 备份管理和自动化同步脚本             |
+| [codebuddy-chat-manager/](./codebuddy-chat-manager/) | CodeBuddy 聊天记录清单与跨账户迁移 |
+| [diagnostics/](./diagnostics/)                    | 系统诊断和问题排查工具               |
+| [encoding/](./encoding/)                          | 文件编码和乱码修复工具               |
+| [fileops/](./fileops/)                            | 文件管理和批量处理工具               |
+| [media-tools/](./media-tools/)                    | 视频下载 + 语音转文字工具链          |
+| [vscode-config/](./vscode-config/)                | VSCode 配置文件管理                  |
 
 ## 使用指南
 
