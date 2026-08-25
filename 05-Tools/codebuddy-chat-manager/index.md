@@ -16,7 +16,6 @@ CodeBuddy 聊天记录迁移工具：清单式索引 + 选择性迁移到新账�
 | chat-restore.ps1  | 选择性迁移会话到新账户（需要时跑） |
 | chat-index.json   | 机器可读清单（脚本生成）           |
 | chat-index.md     | 人类可读清单（脚本生成）           |
-| data-export/      | -Export 实体导出目录（不进 Git）   |
 
 ## 快速开始
 

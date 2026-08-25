@@ -5,14 +5,11 @@
 .DESCRIPTION
     从 chat-index.json 读取会话清单，交互选择会话，
     复制会话文件夹到目标账户对应位置，并合并目标 index.json（自动先备份）。
-    可选 -Export 在脚本目录 data-export\ 留一份实体备份。
     注意: 执行前请完全关闭 CodeBuddy IDE。
 .EXAMPLE
     .\chat-restore.ps1
 .EXAMPLE
     .\chat-restore.ps1 -Select 1,3-5 -TargetAccount xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx -DryRun
-.EXAMPLE
-    .\chat-restore.ps1 -Account 2a2e1d62 -Export
 #>
 [CmdletBinding()]
 param(
@@ -21,7 +18,6 @@ param(
     [string]$Account,
     [string]$TargetAccount,
     [string]$Select,
-    [switch]$Export,
     [switch]$Rescan,
     [switch]$DryRun,
     [switch]$Force
@@ -223,7 +219,6 @@ if (-not (Test-Path $targetRoot)) {
 # ---------- 5. 确认 ----------
 Write-Host ''
 Write-Host "计划: 恢复 $($selIdx.Count) 个会话 -> 账户 $TargetAccount"
-if ($Export) { Write-Host '      同时导出实体到 data-export\' }
 if ($DryRun) { Write-Host '      [DryRun] 只打印计划，不写入任何文件' }
 if (-not $DryRun -and -not $Force) {
     $confirm = Read-Host '确认执行? (y/N)'
@@ -285,13 +280,6 @@ foreach ($n in $selIdx) {
             # 6.4 复制会话文件夹
             $null = & robocopy "$srcDir" "$dstConvDir" /E /NFL /NDL /NJH /NJS /NP /R:1 /W:1
             if ($LASTEXITCODE -ge 8) { throw "robocopy 复制失败, 退出码 $LASTEXITCODE" }
-
-            # 6.5 可选导出实体留底
-            if ($Export) {
-                $exportDir = Join-Path $PSScriptRoot (Join-Path 'data-export' (Join-Path ([string]$c['accountId']) (Join-Path ([string]$c['client']) (Join-Path ([string]$c['workspaceDir']) (Join-Path 'history' (Join-Path ([string]$c['groupHash']) $cid))))))
-                $null = & robocopy "$srcDir" "$exportDir" /E /NFL /NDL /NJH /NJS /NP /R:1 /W:1
-                if ($LASTEXITCODE -ge 8) { throw "导出失败, robocopy 退出码 $LASTEXITCODE" }
-            }
             $note = "-> $dstConvDir"
         }
     } catch {
