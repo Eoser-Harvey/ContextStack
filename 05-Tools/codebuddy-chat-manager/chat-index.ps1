@@ -16,6 +16,18 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+# 兼容旧版 PowerShell 5.1：某些执行方式下 $PSScriptRoot 为空（如 cmd 直接调用/任务计划）
+# 用脚本自身的实际路径兜底（$MyInvocation），不要用 Get-Location（任务计划默认工作目录是 System32）
+if ([string]::IsNullOrEmpty($PSScriptRoot)) {
+    $PSScriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+}
+if ([string]::IsNullOrEmpty($PSScriptRoot)) {
+    $PSScriptRoot = (Get-Location).Path
+}
+if ([string]::IsNullOrEmpty($OutDir)) {
+    $OutDir = $PSScriptRoot
+}
+
 # ---------- 工具函数 ----------
 function Get-DisplayWidth {
     param([string]$Text)

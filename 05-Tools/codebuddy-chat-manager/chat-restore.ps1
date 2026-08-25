@@ -25,6 +25,18 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+# 兼容旧版 PowerShell 5.1：某些执行方式下 $PSScriptRoot 为空（如 cmd 直接调用/任务计划）
+# 用脚本自身的实际路径兜底，不要用 Get-Location（任务计划默认工作目录是 System32）
+if ([string]::IsNullOrEmpty($PSScriptRoot)) {
+    $PSScriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+}
+if ([string]::IsNullOrEmpty($PSScriptRoot)) {
+    $PSScriptRoot = (Get-Location).Path
+}
+if ([string]::IsNullOrEmpty($IndexFile)) {
+    $IndexFile = Join-Path $PSScriptRoot 'chat-index.json'
+}
+
 # ---------- 工具函数（与 chat-index.ps1 相同，保持脚本独立可运行） ----------
 function Get-DisplayWidth {
     param([string]$Text)
@@ -58,10 +70,13 @@ function Split-TruncatedName {
     return ($sb.ToString() + '...')
 }
 
+# 把 PSObject 转换成 [ordered]@{} / 数组（阻止展开），供 ConvertTo-Json 序列化
+# 说明：JavaScriptSerializer 无法序列化 PowerShell 的 PSObject（循环引用），改用原生 ConvertFrom-Json/ConvertTo-Json
 function ConvertTo-PlainObject {
     param($InputObject)
     if ($null -eq $InputObject) { return $null }
     if ($InputObject -is [string]) { return ([string]$InputObject) }
+    if ($InputObject -is [bool] -or $InputObject -is [int] -or $InputObject -is [long] -or $InputObject -is [double] -or $InputObject -is [decimal]) { return $InputObject }
     if ($InputObject -is [System.Collections.IDictionary]) {
         $d = [ordered]@{}
         foreach ($k in $InputObject.Keys) { $d[$k] = ConvertTo-PlainObject $InputObject[$k] }
@@ -70,14 +85,14 @@ function ConvertTo-PlainObject {
     if (($InputObject -is [System.Collections.IEnumerable]) -and -not ($InputObject -is [string])) {
         $list = New-Object System.Collections.ArrayList
         foreach ($i in $InputObject) { [void]$list.Add((ConvertTo-PlainObject $i)) }
-        return $list
+        return ,$list
     }
     if ($InputObject -is [pscustomobject]) {
         $d = [ordered]@{}
         foreach ($p in $InputObject.PSObject.Properties) { $d[$p.Name] = ConvertTo-PlainObject $p.Value }
         return $d
     }
-    return $InputObject
+    return ([string]$InputObject)
 }
 
 function Get-JsonSerializer {
@@ -87,16 +102,24 @@ function Get-JsonSerializer {
     return $ser
 }
 
-function Write-Utf8NoBom {
-    param([string]$Path, [string]$Content)
-    [System.IO.File]::WriteAllText($Path, $Content, (New-Object System.Text.UTF8Encoding($false)))
-}
-
 function Read-JsonFile {
     param([string]$Path)
     $s = Get-JsonSerializer
     $raw = [System.IO.File]::ReadAllText($Path, [System.Text.Encoding]::UTF8)
     return $s.DeserializeObject($raw)
+}
+
+function Write-Utf8NoBom {
+    param([string]$Path, [string]$Content)
+    [System.IO.File]::WriteAllText($Path, $Content, (New-Object System.Text.UTF8Encoding($false)))
+}
+
+# 用原生 ConvertTo-Json 写回（替代 JavaScriptSerializer.Serialize，规避 PSObject 循环引用）
+function Write-JsonFile {
+    param([string]$Path, $Obj)
+    $plain = ConvertTo-PlainObject $Obj
+    $json = ConvertTo-Json -InputObject $plain -Depth 20
+    Write-Utf8NoBom -Path $Path -Content $json
 }
 
 function Parse-Selection {
@@ -140,7 +163,6 @@ if ($Rescan -or -not (Test-Path $IndexFile)) {
 }
 if (-not (Test-Path $IndexFile)) { throw "清单文件不存在: $IndexFile" }
 
-$ser = Get-JsonSerializer
 $data = Read-JsonFile -Path $IndexFile
 $convs = @($data['conversations'])
 
@@ -275,7 +297,7 @@ foreach ($n in $selIdx) {
                 if ([string]$dstConvs[$k]['id'] -eq $cid) { $existAt = $k; break }
             }
             if ($existAt -ge 0) { $dstConvs[$existAt] = $srcEntry } else { [void]$dstConvs.Add($srcEntry) }
-            Write-Utf8NoBom -Path $dstIndex -Content ($ser.Serialize((ConvertTo-PlainObject $dstData)))
+            Write-JsonFile -Path $dstIndex -Obj $dstData
 
             # 6.4 复制会话文件夹
             $null = & robocopy "$srcDir" "$dstConvDir" /E /NFL /NDL /NJH /NJS /NP /R:1 /W:1
