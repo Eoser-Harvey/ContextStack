@@ -147,6 +147,18 @@ if (-not (Test-Path $IndexFile)) { throw "清单文件不存在: $IndexFile" }
 $ser = Get-JsonSerializer
 $data = Read-JsonFile -Path $IndexFile
 $convs = @($data['conversations'])
+
+# 从清单统计每个账户的会话数与最近消息时间（用于目标账户识别，免记 UUID）
+$acctCnt = @{}
+$acctLatest = @{}
+foreach ($c in $convs) {
+    $aid = [string]$c['accountId']
+    if (-not $acctCnt.ContainsKey($aid)) { $acctCnt[$aid] = 0; $acctLatest[$aid] = '' }
+    $acctCnt[$aid] = $acctCnt[$aid] + 1
+    $lm = [string]$c['lastMessageAt']
+    if ($lm -and ($acctLatest[$aid] -eq '' -or $lm -gt $acctLatest[$aid])) { $acctLatest[$aid] = $lm }
+}
+
 Write-Host "清单生成于: $($data['generatedAt'])  共 $($convs.Count) 个会话"
 if ($Account) {
     $convs = @($convs | Where-Object { [string]$_['accountId'] -like "$Account*" })
@@ -180,17 +192,23 @@ $selIdx = @(Parse-Selection -Text $Select -Max $convs.Count)
 if ($selIdx.Count -eq 0) { throw "未解析到有效编号: $Select" }
 
 # ---------- 4. 选择目标账户 ----------
-$accountDirs = @(Get-ChildItem $DataRoot -Directory | Where-Object { $_.Name -notin @('default', 'Public') })
+$accountDirs = @(Get-ChildItem $DataRoot -Directory | Where-Object { $_.Name -notin @('default', 'Public') } | Sort-Object LastWriteTime -Descending)
 if (-not $TargetAccount) {
     Write-Host ''
-    Write-Host '目标账户 (Data 目录下现有账户, 新账户 = 最近登录生成的 UUID):'
+    Write-Host '目标账户列表 (按最近活跃排序; 看「会话数 / 最近消息」认账户, 不用记 UUID):'
     $j = 0
     foreach ($a in $accountDirs) {
         $j++
-        $clients = @((Get-ChildItem $a.FullName -Directory -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name)) -join '/'
-        Write-Host ('  [{0}] {1}' -f $j, $a.Name)
-        Write-Host ("        客户端: $clients   目录写入: $($a.LastWriteTime.ToString('yyyy-MM-dd HH:mm'))")
+        $aid = $a.Name
+        $cnt = if ($acctCnt.ContainsKey($aid)) { $acctCnt[$aid] } else { 0 }
+        $lat = '(无会话)'
+        if ($acctLatest.ContainsKey($aid) -and $acctLatest[$aid]) {
+            $lat = $acctLatest[$aid].Substring(0, [Math]::Min(19, $acctLatest[$aid].Length)).Replace('T', ' ')
+        }
+        Write-Host ('  [{0}] {1}' -f $j, $aid)
+        Write-Host ("        会话数: {0,3}   最近消息: {1}" -f $cnt, $lat)
     }
+    Write-Host '  提示: 刚登录/较新的账户通常会话数最少、目录写入时间最新'
     $pick = Read-Host '选择目标账户序号'
     if ($pick -notmatch '^\d+$') { throw '无效输入' }
     $pi = [int]$pick
