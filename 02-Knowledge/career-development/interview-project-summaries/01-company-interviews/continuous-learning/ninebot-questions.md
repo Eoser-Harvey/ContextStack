@@ -1,4 +1,4 @@
-# 九号公司 — 嵌入式软件工程师（FreeRTOS）面试题整理
+# 九号公司 — 嵌入式软件工程师（FreeRTOS）MS题整理
 
 > 来源：牛客网同学面经
 > 岗位：嵌入式软件工程师（FreeRTOS方向）
@@ -225,7 +225,7 @@ typedef struct {
 | **驱动框架抽象** | 自定义 `driver_ops` 结构体统一接口 |
 | **MMIO（内存映射 I/O）** | 外设寄存器映射到内存地址空间，指针直接访问 |
 
-**个人常用方式**（面试话术）：
+**个人常用方式**（MS话术）：
 > 裸机和 RTOS 开发中，我习惯用寄存器直接访问 + 自定义 HAL 封装的方式。定义一个 `uart_driver_t` 结构体，包含 `init/send/recv` 函数指针，通过 MMIO 操作底层寄存器。中断和主循环之间用环形 FIFO 传递数据，避免丢包。
 
 ---
@@ -516,7 +516,7 @@ void *worker_thread(void *arg) {
 }
 ```
 
-**面试要点**：
+**MS要点**：
 > AWTK 采用"单线程 GUI 模型"，类似 Android/iOS 的"主线程 UI"设计。所有控件操作必须在 GUI 主线程进行。跨线程通信通过 `tk_call_in_gui_thread()` 将回调函数投递到 GUI 事件队列。这和 LVGL 的 `lv_async_call()` 是相同的设计思路。
 
 ---
@@ -664,7 +664,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
 
 ---
 
-## 附录：面试技巧总结
+## 附录：MS技巧总结
 
 ### 高频考点分布
 
@@ -685,4 +685,4 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
 
 ---
 
-> **整理者注**：题目 2 在原面经中缺失（只有 1,3,4...14），已按 RTOS 面试常规知识点补全为"任务调度与共享内存"。
+> **整理者注**：题目 2 在原面经中缺失（只有 1,3,4...14），已按 RTOS MS常规知识点补全为"任务调度与共享内存"。

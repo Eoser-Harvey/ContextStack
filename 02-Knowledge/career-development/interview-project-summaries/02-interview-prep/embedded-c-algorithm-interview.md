@@ -1,6 +1,6 @@
-# 嵌入式C语言算法面试题精选
+# 嵌入式C语言算法MS题精选
 
-> 来源：已有面试资料 + 网络整理
+> 来源：已有MS资料 + 网络整理
 > 适用岗位：嵌入式软件工程师 / C语言开发
 > 整理日期：2026-06-12
 
@@ -65,7 +65,7 @@ uint32_t rb_count(ring_buffer_t *rb) {
 }
 ```
 
-**面试追问**：为什么用 `volatile`？为什么保留一个空位？读写指针同时被中断和主循环访问怎么办？
+**MS追问**：为什么用 `volatile`？为什么保留一个空位？读写指针同时被中断和主循环访问怎么办？
 
 > `volatile` 防止编译器优化；保留一个空位区分空/满状态；对于单生产者单消费者场景，原子操作即可；多生产者需要关中断或加锁。
 
@@ -177,7 +177,7 @@ size_t my_strlen(const char *str) {
     return p - str;
 }
 
-// 面试追问：不用临时变量？递归版？
+// MS追问：不用临时变量？递归版？
 size_t my_strlen2(const char *str) {
     if (*str == '\0') return 0;
     return 1 + my_strlen2(str + 1);
@@ -192,7 +192,7 @@ char *my_strcpy(char *dest, const char *src) {
     while ((*dest++ = *src++) != '\0');
     return ret;  // 返回 dest 首地址，支持链式调用
 }
-// 面试加分：考虑内存重叠？改用 memmove
+// MS加分：考虑内存重叠？改用 memmove
 ```
 
 ### 7. memcpy 实现（按字节拷贝）
@@ -207,7 +207,7 @@ void *my_memcpy(void *dest, const void *src, size_t n) {
     return dest;
 }
 
-// 优化版：按4字节对齐拷贝（面试亮了！）
+// 优化版：按4字节对齐拷贝（MS亮了！）
 void *my_memcpy_fast(void *dest, const void *src, size_t n) {
     char *d = (char *)dest;
     const char *s = (const char *)src;
@@ -222,7 +222,7 @@ void *my_memcpy_fast(void *dest, const void *src, size_t n) {
 }
 ```
 
-**面试追问**：memcpy 和 memmove 的区别？
+**MS追问**：memcpy 和 memmove 的区别？
 
 > memcpy 不保证重叠内存安全；memmove 会先判断 dest 和 src 相对位置，选择正向或反向拷贝，保证重叠内存正确。
 
@@ -354,7 +354,7 @@ void swap_add(int *a, int *b) {
     *a = *a - *b;
 }
 
-// 面试追问：异或法的限制？
+// MS追问：异或法的限制？
 // → a和b不能指向同一地址（自己异或自己=0）
 ```
 
@@ -365,7 +365,7 @@ void swap_add(int *a, int *b) {
 ### 15. 斐波那契数列
 
 ```c
-// 迭代版（面试首选，O(n)时间 O(1)空间）
+// 迭代版（MS首选，O(n)时间 O(1)空间）
 int fib(int n) {
     if (n <= 1) return n;
     int a = 0, b = 1;
@@ -377,7 +377,7 @@ int fib(int n) {
     return b;
 }
 
-// 递归版（简洁但 O(2^n)，面试官可能追问缺点）
+// 递归版（简洁但 O(2^n)，MS官可能追问缺点）
 int fib_recursive(int n) {
     if (n <= 1) return n;
     return fib_recursive(n - 1) + fib_recursive(n - 2);
@@ -416,9 +416,9 @@ void reverse_string(char *s) {
 
 ---
 
-## 六、面试高频考点速查
+## 六、MS高频考点速查
 
-| 考点 | 关键词 | 面试概率 |
+| 考点 | 关键词 | MS概率 |
 |------|------|:--:|
 | 环形队列 | FIFO、volatile、无锁实现 | ⭐⭐⭐⭐⭐ |
 | 链表反转 | 迭代/递归、内存安全 | ⭐⭐⭐⭐ |
@@ -431,4 +431,4 @@ void reverse_string(char *s) {
 
 ---
 
-> **回答策略**：先写基础实现，再说优化点（如 memcpy 4字节对齐），最后提边界条件（如重叠内存、空指针）。面试官要看的不是你写的代码多快，而是你能考虑到多少边界情况。
+> **回答策略**：先写基础实现，再说优化点（如 memcpy 4字节对齐），最后提边界条件（如重叠内存、空指针）。MS官要看的不是你写的代码多快，而是你能考虑到多少边界情况。

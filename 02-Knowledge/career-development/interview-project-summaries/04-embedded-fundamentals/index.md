@@ -11,7 +11,7 @@
 - `嵌入式设计总结.docx` — 综合设计总结
 
 ## 关联
-- [[../01-company-interviews/|公司面试]] — 面试中的技术考察点
+- [[../01-company-interviews/|公司MS]] — MS中的技术考察点
 - [[../../../../../01-Projects/embedded-ai-learning/|嵌入式AI学习项目]] — 端侧AI系统学习
 
 ---
