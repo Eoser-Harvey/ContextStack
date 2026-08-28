@@ -4,12 +4,12 @@
 
 ## 关键文件
 
-- [[TSN-protocol-analysis]] - TSN协议分析：时间敏感网络协议技术分析
+- ~~TSN-protocol-analysis~~ → 已迁移至 `02-Knowledge/career-development/interview-project-summaries/03-project-design/TSN/`（2026-08-28）
 - [[switch-pbr-analysis]] - 交换机PBR功能分析：策略路由在IPv4/IPv6/双栈环境的应用
 
 ## 话题内容
 
-- **TSN协议分析**: TSN协议栈、配置方法、问题排查经验
+- **TSN协议分析**: 已迁移至 `03-project-design/TSN/`（2026-08-28）
 - **交换机PBR功能分析**: 策略路由原理、IPv4/IPv6对比、双栈环境配置策略
 
 ## 工作台功能

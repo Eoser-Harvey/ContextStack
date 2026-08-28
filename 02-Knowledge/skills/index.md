@@ -5,7 +5,7 @@
 
 ---
 
-## 一、ContextStack 自定义 Skills（18 个）
+## 一、ContextStack 自定义 Skills（19 个）
 
 ### 专业领域 Skills
 
@@ -13,7 +13,7 @@
 |-------|------|------|
 | [[device-debugging/index\|设备调试]] | 网络设备、嵌入式设备的分层调试 | `#debugging` `#network` `#embedded` |
 | [[network-packet-analysis/index\|网络抓包分析]] | Wireshark 抓包与协议分析 | `#wireshark` `#packet-analysis` `#network` |
-| [[tsn-protocol/index\|TSN协议]] | IEEE 802.1 TSN 协议栈 | `#tsn` `#network` `#protocol` |
+| TSN协议 → 已迁移至 [[../career-development/interview-project-summaries/03-project-design/TSN/index\|TSN 专题库]] | IEEE 802.1 TSN 协议栈 | `#tsn` `#network` `#protocol` |
 | [[vscode-config-management/index\|VSCode配置管理]] | 配置备份、恢复与同步 | `#vscode` `#tool-config` `#backup` |
 | [[interview-prep/interview-prep使用说明\|面试准备]] | 输入公司名，自动生成8模块面试准备清单 + 7家公司经验库 | `#interview` `#career` `#job-search` |
 | [[wechat-push/x-tweets-wechat-push-方案说明\|微信推送方案]] | X推文→微信推送方案演进：WeChat MCP vs Server酱 vs Bun JSON-RPC | `#wechat` `#push` `#automation` `#json-rpc` |
@@ -80,10 +80,10 @@
 
 | 类别 | 数量 | 位置 |
 |------|------|------|
-| ContextStack 自定义 | 20 | `02-Knowledge/skills/` |
+| ContextStack 自定义 | 19 | `02-Knowledge/skills/` |
 | CodeBuddy 内置 | 6 | CodeBuddy 预装 + `.codebuddy/skills/note-organizer/` |
 | 用户级安装 | 1 | `~/.codebuddy/skills/obsidian/` |
-| **合计** | **25** | — |
+| **合计** | **24** | — |
 
 ---
 
@@ -94,6 +94,7 @@
 | 2026-07-06 | [[ai-berkshire/index\|AI Berkshire 投资研究]]、[[browser-automation/web-pack/index\|Web-Pack 素材采集]] | 微信公众号「JackCui」投资研究文章、微信公众号「Ai学习的老章」原创 Skills 文章 | 14 → 16 |
 | 2026-07-26 | [[wechat-cli/index\|WeChat CLI 本地查询]] | GitHub [huohuoer/wechat-cli](https://github.com/huohuoer/wechat-cli)，本地微信数据命令行查询工具 | 17 → 18 |
 | 2026-08-21 | [[arm-cortex-microcontrollers/index\|ARM Cortex-M固件开发]]、[[tailored-resume-generator/index\|定制简历生成]] | GitHub [wshobson/agents](https://github.com/wshobson/agents)、[composio-community/awesome-codex-skills](https://github.com/composio-community/awesome-codex-skills) | 18 → 20 |
+| 2026-08-28 | TSN协议 迁移至 [[../career-development/interview-project-summaries/03-project-design/TSN/index\|TSN 专题库]] | 手动迁移整合（topics + skills 合并） | 20 → 19 |
 
 - **AI Berkshire**（投资研究）：5 个子技能（investment-research / investment-team / earnings-review / industry-funnel / portfolio-review）。源文：https://mp.weixin.qq.com/s/rN6gmls_hbTWVHHSDhN3-Q
 - **Web-Pack**（网页素材采集，已归入 browser-automation）：深度采集 + 图片本地化 + 结构化输出。源文：https://mp.weixin.qq.com/s/U1nICI87xfBZ86Bh_Dj5kw
