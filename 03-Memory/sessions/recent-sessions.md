@@ -10,6 +10,7 @@
 
 | 日期 | 主题 | 关键经验 | 文件 |
 |------|------|---------|------|
+| 2026-08-29 | 修 auto_push Step2 exit0 漏推 bug + 公司设立/面试沉淀 | ⚠️"脚本exit0≠所有改动已推送"（8/25~8/28漏推投资改动近2天）；Step2改$aheadPushed标志不再早退；加$env:TEMP三级fallback；本地bare隔离测试法 | `session-20260829-auto-catchup.md` |
 | 2026-08-28 | family-hub 投资系统月内更新（auto-catchup） | holdings 加仓/换仓/新建仓+三份报告同步；⚠️当日改了未提交致沉淀断档；投资更新闭环(数据源→历史→报告需同提交) | `session-20260828-auto-catchup.md` |
 | 2026-08-25 | 天玑《我的一些阅读和学习方法~》入库 | 英语输入输出闭环/一目十行泛读/70-20-10精力分层；与用户学习体系对照（费曼/面试mock同源）；警示收藏式学习；文章入库SOP二次验证可Skill化 | `session-20260825-tianji-learning-methods.md` |
 | 2026-08-24 | 贝版《一年只需出手两三次》投资方法论入库 + family-hub 挂载 | 提炼6组观点；与现有纪律对照表（识别"自己恐慌卖 vs 别人恐慌买"张力、CRCL集中度反例）；分层落位(inbox知识+REFERENCES挂载)；三级索引同步 | `session-20260824-bayfamily-invest-methodology.md` |
@@ -43,6 +44,11 @@
 ---
 
 ## 完整会话记录
+
+### 2026-08-29: 修 auto_push_home.ps1 Step2 越早退出 bug + 多类知识沉淀（auto-catchup 补齐）
+- **核心产出**: 修复 `05-Tools/backup/auto_push_home.ps1` 定时推送脚本的潜伏 bug（Step 2 push 成功后 `exit 0`，导致「ahead commit + 未提交改动」并存时未提交改动被静默跳过，8/25~8/28 漏推投资改动近两天）；改用 `$aheadPushed` 标志变量使 push 后继续走 Step 3 提交未提交改动；顺带修 `$env:TEMP` 空值健壮性（三级 fallback）。当日另沉淀北京公司设立（社保方案/记账账本/完成日志）、`company/`→`company-h3c/` 目录重组。
+- **关键决策**: 用本地 bare 仓库隔离测试 bug 修复（不污染 github），端到端验证 Step 1→2→3→4→5 全链路；区分"脚本 bug"与"临时网络抖动"（后者重跑即成功）。
+- **可复用**: 定时任务"假成功"诊断法（日志结尾+源码找 early-return）；脚本修复隔离测试 SOP；自动推送脚本健壮性清单（push 后校验 `git status` 空告警 + 临时路径 fallback）。
 
 ### 2026-08-28: family-hub 投资系统月内更新（auto-catchup 补齐）
 - **核心产出**: 补齐当日因"改工作区未提交"导致的会话沉淀断档。当日 modified 文件集中在 `01-Projects/family-hub/research/portfolio/`：holdings.yaml（last_updated 2026-08-28，含 CRCL 加仓、MRVL 清仓换仓至 MSTR/ONDO/UNI/SOXL、科创50ETF/HK创新药ETF 新建仓）、portfolio_history.yaml、月度/年度/A8 三份报告。
