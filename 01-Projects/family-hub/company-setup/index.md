@@ -9,6 +9,7 @@
 | [[./company-done-log.md]] | ✅ **已完成事项记录**（含已完成总表、公司基本信息、三大操作教程、截图存档） |
 | [[./beijing-company-social-insurance-plan.md]] | 📋 方案研究与待办（含待办清单、时间线、费用核算、政策研究） |
 | [[./beijing-company-social-insurance-plan.html]] | 方案文档 HTML 版（网页查看） |
+| [[./beijing-company-accounting-ledger.md]] | 📒 **公司会计账簿**（2026-08-29 建：实缴1万+手续费632，余额9,368；后续每月补充） |
 | screenshots/ | 社保/公积金增员操作截图存档 |
 
 ## 关键数据速查
@@ -25,4 +26,4 @@
 
 ---
 
-**最后更新**: 2026-08-12
+**最后更新**: 2026-08-29
