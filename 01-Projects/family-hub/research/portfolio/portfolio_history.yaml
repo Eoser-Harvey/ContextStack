@@ -5,8 +5,8 @@
 holdings_history:
   btc_onchain:
     name: 比特币(链上)
-    all_time_high_price: 78563.0
-    all_time_high_date: '2026-08-22'
+    all_time_high_price: 80231.1
+    all_time_high_date: '2026-08-28'
     all_time_low_price: 58644.0
     all_time_low_date: '2026-07-01'
   eth_onchain:
@@ -17,8 +17,8 @@ holdings_history:
     all_time_low_date: '2026-07-01'
   btc_binance:
     name: 比特币(币安)
-    all_time_high_price: 78563.0
-    all_time_high_date: '2026-08-22'
+    all_time_high_price: 80231.1
+    all_time_high_date: '2026-08-28'
     all_time_low_price: 59794.2
     all_time_low_date: '2026-07-01'
   eth_binance:
@@ -73,8 +73,8 @@ holdings_history:
     all_time_low_date: '2026-07-30'
   bitgo:
     name: BitGo(韩伟长桥)
-    all_time_high_price: 6.84
-    all_time_high_date: '2026-08-22'
+    all_time_high_price: 7.16
+    all_time_high_date: '2026-08-28'
     all_time_low_price: 4.83
     all_time_low_date: '2026-07-08'
   xiaomi_ht:
@@ -186,6 +186,9 @@ net_worth_snapshots:
 - date: '2026-08-23'
   net_worth_cny: 1240871
   total_assets_cny: 1640871
+- date: '2026-08-28'
+  net_worth_cny: 1293752
+  total_assets_cny: 1693752
 external_signals:
 - date: '2026-08-23'
   crcl:
@@ -197,4 +200,15 @@ external_signals:
   btc:
     price: 77,043
     ma120: 68,308
+    trigger: 底部信号·当日触发
+- date: '2026-08-28'
+  crcl:
+    price: '88.93'
+    ma120: '90.11'
+    ps: 7.77x
+    rsi: '67.0'
+    score: '23'
+  btc:
+    price: 79,014
+    ma120: 68,342
     trigger: 底部信号·当日触发

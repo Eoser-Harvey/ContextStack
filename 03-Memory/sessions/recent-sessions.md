@@ -10,6 +10,7 @@
 
 | 日期 | 主题 | 关键经验 | 文件 |
 |------|------|---------|------|
+| 2026-08-28 | family-hub 投资系统月内更新（auto-catchup） | holdings 加仓/换仓/新建仓+三份报告同步；⚠️当日改了未提交致沉淀断档；投资更新闭环(数据源→历史→报告需同提交) | `session-20260828-auto-catchup.md` |
 | 2026-08-25 | 天玑《我的一些阅读和学习方法~》入库 | 英语输入输出闭环/一目十行泛读/70-20-10精力分层；与用户学习体系对照（费曼/面试mock同源）；警示收藏式学习；文章入库SOP二次验证可Skill化 | `session-20260825-tianji-learning-methods.md` |
 | 2026-08-24 | 贝版《一年只需出手两三次》投资方法论入库 + family-hub 挂载 | 提炼6组观点；与现有纪律对照表（识别"自己恐慌卖 vs 别人恐慌买"张力、CRCL集中度反例）；分层落位(inbox知识+REFERENCES挂载)；三级索引同步 | `session-20260824-bayfamily-invest-methodology.md` |
 | 2026-08-23 | 框架深度重新学习（WorkBuddy 接入）+ 会话沉淀闭环 | 全量重读四层架构+v3.4 自检清单 8 项；确认"后续基于框架沟通"；双工作区记忆分工(.workbuddy vs 03-Memory)；沉淀本次 session | `session-20260823-framework-relarn.md` |
@@ -42,6 +43,11 @@
 ---
 
 ## 完整会话记录
+
+### 2026-08-28: family-hub 投资系统月内更新（auto-catchup 补齐）
+- **核心产出**: 补齐当日因"改工作区未提交"导致的会话沉淀断档。当日 modified 文件集中在 `01-Projects/family-hub/research/portfolio/`：holdings.yaml（last_updated 2026-08-28，含 CRCL 加仓、MRVL 清仓换仓至 MSTR/ONDO/UNI/SOXL、科创50ETF/HK创新药ETF 新建仓）、portfolio_history.yaml、月度/年度/A8 三份报告。
+- **关键决策**: 依"仅缺失且确有内容才创建"原则生成 auto-catchup；未覆盖任何正常 session。
+- **可复用**: 投资更新闭环（holdings→history→reports 三者必须同步且同一次 git 提交）；成本记录须写清加权均价过程。
 
 ### 2026-08-23: 框架深度重新学习（WorkBuddy 接入）+ 会话沉淀闭环
 - **核心产出**: 全量重读四层架构（L1 v3.4 含 8 项自检清单 / L2 PROJECT-RULES 实例 / L3 规范文档 / L4 MEMORY 索引 + TODO 看板 + 工作台实例 + 最近会话）；确认用户"后续基于此框架沟通"；识别 08-22 后变更（v3.4 新增禁止推算项）
