@@ -186,29 +186,34 @@ function Test-GitHubReachable {
 if (-not (Invoke-GitPull)) { exit 1 }
 
 # === Step 2: Push any already-committed changes first =========================
+# 修复(2026-08-29): 原逻辑 push 成功后直接 exit 0，导致同时存在「已提交未推送」
+# +「未提交改动」时，未提交改动被静默跳过。改为标志变量，push 完继续走 Step 3。
 $commitsAhead = [int](& git rev-list --count origin/master..HEAD 2>&1)
 if ($commitsAhead -gt 0) {
     Add-Content -Path $logFile -Value "Step 2: $commitsAhead committed but un-pushed, pushing..."
     $gitExtraArgs = @()
     if (-not $script:vpnProxy) { $gitExtraArgs = @("-c", "http.proxy=", "-c", "https.proxy=") }
+    $aheadPushed = $false
     try {
         # SSH over port 443 优先（家里环境）
         if (Test-SshReachable) {
             $pushOutput = & git push origin-ssh master 2>&1
             if ($LASTEXITCODE -eq 0) {
                 Add-Content -Path $logFile -Value "Push OK (SSH): $pushOutput"
-                Add-Content -Path $logFile -Value ""
-                exit 0
+                $aheadPushed = $true
             }
         }
-        # SSH failed, fallback to HTTPS
-        $pushOutput = & git @gitExtraArgs -c http.lowSpeedLimit=0 -c http.lowSpeedTime=60 push origin master 2>&1
-        if ($LASTEXITCODE -eq 0) {
-            Add-Content -Path $logFile -Value "Push OK (HTTPS): $pushOutput"
-            Add-Content -Path $logFile -Value ""
-            exit 0
+        # SSH failed/unreachable, fallback to HTTPS
+        if (-not $aheadPushed) {
+            $pushOutput = & git @gitExtraArgs -c http.lowSpeedLimit=0 -c http.lowSpeedTime=60 push origin master 2>&1
+            if ($LASTEXITCODE -eq 0) {
+                Add-Content -Path $logFile -Value "Push OK (HTTPS): $pushOutput"
+                $aheadPushed = $true
+            }
         }
-        Add-Content -Path $logFile -Value "Push of ahead commits FAILED: $($pushOutput -replace '\n',' ')"
+        if (-not $aheadPushed) {
+            Add-Content -Path $logFile -Value "Push of ahead commits FAILED: $($pushOutput -replace '\n',' ')"
+        }
     } catch {
         Add-Content -Path $logFile -Value "Push of ahead commits FAILED: $_"
     }
@@ -273,7 +278,9 @@ $commitMsg = if ($parts.Count -gt 0) { "auto: " + ($parts -join ", ") } else { "
 
 git add -A
 # 用 -F + UTF-8 文件提交，避免 GBK 控制台把中文 commit message 写成乱码（-m 途经控制台编码不可控）
-$msgFile = Join-Path $env:TEMP "ctxstack_commit_msg.txt"
+# $env:TEMP 在部分非交互环境为空，fallback 到 $env:TMP 或脚本目录，避免写盘失败
+$tmpBase = if ($env:TEMP) { $env:TEMP } elseif ($env:TMP) { $env:TMP } else { $scriptDir }
+$msgFile = Join-Path $tmpBase "ctxstack_commit_msg.txt"
 [System.IO.File]::WriteAllText($msgFile, $commitMsg, (New-Object System.Text.UTF8Encoding($false)))
 $commitOutput = & git commit -F $msgFile 2>&1
 Remove-Item $msgFile -ErrorAction SilentlyContinue
