@@ -6,6 +6,7 @@
 
 | 文件 | 类型 | 内容 | 更新 |
 |:-----|:-----|:-----|:-----|
+| [session-20260831-auto-catchup.md](./session-20260831-auto-catchup.md) | 工具链/面试 | 社区采集推送工具链 + 千寻/嵌入式C面试准备 + LLM-Wiki知识范式研究（4 commits/16 files） | 2026-08-31 |
 | [session-20260829-auto-catchup.md](./session-20260829-auto-catchup.md) | 脚本工程 | 修 auto_push Step2 exit0 漏推 bug + 公司设立/面试准备沉淀（本地bare隔离测试） | 2026-08-29 |
 | [session-20260828-auto-catchup.md](./session-20260828-auto-catchup.md) | 投资系统 | family-hub 投资数据月内更新补齐（持仓/历史/报告，未提交致沉淀断档） | 2026-08-28 |
 | [session-20260825-tianji-learning-methods.md](./session-20260825-tianji-learning-methods.md) | 学习方法 | 天玑学习方法文章入库+与用户学习体系对照+收藏式学习警示 | 2026-08-25 |
@@ -21,5 +22,5 @@
 
 ---
 
-**最后更新**: 2026-08-29
+**最后更新**: 2026-08-31
 **维护规则**: 新增会话产出文件时同步到此表 + recent-sessions.md 索引

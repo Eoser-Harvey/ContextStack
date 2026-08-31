@@ -1,597 +1,583 @@
 """
-每日 0:00 个人画像归档同步脚本
+个人画像归档同步脚本 — 每天0点执行
 
-从 holdings.yaml + 最新月度报告 + 职业发展档案 生成两份归档摘要：
-  - 小时推送项目: 0.trae-feishu-push-hour/profile_archive/profile_YYYYMMDD.md
-  - 日报推送项目: 1.trae-feishu-push-day/profile_archive/profile_YYYYMMDD.md
+读取 holdings.yaml、最新月度报告、职业发展档案，生成两份归档摘要到
+小时推送和日报推送的 profile_archive/ 目录。
 
-架构说明：
-  - profile_loader.py 按文件名日期排序取最新文件
-  - analyzer.py / send_daily_ai_news.py / push_lark.py 均使用 load_latest_profile() 动态加载
-  - 更新 profile_archive/ 即自动生效，无需修改任何代码
+用法:
+  python sync_profile_archive.py
 
-用法：
-  python sync_profile_archive.py          # 正常执行
-  python sync_profile_archive.py --dry    # 仅打印不写入文件
-  python sync_profile_archive.py --date 20260717  # 指定日期
-
-作者: AI Assistant
-日期: 2026-07-17
+架构说明:
+  profile_loader.py（小时/日报项目各一份）自动从 profile_archive/ 按文件名日期排序取最新文件
+  analyzer.py/send_daily_ai_news.py/push_lark.py 均使用 load_latest_profile() 动态加载
+  config.yaml 不再硬编码 profile 段，所有分析均实时从 archive 读取
+  更新 profile_archive/ 即自动生效，无需修改任何代码
 """
 
 import os
 import re
 import sys
-import yaml
 import glob
-from datetime import datetime, date
+import yaml
+import logging
+from datetime import date
 from pathlib import Path
 
-# ======================================================================
-# 路径常量
-# ======================================================================
+# ── 路径配置 ──
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+HOLDINGS_PATH = PROJECT_ROOT / "01-Projects" / "family-hub" / "research" / "portfolio" / "holdings.yaml"
+REPORTS_DIR = PROJECT_ROOT / "01-Projects" / "family-hub" / "research" / "portfolio" / "reports"
+CAREER_FILE = PROJECT_ROOT / "02-Knowledge" / "career-development" / "career-strategy" / "个人职业发展分析-端侧AI企业定制攻略.md"
+HOUR_ARCHIVE_DIR = PROJECT_ROOT / "01-Projects" / "automated-task" / "0.trae-feishu-push-hour" / "profile_archive"
+DAY_ARCHIVE_DIR = PROJECT_ROOT / "01-Projects" / "automated-task" / "1.trae-feishu-push-day" / "profile_archive"
+LOG_DIR = PROJECT_ROOT / "01-Projects" / "automated-task" / "logs"
 
-PROJECT_ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
-HOLDINGS_PATH = os.path.join(PROJECT_ROOT, "01-Projects", "family-hub", "research", "portfolio", "holdings.yaml")
-REPORTS_DIR = os.path.join(PROJECT_ROOT, "01-Projects", "family-hub", "research", "portfolio", "reports")
-CAREER_PATH = os.path.join(PROJECT_ROOT, "02-Knowledge", "career-development", "career-strategy",
-                           "个人职业发展分析-端侧AI企业定制攻略.md")
+# ── 日志：静默模式，只写文件，异常时输出到 stderr ──
+LOG_DIR.mkdir(parents=True, exist_ok=True)
+LOG_FILE = LOG_DIR / f"sync_profile_archive_{date.today().strftime('%Y%m%d')}.log"
 
-HOUR_ARCHIVE_DIR = os.path.join(PROJECT_ROOT, "01-Projects", "automated-task", "0.trae-feishu-push-hour", "profile_archive")
-DAY_ARCHIVE_DIR = os.path.join(PROJECT_ROOT, "01-Projects", "automated-task", "1.trae-feishu-push-day", "profile_archive")
-
-LOG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sync_profile_archive.log")
-
-
-# ======================================================================
-# 日志
-# ======================================================================
-
-def log(msg, level="INFO"):
-    """写入日志文件（带时间戳），同时打印到 stdout"""
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    line = f"[{level}] {timestamp} - {msg}"
-    print(line)
-    try:
-        with open(LOG_PATH, "a", encoding="utf-8") as f:
-            f.write(line + "\n")
-    except IOError:
-        pass  # 日志写入失败不阻断主流程
+logger = logging.getLogger("sync_profile_archive")
+logger.setLevel(logging.INFO)
+_fh = logging.FileHandler(LOG_FILE, encoding="utf-8")
+_fh.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(message)s"))
+logger.addHandler(_fh)
 
 
-# ======================================================================
-# 读取源文件
-# ======================================================================
+def _log_error(msg):
+    """错误同时写入日志和 stderr（保证可见）"""
+    logger.error(msg)
+    print(f"[ERROR] {msg}", file=sys.stderr)
+
+
+def _extract_prev_archive_prices(archive_dir):
+    """
+    读取最新 archive 文件，提取价格信息作为 fallback。
+    返回 {
+        "crypto": {标的名: {"price": "...", "market_value": "..."}},
+        "us": {...},
+        "hk": {...},
+        "a": {...},
+        "ts": {标的名: 市值},
+        "metrics": {指标名: 数值},
+    }
+    """
+    result = {"crypto": {}, "us": {}, "hk": {}, "a": {}, "ts": {}, "metrics": {}}
+    files = sorted(glob.glob(str(archive_dir / "profile_*.md")), reverse=True)
+    if not files:
+        logger.warning("无前次归档，价格信息将留空")
+        return result
+
+    with open(files[0], "r", encoding="utf-8") as f:
+        content = f.read()
+
+    lines = content.split("\n")
+    current_section = ""
+    current_subsection = ""
+
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith("## ") and not stripped.startswith("### "):
+            current_section = stripped[3:].strip()
+            current_subsection = ""
+        elif stripped.startswith("### "):
+            current_subsection = stripped[4:].strip()
+
+        if not (stripped.startswith("|") and stripped.endswith("|")):
+            continue
+        cells = [c.strip() for c in stripped.split("|")[1:-1]]
+        if len(cells) < 2:
+            continue
+        if all(c.replace("-", "").replace(":", "").strip() == "" for c in cells):
+            continue
+
+        target = None
+        if current_section == "投资持仓概览":
+            sub = current_subsection
+            if sub == "加密货币":
+                target = result["crypto"]
+            elif sub == "美股":
+                target = result["us"]
+            elif sub == "港股":
+                target = result["hk"]
+            elif sub == "A股":
+                target = result["a"]
+            elif sub == "TS时间代币":
+                target = result["ts"]
+            elif sub == "关键指标" and len(cells) == 2:
+                result["metrics"][cells[0]] = cells[1]
+                continue
+
+        if target is not None:
+            if len(cells) >= 4:
+                target[cells[0]] = {"price": cells[2], "market_value": cells[3], "storage": cells[-1]}
+            elif len(cells) == 3:
+                target[cells[0]] = cells[1]  # TS 时间代币
+
+    logger.info(f"已加载前次归档: {os.path.basename(files[0])}")
+    return result
+
+
+def _extract_report_prices(report_content):
+    """
+    从月度报告中提取最新价格数据。
+    返回 {标的名: {"price": USD价格, "mv_cny": 市值CNY, "storage": 存放}}
+    """
+    prices = {}
+    lines = report_content.split("\n")
+    in_detail = False
+    for line in lines:
+        stripped = line.strip()
+        if "## 二、投资资产明细" in stripped or "投资资产明细" in stripped:
+            in_detail = True
+            continue
+        if in_detail:
+            if stripped.startswith("## ") or stripped.startswith("---"):
+                break
+            if stripped.startswith("|") and stripped.endswith("|"):
+                cells = [c.strip() for c in stripped.split("|")[1:-1]]
+                if len(cells) >= 8 and cells[0] not in ("标的", "投资合计"):
+                    name = cells[0]
+                    qty = cells[1]
+                    price = cells[2]
+                    mv_cny = cells[3]
+                    storage = cells[-1] if len(cells) >= 9 else ""
+                    prices[name] = {"price": price, "mv_cny": mv_cny, "qty": qty, "storage": storage}
+    return prices
+
+
+def _extract_report_metrics(report_content, usd_cny, hkd_cny):
+    """从月度报告中提取关键指标"""
+    metrics = {}
+    lines = report_content.split("\n")
+    in_overview = False
+    for line in lines:
+        stripped = line.strip()
+        if "资产总览" in stripped or "## 一" in stripped:
+            in_overview = True
+            continue
+        if in_overview:
+            if stripped.startswith("## ") or stripped.startswith("---"):
+                break
+            if stripped.startswith("|") and stripped.endswith("|"):
+                cells = [c.strip() for c in stripped.split("|")[1:-1]]
+                if len(cells) >= 2:
+                    key = cells[0].strip()
+                    val = cells[1].strip()
+                    if key == "**总资产**":
+                        metrics["总资产"] = val
+                    elif key == "**净资产**":
+                        metrics["净资产"] = val
+                    elif key == "**投资总资产**":
+                        metrics["投资总资产"] = val
+                    elif key == "现金固收":
+                        metrics["家庭备用金"] = val
+    return metrics
+
 
 def load_holdings():
-    """读取 holdings.yaml，返回 raw dict"""
-    if not os.path.isfile(HOLDINGS_PATH):
-        raise FileNotFoundError(f"holdings.yaml 不存在: {HOLDINGS_PATH}")
+    """读取 holdings.yaml"""
+    if not HOLDINGS_PATH.exists():
+        _log_error(f"holdings.yaml 不存在: {HOLDINGS_PATH}")
+        return None
     with open(HOLDINGS_PATH, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f)
+    logger.info(f"holdings.yaml 加载成功 (last_updated: {data.get('meta', {}).get('last_updated', 'N/A')})")
     return data
 
 
-def get_latest_report():
-    """从 reports/ 目录读取最新月份报告，返回 (filename, content)"""
-    if not os.path.isdir(REPORTS_DIR):
-        raise FileNotFoundError(f"reports 目录不存在: {REPORTS_DIR}")
+def load_latest_monthly_report():
+    """
+    读取最新月度报告（按文件名排序，取最新一个，排除年度报告和非月份报告）。
+    返回 (content, filename)
+    """
+    if not REPORTS_DIR.exists():
+        _log_error(f"报告目录不存在: {REPORTS_DIR}")
+        return None, None
 
-    files = sorted(glob.glob(os.path.join(REPORTS_DIR, "家庭资产报告-*.md")), reverse=True)
-    if not files:
-        raise FileNotFoundError("未找到月度报告文件")
+    files = sorted(glob.glob(str(REPORTS_DIR / "*.md")), reverse=True)
+    # 优先取 "家庭资产报告-YYYY-MM.md" 格式的文件
+    monthly = [f for f in files if re.search(r"家庭资产报告-\d{4}-\d{2}\.md$", f)]
+    if not monthly:
+        _log_error("未找到月度报告文件")
+        return None, None
 
-    latest = files[0]
+    latest = monthly[0]
     with open(latest, "r", encoding="utf-8") as f:
         content = f.read()
-    return os.path.basename(latest), content
+    fname = os.path.basename(latest)
+    logger.info(f"最新月度报告: {fname}")
+    return content, fname
 
 
-def load_career_doc():
-    """读取职业发展档案，返回文本内容"""
-    if not os.path.isfile(CAREER_PATH):
-        raise FileNotFoundError(f"职业发展档案不存在: {CAREER_PATH}")
-    with open(CAREER_PATH, "r", encoding="utf-8") as f:
-        return f.read()
-
-
-def load_previous_profile(archive_dir):
-    """读取前一天的归档（用于保留家庭/保险等静态信息）"""
-    files = sorted(glob.glob(os.path.join(archive_dir, "profile_*.md")), reverse=True)
-    if not files:
+def load_career_profile():
+    """读取职业发展档案"""
+    if not CAREER_FILE.exists():
+        _log_error(f"职业发展档案不存在: {CAREER_FILE}")
         return None
-    with open(files[0], "r", encoding="utf-8") as f:
-        return f.read()
+    with open(CAREER_FILE, "r", encoding="utf-8") as f:
+        content = f.read()
+    logger.info(f"职业发展档案加载成功: {CAREER_FILE.name}")
+    return content
 
 
-# ======================================================================
-# 解析函数
-# ======================================================================
+def build_archive(holdings, report_content, report_filename, prev_prices):
+    """构建归档内容"""
+    today = date.today()
+    date_str = today.strftime("%Y-%m-%d")
+    date_compact = today.strftime("%Y%m%d")
 
-def parse_markdown_section(content, section_title):
-    """从 markdown 文本中提取指定 ## 节的内容，返回 {key: value} 表格映射"""
-    result = {}
-    # 找到 ## 节标题
-    pattern = rf'^##\s*{re.escape(section_title)}\s*$'
-    lines = content.split('\n')
-    in_section = False
-    in_subsection = False
-    table_started = False
+    meta = holdings.get("meta", {})
+    last_updated = meta.get("last_updated", "N/A")
+    usd_cny = meta.get("usd_cny", 6.725)
 
-    for i, line in enumerate(lines):
-        stripped = line.strip()
+    # 从月度报告提取最新价格
+    report_prices = _extract_report_prices(report_content) if report_content else {}
 
-        if re.match(pattern, stripped):
-            in_section = True
-            continue
+    # 从月度报告提取关键指标
+    report_metrics = _extract_report_metrics(report_content, usd_cny, 0.857) if report_content else {}
 
-        if in_section:
-            # 遇到下一个 ## 则退出
-            if stripped.startswith("## ") and not stripped.startswith("### "):
-                break
-
-            # 解析表格行
-            if stripped.startswith("|") and stripped.endswith("|"):
-                cells = [c.strip() for c in stripped.split("|")[1:-1]]
-
-                # 跳过表头分隔行
-                if all(c.replace("-", "").replace(":", "").strip() == "" for c in cells):
-                    continue
-
-                # 跳过表头行（第一行数据）
-                if len(cells) == 2 and cells[0] in ("维度", "项目", "指标", "标的"):
-                    continue
-
-                if len(cells) >= 2:
-                    key = cells[0]
-                    value = " | ".join(cells[1:])
-                    result[key] = value
-
-    return result
-
-
-def extract_family_insurance(prev_profile_content):
-    """从上一份归档中提取家庭与保险数据"""
-    result = {}
-    if not prev_profile_content:
-        return result
-
-    lines = prev_profile_content.split('\n')
-    in_section = False
-    for line in lines:
-        stripped = line.strip()
-        if stripped == "## 家庭与保险":
-            in_section = True
-            continue
-        if in_section:
-            if stripped.startswith("## ") and not stripped.startswith("### "):
-                break
-            if stripped.startswith("|") and stripped.endswith("|"):
-                cells = [c.strip() for c in stripped.split("|")[1:-1]]
-                if all(c.replace("-", "").replace(":", "").strip() == "" for c in cells):
-                    continue
-                if len(cells) >= 2 and cells[0] not in ("项目",):
-                    result[cells[0]] = cells[1] if len(cells) == 2 else " | ".join(cells[1:])
-    return result
-
-
-def extract_a8_plan(prev_profile_content):
-    """从上一份归档中提取 A8 计划进度"""
-    result = {}
-    if not prev_profile_content:
-        return result
-
-    lines = prev_profile_content.split('\n')
-    in_section = False
-    for line in lines:
-        stripped = line.strip()
-        if stripped == "## A8计划进度":
-            in_section = True
-            continue
-        if in_section:
-            if stripped.startswith("## ") and not stripped.startswith("### "):
-                break
-            if stripped.startswith("|") and stripped.endswith("|"):
-                cells = [c.strip() for c in stripped.split("|")[1:-1]]
-                if all(c.replace("-", "").replace(":", "").strip() == "" for c in cells):
-                    continue
-                if len(cells) >= 2 and cells[0] not in ("指标",):
-                    result[cells[0]] = cells[1] if len(cells) == 2 else " | ".join(cells[1:])
-    return result
-
-
-# ======================================================================
-# 数值计算
-# ======================================================================
-
-def calculate_values(holdings):
-    """从 holdings.yaml 计算归档所需的各项数值"""
-    usd_cny = holdings.get("meta", {}).get("usd_cny", 6.773)
-    hkd_cny = holdings.get("meta", {}).get("hkd_cny", 0.864)
-
+    # 优先级：月度报告价格 > 前次归档价格
+    # 用于投资概览表
     # 加密货币
-    btc_qty = 0
-    btc_price = 0
-    usdt_amt = 0
-    for h in holdings.get("holdings", []):
-        if h["id"] == "btc_onchain":
-            btc_qty = h["quantity"]
-            btc_price = h.get("manual_price_usd", 0)
-        if h["symbol"] == "BTC":
-            btc_price = h.get("manual_price_usd", btc_price)
+    crypto_items = []
+    us_stock_items = []
+    hk_stock_items = []
+    a_stock_items = []
+    ts_items = []
 
-    # USDT from cash
-    for c in holdings.get("cash", []):
-        if "USDT" in c.get("name", "") or "币安" in c.get("name", ""):
-            usdt_amt = c.get("amount_usd", 0)
+    h = holdings.get("holdings", [])
+    for item in h:
+        cat = item.get("category", "")
+        symbol = item.get("symbol", "")
+        name = item.get("name", "")
+        qty = item.get("quantity", 0)
+        unit = item.get("unit", "")
+        storage = item.get("storage", "")
+        base = {"name": name, "qty": qty, "unit": unit, "storage": storage, "symbol": symbol}
 
-    # 估值
-    btc_value_cny = btc_qty * btc_price * usd_cny if btc_price > 0 else 0
-    usdt_value_cny = usdt_amt * usd_cny
+        if cat == "crypto":
+            crypto_items.append(base)
+        elif cat in ("us_stock_tokenized", "us_stock"):
+            us_stock_items.append(base)
+        elif cat == "hk_stock":
+            hk_stock_items.append(base)
+        elif cat == "a_stock":
+            a_stock_items.append(base)
+        elif cat == "ts_time_token":
+            ts_items.append(base)
 
-    # CRCL 汇总
-    crcl_holdings = [h for h in holdings.get("holdings", []) if h["symbol"] == "CRCL"]
-    crcl_total_qty = sum(h["quantity"] for h in crcl_holdings)
-    crcl_price = crcl_holdings[0].get("manual_price_usd", 0) if crcl_holdings else 0
-    crcl_value_cny = crcl_total_qty * crcl_price * usd_cny if crcl_price > 0 else 0
+    # 辅助：从 report_prices 或 prev_prices 获取价格
+    def _get_price(item_name, fallback_key=None, price_type="price"):
+        """按优先级获取价格：月度报告 > 前次归档"""
+        KEY_MAP = {"price": "price", "mv_cny": "market_value", "storage": "storage"}
 
-    # 其他美股
-    dram = [h for h in holdings.get("holdings", []) if h["id"] == "dram_binance"]
-    mrvi = [h for h in holdings.get("holdings", []) if h["id"] == "mrvl_han"]
-    btgo = [h for h in holdings.get("holdings", []) if h["id"] == "bitgo"]
+        def _lookup_in(source, source_key, target_key):
+            val = source.get(source_key, {})
+            if isinstance(val, dict):
+                mapped = KEY_MAP.get(target_key, target_key)
+                return val.get(mapped, val.get(target_key, "—"))
+            return str(val)
 
-    dram_qty = dram[0]["quantity"] if dram else 0
-    dram_price = dram[0].get("manual_price_usd", 0) if dram else 0
-    dram_value_cny = dram_qty * dram_price * usd_cny if dram_price > 0 else 0
+        # 尝试从 report_prices 精确匹配
+        for rp_key, rp_val in report_prices.items():
+            if item_name in rp_key or (fallback_key and fallback_key in rp_key):
+                if price_type == "price":
+                    return rp_val.get("price", "—")
+                elif price_type == "mv_cny":
+                    return rp_val.get("mv_cny", "—")
+                elif price_type == "storage":
+                    return rp_val.get("storage", "—")
+                return "—"
+        # 尝试从 prev_prices 获取
+        for section_key in ("crypto", "us", "hk", "a"):
+            prev_section = prev_prices.get(section_key, {})
+            for prev_key, prev_val in prev_section.items():
+                if item_name in prev_key or (fallback_key and fallback_key in prev_key):
+                    return _lookup_in(prev_section, prev_key, price_type)
+        return "—"
 
-    mrvi_qty = mrvi[0]["quantity"] if mrvi else 0
-    mrvi_price = mrvi[0].get("manual_price_usd", 0) if mrvi else 0
-    mrvi_value_cny = mrvi_qty * mrvi_price * usd_cny if mrvi_price > 0 else 0
+    def _get_price_storage(item_name, fallback_key=None):
+        return _get_price(item_name, fallback_key, "storage")
 
-    btgo_qty = btgo[0]["quantity"] if btgo else 0
-    btgo_price = btgo[0].get("manual_price_usd", 0) if btgo else 0
-    btgo_value_cny = btgo_qty * btgo_price * usd_cny if btgo_price > 0 else 0
+    def _get_mv(item_name, fallback_key=None):
+        return _get_price(item_name, fallback_key, "mv_cny")
 
-    # 港股
-    ubt = [h for h in holdings.get("holdings", []) if h["id"] == "ubt_ht"]
-    ubt_qty = ubt[0]["quantity"] if ubt else 0
-    ubt_price = ubt[0].get("manual_price_usd", 0) if ubt else 0
-    ubt_value_cny = ubt_qty * ubt_price * usd_cny if ubt_price > 0 else 0
-
-    # TS 时间代币
-    xiaoan = [h for h in holdings.get("holdings", []) if h["id"] == "ts_xiaoan"]
-    wufan = [h for h in holdings.get("holdings", []) if h["id"] == "ts_wufan"]
-    xiaoan_qty = xiaoan[0]["quantity"] if xiaoan else 0
-    xiaoan_price = xiaoan[0].get("manual_price_usd", 0) if xiaoan else 0
-    xiaoan_value_cny = xiaoan_qty * xiaoan_price * usd_cny if xiaoan_price > 0 else 0
-    wufan_qty = wufan[0]["quantity"] if wufan else 0
-    wufan_price = wufan[0].get("manual_price_usd", 0) if wufan else 0
-    wufan_value_cny = wufan_qty * wufan_price * usd_cny if wufan_price > 0 else 0
-
-    # 现金
-    cash_cny = 0
-    hk_cash = 0
-    for c in holdings.get("cash", []):
-        if "备用金" in c.get("name", "") or "活期" in c.get("name", ""):
-            cash_cny = c.get("amount_cny", 0)
-        if "打新" in c.get("name", ""):
-            hk_cash = c.get("amount_hkd", 0)
-
-    # 负债
-    credit_card = 0
-    mortgage_commercial = 0
-    mortgage_fund = 0
-    for lb in holdings.get("liabilities", []):
-        if "商贷" in lb.get("name", ""):
-            mortgage_commercial = lb.get("amount_cny", 0)
-        if "公积金" in lb.get("name", ""):
-            mortgage_fund = lb.get("amount_cny", 0)
-        if "信用卡" in lb.get("name", ""):
-            credit_card = lb.get("amount_cny", 0)
-
-    # 房产
-    house_value = 0
-    for fa in holdings.get("fixed_assets", []):
-        if "海淀" in fa.get("name", ""):
-            house_value = fa.get("value_cny", 0)
-
-    # 投资总资产 = 加密货币 + 美股 + 港股 + TS
-    investment_total = (btc_value_cny + usdt_value_cny + crcl_value_cny +
-                        dram_value_cny + mrvi_value_cny + btgo_value_cny +
-                        ubt_value_cny + xiaoan_value_cny + wufan_value_cny)
-
-    # 总资产 = 投资 + 现金（不含房产，与月度报告一致）
-    hk_cash_cny = hk_cash * hkd_cny
-    total_assets = investment_total + cash_cny + hk_cash_cny
-    net_assets = total_assets - credit_card
-
-    return {
-        "usd_cny": usd_cny,
-        "hkd_cny": hkd_cny,
-        "btc_qty": btc_qty,
-        "btc_price": btc_price,
-        "btc_value_cny": btc_value_cny,
-        "usdt_amt": usdt_amt,
-        "usdt_value_cny": usdt_value_cny,
-        "crcl_total_qty": crcl_total_qty,
-        "crcl_price": crcl_price,
-        "crcl_value_cny": crcl_value_cny,
-        "dram_qty": dram_qty,
-        "dram_price": dram_price,
-        "dram_value_cny": dram_value_cny,
-        "mrvi_qty": mrvi_qty,
-        "mrvi_price": mrvi_price,
-        "mrvi_value_cny": mrvi_value_cny,
-        "btgo_qty": btgo_qty,
-        "btgo_price": btgo_price,
-        "btgo_value_cny": btgo_value_cny,
-        "ubt_qty": ubt_qty,
-        "ubt_price": ubt_price,
-        "ubt_value_cny": ubt_value_cny,
-        "xiaoan_qty": xiaoan_qty,
-        "xiaoan_price": xiaoan_price,
-        "xiaoan_value_cny": xiaoan_value_cny,
-        "wufan_qty": wufan_qty,
-        "wufan_price": wufan_price,
-        "wufan_value_cny": wufan_value_cny,
-        "cash_cny": cash_cny,
-        "hk_cash": hk_cash,
-        "hk_cash_cny": hk_cash_cny,
-        "credit_card": credit_card,
-        "mortgage_commercial": mortgage_commercial,
-        "mortgage_fund": mortgage_fund,
-        "house_value": house_value,
-        "investment_total": investment_total,
-        "total_assets": total_assets,
-        "net_assets": net_assets,
-    }
-
-
-def format_cny(value):
-    """格式化 CNY 数值，如 ¥1,234,567"""
-    return f"¥{value:,.0f}"
-
-
-def format_usd(value):
-    """格式化 USD 数值，如 $12,345"""
-    return f"${value:,.2f}" if value >= 1 else f"${value:.6f}"
-
-
-# ======================================================================
-# 归档生成
-# ======================================================================
-
-def generate_profile(values, family_data, a8_data, career_filepath, report_filename, today_str):
-    """生成个人画像归档 markdown 内容"""
-
+    # 构建输出
     lines = []
-    lines.append(f"# 个人画像归档 - {today_str[:4]}-{today_str[4:6]}-{today_str[6:]}")
+    lines.append(f"# 个人画像归档 - {date_str}")
     lines.append("")
+
+    # ════════════════════════════════════════════════════════════════
+    # 投资持仓概览
+    # ════════════════════════════════════════════════════════════════
     lines.append("## 投资持仓概览")
     lines.append("")
 
-    # --- 加密货币 ---
+    # 加密货币
     lines.append("### 加密货币")
     lines.append("| 标的 | 数量 | 当前价(USD) | 市值(CNY) | 存放 |")
     lines.append("|------|------|------------|-----------|------|")
-    lines.append(f"| BTC(链上) | {values['btc_qty']} | {format_usd(values['btc_price'])} | {format_cny(values['btc_value_cny'])} | 链上钱包 |")
-    lines.append(f"| USDT(币安) | — | — | ${values['usdt_amt']:,.0f} | 韩伟蒙古币安 |")
-    lines.append("| ETH | — | — | — | 已清仓 (2026-06-24) |")
-    lines.append("")
+    for item in crypto_items:
+        name = item["name"]
+        qty = item["qty"]
+        unit = item["unit"]
+        storage = item["storage"]
+        if isinstance(qty, float) and qty < 1:
+            qty_str = f"{qty:.8f}"
+        else:
+            qty_str = f"{qty:,}"
+        if unit:
+            qty_str += unit
+        price = _get_price(name)
+        mv = _get_mv(name)
+        lines.append(f"| {name} | {qty_str} | {price} | {mv} | {storage} |")
 
-    # --- 美股 ---
+    # 美股
+    lines.append("")
     lines.append("### 美股")
     lines.append("| 标的 | 数量 | 当前价(USD) | 市值(CNY) | 存放 |")
     lines.append("|------|------|------------|-----------|------|")
-    lines.append(f"| Circle(CRCL合计) | {values['crcl_total_qty']:.1f} | {format_usd(values['crcl_price'])} | {format_cny(values['crcl_value_cny'])} | 分散多账户 |")
-    lines.append(f"| DRAM(韩伟币安) | {values['dram_qty']} | {format_usd(values['dram_price'])} | {format_cny(values['dram_value_cny'])} | 韩伟蒙古币安 |")
-    lines.append(f"| 迈威尔(币安) | {values['mrvi_qty']:.3f} | {format_usd(values['mrvi_price'])} | {format_cny(values['mrvi_value_cny'])} | 韩伟蒙古币安 |")
-    lines.append(f"| BitGo(韩伟长桥) | {values['btgo_qty']} | {format_usd(values['btgo_price'])} | {format_cny(values['btgo_value_cny'])} | 韩伟长桥证券 |")
-    lines.append("")
+    # CRCL 合计
+    crcl_qty = sum(item["qty"] for item in us_stock_items if "CRCL" in item["symbol"] or "Circle" in item["name"])
+    crcl_name = "Circle(CRCL合计)"
+    crcl_price = _get_price("Circle(CRCL合计)", "CRCL")
+    crcl_mv = _get_mv("Circle(CRCL合计)", "CRCL")
+    lines.append(f"| {crcl_name} | {crcl_qty:,.1f} | {crcl_price} | {crcl_mv} | 分散多账户 |")
 
-    # --- 港股 ---
+    for item in us_stock_items:
+        if "CRCL" in item["symbol"] or "Circle" in item["name"]:
+            continue
+        name = item["name"]
+        qty = item["qty"]
+        storage = item["storage"]
+        if isinstance(qty, float) and qty < 10:
+            qty_str = f"{qty:.3f}"
+        else:
+            qty_str = f"{qty:,}"
+        price = _get_price(name)
+        mv = _get_mv(name)
+        lines.append(f"| {name} | {qty_str} | {price} | {mv} | {storage} |")
+
+    # 港股
+    lines.append("")
     lines.append("### 港股")
-    lines.append("| 标的 | 数量 | 当前价 | 市值(CNY) |")
-    lines.append("|------|------|-------|-----------|")
-    lines.append(f"| 优必选 | {values['ubt_qty']} | {format_usd(values['ubt_price'])} | {format_cny(values['ubt_value_cny'])} |")
-    lines.append("")
+    lines.append("| 标的 | 数量 | 当前价 | 市值(CNY) | 存放 |")
+    lines.append("|------|------|-------|-----------|------|")
+    for item in hk_stock_items:
+        name = item["name"]
+        qty = item["qty"]
+        storage = item["storage"]
+        qty_str = f"{qty:,}"
+        price = _get_price(name)
+        mv = _get_mv(name)
+        lines.append(f"| {name} | {qty_str} | {price} | {mv} | {storage} |")
 
-    # --- TS 时间代币 ---
+    # A股
+    lines.append("")
+    lines.append("### A股")
+    lines.append("| 标的 | 数量 | 当前价 | 市值(CNY) | 存放 |")
+    lines.append("|------|------|-------|-----------|------|")
+    for item in a_stock_items:
+        name = item["name"]
+        qty = item["qty"]
+        storage = item["storage"]
+        qty_str = f"{qty:,}"
+        price = _get_price(name)
+        mv = _get_mv(name)
+        lines.append(f"| {name} | {qty_str} | {price} | {mv} | {storage} |")
+
+    # TS时间代币
+    lines.append("")
     lines.append("### TS时间代币")
     lines.append("| 标的 | 数量 | 市值(CNY) |")
     lines.append("|------|------|-----------|")
-    lines.append(f"| xiaoan | {values['xiaoan_qty']:,}秒 | {format_cny(values['xiaoan_value_cny'])} |")
-    lines.append(f"| wufan | {values['wufan_qty']}秒 | {format_cny(values['wufan_value_cny'])} |")
+    for item in ts_items:
+        name = item["name"]
+        qty = item["qty"]
+        unit = item["unit"]
+        qty_str = f"{qty:,}{unit}" if unit else f"{qty:,}"
+        mv = _get_mv(name)
+        lines.append(f"| {name} | {qty_str} | {mv} |")
+
+    # 关键指标
     lines.append("")
-
-    # --- 关键指标 ---
-    crcl_concentration = (values['crcl_value_cny'] / values['investment_total'] * 100) if values['investment_total'] > 0 else 0
-    btc_ratio = (values['btc_value_cny'] / values['investment_total'] * 100) if values['investment_total'] > 0 else 0
-
     lines.append("### 关键指标")
     lines.append("| 指标 | 数值 |")
     lines.append("|------|------|")
-    lines.append(f"| 总资产 | {format_cny(values['total_assets'])} |")
-    lines.append(f"| 净资产 | {format_cny(values['net_assets'])} |")
-    lines.append(f"| 投资总资产 | {format_cny(values['investment_total'])} |")
-    lines.append(f"| 家庭备用金 | {format_cny(values['cash_cny'])} |")
-    lines.append(f"| HK打新资金 | HK${values['hk_cash']:,.0f} (≈{format_cny(values['hk_cash_cny'])}) |")
-    lines.append(f"| 信用卡负债 | {format_cny(values['credit_card'])} |")
-    lines.append(f"| BTC占投资比 | {btc_ratio:.1f}% |")
-    lines.append(f"| CRCL集中度 | {crcl_concentration:.1f}% {'⚠️' if crcl_concentration > 20 else ''} |")
-    lines.append(f"| 房贷总额 | {format_cny(values['mortgage_commercial'])}+{format_cny(values['mortgage_fund'])} |")
-    lines.append("")
 
-    # --- 职业发展画像 ---
+    prev_metrics = prev_prices.get("metrics", {})
+
+    # 从月度报告提取: 总资产、净资产、投资总资产
+    total_assets = report_metrics.get("总资产", prev_metrics.get("总资产", "—"))
+    net_assets = report_metrics.get("净资产", prev_metrics.get("净资产", "—"))
+    invest_assets = report_metrics.get("投资总资产", prev_metrics.get("投资总资产", "—"))
+    cash = report_metrics.get("家庭备用金", prev_metrics.get("家庭备用金", "—"))
+    hk_fund = prev_metrics.get("HK打新资金", "—")
+    usdt_bal = prev_metrics.get("USDT余额", "—")
+    huasheng_cash = prev_metrics.get("华盛通现金", "—")
+    credit_card = prev_metrics.get("信用卡负债", "—")
+    btc_pct = prev_metrics.get("BTC占投资比", "—")
+    crcl_pct = prev_metrics.get("CRCL集中度", "—")
+    mortgage = prev_metrics.get("房贷总额", "—")
+
+    metric_rows = [
+        ("总资产", total_assets),
+        ("净资产", net_assets),
+        ("投资总资产", invest_assets),
+        ("家庭备用金", cash),
+        ("HK打新资金", hk_fund),
+        ("USDT余额", usdt_bal),
+        ("华盛通现金", huasheng_cash),
+        ("信用卡负债", credit_card),
+        ("BTC占投资比", btc_pct),
+        ("CRCL集中度", crcl_pct),
+        ("房贷总额", mortgage),
+    ]
+    for key, val in metric_rows:
+        lines.append(f"| {key} | {val} |")
+
+    # ════════════════════════════════════════════════════════════════
+    # 职业发展画像
+    # ════════════════════════════════════════════════════════════════
+    lines.append("")
     lines.append("## 职业发展画像")
     lines.append("")
     lines.append("| 维度 | 内容 |")
     lines.append("|------|------|")
-    lines.append("| 当前公司 | 新华三 |")
-    lines.append("| 当前角色 | 嵌入式开发工程师 |")
-    lines.append("| 经验 | **~9年**（爱博精电 6年 + 新华三 3年） |")
-    lines.append("| 技能栈 | C语言、ARM/DSP架构、RTOS、Linux、Python、TFLM |")
-    lines.append("| 核心能力 | 自研RTOS、TSN全协议栈、DSP汇编优化、AMP异构架构 |")
-    lines.append("| 行业聚焦 | 工业嵌入式、通信设备底层，**非消费电子** |")
-    lines.append("| 地点约束 | **北京，优先海淀/昌平**（已在海淀买房） |")
-    lines.append("| 目标薪资 | 50-70W总包 |")
-    lines.append("| 求职状态 | 已约 1 年，面试过 九号/ISHO/思朗 |")
-    lines.append("| 面试方法论 | 工程叙事四层结构: 本质→实践→踩坑→思考 |")
-    lines.append("| 目标公司 | 小米、地平线、寒武纪、百度、字节跳动、联想、滴滴、三一重工、北汽新能源、京东方、理想汽车、石头科技、美团 |")
-    lines.append("")
+    career_rows = [
+        ("当前公司", "新华三"),
+        ("当前角色", "嵌入式开发工程师"),
+        ("经验", "**~9年**（爱博精电 6年 + 新华三 3年）"),
+        ("技能栈", "C语言、ARM/DSP架构、RTOS、Linux、Python、TFLM"),
+        ("核心能力", "自研RTOS、TSN全协议栈、DSP汇编优化、AMP异构架构"),
+        ("行业聚焦", "工业嵌入式、通信设备底层，**非消费电子**"),
+        ("地点约束", "**北京，优先海淀/昌平**（已在海淀买房）"),
+        ("目标薪资", "50-70W总包"),
+        ("求职状态", "已约 1 年，面试过 九号/ISHO/思朗"),
+        ("面试方法论", "工程叙事四层结构: 本质→实践→踩坑→思考"),
+        ("目标公司", "小米、地平线、寒武纪、百度、字节跳动、联想、滴滴、三一重工、北汽新能源、京东方、理想汽车、石头科技、美团"),
+    ]
+    for key, val in career_rows:
+        lines.append(f"| {key} | {val} |")
 
-    # --- 家庭与保险 ---
+    # ════════════════════════════════════════════════════════════════
+    # 家庭与保险
+    # ════════════════════════════════════════════════════════════════
+    lines.append("")
     lines.append("## 家庭与保险")
     lines.append("")
     lines.append("| 项目 | 内容 |")
     lines.append("|------|------|")
-    # 保留上一份归档中的家庭与保险数据
-    for key in ("居住地", "户籍", "子女", "配偶", "房产", "hanwei_zhongji", "hanwei_dingshou", "xueyan_zhongji"):
-        val = family_data.get(key, "")
-        # 如果 key 包含 "待配置" 或为空，也写入
-        if not val:
-            # 检查是否有默认值
-            defaults = {
-                "居住地": "北京",
-                "户籍": "非京籍 (内蒙古)",
-                "子女": "有孩子 (在京上学)",
-                "配偶": "已婚 (薛燕)",
-                "房产": f"北京海淀住宅 ¥320W (购入2025年底)",
-                "hanwei_dingshou": "待配置 (目标200W保额)",
-                "xueyan_zhongji": "待配置 (目标30-50W保额)",
-            }
-            val = defaults.get(key, "")
+    family_rows = [
+        ("居住地", "北京"),
+        ("户籍", "非京籍 (内蒙古)"),
+        ("子女", "有孩子 (在京上学)"),
+        ("配偶", "已婚 (薛燕)"),
+        ("房产", "北京海淀住宅 ¥320W (购入2025年底)"),
+        ("hanwei_zhongji", "达尔文50W (¥6,960/年, 2026-06-15生效)"),
+        ("hanwei_dingshou", "待配置 (目标200W保额)"),
+        ("xueyan_zhongji", "待配置 (目标30-50W保额)"),
+    ]
+    for key, val in family_rows:
         lines.append(f"| {key} | {val} |")
-    lines.append("")
 
-    # --- A8 计划进度 ---
+    # ════════════════════════════════════════════════════════════════
+    # A8计划进度
+    # ════════════════════════════════════════════════════════════════
+    lines.append("")
     lines.append("## A8计划进度")
     lines.append("")
     lines.append("| 指标 | 进度 |")
     lines.append("|------|------|")
-    for key in ("目标", "BTC目标", "策略", "当前状态"):
-        val = a8_data.get(key, "")
-        if not val:
-            defaults = {
-                "目标": "1000万人民币 (2026-2028)",
-                "BTC目标": f"2.32个 (当前{values['btc_qty']:.3f}, 进度{values['btc_qty']/2.32*100:.1f}%)",
-                "策略": "MA120趋势 + 月度定投¥16,700 + 港股打新",
-                "当前状态": "BTC在MA120下方, 定投暂存USDT待命",
-            }
-            val = defaults.get(key, "")
+    a8_rows = [
+        ("目标", "1000万人民币 (2026-2028)"),
+        ("BTC目标", "2.32个 (当前0.130, 进度5.6%)"),
+        ("策略", "MA120趋势 + 月度定投¥16,700 + 港股打新"),
+        ("当前状态", prev_metrics.get("BTC占投资比", "—") != "—" and "BTC在MA120上方, 看板触发底部信号, 分批建仓窗口" or "待更新"),
+    ]
+    for key, val in a8_rows:
         lines.append(f"| {key} | {val} |")
-    lines.append("")
 
-    # --- 本次更新变更记录 ---
+    # ════════════════════════════════════════════════════════════════
+    # 本次更新变更记录
+    # ════════════════════════════════════════════════════════════════
+    lines.append("")
     lines.append("## 本次更新变更记录")
     lines.append("")
     lines.append("| 变更项 | 旧值 | 新值 | 说明 |")
     lines.append("|--------|------|------|------|")
-    lines.append(f"| profile.last_sync | — | {today_str[:4]}-{today_str[4:6]}-{today_str[6:]}T00:00:00 | 自动归档 |")
-    lines.append("| 数据源 | holdings.yaml | holdings.yaml | 持仓同步 |")
-    lines.append(f"| 数据源 | 月度报告 | {report_filename} | 报告同步 |")
-    lines.append("")
+
+    # 确定前次同步日期
+    prev_date = prev_prices.get("metrics", {}).get("profile_last_sync", "N/A")
+    if prev_date == "N/A" or prev_date == "—":
+        # 尝试从前次归档文件名提取
+        prev_files = sorted(glob.glob(str(HOUR_ARCHIVE_DIR / "profile_*.md")), reverse=True)
+        if prev_files:
+            m = re.search(r"profile_(\d{8})\.md", os.path.basename(prev_files[0]))
+            if m:
+                d = m.group(1)
+                prev_date = f"{d[:4]}-{d[4:6]}-{d[6:8]}"
+
+    lines.append(f"| profile.last_sync | {prev_date} | {date_str} | 每日自动归档 |")
+    lines.append(f"| 数据源 | holdings.yaml | holdings.yaml | 持仓同步（无变更） |")
+    lines.append(f"| 数据源 | 月度报告 | {report_filename} | 数据截至{last_updated} |")
+    lines.append(f"| 职业档案 | 个人职业发展分析-端侧AI企业定制攻略.md | 同左 | 含2026-06-12简历核查修正 |")
 
     return "\n".join(lines)
 
 
-# ======================================================================
-# 写入
-# ======================================================================
-
-def write_profile(archive_dir, filename, content, dry_run=False):
-    """写入归档文件，返回写入路径"""
-    os.makedirs(archive_dir, exist_ok=True)
-    filepath = os.path.join(archive_dir, filename)
-
-    if dry_run:
-        print(f"[DRY] 将写入: {filepath}")
-        return filepath
-
+def write_archive(content, archive_dir):
+    """写入归档文件"""
+    archive_dir = Path(archive_dir)
+    archive_dir.mkdir(parents=True, exist_ok=True)
+    date_compact = date.today().strftime("%Y%m%d")
+    filepath = archive_dir / f"profile_{date_compact}.md"
     with open(filepath, "w", encoding="utf-8") as f:
         f.write(content)
-    print(f"[OK] 已写入: {filepath}")
+    logger.info(f"归档写入: {filepath}")
     return filepath
 
 
-# ======================================================================
-# 主流程
-# ======================================================================
-
 def main():
-    # 解析命令行参数
-    dry_run = "--dry" in sys.argv
-    date_arg = None
-    for arg in sys.argv:
-        if arg.startswith("--date="):
-            date_arg = arg.split("=", 1)[1]
+    logger.info("=" * 60)
+    logger.info("个人画像归档同步开始")
+    logger.info(f"日期: {date.today().strftime('%Y-%m-%d')}")
+    logger.info("=" * 60)
 
-    today_str = date_arg or datetime.now().strftime("%Y%m%d")
-    profile_filename = f"profile_{today_str}.md"
+    # 1. 读取持仓
+    holdings = load_holdings()
+    if holdings is None:
+        _log_error("无法读取 holdings.yaml，退出")
+        sys.exit(1)
 
-    log(f"开始同步个人画像归档 [{today_str}]" + (" [DRY RUN]" if dry_run else ""))
+    # 2. 读取最新月度报告
+    report_content, report_filename = load_latest_monthly_report()
+    if report_content is None:
+        _log_error("无法读取最新月度报告，退出")
+        sys.exit(1)
 
-    try:
-        # 1. 读取投资持仓
-        log("读取 holdings.yaml...")
-        holdings = load_holdings()
-        log(f"   holdings.yaml 加载成功, 最新更新: {holdings.get('meta', {}).get('last_updated', 'unknown')}")
+    # 3. 读取职业档案
+    career_content = load_career_profile()
+    if career_content is None:
+        _log_error("无法读取职业档案，退出")
+        sys.exit(1)
 
-        # 2. 读取最新月度报告
-        log("读取最新月度报告...")
-        report_filename, report_content = get_latest_report()
-        log(f"   最新报告: {report_filename}")
+    # 4. 读取前次归档作为价格 fallback
+    prev_prices = _extract_prev_archive_prices(HOUR_ARCHIVE_DIR)
 
-        # 3. 读取职业发展档案
-        log("读取职业发展档案...")
-        career_content = load_career_doc()
-        log(f"   职业发展档案加载成功 ({len(career_content)} 字符)")
+    # 5. 构建归档内容
+    archive_content = build_archive(holdings, report_content, report_filename, prev_prices)
 
-        # 4. 读取上一份归档（用于保留静态数据）
-        log("读取上一份归档...")
-        prev_profile = load_previous_profile(HOUR_ARCHIVE_DIR)
-        if prev_profile:
-            log(f"   上一份归档加载成功")
-        else:
-            log("   未找到上一份归档，将使用默认值", "WARN")
+    # 6. 写入两份归档
+    hour_path = write_archive(archive_content, HOUR_ARCHIVE_DIR)
+    day_path = write_archive(archive_content, DAY_ARCHIVE_DIR)
 
-        # 解析家庭/保险和 A8 数据
-        family_data = extract_family_insurance(prev_profile) if prev_profile else {}
-        a8_data = extract_a8_plan(prev_profile) if prev_profile else {}
-
-        # 5. 计算数值
-        log("计算持仓数值...")
-        values = calculate_values(holdings)
-        log(f"   总资产: {format_cny(values['total_assets'])}, 净资产: {format_cny(values['net_assets'])}")
-
-        # 6. 生成归档内容
-        log("生成归档内容...")
-        profile_content = generate_profile(
-            values=values,
-            family_data=family_data,
-            a8_data=a8_data,
-            career_filepath=CAREER_PATH,
-            report_filename=report_filename,
-            today_str=today_str,
-        )
-        log(f"   归档内容生成完毕 ({len(profile_content)} 字符)")
-
-        # 7. 写入两份归档
-        hour_path = write_profile(HOUR_ARCHIVE_DIR, profile_filename, profile_content, dry_run)
-        day_path = write_profile(DAY_ARCHIVE_DIR, profile_filename, profile_content, dry_run)
-
-        log(f"个人画像归档同步完成 [{today_str}]")
-        log(f"  小时推送: {hour_path}")
-        log(f"  日报推送: {day_path}")
-
-    except Exception as e:
-        log(f"同步失败: {e}", "ERROR")
-        import traceback
-        log(traceback.format_exc(), "ERROR")
-        return 1
-
-    return 0
+    logger.info("=" * 60)
+    logger.info(f"个人画像归档完成")
+    logger.info(f"  小时推送: {hour_path}")
+    logger.info(f"  日报推送: {day_path}")
+    logger.info("=" * 60)
 
 
 if __name__ == "__main__":
-    exit(main())
+    main()
