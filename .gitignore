@@ -18,6 +18,9 @@ venv/
 Thumbs.db
 .DS_Store
 
+# Office 临时锁文件（~$ 开头，Word/Excel 打开文档时自动生成）
+~$*
+
 
 # Logs
 *.log
