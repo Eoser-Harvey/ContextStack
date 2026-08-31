@@ -2,16 +2,14 @@
 推文数据模块 — 多源推文获取
 
 数据源优先级:
-1. fetched_tweets.json — AI 通过浏览器从 X.com 抓取的最新推文（实时）
-2. 硬编码数据 — 作为兜底（当 fetched_tweets.json 不存在或为空时）
-
-AI 抓取流程（由自动化任务执行）:
-  - 使用浏览器访问 X.com 用户主页
-  - 提取推文内容、时间、URL
-  - 写入 fetched_tweets.json（标准格式）
+1. GitHub Actions 拉取 (github_fetcher.py → Eoser-Harvey/twitter-feed-fetcher)
+2. FxTwitter API v2 (直接实时拉取，Cloudflare Worker，免认证)
+3. fetched_tweets.json (AI 浏览器抓取，已废弃)
+4. 硬编码数据 (兜底)
 """
 import json
 import os
+import time
 from datetime import datetime
 
 
@@ -34,6 +32,86 @@ def load_fetched_tweets():
     except (ValueError, IOError) as e:
         print(f"[WARN] 读取 fetched_tweets.json 失败: {e}")
     return []
+
+
+def load_fxtwitter_tweets():
+    """从 FxTwitter API v2 直接拉取实时推文 (Cloudflare Worker, 免认证, GFW友好)
+    API: GET /2/profile/{handle}/statuses
+    Rate limit: 1000 req/min per IP
+    """
+    import requests as req_lib
+
+    USERS = [
+        {"username": "elonmusk", "display_name": "马斯克"},
+        {"username": "cz_binance", "display_name": "CZ (赵长鹏)"},
+        {"username": "realDonaldTrump", "display_name": "特朗普"},
+        {"username": "aleaborteddit", "display_name": "Serenity (白毛股神)"},
+        {"username": "qinbafrank", "display_name": "秦巴Frank"},
+        {"username": "xiaomustock", "display_name": "小米股"},
+        {"username": "xingpt", "display_name": "星Prompt"},
+        {"username": "hibtc37", "display_name": "HiBTC"},
+        {"username": "supezen", "display_name": "Supezen"},
+    ]
+    TWEETS_PER_USER = 3
+    all_tweets = []
+    success_count = 0
+    fail_count = 0
+
+    print("[INFO] FxTwitter API v2: 直接拉取实时推文...")
+    for user in USERS:
+        try:
+            url = "https://api.fxtwitter.com/2/profile/{}/statuses".format(user["username"])
+            resp = req_lib.get(url, timeout=15, headers={
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            })
+            if resp.status_code == 200:
+                data = resp.json()
+                if data.get("code") == 200 and "results" in data:
+                    count = 0
+                    for item in data["results"]:
+                        if count >= TWEETS_PER_USER:
+                            break
+                        if item.get("type") == "status":
+                            tweet_id = item.get("id", "")
+                            if not tweet_id:
+                                continue
+                            content = item.get("text", "") or item.get("raw_text", {}).get("text", "")
+                            if not content:
+                                continue
+                            all_tweets.append({
+                                "id": "tweet_{}_{}".format(user["username"], tweet_id),
+                                "username": user["username"],
+                                "display_name": user["display_name"],
+                                "published_at": item.get("created_at", item.get("timestamp", "")),
+                                "content": content,
+                                "url": item.get("url", "https://x.com/{}/status/{}".format(user["username"], tweet_id)),
+                                "translated": "",
+                                "source_note": "FxTwitter API v2: {}".format(datetime.now().isoformat()),
+                            })
+                            count += 1
+                    if count > 0:
+                        success_count += 1
+                        print("  [OK] @{}: {} tweets".format(user["username"], count))
+                    else:
+                        fail_count += 1
+                        print("  [WARN] @{}: 0 tweets parsed".format(user["username"]))
+                else:
+                    fail_count += 1
+                    print("  [WARN] @{}: API error code={}".format(user["username"], data.get("code")))
+            elif resp.status_code == 429:
+                fail_count += 1
+                print("  [RATE] @{}: Rate limited (429)".format(user["username"]))
+                break
+            else:
+                fail_count += 1
+                print("  [WARN] @{}: HTTP {}".format(user["username"], resp.status_code))
+        except Exception as e:
+            fail_count += 1
+            print("  [ERROR] @{}: {}".format(user["username"], str(e)[:60]))
+        time.sleep(1)  # 间隔1秒避免触发限流
+
+    print("[INFO] FxTwitter: {}/{} users, {} tweets total".format(success_count, success_count + fail_count, len(all_tweets)))
+    return all_tweets
 
 
 def _get_hardcoded_tweets():
@@ -132,9 +210,10 @@ def build_tweets_from_fetch():
     """返回最新推文数据
     
     优先级:
-    1. GitHub Actions 抓取 (github_fetcher.py → 实时推文)
-    2. fetched_tweets.json (AI 浏览器抓取的推文，已废弃)
-    3. 硬编码数据 (兜底)
+    1. GitHub Actions 抓取 (github_fetcher.py → Eoser-Harvey/twitter-feed-fetcher)
+    2. FxTwitter API v2 (直接实时拉取，Cloudflare Worker，免认证)
+    3. fetched_tweets.json (AI 浏览器抓取，已废弃)
+    4. 硬编码数据 (兜底)
     
     返回推文列表，每条推文格式:
     {
@@ -147,24 +226,53 @@ def build_tweets_from_fetch():
         "source_note": "来源备注 (可选)"
     }
     """
-    # 1. 优先从 GitHub Actions 拉取
+    # 1. 优先从 GitHub Actions 拉取 (仅用24小时内的新鲜数据)
     try:
         from github_fetcher import pull_tweets_from_github
         github_tweets = pull_tweets_from_github()
         if github_tweets:
-            print("[INFO] 使用 GitHub Actions 抓取的实时推文 ({}) 条".format(len(github_tweets)))
-            return github_tweets
+            # 检查数据时效性: 最新推文是否在24小时内
+            latest_time = max((t.get("published_at", "") for t in github_tweets), default="")
+            if latest_time:
+                try:
+                    from datetime import timezone
+                    # 尝试解析时间
+                    for fmt in ("%a, %d %b %Y %H:%M:%S %Z", "%Y-%m-%dT%H:%M:%S", "%a %b %d %H:%M:%S %z %Y"):
+                        try:
+                            from datetime import datetime as dt2
+                            parsed = dt2.strptime(latest_time.replace("GMT", "UTC").replace("+0000", "").strip(), fmt)
+                            if (datetime.now(timezone.utc) - parsed.replace(tzinfo=timezone.utc)).total_seconds() < 86400:
+                                print("[INFO] 使用 GitHub Actions 新鲜推文 ({}) 条".format(len(github_tweets)))
+                                return github_tweets
+                            else:
+                                print("[INFO] GitHub 数据已过期 (最新: {}), 尝试 FxTwitter".format(latest_time[:19]))
+                                break
+                        except ValueError:
+                            continue
+                except Exception as e2:
+                    print("[INFO] 时效性检查失败: {}, 使用 FxTwitter".format(e2))
+            else:
+                print("[INFO] GitHub 数据无时间戳, 使用 FxTwitter")
     except ImportError:
         print("[INFO] github_fetcher.py 不可用，跳过")
     except Exception as e:
         print("[INFO] GitHub 拉取失败: {}，尝试其他数据源".format(e))
     
-    # 2. 读取本地 fetched_tweets.json
+    # 2. FxTwitter API v2 直接拉取 (Cloudflare Worker, 免认证, 实时)
+    try:
+        fxtwitter_tweets = load_fxtwitter_tweets()
+        if fxtwitter_tweets:
+            print("[INFO] 使用 FxTwitter API v2 实时推文 ({}) 条".format(len(fxtwitter_tweets)))
+            return fxtwitter_tweets
+    except Exception as e:
+        print("[INFO] FxTwitter 拉取失败: {}，尝试其他数据源".format(e))
+    
+    # 3. 读取本地 fetched_tweets.json
     fetched = load_fetched_tweets()
     if fetched:
         print("[INFO] 使用 fetched_tweets.json 中的推文 ({}) 条".format(len(fetched)))
         return fetched
     
-    # 3. 回退到硬编码数据
+    # 4. 回退到硬编码数据
     print("[INFO] 所有实时数据源不可用，使用硬编码兜底数据")
     return _get_hardcoded_tweets()
