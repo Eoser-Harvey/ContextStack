@@ -7,9 +7,10 @@
 
 - `collect_community.py` — 主脚本：登录 → 抓报告列表 → 解析投资信息 → 构建卡片 → 推送
 - `push_lark.py` — 飞书 interactive 卡片推送模块（复用）
-- `profile_loader.py` — 个人画像加载模块（兼容复用）
 - `.secrets.yaml` — 飞书凭证 + 网站凭证（.gitignore 排除，不入库）
 - `community_push_state.json` — 去重状态（记录上次推送报告 + 时间戳，.gitignore 排除）
+
+> 注：本目录已清理非本任务文件（send_daily_ai_news.py / profile_loader.py / profile_archive/，均属每日AI新闻任务的残留）。
 
 ## 触发
 
