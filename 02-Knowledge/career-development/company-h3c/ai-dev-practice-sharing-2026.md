@@ -292,7 +292,7 @@ AI 有长处（省时间）──→ 但也有短处（胡编 / 变懒 / 失忆�
 | 大纲段落 | 素材来源 |
 |---|---|
 | 调试定位案例 | `01-Projects/network-device-debug/` （IE4120U-18TP 已解决） |
-| 陌生协议 TSN | `01-Projects/topics/TSN-protocol-analysis.md` |
+| 陌生协议 TSN | `02-Knowledge/career-development/interview-project-summaries/03-project-design/TSN/tsn-protocol-summary.md` |
 | 让 AI 泼冷水心法 | `02-Knowledge/system/methodology/ai-collaboration-methodology.md`（刘小排方法论） |
 | ContextStack 四层架构 | `GLOBAL-RULES.md` + `FRAMEWORK-README.md` |
 | 铁律 5 批判性立场 | `GLOBAL-RULES.md` 第 94-100 行 |

@@ -232,14 +232,7 @@ void IRQ_Handler() {
 
 ### 3.2 TSN 协议集
 
-802.1Qbv：时间感知调度
-802.1AS：时间同步
-802.1Qci：流过滤和管控
-802.1Qbu：帧抢占
-802.1CB：无缝冗余
-802.1Qcc：集中配置
-
-**实战数据**：环网故障收敛时间 ≤20ms
+> 完整总结已迁移至 [[03-project-design/TSN/tsn-protocol-summary|TSN 协议总结]]（2026-09-01）。核心：802.1Qbv/AS/Qci/Qbu/CB/Qcc 六协议 + 环网故障收敛 ≤20ms。
 
 ### 3.3 DMA 优化案例
 
