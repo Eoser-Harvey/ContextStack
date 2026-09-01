@@ -10,6 +10,7 @@
 
 | 日期 | 主题 | 关键经验 | 文件 |
 |------|------|---------|------|
+| 2026-09-01 | TSN协议文档重构 + 定时推送工具迭代 + 面试叙事 | TSN文档"单一权威源"重构(合并analysis+使用说明→summary,年限9年/Qci单条流/SyncE配图)；trae-feishu-push-hour迭代；面试叙事训练；sync_profile_archive重构；⚠️临时_fix脚本误入git后应git rm | `session-20260901-auto-catchup.md` |
 | 2026-08-31 | 社区采集推送工具链 + 面试准备 + LLM-Wiki范式研究 | 新建 community-collection-push 工具链(采集/画像/飞书推送/每日AI资讯)；面试框架(自我+Linux应用层+环形缓冲三追问+嵌入式C)；inbox暂存→范式提炼→入库；.gitignore忽略Office锁文件 | `session-20260831-auto-catchup.md` |
 | 2026-08-29 | 修 auto_push Step2 exit0 漏推 bug + 公司设立/面试沉淀 | ⚠️"脚本exit0≠所有改动已推送"（8/25~8/28漏推投资改动近2天）；Step2改$aheadPushed标志不再早退；加$env:TEMP三级fallback；本地bare隔离测试法 | `session-20260829-auto-catchup.md` |
 | 2026-08-28 | family-hub 投资系统月内更新（auto-catchup） | holdings 加仓/换仓/新建仓+三份报告同步；⚠️当日改了未提交致沉淀断档；投资更新闭环(数据源→历史→报告需同提交) | `session-20260828-auto-catchup.md` |
@@ -45,6 +46,11 @@
 ---
 
 ## 完整会话记录
+
+### 2026-09-01: TSN 协议文档重构 + 定时推送工具迭代 + 面试叙事训练（auto-catchup 补齐）
+- **核心产出**: 当日 4 commits（其中 `b3e6ea7` 为自动化自身 08-31 产出落地，非新内容）+ 2 个未提交改动。① TSN 协议文档"单一权威源"重构：`TSN-protocol-analysis.md`(删111)+`tsn-protocol使用说明.md`(删290) 合并为 `tsn-protocol-summary.md`(增198)，统一年限9年/Qci"单条流"表述/叙事对齐，`index.md` 瘦身，`SyncE硬件链路.jpg`(43KB)配图入库；② AcuOS 源码(`AcuOs.h/.c/.s`)作者署名改 hanwei；③ `0.trae-feishu-push-hour/fetcher_web.py`(138增强)+`.last_cleanup_week` + 临时 `_fix_fetch_temp.py`(375,后本地删除)；④ `sync_profile_archive.py`(968行大重构)；⑤ 面试叙事 `narrative-training.md`(+104)+千寻清单(+23)+`tech-interview-notes.md`(+9)。
+- **关键决策**: 依"仅缺失且确有内容才创建"生成 auto-catchup；未覆盖任何正常 session。`b3e6ea7` 内的 session/index 更新属自动化前一日产出，不计入新内容。
+- **可复用**: 协议文档"单一权威源"重构法（散落→合并→统一口径→配图→index瘦身）；面试叙事训练法；automated-task 定时推送模式（`fetcher_web.py`+周清理标记）；临时脚本用完即 `git rm` 不入历史。
 
 ### 2026-08-31: 社区采集推送工具链 + 面试准备 + LLM-Wiki 知识范式研究（auto-catchup 补齐）
 - **核心产出**: 当日 4 commits / 16 files，工作区已 clean。① 新建 `01-Projects/.../6.community-collection-push/` 工具链：`collect_community.py`(采集) / `profile_loader.py`(账号画像) / `push_lark.py`(飞书推送) / `send_daily_ai_news.py`(每日AI资讯调度)，配 `index.md`+`.gitignore`（经历 `63d957c` 初建、`0711674` 重排）；② 千寻智能 MS 清单增量补「自我介绍+Linux应用层能力+环形缓冲三追问」(+132行) + 新增 `embedded-c-algorithm-interview.md`(含SyncE/PTP时钟图)；③ `02-Knowledge/inbox/LLM-Wiki-知识编译范式研究.md`(137行)；④ `codebuddy-chat-manager/chat-index.{json,md}` 更新；⑤ 北京公司账务/社保 + 信用卡主控表更新。
