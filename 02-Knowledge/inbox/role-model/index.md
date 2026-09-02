@@ -27,7 +27,8 @@
 | [J哥-wealth-creation-preservation-two-games-2026-07-09.md](./J哥-wealth-creation-preservation-two-games-2026-07-09.md) | 创富vs守富两套游戏；五条机会筛选标准 |
 | [liangwenfeng-deepseek-four-hour-investor-meeting-2026-07.md](./liangwenfeng-deepseek-four-hour-investor-meeting-2026-07.md) | 梁文锋四小时投资人会议分析：6大模块+与harve交叉映射+行动建议 |
 | [liangwenfeng-52-quotes-2026-07.md](./liangwenfeng-52-quotes-2026-07.md) | 梁文锋52条核心观点完整清单（10大板块+金句速查表） |
+| [lijigang-write-prompt-codex-skills-2026-09-02.md](./lijigang-write-prompt-codex-skills-2026-09-02.md) | lijigang（Write Prompt作者）：Codex技能集7.3k star；技能工程化/认知方法论产品化/输出闭环，后续重点学习 |
 
 ---
 
-**创建日期**: 2026-07-08 | **最后更新**: 2026-07-23
+**创建日期**: 2026-07-08 | **最后更新**: 2026-09-02

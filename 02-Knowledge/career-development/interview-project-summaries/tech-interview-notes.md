@@ -43,7 +43,7 @@ A5(Linux) ── DSP1(RTOS) ── DSP2(裸机)
 - `OsQPend` 队列：DI采集、EEPROM写入缓冲
 - `OsFlagPend` 标志：按键处理、Modbus通信
 - `T_OsMutex` 互斥锁：EEPROM写锁、IIC总线锁
-- `T_OsSem` 信号量：EEPROM写、软件缓存
+- `T_OsSem` 信号量：EEPROM写软件缓存到硬件
 
 ### 1.3 任务调度
 

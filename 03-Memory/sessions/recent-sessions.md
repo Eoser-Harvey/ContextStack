@@ -10,6 +10,7 @@
 
 | 日期 | 主题 | 关键经验 | 文件 |
 |------|------|---------|------|
+| 2026-09-02 | lijigang（Write Prompt作者）人物研究 + role-model 归档 | GitHub四层研究法(主页→置顶仓库→仓库列表→个人站)；ljg-skills 7.3k star技能工程化(安装CLI/双分支/版本bump)呼应自检清单Skill化P1；"学方法不学内容"跨赛道原则 | `session-20260902-lijigang-research.md` |
 | 2026-09-01 | TSN协议文档重构 + 定时推送工具迭代 + 面试叙事 | TSN文档"单一权威源"重构(合并analysis+使用说明→summary,年限9年/Qci单条流/SyncE配图)；trae-feishu-push-hour迭代；面试叙事训练；sync_profile_archive重构；⚠️临时_fix脚本误入git后应git rm | `session-20260901-auto-catchup.md` |
 | 2026-08-31 | 社区采集推送工具链 + 面试准备 + LLM-Wiki范式研究 | 新建 community-collection-push 工具链(采集/画像/飞书推送/每日AI资讯)；面试框架(自我+Linux应用层+环形缓冲三追问+嵌入式C)；inbox暂存→范式提炼→入库；.gitignore忽略Office锁文件 | `session-20260831-auto-catchup.md` |
 | 2026-08-29 | 修 auto_push Step2 exit0 漏推 bug + 公司设立/面试沉淀 | ⚠️"脚本exit0≠所有改动已推送"（8/25~8/28漏推投资改动近2天）；Step2改$aheadPushed标志不再早退；加$env:TEMP三级fallback；本地bare隔离测试法 | `session-20260829-auto-catchup.md` |
