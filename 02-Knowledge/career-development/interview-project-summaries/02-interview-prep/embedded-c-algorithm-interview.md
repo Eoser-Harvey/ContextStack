@@ -124,6 +124,16 @@ bool stack_pop(stack_t *s, int *val) {
 }
 ```
 
+**关键点（背）**：
+
+1. **`top = -1` 空栈约定**：top 指向栈顶元素下标。空栈 top=-1，压满 top=capacity-1。另一约定「top=0 空栈」判空/判满条件不同，别混。
+2. **前自增 vs 后自减（最易错）**：push `data[++top]=val`（先 ++ 再写），pop `val=data[top--]`（先取再 --）。写反 → 越界 / 漏元素。
+3. **判满/判空**：满 `top+1>=capacity`（非 `top>=capacity`），空 `top<0`。
+4. **缓冲区外部传入**：`stack_init` 的 buf 由调用者提供，不用 malloc —— 嵌入式静态内存，避免堆碎片。
+5. **边界检查**：push 判满、pop 判空，bool 返回失败。栈溢出会越界写踩内存 → 偶发死机 / HardFault（量产可靠性根因之一）。
+
+**追问点**：`top=0` vs `top=-1` 两种约定？top=0 空栈时判空 `top==0`，push 先写 `data[top]` 再 `top++`，满 `top==capacity`。
+
 ---
 
 ### 3. 链表反转（单向链表）
