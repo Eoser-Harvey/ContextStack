@@ -7,6 +7,7 @@
 - `Acuvim-DSP模块间关系图&系统设计.gif` — DSP架构图
 - [[./TSN/index|TSN 时间敏感网络]] — TSN 协议 + 时钟同步（PTP/SyncE/gPTP）技术专题库
 - [[./Can/can-application-protocol-summary|CAN 应用层协议设计]] — 29-bit ID 语义化路由 + 8 字节负载，经典 CAN 2.0B 项目总结
+- [[./AcuOS-Source/AcuOS-porting-summary|AcuOS RTOS 移植总结]] — ARM M4 ↔ SHARC DSP 跨平台移植，改平台相关层、保留平台无关层
 
 ## 关联
 - [[../01-company-interviews/|公司MS]] — MS中的项目展示参考
