@@ -82,8 +82,7 @@ for ($i = 0; $i -lt $maxRetries; $i++) {
     }
     Add-Content -Path $logFile -Value "Pull failed ($($i+1)/$maxRetries): $($pullOutput -replace '\n',' ')"
 
-    # Refresh SSH config on failure
-    Initialize-SshConfig
+    # 不再切 SSH：公司电脑用 HTTPS（无 SSH 密钥），切 SSH 反而导致 origin 永久损坏
 }
 
 if (-not $pullOk) {
