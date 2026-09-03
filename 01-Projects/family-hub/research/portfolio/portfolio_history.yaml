@@ -73,8 +73,8 @@ holdings_history:
     all_time_low_date: '2026-07-30'
   bitgo:
     name: BitGo(韩伟长桥)
-    all_time_high_price: 7.16
-    all_time_high_date: '2026-08-28'
+    all_time_high_price: 7.63
+    all_time_high_date: '2026-09-03'
     all_time_low_price: 4.83
     all_time_low_date: '2026-07-08'
   xiaomi_ht:
@@ -189,6 +189,9 @@ net_worth_snapshots:
 - date: '2026-08-28'
   net_worth_cny: 1293752
   total_assets_cny: 1693752
+- date: '2026-09-03'
+  net_worth_cny: 1334174
+  total_assets_cny: 1734174
 external_signals:
 - date: '2026-08-23'
   crcl:
@@ -211,4 +214,15 @@ external_signals:
   btc:
     price: 79,014
     ma120: 68,342
+    trigger: 底部信号·当日触发
+- date: '2026-09-03'
+  crcl:
+    price: '99.22'
+    ma120: '89.12'
+    ps: 8.67x
+    rsi: '66.2'
+    score: '22'
+  btc:
+    price: 77,334
+    ma120: 68,335
     trigger: 底部信号·当日触发
