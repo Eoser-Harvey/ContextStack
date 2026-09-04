@@ -728,7 +728,10 @@ L.append("**历史净资产走势：**\n")
 L.append("| 日期 | 净资产 | 环比 | 备注 |")
 L.append("|------|--------|------|------|")
 for i, s in enumerate(snaps):
-    d = s["date"]; n = round(s["net_worth_cny"])
+    d = s["date"]
+    if d == today:
+        continue  # 当日旧快照跳过：本次运行末尾统一 append 最新值，避免同日双行
+    n = round(s["net_worth_cny"])
     if i == 0:
         chg = "—"
     else:
@@ -919,22 +922,38 @@ else:
 # ============================================================
 L.append("## 十二、CRCL 还债策略：200万 / 300万 卖出路径\n")
 L.append("> 目标：用 **1000 股 CRCL**，未来 3 年内分批卖出，回收人民币偿还家庭负债。\n")
+
+# 12 节价格联动信号看板（若抓取失败则回退上月硬编码值）
+_crcl_price_now = _crcl_sig.get("price") or "99.22"      # 信号看板实时价，抓取失败时用上期
+_crcl_ma120_now = _crcl_sig.get("ma120") or "90.46"      # MA120，抓取失败时用上期
+_price_f = _crcl_price_now.replace(",", "")
+_ma120_f = _crcl_ma120_now.replace(",", "")
+try:
+    _above_ma120 = float(_price_f) >= float(_ma120_f)
+except ValueError:
+    _above_ma120 = None
+
 L.append("### 12.1 核心参数\n")
 L.append("| 项 | 数值 |")
 L.append("|----|------|")
 L.append("| 目标股数 | 1000 股 CRCL |")
 L.append("| 当前成本 | $66.66 / 股（持仓均价）|")
-L.append("| 当前价 | 约 $87.98 |")
+L.append(f"| 当前价 | ${_crcl_price_now} |")
 L.append("| 历史最高(ATH) | $298（2026-01 泡沫顶）|")
-L.append("| MA120 | 约 $90.46 |")
+L.append(f"| MA120 | ${_crcl_ma120_now} |")
 L.append("")
 L.append("**数学底线**：")
 L.append("- 200万 = ¥2,000,000 → 1000股平均卖价 **$297**")
 L.append("- 300万 = ¥3,000,000 → 1000股平均卖价 **$446**")
 L.append("")
 L.append("### 12.2 启动门坎（必须先满足）\n")
-L.append("> **CRCL 日线收盘站上 MA120（$90.46），且连续站稳（≥2日），才启动下方卖出策略。**")
-L.append("> 当前价 $87.98 在 MA120 下方 → **暂不执行，先持有等待**。")
+L.append(f"> **CRCL 日线收盘站上 MA120（${_crcl_ma120_now}），且连续站稳（≥2日），才启动下方卖出策略。**")
+if _above_ma120 is True:
+    L.append(f"> 当前价 ${_crcl_price_now} 已站上 MA120（${_crcl_ma120_now}）→ **已达启动条件，进入观察期（需连续站稳 ≥2 日才执行启动档 $95）**。")
+elif _above_ma120 is False:
+    L.append(f"> 当前价 ${_crcl_price_now} 在 MA120（${_crcl_ma120_now}）下方 → **暂不执行，先持有等待**。")
+else:
+    L.append("> ⚠️ 信号抓取失败，按人工判断。")
 L.append("")
 L.append("**下跌兜底**（站不上 MA120 时）：")
 L.append("- 一直站不上 MA120 且跌破 **$69** → 强势不再，**不\"死等 ATH\"**，暂停上涨计划、重新评估目标")
