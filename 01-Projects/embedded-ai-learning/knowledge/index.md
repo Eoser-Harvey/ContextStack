@@ -12,6 +12,7 @@
 | [[model-optimization-techniques\|模型优化技术]] | 优化 | 模型压缩/加速技术 |
 | [[paper-edge-ai-survey-2025\|端侧AI综述2025]] | 论文 | 端侧AI调研综述 |
 | [[data-labeling-annotation\|数据标注]] | 数据 | 数据标注方法（结合Day16动作识别） |
+| [[edge-ai-fundamentals-gaps\|端侧AI基础缺口考题]] | 面试 | 5块课程薄弱基础知识 + 结合项目的7道考题（CMSIS-NN/量化深度/压缩四件套/arena/NPU） |
 
 ## 说明
 

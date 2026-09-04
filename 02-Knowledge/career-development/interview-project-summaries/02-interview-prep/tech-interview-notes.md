@@ -213,6 +213,45 @@ void IRQ_Handler() {
 | O2 | 标准优化 | 调度器用 O2 |
 | O3 | 激进优化（内联+向量化） | 浮点运算用 O3，曾导致时序问题，用内存屏障解决 |
 
+### 2.9 弱连接（weak symbol）（2026-09-04 学习）
+
+**本质**：链接期的符号优先级——强符号（普通定义）覆盖弱符号（`__attribute__((weak))`），链接器对"只有弱符号、无强符号"不报错。
+
+**使用场景（嵌入式 5 大）**：
+
+| 场景 | 例子 |
+|:-----|:-----|
+| 中断处理函数 | STM32 startup 里 `xxx_IRQHandler` 全 weak，默认指向 `Default_Handler`（死循环） |
+| 回调/钩子 | HAL 库 `HAL_UART_RxCpltCallback`，用户选择性重写 |
+| 默认配置 | 芯片库 weak 时钟配置，用户可覆盖 |
+| 硬件抽象层 | 芯片厂 weak 底层驱动 |
+| 测试打桩 | 单测用 weak 替换真实实现 |
+
+**自研 RTOS 应用**：给 RTOS 留"可选钩子"（`IdleTaskHook`/`TickHook`）——默认 weak 空实现，用户要用就定义强符号，不用就零开销。
+
+**GCC 用法**：
+
+```c
+/* 库文件：weak 默认实现 */
+void MyCallback(void) __attribute__((weak));
+void MyCallback(void) { /* 默认空实现 */ }
+
+/* 用户代码：强符号覆盖 */
+void MyCallback(void) { /* 用户实现 */ }
+
+/* 中断向量的 weak alias（startup 常见写法） */
+void USART1_IRQHandler(void) __attribute__((weak, alias("Default_Handler")));
+```
+
+**注意事项**：
+- 同名多 weak 符号 = **未定义行为**
+- weak 函数可能被 `-O2` 内联，跨文件覆盖需注意 `noinline`
+- 弱符号覆盖只在**链接期**生效；默认实现和强实现在**同一 .c 文件**会重定义报错
+- RTOS 弱钩子要保持空实现，别放默认逻辑（否则不覆盖也有隐藏开销）
+
+**面试话术**：
+> "弱连接是链接期符号优先级：强符号覆盖弱符号，只有弱符号时不报错。嵌入式最典型的是中断处理函数——startup 里所有 IRQHandler 声明为 weak 指向默认死循环，用户定义同名强符号就覆盖。我自研 RTOS 时用它给内核留可选钩子（IdleHook/TickHook），默认空实现，用户要用就覆盖，不用零开销。"
+
 ---
 
 ## 三、外设与协议
