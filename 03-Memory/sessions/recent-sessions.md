@@ -10,6 +10,7 @@
 
 | 日期 | 主题 | 关键经验 | 文件 |
 |------|------|---------|------|
+| 2026-09-05 | sync_profile_archive 档案中枢重写 + xlsx 提交 | 档案同步中枢 sync_profile_archive.py 大幅重写(1288行,+824/-464)，架构定型(生成小时/日报双 archive→load_latest_profile 动态加载)；信用卡主控表滞留09-01→09-05终提交；⚠️中枢单文件churn高需拆模块+改动当天提交 | `session-20260905-auto-catchup.md` |
 | 2026-09-03 | family-hub 9月组合更新 + 报告引擎 + 日级推送工具 | 9月月报新建+持仓/历史/年报/A8计划同步；_gen_report_v2.py 增强；新增 1.trae-feishu-push-day(与hour双档)；⚠️当日全改动未提交，靠auto_push兜底(08-28同源风险) | `session-20260903-auto-catchup.md` |
 | 2026-09-02 | lijigang（Write Prompt作者）人物研究 + role-model 归档 | GitHub四层研究法(主页→置顶仓库→仓库列表→个人站)；ljg-skills 7.3k star技能工程化(安装CLI/双分支/版本bump)呼应自检清单Skill化P1；"学方法不学内容"跨赛道原则 | `session-20260902-lijigang-research.md` |
 | 2026-09-01 | TSN协议文档重构 + 定时推送工具迭代 + 面试叙事 | TSN文档"单一权威源"重构(合并analysis+使用说明→summary,年限9年/Qci单条流/SyncE配图)；trae-feishu-push-hour迭代；面试叙事训练；sync_profile_archive重构；⚠️临时_fix脚本误入git后应git rm | `session-20260901-auto-catchup.md` |
@@ -19,8 +20,6 @@
 | 2026-08-25 | 天玑《我的一些阅读和学习方法~》入库 | 英语输入输出闭环/一目十行泛读/70-20-10精力分层；与用户学习体系对照（费曼/面试mock同源）；警示收藏式学习；文章入库SOP二次验证可Skill化 | `session-20260825-tianji-learning-methods.md` |
 | 2026-08-24 | 贝版《一年只需出手两三次》投资方法论入库 + family-hub 挂载 | 提炼6组观点；与现有纪律对照表（识别"自己恐慌卖 vs 别人恐慌买"张力、CRCL集中度反例）；分层落位(inbox知识+REFERENCES挂载)；三级索引同步 | `session-20260824-bayfamily-invest-methodology.md` |
 | 2026-08-23 | 框架深度重新学习（WorkBuddy 接入）+ 会话沉淀闭环 | 全量重读四层架构+v3.4 自检清单 8 项；确认"后续基于框架沟通"；双工作区记忆分工(.workbuddy vs 03-Memory)；沉淀本次 session | `session-20260823-framework-relarn.md` |
-| 2026-08-22 | 投资系统账本全量更新 + 报告引擎3处修复 + "禁止推算"规则固化 | 合并账户(燕/韩伟币安)；CRCL整体均价$66.66；脚本修复(按资产+均价列/第九节接trade_log/第十节上期价)；华盛通成本推算被骂→固化"禁止推算不确定必问"(GLOBAL-RULES v3.4) | `session-20260822-investment-system-update.md` |
-| 2026-08-22 | ContextStack 框架完整重新学习 + 常驻规则固化 + 会话沉淀补闭环 | 完整重读四层架构；固化"每次对话5条常驻规则"到记忆；补今天会话沉淀（上次2026-08-20那条实为审计，非学习） | `session-20260822-framework-relarn.md` |
 | — | — | — | — |
 
 > ⚠️ 2026-05-28 至 2026-08-20 之间 3 个月无会话归档，违反框架"每次对话后更新"规则。
@@ -47,6 +46,11 @@
 ---
 
 ## 完整会话记录
+
+### 2026-09-05: sync_profile_archive 档案同步中枢重写 + 信用卡主控表提交（auto-catchup 补齐）
+- **核心产出**: 当日 1 commit `557b107`（auto 提交，工作区 clean）。① `01-Projects/automated-task/sync_profile_archive.py` 大幅重写（1288 行变动，+824/−464），相比 09-01 的 968 行重构进一步扩展；架构定型为"每日0点读取 holdings.yaml+最新月报+职业档案 → 生成两份 profile_archive(小时推送/日报推送) → profile_loader.load_latest_profile() 动态加载 → analyzer/send_daily_ai_news/push_lark 消费，config 不硬编码"，更新 archive 即全链路生效；② `信用卡主控表.xlsx` 滞留多日（09-01→09-05）终于提交。
+- **关键决策**: 依"仅缺失且确有内容才创建"生成 auto-catchup（commit 含真实项目工作 sync_profile_archive.py 重写，非自动化自身产出落地，故不同于 08-30/09-04 的"不创建"情形）；未覆盖任何正常 session。
+- **可复用**: 自动化推送"档案中枢"模式（sync_profile_archive 生成双 archive→load_latest_profile 动态加载，消费方零改）；⚠️中枢单文件 churn 高(09-01 968/09-05 1288行)有"万能脚本"风险，建议拆模块；重要改动当次对话即提交，勿靠 auto_push 兜底(08-28 同源警示)。
 
 ### 2026-09-03: family-hub 9月投资组合更新 + 报告引擎增强 + 日级推送工具（auto-catchup 补齐）
 - **核心产出**: 当日 git 无 commit，全部 7 files 改动停留工作区（5 modified + 2 untracked）。① 9月月报 `家庭资产报告-2026-09.md`(新建) + `holdings.yaml`(持仓,4行) + `portfolio_history.yaml`(历史,18行) + `家庭资产年度报告-2026.md`(年报,29行) + `Crypto-A8计划-2026至2028.md`(A8计划,8行) 同步更新；② 报告引擎 `05-Tools/portfolio-tracker/_gen_report_v2.py`(+29行) 增强；③ 新增日级推送工具 `1.trae-feishu-push-day/_gen_script.py`(与既有 `0.trae-feishu-push-hour` 形成双档)。

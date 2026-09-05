@@ -6,6 +6,7 @@
 
 | 文件 | 类型 | 内容 | 更新 |
 |:-----|:-----|:-----|:-----|
+| [session-20260905-auto-catchup.md](./session-20260905-auto-catchup.md) | 工具/自动化 | sync_profile_archive 档案中枢重写(1288行) + 信用卡主控表提交（1 commit/2 files） | 2026-09-05 |
 | [session-20260903-auto-catchup.md](./session-20260903-auto-catchup.md) | 投资/工具 | family-hub 9月组合更新 + 报告引擎增强 + 日级推送工具（7 files 未提交） | 2026-09-03 |
 | [session-20260902-lijigang-research.md](./session-20260902-lijigang-research.md) | 人物研究 | lijigang Codex技能集研究 + role-model 归档 + 技能工程化思想提取 | 2026-09-02 |
 | [session-20260901-auto-catchup.md](./session-20260901-auto-catchup.md) | 协议/工具 | TSN协议文档重构 + trae-feishu-push-hour迭代 + 面试叙事 + sync_profile_archive重构（4 commits+2未提交） | 2026-09-01 |
@@ -25,5 +26,5 @@
 
 ---
 
-**最后更新**: 2026-09-03
+**最后更新**: 2026-09-05
 **维护规则**: 新增会话产出文件时同步到此表 + recent-sessions.md 索引
