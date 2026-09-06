@@ -8,6 +8,11 @@
 
 ## P0（本周必须做）
 
+### Life OS 六模块系统（2026-09-06 起，神鱼框架落地）
+- [ ] **inbox 建 index.md 内容地图**（87 篇归档按类别索引，LLM Wiki 落地第一步）→ [参考](02-Knowledge/inbox/LLM-Wiki-知识编译范式研究.md)
+- [ ] **健康指标追踪表建表**（先录韩伟近两年体检数据 → 趋势，为 2026-10 蓝医保补买做准备）→ [详情](01-Projects/family-hub/health/)
+- [ ] **周复盘模板**（每周日：本周决策/结果/下周3件事）→ [参考](02-Knowledge/inbox/个人成长系统方法论-12项习惯.md)
+
 ### 嵌入式AI项目
 - [ ] **实测推理延迟**（DWT cycle counter 测特征提取+Invoke 分解计时）→ [详情](01-Projects/embedded-ai-learning/courses/嵌入式AI课程全链路总结-MS版.md#111-p0-级短板不补必挂)
 - [ ] **跑 X-CUBE-AI aiValidation**（拿 Flash/RAM/算子报告）→ 同上
@@ -21,6 +26,12 @@
 ---
 
 ## P1（本月要做）
+
+### Life OS 六模块系统
+- [ ] **定义 CRCL/MRVL/DRAM 卖出信号**（策略文档"待完善"挂太久，MA120 定不下来仓位就不该动）→ [详情](01-Projects/family-hub/research/investment-strategy.md)
+- [ ] **归档流程升级**（raw 原文 + wiki 编译层两层 + 查询写回，分析结论不再死在聊天记录）→ [参考](02-Knowledge/inbox/LLM-Wiki-知识编译范式研究.md)
+- [ ] **消费决策记录模板**（选品→比价→买入→用后反馈，每件5行，轻量化）→ [详情](01-Projects/family-hub/purchases/)
+- [ ] **教育升学决策系统化**（非京籍6条升学路，放进人生导航）→ [参考](02-Knowledge/inbox/非京籍孩子升学路径全解析.md)
 
 ### 框架治理（2026-08-20 起）
 - [ ] **AI 行为约束自检清单 Skill 化**：把 GLOBAL-RULES.md v3.3 的 6 项会话开始自检清单抽取为 `02-Knowledge/skills/ai-self-check/` Skill，配置为 always-applied（类似 karpathy-guidelines），让每次会话开始时自动注入到 system prompt，对抗"加载规则 ≠ 遵守规则"漏洞（已记录 4 次违规教训）。配套用户抽查机制兜底。→ [详情](GLOBAL-RULES.md#-ai-行为约束自检清单2026-08-20-新增)
@@ -49,6 +60,11 @@
 ---
 
 ## P2（有余力再做）
+
+### Life OS 六模块系统
+- [ ] **投研异常告警自动化**（btc-temperature-gauge 扩展：机器做侦察，人做判断）→ [详情](01-Projects/btc-temperature-gauge)
+- [ ] **穿戴设备接入健康中枢**（二期，先跑通体检表再说）
+- [ ] **wiki→文章输出管道**（wiki 页面直接生成公众号/网站文章）→ [详情](01-Projects/personal-website)
 
 ### 工具安装（2026-05/06 起，来自原 personal/todo.md）
 - [ ] **飞书接入家里电脑**，手机远程控制 Trae（可参考腾讯飞书接入方案）
