@@ -485,6 +485,69 @@ Step 6: 传感器接入
 
 ---
 
+## 六、模型层结构选择（ESP32-S3 NPU 适配）
+
+> 合并自 `model-layer-architecture.md`（2026-09-07）。核心：从"逻辑划分"到"具体算子层"的嵌入式选型。
+
+### 6.1 逻辑划分 vs 具体算子层（误区纠正）
+
+输入层/隐藏层/输出层是「逻辑划分」，不是具体层类型。真正决定 MCU 性能的是隐藏层里的具体算子层。
+
+| 逻辑划分 | 作用 | 包含的具体层 |
+|:---------|:-----|:-------------|
+| 输入层 | 接收数据，统一格式 | Input、归一化层 |
+| 隐藏层 | 提取特征 | 卷积、池化、全连接、激活 |
+| 输出层 | 输出结果 | Dense、Softmax/Sigmoid |
+
+> ⚠️ 新手误区：层越多越好。ESP32-S3 隐藏层超 10 层就内存溢出、延迟超标。工业场景优先 3-8 层轻量模型。
+
+### 6.2 激活函数嵌入式适配排名
+
+| 排名 | 激活 | NPU 支持 | 场景 |
+|:---:|:-----|:---:|:-----|
+| 1 | **ReLU** | ✅ | 首选，所有隐藏层 |
+| 2 | LeakyReLU | ✅ | 解决 ReLU 死亡问题 |
+| 3 | Sigmoid | ✅ | 二分类输出层 |
+| 4 | Softmax | ✅ | 多分类输出层 |
+| ❌ | Swish/GELU/Mish | ❌ | 禁用，CPU 推理慢 10 倍+ |
+
+> ⚠️ 抄网上的大模型代码用了 GELU，部署到 ESP32 后延迟从 10ms 变 100ms。工业嵌入式只认 ReLU。
+
+### 6.3 ESP32-S3 NPU 支持层清单
+
+**✅ 完全支持（硬件加速）**：1D/2D 卷积（3×3/1×1 核）、深度可分离卷积、最大/平均池化、ReLU/LeakyReLU、批归一化（量化后融合，零开销）、小尺寸全连接、Sigmoid/Softmax。
+
+**❌ 回退 CPU（慢 10 倍+）**：LSTM/GRU/Transformer、5×5/7×7 大卷积核、分组卷积/空洞卷积、Swish/GELU/Mish、上采样层。
+
+### 6.4 层选择黄金法则（5 条）
+
+1. **优先卷积层**：1D/2D 卷积是 NPU 加速最好的层，隐藏层全用卷积，少用全连接
+2. **只认 ReLU**：其他激活一律禁用，否则 NPU 不加速
+3. **坚决不用 LSTM**：工业时序用 1D CNN，快 10 倍、精度更高
+4. **控制模型大小**：总层数 ≤8、通道数 ≤64，否则 ESP32-S3 内存不够
+5. **量化后验证**：所有层都要支持 INT8，否则部署后精度损失严重
+
+### 6.5 项目层结构示例
+
+```python
+# 电力故障识别（1D CNN，INT8 量化后推理 <5ms）
+model = tf.keras.Sequential([
+    layers.Input(shape=(100, 1)),
+    layers.Conv1D(16, 3, activation='relu'),
+    layers.BatchNormalization(),
+    layers.MaxPooling1D(2),
+    layers.Conv1D(32, 3, activation='relu'),
+    layers.BatchNormalization(),
+    layers.MaxPooling1D(2),
+    layers.Conv1D(16, 3, activation='relu'),
+    layers.BatchNormalization(),
+    layers.GlobalAveragePooling1D(),   # 替代全连接，省内存
+    layers.Dense(3, activation='softmax')
+])
+```
+
+---
+
 ## 参考来源
 
 - TFLM 官方文档：`tensorflow/lite/micro/`

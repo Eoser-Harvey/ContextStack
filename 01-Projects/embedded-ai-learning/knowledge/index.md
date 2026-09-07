@@ -17,8 +17,7 @@
 | [[data-labeling-annotation\|数据标注]] | 数据 | 数据标注方法（源码级，结合 Day16 动作识别） |
 | [[ai-model-development-framework\|AI模型开发框架]] | 模型开发 | 模型从设计到验证的框架 |
 | [[loss-function-embedded-ai\|嵌入式AI损失函数]] | 训练 | 损失函数选择与原理 |
-| [[model-layer-architecture\|模型层架构]] | 模型结构 | 网络层级与结构设计 |
-| [[model-optimization-techniques\|模型优化技术]] | 优化 | 模型压缩/加速技术 |
+| [[model-optimization-techniques\|模型优化技术]] | 优化+架构 | 量化/剪枝/蒸馏 + CNN/RNN + 模型层结构选择/NPU适配 |
 | [[paper-edge-ai-survey-2025\|端侧AI综述2025]] | 论文 | 端侧AI调研综述 |
 
 ## 说明
