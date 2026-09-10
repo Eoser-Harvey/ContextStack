@@ -12,6 +12,8 @@
   - `#codebuddy` `#history` `#workspace` `#data-recovery`
 - [[wechat-download|微信公众号批量下载工具 wechatDownload]] — 基于 PC 微信登录态批量抓取公众号全部历史文章（GUI，人工取 key+导出）
   - `#tool-config` `#wechat` `#crawler`
+- [[windows-c-drive-cleanup|Windows C 盘清理实战记录]] — 可复用诊断流程 + 实测空间分布 + 分级清理清单 + AMD EeuDumps 专项
+  - `#tool-config` `#windows` `#disk-cleanup` `#c-drive`
 
 ## 脚本文件
 
