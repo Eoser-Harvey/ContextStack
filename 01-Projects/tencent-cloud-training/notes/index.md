@@ -14,6 +14,7 @@
 | 6 | **高效指南与新范式** | [06-best-practices.md](./06-best-practices.md) | 3 | 高效指南、实践思路 |
 | 7 | **完整培训总结** | [07-full-training-summary.md](./07-full-training-summary.md) | 腾讯PPT全文 | SDD五步主链、三层工具、六工种重组、Q&A、职业发展借鉴 |
 | 8 | **其他团队AI实践分享** | [08-team-ai-sharing.md](./08-team-ai-sharing.md) | 团队分享 | 五角色定位、四道栅栏、5条红线、风险防控 |
+| 9 | **嵌入式AI编程（新华三）** | [嵌入式AI编程/](./嵌入式AI编程/) | 腾讯会议 | AI嵌入式落地、故障排查、知识库、双层Spec、测试转型 |
 
 ## 如何使用
 
