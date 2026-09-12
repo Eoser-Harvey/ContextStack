@@ -11,6 +11,15 @@ from datetime import date, timedelta
 import requests
 import yaml
 
+# 🔴 控制台编码容错（2026-09-12 修复）：Windows 默认 GBK 控制台无法输出 emoji
+# （📅🚨⚠️ 等），而 main() 里的 print 在【推送之前】，一旦抛 UnicodeEncodeError
+# 整个推送就中断了 —— 属于"静默失败"的又一来源。统一改为 UTF-8 + 出错替换。
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from push_lark import send_interactive_card, load_secrets
 
@@ -36,6 +45,26 @@ COMPANY_DOC_PATH = os.path.normpath(os.path.join(
     "beijing-company-backlog-and-risks.md"
 ))
 
+# 2026 年下半年关键节点（🔴 内置常量 —— 2026-09-12 修复）
+# 原实现从文档解析「完整时间线（2026年8月-12月）」表格，但该表已随拆分迁至
+# 1-beijing-company-ops-manual.md → 事件全部丢失。文档会改名、会搬家，故内置于此。
+SPECIAL_EVENTS_2026 = [
+    {"date": "2026-09-15", "name": "补发 8 月工资（截止）",
+     "description": "对公 → 薛燕卡转账 5,393.65 元，备注「2026年8月工资」（严禁现金、严禁凑整）。完成后登记账簿 §0.5 第④步。"},
+    {"date": "2026-09-15", "name": "首次个税实报（截止）",
+     "description": "8 月属期，应补税额 0（申报 ≠ 缴款，0 税也必须报）。扣缴端填：养老 581.60 / 医疗 148.40 / 失业 36.35 / 公积金 840.00 / 专项附加扣除 0。完成后登记账簿 §0.5 第⑤步。"},
+    {"date": "2026-09-26", "name": "工商公示实缴 3 万（截止）",
+     "description": "gsxt.gov.cn，实缴后 20 日内；同时归档转账回单 + 出资证明。印花税 7.50 元（2027-01 按年缴）。"},
+    {"date": "2026-09-30", "name": "残疾人就业保障金申报（截止）",
+     "description": "0 残疾人也须申报（⚠️ 首年是否适用需确认）。"},
+    {"date": "2026-10-10", "name": "发 9 月工资 + Q3 绩效奖金 4,000 元",
+     "description": "🔴 2026 年个税补救核心动作。转账 9,388.22 元，备注「2026年9月工资+Q3绩效奖金」。属期 2026-10 → 11 月入库。"},
+    {"date": "2026-10-15", "name": "Q3 季度申报（截止）",
+     "description": "增值税(2子目) + 企业所得税 + 城建税 + 教育费附加 + 地方教育附加，共 6 项零申报。"},
+    {"date": "2026-11-15", "name": "个税实报（10 月属期，含 Q3 奖金）",
+     "description": "🔴 应补 ≈5.43 元 → 2026 年 11 月税款入库 → 2026 年摇号个税记录成立。⚠️ 2027 年汇算不得申请退税（否则记录被冲成 0）。"},
+]
+
 # 内置默认值（所有回退路径最终兜底）
 BUILTIN_DEFAULTS = {
     "company": {
@@ -44,7 +73,7 @@ BUILTIN_DEFAULTS = {
         "industry": "文艺创作与表演",
     },
     "stage": {"current": ""},
-    "special_events_2026": [],
+    "special_events_2026": SPECIAL_EVENTS_2026,
     "policy_highlights": [
         "**小微企业税收优惠延续至2027年底**\n5%企业所得税低税负、六税两费减半、小规模月销10万免增值税等优惠明确延续。金税四期「以数治税」全面上线，需注意合规申报。",
         "**《增值税法》2026年1月1日起施行**\n财政部税务总局公告2026年第10号将小规模纳税人优惠锁定至2027年12月31日。月销售额≤10万、季销售额≤30万免征增值税。",
@@ -60,6 +89,9 @@ def _parse_date(date_str: str) -> date:
     return date(int(parts[0]), int(parts[1]), int(parts[2]))
 
 
+# ⚠️ 以下两个 _parse_timeline_* 函数自 2026-09-12 起【暂未使用】——
+#    2026 关键节点已改为内置常量 SPECIAL_EVENTS_2026（文档会改名/搬家，解析不可靠）。
+#    保留以备将来改为解析 TODO-DASHBOARD.md 之类的结构化来源。
 def _parse_timeline_date(raw_date: str, fallback_month: int, fallback_year: int) -> date | None:
     """解析时间线表格中的日期格式：9/15前、8/30、月末 等"""
     if not raw_date or not fallback_month:
@@ -129,34 +161,21 @@ def _parse_company_document(content: str) -> dict:
     config = {
         "company": {"name": "燕知行", "register_date": "2026-07-09", "industry": "文艺创作与表演"},
         "stage": {"current": ""},
-        "special_events_2026": [],
+        "special_events_2026": SPECIAL_EVENTS_2026,
         "policy_highlights": BUILTIN_DEFAULTS["policy_highlights"],
         "doc_last_updated": "",
     }
 
-    # 1. 文档更新时间
-    m = re.search(r'最新整理时间:\s*(.+)', content)
+    # 1. 文档更新时间（兼容中英文冒号 —— 原正则只认英文冒号，而文档写的是中文冒号「：」）
+    m = re.search(r'最新整理时间[：:]\s*(.+)', content)
     if m:
         config["doc_last_updated"] = m.group(1).strip()
 
-    # 2. 当前状态文本
-    m = re.search(r'当前状态:\s*(.+?)(?:\n|$)', content)
-    status_text = m.group(1).strip() if m else ""
+    # 2~3. 阶段判定：已改由 get_current_stage() 按日期判定（2026-09-12 修复）
+    #      原实现读「当前状态:」行并匹配 "社保增员完成" 等关键词，但文档用的是中文冒号、
+    #      且拆分后这些关键词已不在该文档中 → 永远误判"筹备期"。此处不再解析。
 
-    # 3. 判断运营阶段（基于状态文本中的里程碑完成情况）
-    has_shebao = "社保增员完成" in status_text
-    has_gjj = "公积金增员完成" in status_text
-    has_contract = "劳动合同" in status_text and "签订" in status_text
-
-    if has_shebao and has_gjj:
-        if has_contract:
-            config["stage"]["current"] = "有员工运转期"
-        else:
-            config["stage"]["current"] = "入职过渡期"
-    else:
-        config["stage"]["current"] = "筹备期"
-
-    # 4. 公司基本信息
+    # 4. 公司基本信息（容错：文档改版后读不到，则沿用上面的默认值，不影响推送）
     m = re.search(r'注册日期\s*\|\s*(\d{4}-\d{2}-\d{2})', content)
     if m:
         config["company"]["register_date"] = m.group(1)
@@ -164,13 +183,9 @@ def _parse_company_document(content: str) -> dict:
     if m:
         config["company"]["industry"] = m.group(1).strip()
 
-    # 5. 解析时间线表格
-    timeline_match = re.search(
-        r'完整时间线（2026年8月-12月）.*?\n\n((?:\|.+\|.*\n)+)',
-        content
-    )
-    if timeline_match:
-        config["special_events_2026"] = _parse_timeline_table(timeline_match.group(1))
+    # 5. 2026 特殊节点：改用内置常量 SPECIAL_EVENTS_2026（2026-09-12 修复）
+    #    原实现从文档解析「完整时间线（2026年8月-12月）」表格，但该表已随拆分迁至
+    #    1-beijing-company-ops-manual.md → 事件全部丢失。文档会改名/搬家，内置才稳定。
 
     return config
 
@@ -187,12 +202,11 @@ def load_company_config() -> dict:
                 content = f.read()
             config = _parse_company_document(content)
             updated = config.get("doc_last_updated", "未知")
-            stage = config["stage"]["current"]
             events_count = len(config.get("special_events_2026", []))
-            print(f"[INFO] 从公司社保公积金计划文档解析配置（每日自动读取最新）")
+            print(f"[INFO] 从公司文档解析配置（每日自动读取最新）")
             print(f"       文档更新时间: {updated}")
-            print(f"       当前阶段: {stage}")
-            print(f"       时间线事件: {events_count} 条")
+            print(f"       运营阶段: 按日期判定（见 STAGE_MILESTONES）")
+            print(f"       2026 特殊节点: {events_count} 条（内置常量）")
             return config
         except Exception as e:
             print(f"[WARN] 文档解析失败: {e}，尝试回退")
@@ -223,13 +237,29 @@ COMPANY_REGISTER_DATE = _parse_date(COMPANY_CONFIG["company"]["register_date"])
 
 # ==================== 状态判断 ====================
 
+# 阶段里程碑（日期 → 阶段名），按日期判定，不依赖文档
+STAGE_MILESTONES = [
+    (date(2026, 8, 1), "有员工运转期"),  # 劳动合同起期 + 社保/公积金/个税增员均已完成
+]
+
+
+
+
 def get_current_stage() -> str:
-    """判断当前公司运营阶段（从文档状态行自动判定）"""
-    stage_cfg = COMPANY_CONFIG.get("stage", {})
-    direct_stage = stage_cfg.get("current", "")
-    if direct_stage in ("筹备期", "入职过渡期", "有员工运转期"):
-        return direct_stage
-    return "筹备期"
+    """
+    判断当前公司运营阶段 —— 🔴 按日期判定（2026-09-12 修复）。
+
+    原实现从文档读「当前状态:」行 + 匹配"社保增员完成"等关键词，但：
+      ① 文档实际写的是中文冒号「当前状态：」，正则用的是英文冒号 → 读不到；
+      ② 拆分后这些关键词已不在该文档中；
+      → 结果永远误判为"筹备期"，推送内容全错。
+    现改为按里程碑日期判定，稳定且不依赖任何文档措辞。
+    """
+    stage = "筹备期"
+    for since, name in STAGE_MILESTONES:
+        if TODAY >= since:
+            stage = name
+    return stage
 
 
 def is_employee_stage() -> bool:
@@ -472,40 +502,44 @@ def get_all_deadlines():
     """
     deadlines = []
 
-    # ===== 月度常规（筹备期 + 有员工期通用）=====
-    dl = next_occurrence(15)
-    if in_window(dl):
-        deadlines.append((dl, "个税申报", "每月15日前完成上月工资薪金个税申报（自然人电子税务局扣缴端）。筹备期无员工做零申报，有员工后实报。"))
+    # ===== 月度常规 =====
+    dl_15 = next_occurrence(15)
+    if in_window(dl_15):
+        deadlines.append((dl_15, "个税申报", "每月 11-15 日在扣缴端完成上月工资薪金个税申报（**申报 ≠ 缴款，0 税也必须报**）。扣缴端专项扣除**分项填**：养老 581.60 ／ 医疗 **148.40**（含大额互助 3.00）／ 失业 36.35 ／ 公积金 840.00 ／ 专项附加扣除 **0**。→ 完成后登记账簿 §0.5 第⑤步。"))
 
     # 对公账户余额核查（每月15日前）
-    if in_window(dl):
-        deadlines.append((dl, "对公账户余额核查", "确保对公账户余额充足，防止社保/公积金/个税自动扣款失败。断缴 = 5年摇号资格重算。"))
+    if in_window(dl_15):
+        deadlines.append((dl_15, "对公账户余额核查", "确保对公账户余额充足，防止社保/公积金/个税自动扣款失败。**断缴 = 5 年摇号资格重算**。"))
 
     # ===== 有员工阶段月度 =====
     if is_employee_stage():
         # 1-5日 工资核算
         dl_5 = next_occurrence(5)
         if in_window(dl_5):
-            deadlines.append((dl_5, "工资与社保核算", "制作工资表：应发工资 - 个人社保 - 个人公积金 - 代扣个税 = 实发工资。核对当月社保/公积金缴费通知单。"))
+            deadlines.append((dl_5, "工资与社保核算", "制作工资表：应发 − 个人社保 − 个人公积金 − 代扣个税 = 实发。⚠️ 四个扣项必须**已由渠道确认**（见账簿 §0.5），不得自行推算。→ 登记账簿 §二 / §0.5 第③步。"))
 
-        # 10-15日 发工资
+        # 10日 发工资
         dl_10 = next_occurrence(10)
         if in_window(dl_10):
-            deadlines.append((dl_10, "对公账户发工资", "批量代发：对公账户→个人卡，银行流水备注'X月工资'。严禁现金发薪。"))
+            deadlines.append((dl_10, "对公账户发工资", "对公账户 → 个人卡转账当月实发数，备注「X月工资」，**严禁现金、严禁凑整**。→ 完成后登记账簿 §0.5 第④步，并补工资凭证。"))
 
-        # 15日前 社保缴费
-        if in_window(dl):
-            deadlines.append((dl, "社保费缴纳", "税务系统自动扣款（三方协议）。总额=单位部分+个人代扣部分。断缴=5年重算，确保余额充足。"))
+        # 10-25日 社保申报缴纳（上月）—— 🔴 2026-09-12 修正：北京是"次月缴上月"，窗口 10-25 日
+        dl_25 = next_occurrence(25)
+        if in_window(dl_25):
+            deadlines.append((dl_25, "社保费申报缴纳（上月）", "电子税务局「日常申报」缴纳**上月**社保（10-25 日窗口），三方协议自动扣款；总额 = 单位 + 个人。**断缴 = 5 年重算**。→ 完成后登记账簿 §0.5 第②步，并补凭证 + 总账。"))
 
-        # 公积金汇缴
-        dl_20 = next_occurrence(20)
-        if in_window(dl_20):
-            deadlines.append((dl_20, "公积金汇缴", "公积金中心按委托收款协议自动扣款。总额=单位缴存+个人缴存。"))
+        # 每月最后一天 公积金汇缴 —— 🔴 2026-09-12 修正：原写"每月20日"，实际是月末自动托收
+        if TODAY.month == 12:
+            dl_month_end = date(TODAY.year, 12, 31)
+        else:
+            dl_month_end = date(TODAY.year, TODAY.month + 1, 1) - timedelta(days=1)
+        if in_window(dl_month_end):
+            deadlines.append((dl_month_end, "公积金汇缴（月末自动托收）", "公积金中心按委托收款协议于**每月最后一天**自动扣款（已设自动托收，无需手动操作）。→ 托收后上网厅核对金额，登记账簿 §0.5 第①步。"))
 
-        # 月末 账务处理
+        # 月末 账务处理 + 数据登记自查
         dl_28 = next_occurrence(28)
         if in_window(dl_28):
-            deadlines.append((dl_28, "月末账务处理", "计提当月工资、单位社保、单位公积金。登记发放/缴费/缴税会计分录。装订工资表+银行回单+缴费凭证+个税申报表。"))
+            deadlines.append((dl_28, "月末账务 + 数据登记自查", "① 账务：计提工资/单位社保/单位公积金，登记发放/缴费/缴税分录，装订工资表+银行回单+缴费凭证+个税申报表。② **自查**：账簿 §0.5 当月行是否填全？§0.4 余额是否与银行一致？"))
 
     # ===== 季度申报（1/4/7/10月15日前）=====
     dl_q = next_quarterly([1, 4, 7, 10], 15)
@@ -629,13 +663,14 @@ def build_card_json():
             "text": {
                 "tag": "lark_md",
                 "content": (
-                    "📌 **有员工运转期核心任务**\n"
-                    "• 每月1-5日：工资核算\n"
-                    "• 每月10-15日：发工资（对公账户→个人卡）\n"
-                    "• 每月15日前：社保缴费 + 个税申报\n"
-                    "• 每月中旬：公积金汇缴\n"
-                    "• 每月月末：账务处理\n"
-                    "• 每月总出账：约17,612元"
+                    "📌 **有员工运转期 · 每月五步（顺序不可颠倒）**\n"
+                    "① **公积金**：每月最后一天自动托收 → 网厅确认实际额 → 登记 §0.5\n"
+                    "② **社保**：次月 10-25 日缴上月 → 电子税务局带出实际额 → 登记 §0.5\n"
+                    "③ **个税试算**：发薪前扣缴端试算 → 编工资表 → 登记 §0.5\n"
+                    "④ **发工资**：对公 → 个人卡（备注「X月工资」）→ 登记 §0.5\n"
+                    "⑤ **个税申报**：次月 1-15 日扣缴端正式申报（0 税也要报）→ 登记 §0.5\n"
+                    "🔴 **每步做完当天登记账簿 §0.5「每月实缴登记表」** —— 那是实际数的唯一登记点，**绝不推算**。\n"
+                    "📌 **公司月支出 ≈9,781.09 元**（工资 7,000 + 公司社保公积金 2,781.09；2026 年个税 0～17.24）"
                 ),
             },
         })
@@ -767,10 +802,11 @@ def build_card_json():
             "tag": "lark_md",
             "content": (
                 "⚠️ **关键风险提示**\n"
-                "• **社保断缴 = 5年摇号资格重算**，每月15日前确保对公账户余额充足\n"
-                "• **个税不能为零**（摇号不认），发薪后确保有个税扣缴记录\n"
-                "• **工商年报漏报 = 经营异常名录**，每年6月30日前必须完成\n"
-                "• **零申报不等于不申报**，无收入也必须按期申报"
+                "• **社保断缴 = 5 年摇号资格重算**，每月 15 日前确保对公账户余额充足\n"
+                "• **个税须保持非零**（摇号要求「近 5 年**每年**有个税记录」，不是每月）—— 2026 年 8–9 月属期因 7 月多占一次减除额而为 0，**已用 10 月属期 Q3 奖金 4,000 元补救**（2026-11 入库）；⚠️ **2027 年汇算不得申请退税**，否则记录被冲成 0\n"
+                "• **工商年报漏报 = 经营异常名录**，每年 6 月 30 日前必须完成\n"
+                "• **零申报 ≠ 不申报**，无收入也必须按期申报\n"
+                "• **数据当日登记**：每步做完立即填账簿 §0.5，**只登记渠道实际数、绝不推算**（2026 年 8 月 759.12 返工即因此）"
             ),
         },
     })
