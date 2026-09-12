@@ -28,7 +28,12 @@ DEADLINE_END = TODAY + timedelta(days=ADVANCE_DAYS)
 # 公司社保公积金计划文档（唯一数据源，用户每日更新）
 COMPANY_DOC_PATH = os.path.normpath(os.path.join(
     SCRIPT_DIR, "..", "..", "family-hub", "company-setup",
-    "beijing-company-social-insurance-plan.md"
+    # 2026-09-12 改名两次：beijing-company-social-insurance-plan.md
+    #   → company-backlog-and-risks.md → beijing-company-backlog-and-risks.md（现名，漏改即崩）
+    # ⚠️ 注意：文档拆分后，"当前状态 / 完整时间线（2026年8月-12月）/ 注册日期" 三个锚点
+    #    已不在本文档中（时间线迁至 1-beijing-company-ops-manual.md）→ 本脚本的阶段判定与
+    #    2026 特殊事件解析当前均已失效（详见调用方报告）。待重构，勿依赖其输出。
+    "beijing-company-backlog-and-risks.md"
 ))
 
 # 内置默认值（所有回退路径最终兜底）

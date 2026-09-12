@@ -10,7 +10,10 @@
 | [[./investment-strategy.md]] | 家庭投资策略与方法论（核心策略 + 卖出纪律 + 学习方法 + 能力圈） |
 | [[./investment-reflection-journal.md]] | 个人投资反思日志（2021-至今，按时间线归档） |
 | [[./second-curve-ai-projects.md]] | 第二曲线：AI 驱动可落地项目清单（嵌入式面试陪跑等） |
-| [[../company-setup/beijing-company-social-insurance-plan.md]] | 北京开公司社保全攻略 |
+| [[../company-setup/beijing-company-backlog-and-risks.md]] | 北京燕知行 · 公司待办与风险管控（原"社保方案"，2026-09-12 更名） |
+| [[../company-setup/1-beijing-company-ops-manual.md]] | 公司运营手册（月/季/年操作、报税时间表、收款码教程） |
+| [[../company-setup/2-beijing-company-accounting-ledger.md]] | 公司会计账簿 🌟 财务数字唯一真值源（含日记账、凭证、报表） |
+| [[../company-setup/beijing-company-cost-model.md]] | 公司成本测算（社保公积金明细、个税、月度/年度成本） |
 
 ## 关联资源
 
