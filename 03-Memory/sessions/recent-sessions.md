@@ -10,6 +10,7 @@
 
 | 日期 | 主题 | 关键经验 | 文件 |
 |------|------|---------|------|
+| 2026-09-13 | 信用卡「刷卡循环提醒」自动化：口径4次纠偏 + 格式1:1复刻 + 常驻脚本落盘 | ⚠️同一需求改了4次口径且每次都"替换而非补齐"：账单日→还款日→只留刷卡/到账(丢了还款段)→补回三段。**每张表内三段并列缺一不可**：💳今日需还款(还款日)→🔔今日需刷卡(刷卡日D0)→💰今日资金到账(到账日)。任务文字"出账单/账单日"是模糊词，**用户历史脚本才是唯一权威**——给格式截图时先 Grep 定位生成脚本再复刻(template=html/💳 emoji/&nbsp;缩进)；数据源要单一(别去翻并列的 Excel)；自动化正解=提示词只"调脚本+汇报stdout" | `session-20260913-credit-cycle-reminder.md` |
 | 2026-09-05 | sync_profile_archive 档案中枢重写 + xlsx 提交 | 档案同步中枢 sync_profile_archive.py 大幅重写(1288行,+824/-464)，架构定型(生成小时/日报双 archive→load_latest_profile 动态加载)；信用卡主控表滞留09-01→09-05终提交；⚠️中枢单文件churn高需拆模块+改动当天提交 | `session-20260905-auto-catchup.md` |
 | 2026-09-03 | family-hub 9月组合更新 + 报告引擎 + 日级推送工具 | 9月月报新建+持仓/历史/年报/A8计划同步；_gen_report_v2.py 增强；新增 1.trae-feishu-push-day(与hour双档)；⚠️当日全改动未提交，靠auto_push兜底(08-28同源风险) | `session-20260903-auto-catchup.md` |
 | 2026-09-02 | lijigang（Write Prompt作者）人物研究 + role-model 归档 | GitHub四层研究法(主页→置顶仓库→仓库列表→个人站)；ljg-skills 7.3k star技能工程化(安装CLI/双分支/版本bump)呼应自检清单Skill化P1；"学方法不学内容"跨赛道原则 | `session-20260902-lijigang-research.md` |
@@ -19,7 +20,6 @@
 | 2026-08-28 | family-hub 投资系统月内更新（auto-catchup） | holdings 加仓/换仓/新建仓+三份报告同步；⚠️当日改了未提交致沉淀断档；投资更新闭环(数据源→历史→报告需同提交) | `session-20260828-auto-catchup.md` |
 | 2026-08-25 | 天玑《我的一些阅读和学习方法~》入库 | 英语输入输出闭环/一目十行泛读/70-20-10精力分层；与用户学习体系对照（费曼/面试mock同源）；警示收藏式学习；文章入库SOP二次验证可Skill化 | `session-20260825-tianji-learning-methods.md` |
 | 2026-08-24 | 贝版《一年只需出手两三次》投资方法论入库 + family-hub 挂载 | 提炼6组观点；与现有纪律对照表（识别"自己恐慌卖 vs 别人恐慌买"张力、CRCL集中度反例）；分层落位(inbox知识+REFERENCES挂载)；三级索引同步 | `session-20260824-bayfamily-invest-methodology.md` |
-| 2026-08-23 | 框架深度重新学习（WorkBuddy 接入）+ 会话沉淀闭环 | 全量重读四层架构+v3.4 自检清单 8 项；确认"后续基于框架沟通"；双工作区记忆分工(.workbuddy vs 03-Memory)；沉淀本次 session | `session-20260823-framework-relarn.md` |
 | — | — | — | — |
 
 > ⚠️ 2026-05-28 至 2026-08-20 之间 3 个月无会话归档，违反框架"每次对话后更新"规则。
