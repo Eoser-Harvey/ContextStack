@@ -8,10 +8,11 @@
 - [[./TSN/index|TSN 时间敏感网络]] — TSN 协议 + 时钟同步（PTP/SyncE/gPTP）技术专题库
 - [[./Can/can-application-protocol-summary|CAN 应用层协议设计]] — 29-bit ID 语义化路由 + 8 字节负载，经典 CAN 2.0B 项目总结
 - [[./AcuOS-Source/AcuOS-porting-summary|AcuOS RTOS 移植总结]] — ARM M4 ↔ SHARC DSP 跨平台移植，改平台相关层、保留平台无关层
+- [[./Network-Troubleshooting/index|网络故障排查]] — 交换机 ping 丢包方法论 + IE4120U 抓包根因分析案例（ARP 风暴→弱管机转发延迟）
 
 ## 关联
 - [[../01-company-interviews/|公司MS]] — MS中的项目展示参考
 
 ---
 
-**最后更新**: 2026-06-14
+**最后更新**: 2026-09-16
