@@ -301,10 +301,12 @@ foreach ($n in $selIdx) {
                 $dstData = [ordered]@{ conversations = (New-Object System.Collections.ArrayList) }
             }
             $dstConvs = $dstData['conversations']
-            if ($null -eq $dstConvs) {
-                $dstConvs = New-Object System.Collections.ArrayList
-                $dstData['conversations'] = $dstConvs
+            # 统一转为可变 ArrayList：JavaScriptSerializer 反序列化的 JSON 数组是固定大小 object[]，直接 Add 会报错
+            $dstConvs = New-Object System.Collections.ArrayList
+            if ($null -ne $dstData['conversations']) {
+                foreach ($e in @($dstData['conversations'])) { [void]$dstConvs.Add($e) }
             }
+            $dstData['conversations'] = $dstConvs
             $existAt = -1
             for ($k = 0; $k -lt $dstConvs.Count; $k++) {
                 if ([string]$dstConvs[$k]['id'] -eq $cid) { $existAt = $k; break }
