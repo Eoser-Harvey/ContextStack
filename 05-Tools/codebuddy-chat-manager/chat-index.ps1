@@ -16,6 +16,11 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+# 账户别名映射：UUID -> 可读名（如 Windows 用户名），方便识别账户。新增别名时 chat-index/chat-restore 两处同步。
+$AccountAlias = @{
+    '2a2e1d62-de8b-4abb-87fe-af5f9a2ff441' = 'h31280'
+}
+
 # 兼容旧版 PowerShell 5.1：某些执行方式下 $PSScriptRoot 为空（如 cmd 直接调用/任务计划）
 # 用脚本自身的实际路径兜底（$MyInvocation），不要用 Get-Location（任务计划默认工作目录是 System32）
 if ([string]::IsNullOrEmpty($PSScriptRoot)) {
@@ -146,6 +151,7 @@ foreach ($account in $accountDirs) {
                     }
                     [void]$items.Add([ordered]@{
                         accountId      = $account.Name
+                        alias          = $(if ($AccountAlias.ContainsKey($account.Name)) { $AccountAlias[$account.Name] } else { '' })
                         client         = $client.Name
                         workspace      = (ConvertFrom-WorkspaceDirName $ws.Name)
                         workspaceDir   = $ws.Name
@@ -188,10 +194,12 @@ foreach ($c in $sorted) {
     $nm = ([string]$c['name']) -replace '\s+', ' ' -replace '\|', '\|'
     $t = [string]$c['lastMessageAt']
     if ($t.Length -ge 19) { $t = $t.Substring(0, 19).Replace('T', ' ') }
+    $accLabel = ([string]$c['accountId']).Substring(0, 8)
+    if ($AccountAlias.ContainsKey([string]$c['accountId'])) { $accLabel = $AccountAlias[[string]$c['accountId']] }
     [void]$rows.Add(@(
         "$i",
         (Split-TruncatedName $nm 34),
-        ([string]$c['accountId']).Substring(0, 8),
+        $accLabel,
         [string]$c['client'],
         (Split-TruncatedName ([string]$c['workspace']) 26),
         $t,

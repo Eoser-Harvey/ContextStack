@@ -25,6 +25,11 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+# 账户别名映射：UUID -> 可读名（如 Windows 用户名），方便识别账户。新增别名时 chat-index/chat-restore 两处同步。
+$AccountAlias = @{
+    '2a2e1d62-de8b-4abb-87fe-af5f9a2ff441' = 'h31280'
+}
+
 # 兼容旧版 PowerShell 5.1：某些执行方式下 $PSScriptRoot 为空（如 cmd 直接调用/任务计划）
 # 用脚本自身的实际路径兜底，不要用 Get-Location（任务计划默认工作目录是 System32）
 if ([string]::IsNullOrEmpty($PSScriptRoot)) {
@@ -218,12 +223,13 @@ if (-not $TargetAccount) {
     foreach ($a in $accountDirs) {
         $j++
         $aid = $a.Name
+        $alias = if ($AccountAlias.ContainsKey($aid)) { "  [$($AccountAlias[$aid])]" } else { '' }
         $cnt = if ($acctCnt.ContainsKey($aid)) { $acctCnt[$aid] } else { 0 }
         $lat = '(无会话)'
         if ($acctLatest.ContainsKey($aid) -and $acctLatest[$aid]) {
             $lat = $acctLatest[$aid].Substring(0, [Math]::Min(19, $acctLatest[$aid].Length)).Replace('T', ' ')
         }
-        Write-Host ('  [{0}] {1}' -f $j, $aid)
+        Write-Host ('  [{0}] {1}{2}' -f $j, $aid, $alias)
         Write-Host ("        会话数: {0,3}   最近消息: {1}" -f $cnt, $lat)
     }
     Write-Host '  提示: 刚登录/较新的账户通常会话数最少、目录写入时间最新'
