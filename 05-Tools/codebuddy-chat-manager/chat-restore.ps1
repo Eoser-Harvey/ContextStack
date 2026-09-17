@@ -260,7 +260,14 @@ foreach ($n in $selIdx) {
     $cid   = [string]$c['conversationId']
     $cname = [string]$c['name']
     $srcDir = [string]$c['sourcePath']
-    $dstGroup   = Join-Path $targetRoot (Join-Path ([string]$c['client']) (Join-Path ([string]$c['workspaceDir']) (Join-Path 'history' ([string]$c['groupHash']))))
+    # 目标工作区目录名：源为「账户默认工作区」（UUID 形态，等于某账户 UUID）时换成目标账户 UUID；
+    # 真实文件夹工作区（base64 编码路径）保持原样，目标账户打开同一文件夹时目录名一致即可见。
+    $srcWsDir = [string]$c['workspaceDir']
+    $dstWsDir = $srcWsDir
+    if ($srcWsDir -match '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$') {
+        $dstWsDir = $TargetAccount
+    }
+    $dstGroup   = Join-Path $targetRoot (Join-Path ([string]$c['client']) (Join-Path $dstWsDir (Join-Path 'history' ([string]$c['groupHash']))))
     $dstConvDir = Join-Path $dstGroup $cid
     $dstIndex   = Join-Path $dstGroup 'index.json'
 
