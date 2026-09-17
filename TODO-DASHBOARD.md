@@ -87,6 +87,9 @@
 - [ ] **设每月固定日自动扣款** → 同上
 - [ ] **写入 family-hub 投资模块** → 同上
 
+### 交易工具学习（币安）
+- [ ] **学习币安移动止盈（跟踪止盈止损单）**：理解触发机制（追踪激活价 + 回调幅度% + Last/Mark Price 触发源），小额仓位试设跑通，评估能否用来自动化执行卖出纪律（与 10/20 日线 / MA120 互补，非替代）→ [币安官方文档](https://www.binance.bh/zh-CN/support/faq/detail/2c281d86e6764dba89c24c2de115672f)
+
 ### 家庭
 - [ ] **爱人完成盖洛普测评** → 补充「配偶协同分析」→ [详情](02-Knowledge/career-development/career-strategy/Harvey盖洛普测评/Harvey盖洛普优势测评分析报告.md#七配偶协同分析可选)
 

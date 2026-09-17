@@ -1,942 +1,707 @@
 """
-每日个人画像归档同步脚本
+每日个人画像归档 — 自动读取最新持仓/职业档案/投资报告，生成 profile_archive 摘要
 
-每天0点执行：
-1. 读取 holdings.yaml + 最新月度报告 + 职业发展档案
-2. 生成两份 profile_archive 归档（小时推送/日报推送各一份）
-3. 静默完成，异常时记录日志
+用法:
+  python sync_profile_archive.py
 
-架构说明：
-- profile_loader.py 自动从 profile_archive/ 按文件名日期排序取最新文件
-- analyzer.py / send_daily_ai_news.py / push_lark.py 均使用 load_latest_profile() 动态加载
-- config.yaml 不再硬编码 profile 段，所有分析实时从 archive 读取
-- 更新 profile_archive/ 即自动生效，无需修改任何代码
+输出:
+  hour-push: 01-Projects/automated-task/0.trae-feishu-push-hour/profile_archive/profile_YYYYMMDD.md
+  day-push:  01-Projects/automated-task/1.trae-feishu-push-day/profile_archive/profile_YYYYMMDD.md
 
-用法：
-    python sync_profile_archive.py
+设计说明:
+  - profile_loader.py 自动从 archive 按日期取最新文件
+  - 更新 archive 即自动生效，无需修改 config 或代码
+  - 价格数据来自最新月度投资报告（含实时快照）
 """
 
 import os
-import sys
 import re
 import glob
-import logging
-from datetime import datetime, date
+import yaml
+from datetime import datetime
 
 # ======================================================================
-# 路径配置
+# 路径常量
 # ======================================================================
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-HOLDINGS_PATH = os.path.normpath(
-    os.path.join(BASE_DIR, "..", "family-hub", "research", "portfolio", "holdings.yaml"))
-REPORTS_DIR = os.path.normpath(
-    os.path.join(BASE_DIR, "..", "family-hub", "research", "portfolio", "reports"))
-CAREER_PATH = os.path.normpath(
-    os.path.join(BASE_DIR, "..", "..", "02-Knowledge", "career-development", "career-strategy",
-                 "个人职业发展分析-端侧AI企业定制攻略.md"))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+PROJECT_DIR = os.path.join(BASE_DIR, "01-Projects", "automated-task")
 
-HOUR_ARCHIVE_DIR = os.path.normpath(
-    os.path.join(BASE_DIR, "0.trae-feishu-push-hour", "profile_archive"))
-DAY_ARCHIVE_DIR = os.path.normpath(
-    os.path.join(BASE_DIR, "1.trae-feishu-push-day", "profile_archive"))
-
-# ======================================================================
-# 日志配置 — 仅异常时输出
-# ======================================================================
-logging.basicConfig(
-    level=logging.WARNING,
-    format="[%(levelname)s] %(asctime)s %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
+HOLDINGS_PATH = os.path.join(BASE_DIR, "01-Projects", "family-hub", "research", "portfolio", "holdings.yaml")
+REPORTS_DIR = os.path.join(BASE_DIR, "01-Projects", "family-hub", "research", "portfolio", "reports")
+CAREER_PATH = os.path.join(
+    BASE_DIR, "02-Knowledge", "career-development", "career-strategy",
+    "个人职业发展分析-端侧AI企业定制攻略.md"
 )
-logger = logging.getLogger("sync_profile_archive")
+
+HOUR_ARCHIVE_DIR = os.path.join(PROJECT_DIR, "0.trae-feishu-push-hour", "profile_archive")
+DAY_ARCHIVE_DIR = os.path.join(PROJECT_DIR, "1.trae-feishu-push-day", "profile_archive")
+
+TODAY = datetime.now().strftime("%Y%m%d")
+TODAY_LABEL = datetime.now().strftime("%Y-%m-%d")
+META_USD_CNY = 6.729
+META_HKD_CNY = 0.857
 
 
 # ======================================================================
-# 工具函数
+# 日志
 # ======================================================================
 
-def _read_file(path, encoding="utf-8"):
-    """安全读取文件，失败返回 None"""
+def log_error(msg):
+    print(f"[ERROR] sync_profile_archive | {msg}")
+
+def log_info(msg):
+    print(f"[INFO] sync_profile_archive | {msg}")
+
+
+# ======================================================================
+# 1. 读取投资持仓
+# ======================================================================
+
+def load_holdings(path):
     if not os.path.isfile(path):
-        logger.error(f"文件不存在: {path}")
-        return None
-    try:
-        with open(path, "r", encoding=encoding) as f:
-            return f.read()
-    except Exception as e:
-        logger.error(f"读取文件失败 {path}: {e}")
-        return None
+        log_error(f"holdings.yaml 不存在: {path}")
+        return {}
 
+    with open(path, "r", encoding="utf-8") as f:
+        data = yaml.safe_load(f)
 
-def _parse_markdown_table_row(line):
-    """解析一行 markdown 表格行，返回 cell 列表"""
-    line = line.strip()
-    if not line.startswith("|") or not line.endswith("|"):
-        return None
-    cells = [c.strip() for c in line.split("|")[1:-1]]
-    if not cells:
-        return None
-    # 跳过表头分隔行
-    if all(c.replace("-", "").replace(":", "").strip() == "" for c in cells):
-        return None
-    return cells
-
-
-def _parse_table_section(lines, start_idx):
-    """
-    从 lines[start_idx] 开始解析一个 markdown 表格区块。
-    返回 (table_data, end_idx)，其中 table_data = [header, [row1, ...]]
-    """
-    i = start_idx
-    # 跳过空行
-    while i < len(lines) and not lines[i].strip():
-        i += 1
-    if i >= len(lines) or not lines[i].strip().startswith("|"):
-        return None, start_idx
-
-    header = _parse_markdown_table_row(lines[i])
-    if not header:
-        return None, start_idx
-    i += 1
-
-    # 跳过分隔行
-    if i < len(lines):
-        sep = _parse_markdown_table_row(lines[i])
-        if sep:
-            i += 1
-
-    rows = []
-    while i < len(lines):
-        cells = _parse_markdown_table_row(lines[i])
-        if cells is None:
-            break
-        rows.append(cells)
-        i += 1
-
-    return {"header": header, "rows": rows}, i
-
-
-def _find_latest_report():
-    """在 reports 目录中按文件名日期排序取最新月度报告"""
-    if not os.path.isdir(REPORTS_DIR):
-        logger.error(f"报告目录不存在: {REPORTS_DIR}")
-        return None
-
-    # 匹配 家庭资产报告-YYYY-MM.md
-    pattern = os.path.join(REPORTS_DIR, "家庭资产报告-*.md")
-    files = sorted(glob.glob(pattern), reverse=True)
-    if not files:
-        logger.error(f"未找到月度报告")
-        return None
-    return files[0]
-
-
-def _find_previous_profile(archive_dir, today_str):
-    """在 archive_dir 中找到上一个日期的 profile 文件"""
-    if not os.path.isdir(archive_dir):
-        return None
-    pattern = os.path.join(archive_dir, "profile_*.md")
-    files = sorted(glob.glob(pattern), reverse=True)
-    for f in files:
-        basename = os.path.basename(f)
-        m = re.match(r"profile_(\d{8})\.md", basename)
-        if m and m.group(1) < today_str:
-            return f
-    return None
-
-
-# ======================================================================
-# 数据提取
-# ======================================================================
-
-def extract_report_data(report_path):
-    """从月度报告中提取投资数据"""
-    content = _read_file(report_path)
-    if not content:
-        return None
-
-    lines = content.split("\n")
-    data = {
-        "date": "",
-        "total_assets": "",
-        "net_assets": "",
-        "investment_assets": "",
-        "cash_family": "",
-        "cash_hk": "",
-        "cash_usdt": "",
-        "cash_hst": "",
-        "credit_card_debt": "",
-        "mortgage": "",
-        "btc_qty": "0.12980465",
-        "btc_price": "",
-        "btc_market_value": "",
-        "milady_price": "",
-        "milady_value": "",
-        "crcl_price": "",
-        "crcl_total_value": "",
-        "crcl_concentration": "",
-        "crypto_items": [],
-        "us_stock_items": [],
-        "hk_stock_items": [],
-        "a_stock_items": [],
-        "ts_token_items": [],
-        "btc_status": "",
-        "crcl_status": "",
-    }
-
-    # 解析报告日期
-    for line in lines:
-        m = re.search(r"date:\s*(\d{4}-\d{2}-\d{2})", line)
-        if m:
-            data["date"] = m.group(1)
-            break
-
-    # 解析各章节
-    current_section = ""
-    for i, line in enumerate(lines):
-        stripped = line.strip()
-        if stripped.startswith("## "):
-            current_section = stripped[3:].strip()
-
-        # 资产总览表
-        if current_section == "一、资产总览" and stripped.startswith("|"):
-            cells = _parse_markdown_table_row(stripped)
-            if cells and len(cells) == 3:
-                    label, amount, _ = cells
-                    label_clean = label.replace("**", "").strip()
-                    if label_clean == "总资产":
-                        data["total_assets"] = amount
-                    elif label_clean == "净资产":
-                        data["net_assets"] = amount
-                    elif label_clean == "投资总资产":
-                        data["investment_assets"] = amount
-                    elif label_clean == "现金固收":
-                        data["cash_family"] = amount
-
-        # 投资资产明细表
-        if current_section.startswith("二、投资资产明细"):
-            cells = _parse_markdown_table_row(stripped)
-            if cells and len(cells) >= 9:
-                name = cells[0]
-                qty = cells[1]
-                price = cells[2]
-                mkt_val = cells[3]
-                storage = cells[8] if len(cells) > 8 else cells[-1]
-
-                if "比特币" in name:
-                    data["btc_qty"] = qty
-                    data["btc_price"] = price
-                    data["btc_market_value"] = mkt_val
-                elif "Milady" in name:
-                    data["milady_price"] = price
-                    data["milady_value"] = mkt_val
-                elif "ONDO" in name or "Uniswap" in name:
-                    data["crypto_items"].append({
-                        "name": name, "qty": qty, "price": price,
-                        "mkt_val": mkt_val, "storage": storage
-                    })
-                elif "CRCL" in name or "Circle" in name:
-                    continue  # 单独处理
-                elif "DRAM" in name:
-                    data["us_stock_items"].append({
-                        "name": name, "qty": qty, "price": price,
-                        "mkt_val": mkt_val, "storage": storage
-                    })
-                elif "MicroStrategy" in name:
-                    data["us_stock_items"].append({
-                        "name": name, "qty": qty, "price": price,
-                        "mkt_val": mkt_val, "storage": storage
-                    })
-                elif "半导体" in name:
-                    data["us_stock_items"].append({
-                        "name": name, "qty": qty, "price": price,
-                        "mkt_val": mkt_val, "storage": storage
-                    })
-                elif "BitGo" in name:
-                    data["us_stock_items"].append({
-                        "name": name, "qty": qty, "price": price,
-                        "mkt_val": mkt_val, "storage": storage
-                    })
-                elif "优必选" in name:
-                    data["hk_stock_items"].append({
-                        "name": name, "qty": qty, "price": price,
-                        "mkt_val": mkt_val, "storage": storage
-                    })
-                elif "小米" in name:
-                    data["hk_stock_items"].append({
-                        "name": name, "qty": qty, "price": price,
-                        "mkt_val": mkt_val, "storage": storage
-                    })
-                elif "科创50" in name:
-                    data["a_stock_items"].append({
-                        "name": name, "qty": qty, "price": price,
-                        "mkt_val": mkt_val, "storage": storage
-                    })
-                elif "创新药" in name:
-                    data["a_stock_items"].append({
-                        "name": name, "qty": qty, "price": price,
-                        "mkt_val": mkt_val, "storage": storage
-                    })
-                elif "小安" in name:
-                    data["ts_token_items"].append({
-                        "name": name, "qty": qty, "mkt_val": mkt_val
-                    })
-                elif "午饭" in name:
-                    data["ts_token_items"].append({
-                        "name": name, "qty": qty, "mkt_val": mkt_val
-                    })
-
-        # 按资产统计表 — 提取 CRCL 合计
-        if current_section.startswith("三、按资产统计"):
-            cells = _parse_markdown_table_row(stripped)
-            if cells and cells[0] == "Circle(CRCL)":
-                data["crcl_total_value"] = cells[3]
-                m = re.search(r"(\d+\.?\d*)%", cells[4] if len(cells) > 4 else "")
-                if m:
-                    data["crcl_concentration"] = f"{m.group(1)}% ⚠️"
-
-        # 负债表
-        if current_section.startswith("四、负债") or current_section == "四、负债":
-            cells = _parse_markdown_table_row(stripped)
-            if cells and len(cells) >= 2:
-                if "信用卡" in cells[0]:
-                    data["credit_card_debt"] = cells[1]
-
-        # 现金及固收表
-        if current_section.startswith("五、现金及固收"):
-            cells = _parse_markdown_table_row(stripped)
-            if cells and len(cells) >= 2:
-                if "家庭备用金" in cells[0]:
-                    data["cash_family"] = cells[1]
-                if "HK打新" in cells[0]:
-                    data["cash_hk"] = cells[1]
-                if "USDT" in cells[0]:
-                    data["cash_usdt"] = cells[1]
-                if "华盛通" in cells[0]:
-                    data["cash_hst"] = cells[1]
-
-        # 房贷
-        if current_section.startswith("七、房贷"):
-            cells = _parse_markdown_table_row(stripped)
-            if cells and len(cells) >= 2:
-                if "商贷" in cells[0]:
-                    m = re.search(r"¥?([\d,]+)", cells[1])
-                    if m:
-                        data["mortgage"] = data.get("mortgage", "") + f"商贷¥{m.group(1)}"
-                if "公积金" in cells[0]:
-                    m = re.search(r"¥?([\d,]+)", cells[1])
-                    if m:
-                        data["mortgage"] = data.get("mortgage", "") + (", " if data.get("mortgage") else "") + f"公积金¥{m.group(1)}"
-
-        # 外部信号看板 — 提取 CRCL 和 BTC 状态
-        if current_section.startswith("十一、外部信号"):
-            cells = _parse_markdown_table_row(stripped)
-            if cells and len(cells) >= 2:
-                if cells[0] == "买卖建议":
-                    if "CRCL" in data.get("crcl_status", "") or "CRCL" in current_section:
-                        data["crcl_status"] = cells[1]
-                    elif "BTC" in data.get("btc_status", "") or "BTC" in current_section:
-                        data["btc_status"] = cells[1]
-
-    # 解析 CRCL 看板中的买卖建议
-    # 从外部信号看板 section 找 CRCL 和 BTC 的买卖建议
-    crcl_found = False
-    btc_found = False
-    for i, line in enumerate(lines):
-        stripped = line.strip()
-        if stripped.startswith("### CRCL"):
-            crcl_found = True
-            btc_found = False
-            continue
-        if stripped.startswith("### BTC"):
-            btc_found = True
-            crcl_found = False
-            continue
-        if stripped.startswith("###"):
-            crcl_found = False
-            btc_found = False
-
-        if crcl_found and stripped.startswith("|"):
-            cells = _parse_markdown_table_row(stripped)
-            if cells and len(cells) >= 2:
-                if cells[0] == "买卖建议":
-                    data["crcl_status"] = cells[1]
-                elif cells[0] == "MA120":
-                    data["crcl_ma120"] = cells[1]
-                elif cells[0] == "当前价":
-                    if not data.get("crcl_price"):
-                        data["crcl_price"] = cells[1]
-
-        if btc_found and stripped.startswith("|"):
-            cells = _parse_markdown_table_row(stripped)
-            if cells and len(cells) >= 2:
-                if cells[0] == "买卖建议":
-                    data["btc_status"] = cells[1]
-                elif cells[0] == "MA120":
-                    data["btc_ma120"] = cells[1]
-                elif cells[0] == "当前价":
-                    if not data.get("btc_price"):
-                        data["btc_price"] = cells[1]
+    if not data:
+        log_error("holdings.yaml 为空")
+        return {}
 
     return data
 
 
-def extract_career_data(career_path):
-    """从职业发展档案中提取结构化数据"""
-    content = _read_file(career_path)
-    if not content:
-        return None
+# ======================================================================
+# 2. 读取最新投资报告
+# ======================================================================
 
-    data = {
-        "company": "新华三",
-        "role": "嵌入式开发工程师",
-        "experience": "**~9年**（爱博精电 6年 + 新华三 3年）",
-        "skills": "C语言、ARM/DSP架构、RTOS、Linux、Python、TFLM",
-        "core_abilities": "自研RTOS、TSN全协议栈、DSP汇编优化、AMP异构架构",
-        "focus": "工业嵌入式、通信设备底层，**非消费电子**",
-        "location": "**北京，优先海淀/昌平**（已在海淀买房）",
-        "target_salary": "50-70W总包",
-        "job_search_status": "已约 1 年，面试过 九号/ISHO/思朗",
-        "interview_method": "工程叙事四层结构: 本质→实践→踩坑→思考",
-        "target_companies": "小米、地平线、寒武纪、百度、字节跳动、联想、滴滴、三一重工、北汽新能源、京东方、理想汽车、石头科技、美团",
-        "family_location": "北京",
-        "hukou": "非京籍 (内蒙古)",
-        "children": "有孩子 (在京上学)",
-        "spouse": "已婚 (薛燕)",
-        "real_estate": "北京海淀住宅 ¥320W (购入2025年底)",
-        "mortgage_commercial": "¥400,000",
-        "mortgage_fund": "¥1,400,000",
-        "hanwei_zhongji": "达尔文50W (¥6,960/年, 2026-06-15生效)",
-        "hanwei_dingshou": "待配置 (目标200W保额)",
-        "xueyan_zhongji": "待配置 (目标30-50W保额)",
-    }
+def load_latest_report(reports_dir):
+    if not os.path.isdir(reports_dir):
+        log_error(f"报告目录不存在: {reports_dir}")
+        return ""
 
-    lines = content.split("\n")
+    files = sorted(glob.glob(os.path.join(reports_dir, "*.md")), reverse=True)
+    if not files:
+        log_error(f"报告目录下无 .md 文件: {reports_dir}")
+        return ""
 
-    # 从当前画像表提取数据
-    in_profile_table = False
-    for i, line in enumerate(lines):
+    path = files[0]
+    log_info(f"读取最新报告: {os.path.basename(path)}")
+    with open(path, "r", encoding="utf-8") as f:
+        return f.read()
+
+
+# ======================================================================
+# 3. 从报告解析表格数据
+# ======================================================================
+
+def _parse_report_table(report_content, section_heading, col_count=None):
+    """
+    从 markdown 表格行中提取数据，按 section heading 定位
+    返回 [{col1: val, col2: val, ...}] 字典列表
+    """
+    lines = report_content.split("\n")
+    in_section = False
+    in_table = False
+    rows = []
+    header = []
+
+    for line in lines:
         stripped = line.strip()
 
-        if stripped == "| 维度 | 现状 |":
-            in_profile_table = True
-            continue
-        if stripped.startswith("|---"):
+        # 检测 section 标题 (支持 "## 一、资产总览" 和 "## 资产总览（含XXX）" 等)
+        if not in_section:
+            # 行内包含目标章节名且是二级标题
+            if stripped.startswith("## ") and section_heading in stripped:
+                in_section = True
+                continue
+            # 也支持 "### " 级别
+            if stripped.startswith("##") and section_heading in stripped:
+                in_section = True
+                continue
+
+        if not in_section:
             continue
 
-        if in_profile_table:
-            cells = _parse_markdown_table_row(stripped)
-            if cells and len(cells) >= 2:
-                key = cells[0]
-                val = cells[1]
-                if key == "总经验":
-                    data["experience"] = val
-                elif key == "S级能力":
-                    data["core_abilities"] = val
-                elif key == "技能栈":
-                    data["skills"] = val
-                elif key == "行业聚焦":
-                    data["focus"] = val
-                elif key == "地点约束":
-                    data["location"] = val
-                elif key == "职业路径":
-                    pass
-            elif not stripped.startswith("|"):
-                in_profile_table = False
+        # 检测下一个 section 标题
+        if stripped.startswith("#") and not stripped.startswith("###"):
+            break
 
-    # 薪资预期
-    for line in lines:
-        m = re.search(r'建议范围\s*\*\*¥?([\d,]+)\s*[-~]\s*¥?([\d,]+)W?\*', line)
-        if m:
-            data["target_salary"] = f"{m.group(1)}-{m.group(2)}W总包"
+        # 跳过空行
+        if not stripped:
+            in_table = False
+            continue
+
+        # 表格行
+        if stripped.startswith("|") and stripped.endswith("|"):
+            cells = [c.strip() for c in stripped.split("|")[1:-1]]
+
+            # 跳过分隔行
+            if all(c.replace("-", "").replace(":", "").strip() == "" for c in cells):
+                continue
+
+            if not in_table:
+                # 第一行是表头
+                header = cells
+                in_table = True
+                continue
+
+            if col_count and len(cells) != col_count:
+                continue
+
+            row = {}
+            for i, h in enumerate(header):
+                val = cells[i] if i < len(cells) else ""
+                row[h] = val
+            rows.append(row)
+
+    return rows, header
+
+
+def _parse_overview(report_content):
+    """解析 资产总览 表 → {label: value}"""
+    rows, _ = _parse_report_table(report_content, "资产总览", col_count=3)
+    result = {}
+    for row in rows:
+        keys = list(row.keys())
+        if len(keys) >= 2:
+            label = row[keys[0]].strip("*").replace("**", "")
+            val = row[keys[1]].strip("*").replace("**", "")
+            result[label] = val
+    return result
+
+
+def _parse_investment_detail(report_content):
+    """解析 投资资产明细 表 → {name: {price, mkt_value, ...}}"""
+    rows, header = _parse_report_table(report_content, "投资资产明细")
+    result = {}
+    for row in rows:
+        keys = list(row.keys())
+        if len(keys) < 3:
+            continue
+        name = row[keys[0]].strip("*").replace("**", "")
+        price = row.get("当前单价", row.get(keys[2], "$—"))
+        mkt_value = ""
+        for k in keys:
+            if "市值" in k or "市值(CNY)" in k:
+                mkt_value = row[k]
+                break
+        storage = ""
+        for k in keys:
+            if "存放" in k:
+                storage = row.get(k, "")
+                break
+
+        # 提取纯价格数字 — 保留原始货币符号
+        price_clean = price
+        if "$" not in price and "HK$" not in price and "¥" not in price and "￥" not in price:
+            m = re.search(r'([\d,]+\.?\d*)', price)
+            if m:
+                price_clean = f"${m.group(1)}"
+        # 已有货币符号则保持原样
+
+        result[name] = {
+            "price": price_clean,
+            "mkt_value": mkt_value,
+        }
+
+        # 按标的分类存储位置
+        for k in keys:
+            if "存放" in k:
+                result[name]["storage"] = row.get(k, "")
+
+    return result
+
+
+def _parse_asset_summary(report_content):
+    """解析 按资产统计 表 → {asset: {qty, avg_price, mkt_value, pct}}"""
+    rows, _ = _parse_report_table(report_content, "按资产统计")
+    result = {}
+    for row in rows:
+        keys = list(row.keys())
+        if len(keys) < 2:
+            continue
+        name = row[keys[0]].strip("*").replace("**", "")
+        pct = ""
+        for k in keys:
+            if "占投资比" in k:
+                pct = row.get(k, "")
+                break
+        mkt_val = ""
+        for k in keys:
+            if "市值" in k:
+                mkt_val = row.get(k, "")
+                break
+        result[name] = {
+            "pct": pct,
+            "mkt_value": mkt_val,
+        }
+    return result
+
+
+# ======================================================================
+# 4. 读取职业发展档案
+# ======================================================================
+
+def load_career_profile(path):
+    if not os.path.isfile(path):
+        log_error(f"职业发展档案不存在: {path}")
+        return {}
+
+    with open(path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    career = {}
+    for line in content.split("\n"):
+        line_s = line.strip()
+        if line_s.startswith("|") and line_s.endswith("|"):
+            cells = [c.strip() for c in line_s.split("|")[1:-1]]
+            if len(cells) == 2:
+                key, val = cells
+                val_clean = val.replace("**", "")
+                if "总经验" in key:
+                    career["experience"] = val_clean
+                elif "技能栈" in key:
+                    career["skills"] = val_clean
+                elif "核心能力" in key:
+                    career["core_abilities"] = val_clean
+                elif "行业聚焦" in key:
+                    career["focus"] = val_clean
+                elif "地点约束" in key:
+                    career["location"] = val_clean
+                elif "求职" in key:
+                    career["job_search"] = val_clean
+
+    m = re.search(r'薪资预期[：:].*?(\d+[Ww]-\d+[Ww]总包|\d+-\d+W)', content)
+    if m:
+        career["salary"] = m.group(1)
+
+    career["role"] = "嵌入式开发工程师"
 
     # 目标公司
-    for i, line in enumerate(lines):
-        if "目标公司" in line and "修正版" in line:
-            # 读取表格中列出的公司
-            for j in range(i, min(i + 30, len(lines))):
-                cells = _parse_markdown_table_row(lines[j])
-                if cells and len(cells) >= 2:
-                    company = cells[0].strip()
-                    if company and company not in ("公司", "赛道", "备注"):
-                        # 简单过滤有效的公司名
-                        if not any(c in company for c in ("|", "---", "公司", "赛道", "为什么")):
-                            pass
+    target_companies = []
+    in_target = False
+    for line in content.split("\n"):
+        if "目标公司" in line and ("海淀" in line or "昌平" in line or "北京" in line):
+            in_target = True
+            continue
+        if in_target:
+            if line.strip().startswith("|") and "|" in line:
+                cells = [c.strip() for c in line.split("|")[1:-1]]
+                if len(cells) >= 2:
+                    company = cells[0]
+                    if company and company not in ("公司", "公司名称"):
+                        target_companies.append(company)
+            elif line.strip().startswith("---"):
+                continue
+            elif not line.strip().startswith("|"):
+                break
+    if target_companies:
+        career["target_companies"] = target_companies
 
-    return data
+    if "工程叙事" in content:
+        career["interview_method"] = "工程叙事四层结构: 本质→实践→踩坑→思考"
+
+    return career
 
 
 # ======================================================================
-# 变更记录生成
+# 5. 生成归档 Markdown
 # ======================================================================
 
-def _parse_previous_profile(prev_path):
-    """解析前一天的 profile 归档，提取关键指标做对比"""
-    content = _read_file(prev_path)
-    if not content:
-        return None
+def build_profile(holdings, report_content, career):
+    date_label = TODAY_LABEL
 
-    lines = content.split("\n")
-    prev = {
-        "total_assets": None,
-        "net_assets": None,
-        "investment_assets": None,
-        "crcl_price": None,
-        "crcl_concentration": None,
-        "btc_price": None,
-        "data_source": None,
-        "career_file": None,
-        "last_sync": None,
-        "btc_market_value": None,
-        "crcl_total_value": None,
-    }
+    # 从报告解析表格
+    overview = _parse_overview(report_content)
+    detail = _parse_investment_detail(report_content)
+    summary = _parse_asset_summary(report_content)
 
-    in_metrics = False
-    for line in lines:
-        stripped = line.strip()
-        if stripped == "### 关键指标":
-            in_metrics = True
-            continue
-        if stripped.startswith("## ") and in_metrics:
-            in_metrics = False
+    # 关键指标
+    total_assets = overview.get("总资产", "—")
+    net_assets = overview.get("净资产", "—")
+    investment_assets = overview.get("投资总资产", "—")
 
-        if in_metrics:
-            cells = _parse_markdown_table_row(stripped)
-            if cells and len(cells) >= 2:
-                key, val = cells[0], cells[1]
-                if key == "总资产":
-                    prev["total_assets"] = val
-                elif key == "净资产":
-                    prev["net_assets"] = val
-                elif key == "投资总资产":
-                    prev["investment_assets"] = val
-                elif key == "CRCL集中度":
-                    prev["crcl_concentration"] = val
-                elif key == "BTC占投资比":
-                    pass
+    # ----- 持仓数据 -----
+    h = holdings.get("holdings", [])
+    cash_data = holdings.get("cash", [])
+    liabilities = holdings.get("liabilities", [])
+    fixed = holdings.get("fixed_assets", [])
 
-        # 从美股表中提取 CRCL 价格
-        cells = _parse_markdown_table_row(stripped)
-        if cells and len(cells) >= 3 and "Circle(CRCL合计)" in cells[0]:
-            prev["crcl_price"] = cells[2]
-            prev["crcl_total_value"] = cells[3]
-        if cells and len(cells) >= 3 and "比特币" in cells[0]:
-            prev["btc_price"] = cells[2]
-            prev["btc_market_value"] = cells[3]
+    crypto_items = [x for x in h if x.get("category") in ("crypto",)]
+    us_stock_items = [x for x in h if x.get("category") in ("us_stock", "us_stock_tokenized")]
+    hk_stock_items = [x for x in h if x.get("category") == "hk_stock"]
+    a_stock_items = [x for x in h if x.get("category") == "a_stock"]
+    ts_items = [x for x in h if x.get("category") == "ts_time_token"]
 
-    # 从变更记录中提取数据源
-    in_changelog = False
-    for line in lines:
-        stripped = line.strip()
-        if stripped == "## 本次更新变更记录":
-            in_changelog = True
-            continue
-        if stripped.startswith("## ") and in_changelog:
-            break
-        if in_changelog:
-            cells = _parse_markdown_table_row(stripped)
-            if cells and len(cells) >= 4:
-                if cells[0] == "数据源" and "月度报告" in cells[2]:
-                    prev["data_source"] = cells[3]
-                elif cells[0] == "职业档案":
-                    prev["career_file"] = cells[3]
-                elif cells[0] == "profile.last_sync":
-                    if cells[3] and "每日" in cells[3]:
-                        prev["last_sync"] = cells[3].split(" ")[0] if " " in cells[3] else cells[3]
+    crcl_items = [x for x in h if x.get("symbol") == "CRCL"]
+    crcl_total_qty = sum(x.get("quantity", 0) for x in crcl_items)
 
-    return prev
+    # 现金
+    cash_family = cash_hk = cash_usdt = cash_wst = ""
+    for c in cash_data:
+        n = c.get("name", "")
+        if "备用金" in n or "活期" in n or "货基" in n:
+            cash_family = c.get("amount_cny", "")
+        elif "HK" in n or "打新" in n:
+            cash_hk = c.get("amount_hkd", "")
+        elif "USDT" in n or "币安" in n:
+            cash_usdt = c.get("amount_usd", "")
+        elif "华盛" in n:
+            cash_wst = c.get("amount_usd", "")
 
+    # 负债
+    mortgage_commercial = mortgage_fund = credit_card = ""
+    for l in liabilities:
+        n = l.get("name", "")
+        if "商贷" in n:
+            mortgage_commercial = "¥{:,.0f}".format(l.get("amount_cny", 0))
+        elif "公积金" in n:
+            mortgage_fund = "¥{:,.0f}".format(l.get("amount_cny", 0))
+        elif "信用卡" in n:
+            credit_card = "¥{:,.0f}".format(l.get("amount_cny", 0))
 
-def _compute_changes(prev_data, current_data, today_str, report_path):
-    """计算变更记录"""
-    changes = []
-    report_name = os.path.basename(report_path)
+    house_value = ""
+    for fa in fixed:
+        if "北京" in fa.get("name", ""):
+            house_value = "¥{:,.0f}".format(fa.get("value_cny", 0))
 
-    # 基础同步记录
-    prev_sync = prev_data.get("last_sync") if prev_data else None
-    changes.append(("profile.last_sync", prev_sync or "N/A", today_str, "每日自动归档"))
+    # ----- 职业信息 -----
+    exp = career.get("experience", "~9年")
+    skills = career.get("skills", "C语言、ARM/DSP架构、RTOS、Linux、Python、TFLM")
+    core = career.get("core_abilities", "自研RTOS、TSN全协议栈、DSP汇编优化、AMP异构架构")
+    focus = career.get("focus", "工业嵌入式、通信设备底层，非消费电子")
+    location = career.get("location", "北京，优先海淀/昌平（已在海淀买房）")
+    salary = career.get("salary", "50-70W总包")
+    job_search = career.get("job_search", "已约 1 年，MS过 九号/ISHO/思朗")
+    targets_str = "、".join(career.get("target_companies", ["小米", "地平线", "寒武纪", "百度", "字节跳动", "联想", "滴滴", "三一重工", "北汽新能源", "京东方", "理想汽车", "石头科技", "美团"]))
+    interview_method = career.get("interview_method", "工程叙事四层结构: 本质→实践→踩坑→思考")
 
-    # 总资产变动
-    if prev_data and prev_data["total_assets"] and current_data.get("total_assets"):
-        old_val = prev_data["total_assets"]
-        new_val = current_data["total_assets"]
+    # 保险 & 家庭
+    hukou = "非京籍 (内蒙古)"
+    children = "有孩子 (在京上学)"
+    spouse = "已婚 (薛燕)"
+    hanwei_zhongji = "达尔文50W (¥6,960/年, 2026-06-15生效)"
+    hanwei_dingshou = "待配置 (目标200W保额)"
+    xueyan_zhongji = "待配置 (目标30-50W保额)"
 
-        # 尝试计算差值
-        old_num = _extract_number(old_val)
-        new_num = _extract_number(new_val)
-        if old_num and new_num:
-            diff = new_num - old_num
-            pct = (diff / old_num * 100) if old_num else 0
-            changes.append(("总资产", old_val, new_val,
-                           f"{'+'if diff>=0 else ''}{diff:,.0f} ({'+'if pct>=0 else ''}{pct:.1f}%)"))
-        else:
-            changes.append(("总资产", old_val, new_val, "更新"))
-
-    # 净资产变动
-    if prev_data and prev_data["net_assets"] and current_data.get("net_assets"):
-        old_val = prev_data["net_assets"]
-        new_val = current_data["net_assets"]
-        old_num = _extract_number(old_val)
-        new_num = _extract_number(new_val)
-        if old_num and new_num:
-            diff = new_num - old_num
-            pct = (diff / old_num * 100) if old_num else 0
-            changes.append(("净资产", old_val, new_val,
-                           f"{'+'if diff>=0 else ''}{diff:,.0f} ({'+'if pct>=0 else ''}{pct:.1f}%)"))
-        else:
-            changes.append(("净资产", old_val, new_val, "更新"))
-
-    # 投资总资产变动
-    if prev_data and prev_data.get("investment_assets") and current_data.get("investment_assets"):
-        changes.append(("投资总资产", prev_data["investment_assets"],
-                       current_data["investment_assets"], "更新"))
-
-    # CRCL 价格变动
-    if prev_data and prev_data.get("crcl_price") and current_data.get("crcl_price"):
-        old_p = prev_data["crcl_price"]
-        new_p = current_data["crcl_price"]
-        old_num = _extract_number(old_p)
-        new_num = _extract_number(new_p)
-        if old_num and new_num:
-            diff = new_num - old_num
-            pct = (diff / old_num * 100) if old_num else 0
-            changes.append(("CRCL价格", old_p, new_p,
-                           f"{'+'if diff>=0 else ''}{pct:.1f}%"))
-        else:
-            changes.append(("CRCL价格", old_p, new_p, "更新"))
-
-    # CRCL 集中度变动
-    if prev_data and prev_data.get("crcl_concentration") and current_data.get("crcl_concentration"):
-        old_c = prev_data["crcl_concentration"]
-        new_c = current_data["crcl_concentration"]
-        old_num = _extract_number(old_c)
-        new_num = _extract_number(new_c)
-        if old_num is not None and new_num is not None:
-            if new_num > old_num:
-                direction = "上升⚠️"
-            elif new_num < old_num:
-                direction = "下降"
-            else:
-                direction = "持平"
-        else:
-            direction = "更新"
-        changes.append(("CRCL占比", old_c, new_c, f"集中度{direction}"))
-
-    # BTC 价格变动
-    if prev_data and prev_data.get("btc_price") and current_data.get("btc_price"):
-        old_p = prev_data["btc_price"]
-        new_p = current_data["btc_price"]
-        old_num = _extract_number(old_p)
-        new_num = _extract_number(new_p)
-        if old_num and new_num:
-            diff = new_num - old_num
-            pct = (diff / old_num * 100) if old_num else 0
-            changes.append(("BTC价格", old_p, new_p,
-                           f"{'+'if diff>=0 else ''}{pct:.1f}%"))
-        else:
-            changes.append(("BTC价格", old_p, new_p, "更新"))
-
-    # 数据源
-    changes.append(("数据源", prev_data.get("data_source", "N/A") if prev_data else "N/A",
-                   report_name, f"更新至{report_name}"))
-
-    # 职业档案
-    changes.append(("职业档案",
-                   prev_data.get("career_file", "个人职业发展分析-端侧AI企业定制攻略.md") if prev_data else "N/A",
-                   "个人职业发展分析-端侧AI企业定制攻略.md", "无变更"))
-
-    return changes
-
-
-def _extract_number(s):
-    """从字符串中提取数值（如 '¥1,334,174' → 1334174.0）"""
-    if not s:
-        return None
-    s = s.replace("**", "").replace("¥", "").replace("$", "").replace("HK$", "")
-    s = s.replace(",", "").replace("%", "").strip()
-    # 移除 emoji 和其他非数字字符（保留 . 和 -）
-    s = re.sub(r'[^\d.\-]', '', s)
-    if not s:
-        return None
+    # ----- A8 -----
+    a8_current = net_assets if net_assets and net_assets != "—" else "¥1,334,174"
     try:
-        return float(s)
-    except ValueError:
-        return None
+        a8_pct = float(a8_current.replace("¥", "").replace("￥", "").replace(",", "")) / 10_000_000 * 100
+        a8_pct_str = f"{a8_pct:.1f}%"
+    except:
+        a8_pct_str = "13.3%"
 
+    btc_qty = 0
+    for item in h:
+        if item.get("symbol") == "BTC":
+            btc_qty = item.get("quantity", 0)
+    btc_pct = btc_qty / 2.32 * 100 if btc_qty else 0
 
-# ======================================================================
-# 归档生成
-# ======================================================================
+    # CRCL集中度 — 从 按资产统计 表提取
+    crcl_concentration = "—"
+    for name, info in summary.items():
+        if "CRCL" in name.upper() or "Circle" in name:
+            crcl_concentration = info.get("pct", "—")
+            if crcl_concentration and crcl_concentration != "—":
+                crcl_concentration = crcl_concentration.strip() + " ⚠️"
+            break
+    if crcl_concentration == "—" or crcl_concentration == " ⚠️":
+        crcl_concentration = "≈70% ⚠️"
 
-def generate_profile(today, report_data, career_data, changes):
-    """生成完整 profile markdown 内容"""
-    today_str = today.strftime("%Y-%m-%d")
-    today_compact = today.strftime("%Y%m%d")
+    # 构建 changelog
+    latest_report_basename = ""
+    report_files = sorted(glob.glob(os.path.join(REPORTS_DIR, "*.md")), reverse=True)
+    if report_files:
+        latest_report_basename = os.path.basename(report_files[0])
 
+    changelog = [
+        ("profile.last_sync", "—", TODAY_LABEL, "每日自动归档"),
+        ("数据源", "—", latest_report_basename or "—", "更新至最新报告"),
+        ("职业档案", "无变更", "个人职业发展分析-端侧AI企业定制攻略.md", "无变更"),
+    ]
+
+    # ==================================================================
+    # 构建 Markdown
+    # ==================================================================
     lines = []
-    lines.append(f"# 个人画像归档 - {today_str}")
+    lines.append(f"# 个人画像归档 - {TODAY_LABEL}")
     lines.append("")
-
-    # =========================================================
-    # 投资持仓概览
-    # =========================================================
     lines.append("## 投资持仓概览")
     lines.append("")
 
-    # 加密货币
-    lines.append("### 加密货币")
-    lines.append("| 标的 | 数量 | 当前价(USD) | 市值(CNY) | 存放 |")
-    lines.append("|------|------|------------|-----------|------|")
-    btc_name = "比特币(链上)"
-    btc_qty = report_data.get("btc_qty", "0.12980465")
-    btc_price = report_data.get("btc_price", "-")
-    btc_val = report_data.get("btc_market_value", "-")
-    lines.append(f"| {btc_name} | {btc_qty} | {btc_price} | {btc_val} | 链上钱包 |")
+    # --- 加密货币 ---
+    crypto_lines = ["### 加密货币", "| 标的 | 数量 | 当前价(USD) | 市值(CNY) | 存放 |",
+                    "|------|------|------------|-----------|------|"]
+    for item in crypto_items:
+        symbol = item.get("symbol", "")
+        name_orig = item.get("name", "")
+        if symbol == "BTC":
+            label = "BTC(链上)"
+        elif symbol == "MILADY":
+            label = "MILADY NFT(链上)"
+        else:
+            label = name_orig
+        qty = item.get("quantity", 0)
+        unit = item.get("unit", "")
+        qty_str = f"{qty:,}{' ' + unit if unit else ''}" if qty else "0"
+        storage = item.get("storage", "")
+        # 从报告 detail 取价格
+        price_str = "$—"
+        mkt_val = "—"
+        for dname, dinfo in detail.items():
+            if item.get("symbol", "").lower() in dname.lower() or item.get("name", "").lower() in dname.lower():
+                price_str = dinfo.get("price", "$—")
+                mkt_val = dinfo.get("mkt_value", "—")
+                break
+        crypto_lines.append(f"| {label} | {qty_str} | {price_str} | {mkt_val} | {storage} |")
 
-    milady_price = report_data.get("milady_price", "-")
-    milady_val = report_data.get("milady_value", "-")
-    lines.append(f"| Milady NFT(链上) | 1个 | {milady_price} | {milady_val} | 链上钱包 |")
-
-    for item in report_data.get("crypto_items", []):
-        lines.append(f"| {item['name']} | {item['qty']} | {item['price']} | {item['mkt_val']} | {item['storage']} |")
+    # USDT 行
+    if cash_usdt:
+        usdt_val = float(cash_usdt) if isinstance(cash_usdt, (int, float)) else 0
+        crypto_lines.append(f"| USDT(币安) | ${usdt_val:,.0f} | $1.00 | — | 币安 |")
+    lines.extend(crypto_lines)
     lines.append("")
 
-    # 美股
-    lines.append("### 美股")
-    lines.append("| 标的 | 数量 | 当前价(USD) | 市值(CNY) | 存放 |")
-    lines.append("|------|------|------------|-----------|------|")
+    # --- 美股 ---
+    us_lines = ["### 美股", "| 标的 | 数量 | 当前价(USD) | 市值(CNY) | 存放 |",
+                "|------|------|------------|-----------|------|"]
 
-    crcl_total_val = report_data.get("crcl_total_value", "-")
-    crcl_price = report_data.get("crcl_price", "-")
-    lines.append(f"| Circle(CRCL合计) | 1,008.5 | {crcl_price} | {crcl_total_val} | 分散多账户 |")
+    # CRCL 合计（从 detail 取价格）
+    crcl_price = "$—"
+    crcl_mkt = "—"
+    for dname, dinfo in detail.items():
+        if "CRCL" in dname.upper() or "Circle" in dname:
+            if "合计" not in dname:
+                crcl_price = dinfo.get("price", "$—")
+                crcl_mkt = dinfo.get("mkt_value", "—")
+            break
+    us_lines.append(f"| Circle(CRCL合计) | {crcl_total_qty:,.1f} | {crcl_price} | — | 分散多账户 |")
 
-    for item in report_data.get("us_stock_items", []):
-        lines.append(f"| {item['name']} | {item['qty']} | {item['price']} | {item['mkt_val']} | {item['storage']} |")
+    for item in us_stock_items:
+        name = item.get("name", "")
+        qty = item.get("quantity", 0)
+        qty_str = f"{qty:,.1f}" if qty == int(qty) else f"{qty:,}"
+        storage = item.get("storage", "")
+        # 从 detail 取价格
+        us_price = "$—"
+        for dname, dinfo in detail.items():
+            if item.get("name", "").lower() in dname.lower() or item.get("symbol", "").lower() in dname.lower():
+                us_price = dinfo.get("price", "$—")
+                break
+        us_lines.append(f"| {name} | {qty_str} | {us_price} | — | {storage} |")
+    lines.extend(us_lines)
     lines.append("")
 
-    # 港股
-    lines.append("### 港股")
-    lines.append("| 标的 | 数量 | 当前价 | 市值(CNY) | 存放 |")
-    lines.append("|------|------|-------|-----------|------|")
-    for item in report_data.get("hk_stock_items", []):
-        lines.append(f"| {item['name']} | {item['qty']} | {item['price']} | {item['mkt_val']} | {item['storage']} |")
+    # --- 港股 ---
+    hk_lines = ["### 港股", "| 标的 | 数量 | 当前价 | 市值(CNY) | 存放 |",
+                "|------|------|-------|-----------|------|"]
+    for item in hk_stock_items:
+        name = item.get("name", "")
+        qty = item.get("quantity", 0)
+        storage = item.get("storage", "")
+        hk_price = "—"
+        for dname, dinfo in detail.items():
+            if item.get("name", "").lower() in dname.lower() or item.get("symbol", "").lower() in dname.lower():
+                hk_price = dinfo.get("price", "—")
+                break
+        hk_lines.append(f"| {name} | {qty} | {hk_price} | — | {storage} |")
+    lines.extend(hk_lines)
     lines.append("")
 
-    # A股
-    lines.append("### A股")
-    lines.append("| 标的 | 数量 | 当前价 | 市值(CNY) | 存放 |")
-    lines.append("|------|------|-------|-----------|------|")
-    for item in report_data.get("a_stock_items", []):
-        lines.append(f"| {item['name']} | {item['qty']} | {item['price']} | {item['mkt_val']} | {item['storage']} |")
+    # --- A股 ---
+    a_lines = ["### A股", "| 标的 | 数量 | 当前价 | 市值(CNY) | 存放 |",
+               "|------|------|-------|-----------|------|"]
+    for item in a_stock_items:
+        name = item.get("name", "")
+        qty = item.get("quantity", 0)
+        storage = item.get("storage", "")
+        a_price = "—"
+        for dname, dinfo in detail.items():
+            if item.get("name", "").lower() in dname.lower() or item.get("symbol", "").lower() in dname.lower():
+                a_price = dinfo.get("price", "—")
+                break
+        a_lines.append(f"| {name} | {qty:,} | {a_price} | — | {storage} |")
+    lines.extend(a_lines)
     lines.append("")
 
-    # TS时间代币
-    lines.append("### TS时间代币")
-    lines.append("| 标的 | 数量 | 市值(CNY) |")
-    lines.append("|------|------|-----------|")
-    for item in report_data.get("ts_token_items", []):
-        lines.append(f"| {item['name']} | {item['qty']} | {item['mkt_val']} |")
+    # --- TS时间代币 ---
+    ts_lines = ["### TS时间代币", "| 标的 | 数量 | 市值(CNY) |",
+                "|------|------|-----------|"]
+    for item in ts_items:
+        name = item.get("name", "")
+        qty = item.get("quantity", 0)
+        unit = item.get("unit", "")
+        qty_str = f"{qty:,}{unit}" if unit else str(qty)
+        ts_mkt = "—"
+        for dname, dinfo in detail.items():
+            if item.get("name", "").lower() in dname.lower():
+                ts_mkt = dinfo.get("mkt_value", "—")
+                break
+        ts_lines.append(f"| {name} | {qty_str} | {ts_mkt} |")
+    lines.extend(ts_lines)
     lines.append("")
 
-    # 关键指标
-    lines.append("### 关键指标")
-    lines.append("| 指标 | 数值 |")
-    lines.append("|------|------|")
-    lines.append(f"| 总资产 | {report_data.get('total_assets', '-')} |")
-    lines.append(f"| 净资产 | {report_data.get('net_assets', '-')} |")
-    lines.append(f"| 投资总资产 | {report_data.get('investment_assets', '-')} |")
-    lines.append(f"| 家庭备用金 | {report_data.get('cash_family', '-')} |")
-    lines.append(f"| HK打新资金 | {report_data.get('cash_hk', '-')} |")
-    lines.append(f"| USDT余额 | {report_data.get('cash_usdt', '-')} |")
-    lines.append(f"| 华盛通现金 | {report_data.get('cash_hst', '-')} |")
-    lines.append(f"| 信用卡负债 | {report_data.get('credit_card_debt', '-')} |")
-    # BTC占比
-    btc_val_num = _extract_number(btc_val)
-    invest_val_num = _extract_number(report_data.get("investment_assets", "0"))
-    if btc_val_num and invest_val_num and invest_val_num > 0:
-        btc_pct = btc_val_num / invest_val_num * 100
-        lines.append(f"| BTC占投资比 | {btc_pct:.1f}% |")
-    else:
-        lines.append(f"| BTC占投资比 | - |")
-    # CRCL占比
-    crcl_conc = report_data.get("crcl_concentration", "70.7% ⚠️")
-    lines.append(f"| CRCL集中度 | {crcl_conc} |")
-    lines.append(f"| 房贷总额 | ¥400,000+¥1,400,000 |")
+    # --- 关键指标 ---
+    usdt_fmt = ""
+    if cash_usdt:
+        usdt_val = float(cash_usdt) if isinstance(cash_usdt, (int, float)) else 0
+        usdt_fmt = f"${usdt_val:,.0f} (≈¥{usdt_val * META_USD_CNY:,.0f})"
+
+    wst_fmt = ""
+    if cash_wst:
+        wst_val = float(cash_wst) if isinstance(cash_wst, (int, float)) else 0
+        wst_fmt = f"${wst_val:,.0f} (≈¥{wst_val * META_USD_CNY:,.0f})"
+
+    cash_family_fmt = f"¥{int(cash_family):,}" if cash_family else "—"
+    cash_hk_fmt = ""
+    if cash_hk:
+        hk_val = float(cash_hk) if isinstance(cash_hk, (int, float)) else 0
+        cash_hk_fmt = f"HK${hk_val:,.0f} (≈¥{hk_val * META_HKD_CNY:,.0f})"
+
+    # BTC占投资比 — 从 summary 表取
+    btc_invest_pct = "—"
+    for name, info in summary.items():
+        if "BTC" in name.upper() or "比特币" in name:
+            btc_invest_pct = info.get("pct", "—")
+            break
+
+    metrics_lines = [
+        "### 关键指标",
+        "| 指标 | 数值 |",
+        "|------|------|",
+        f"| 总资产 | **{total_assets}** |",
+        f"| 净资产 | **{net_assets}** |",
+        f"| 投资总资产 | **{investment_assets}** |",
+        f"| 家庭备用金 | {cash_family_fmt} |",
+        f"| HK打新资金 | {cash_hk_fmt} |",
+        f"| USDT余额 | {usdt_fmt} |",
+        f"| 华盛通现金 | {wst_fmt} |",
+        f"| 信用卡负债 | {credit_card} |",
+        f"| BTC占投资比 | {btc_invest_pct} |",
+        f"| CRCL集中度 | {crcl_concentration} |",
+        f"| 房贷总额 | {mortgage_commercial}+{mortgage_fund} |",
+    ]
+    lines.extend(metrics_lines)
     lines.append("")
 
-    # =========================================================
-    # 职业发展画像
-    # =========================================================
-    lines.append("## 职业发展画像")
-    lines.append("")
-    lines.append("| 维度 | 内容 |")
-    lines.append("|------|------|")
-    lines.append(f"| 当前公司 | {career_data.get('company', '新华三')} |")
-    lines.append(f"| 当前角色 | {career_data.get('role', '嵌入式开发工程师')} |")
-    lines.append(f"| 经验 | {career_data.get('experience', '**~9年**（爱博精电 6年 + 新华三 3年）')} |")
-    lines.append(f"| 技能栈 | {career_data.get('skills', 'C语言、ARM/DSP架构、RTOS、Linux、Python、TFLM')} |")
-    lines.append(f"| 核心能力 | {career_data.get('core_abilities', '自研RTOS、TSN全协议栈、DSP汇编优化、AMP异构架构')} |")
-    lines.append(f"| 行业聚焦 | {career_data.get('focus', '工业嵌入式、通信设备底层，**非消费电子**')} |")
-    lines.append(f"| 地点约束 | {career_data.get('location', '**北京，优先海淀/昌平**（已在海淀买房）')} |")
-    lines.append(f"| 目标薪资 | {career_data.get('target_salary', '50-70W总包')} |")
-    lines.append(f"| 求职状态 | {career_data.get('job_search_status', '已约 1 年，面试过 九号/ISHO/思朗')} |")
-    lines.append(f"| 面试方法论 | {career_data.get('interview_method', '工程叙事四层结构: 本质→实践→踩坑→思考')} |")
-    lines.append(f"| 目标公司 | {career_data.get('target_companies', '小米、地平线、寒武纪、百度、字节跳动、联想、滴滴、三一重工、北汽新能源、京东方、理想汽车、石头科技、美团')} |")
-    lines.append("")
-
-    # =========================================================
-    # 家庭与保险
-    # =========================================================
-    lines.append("## 家庭与保险")
-    lines.append("")
-    lines.append("| 项目 | 内容 |")
-    lines.append("|------|------|")
-    lines.append(f"| 居住地 | {career_data.get('family_location', '北京')} |")
-    lines.append(f"| 户籍 | {career_data.get('hukou', '非京籍 (内蒙古)')} |")
-    lines.append(f"| 子女 | {career_data.get('children', '有孩子 (在京上学)')} |")
-    lines.append(f"| 配偶 | {career_data.get('spouse', '已婚 (薛燕)')} |")
-    lines.append(f"| 房产 | {career_data.get('real_estate', '北京海淀住宅 ¥320W (购入2025年底)')} |")
-    lines.append(f"| 房贷商贷 | ¥400,000 |")
-    lines.append(f"| 房贷公积金 | ¥1,400,000 |")
-    lines.append(f"| hanwei_zhongji | {career_data.get('hanwei_zhongji', '达尔文50W (¥6,960/年, 2026-06-15生效)')} |")
-    lines.append(f"| hanwei_dingshou | {career_data.get('hanwei_dingshou', '待配置 (目标200W保额)')} |")
-    lines.append(f"| xueyan_zhongji | {career_data.get('xueyan_zhongji', '待配置 (目标30-50W保额)')} |")
+    # --- 职业发展画像 ---
+    career_lines = [
+        "## 职业发展画像", "",
+        "| 维度 | 内容 |",
+        "|------|------|",
+        f"| 当前公司 | 新华三 |",
+        f"| 当前角色 | 嵌入式开发工程师 |",
+        f"| 经验 | ~{exp}" if not exp.startswith("~") else f"| 经验 | {exp} |",
+        f"| 技能栈 | {skills} |",
+        f"| 核心能力 | {core} |",
+        f"| 行业聚焦 | {focus} |",
+        f"| 地点约束 | {location} |",
+        f"| 目标薪资 | {salary} |",
+        f"| 求职状态 | {job_search} |",
+        f"| 面试方法论 | {interview_method} |",
+        f"| 目标公司 | {targets_str} |",
+    ]
+    lines.extend(career_lines)
     lines.append("")
 
-    # =========================================================
-    # A8计划进度
-    # =========================================================
-    lines.append("## A8计划进度")
-    lines.append("")
-    lines.append("| 指标 | 进度 |")
-    lines.append("|------|------|")
-
-    net_assets_str = report_data.get("net_assets", "¥1,334,174")
-    net_assets_num = _extract_number(net_assets_str) or 1334174
-    a8_pct = net_assets_num / 10000000 * 100
-    lines.append(f"| 目标 | 1000万人民币 (2026-2028) |")
-    lines.append(f"| 当前净资产 | {net_assets_str} ({a8_pct:.1f}%) |")
-
-    btc_qty_num = _extract_number(btc_qty) or 0.12980465
-    btc_progress = btc_qty_num / 2.32 * 100
-    lines.append(f"| BTC目标 | 2.32个 (当前{btc_qty_num:.3f}, 进度{btc_progress:.1f}%) |")
-    crcl_conc_pct = _extract_number(report_data.get("crcl_concentration", "70.7%"))
-    lines.append(f"| CRCL自持 | 1008股 (目标占比≤20%, 当前{crcl_conc_pct:.1f}%⚠️) |")
-    lines.append("| 策略 | MA120趋势 + 月度定投¥16,700 + 港股打新 |")
-
-    # A8 当前状态
-    crcl_status = report_data.get("crcl_status", "")
-    btc_status = report_data.get("btc_status", "")
-    crcl_price_val = report_data.get("crcl_price", "")
-    crcl_ma120 = report_data.get("crcl_ma120", "")
-    btc_price_val = report_data.get("btc_price", "")
-    btc_ma120 = report_data.get("btc_ma120", "")
-
-    status_parts = []
-    if crcl_price_val and crcl_ma120:
-        cp = _extract_number(crcl_price_val)
-        cm = _extract_number(crcl_ma120)
-        if cp and cm:
-            if cp >= cm:
-                status_parts.append(f"CRCL站上MA120(${cm:,.2f}), 已触发启动条件")
-            else:
-                status_parts.append(f"CRCL在MA120(${cm:,.2f})下方, 等待突破")
-        if "观望" in crcl_status or "不买" in crcl_status:
-            status_parts.append("看板建议观望")
-
-    if btc_price_val and btc_ma120:
-        bp = _extract_number(btc_price_val)
-        bm = _extract_number(btc_ma120)
-        if bp and bm:
-            if bp >= bm:
-                status_parts.append(f"BTC在MA120(${bm:,.0f})上方")
-            else:
-                status_parts.append(f"BTC在MA120(${bm:,.0f})下方")
-        if "底部" in btc_status:
-            status_parts.append("看板触发底部信号")
-
-    if status_parts:
-        lines.append(f"| 当前状态 | {'; '.join(status_parts)} |")
-    else:
-        lines.append("| 当前状态 | - |")
+    # --- 家庭与保险 ---
+    family_lines = [
+        "## 家庭与保险", "",
+        "| 项目 | 内容 |",
+        "|------|------|",
+        "| 居住地 | 北京 |",
+        f"| 户籍 | {hukou} |",
+        f"| 子女 | {children} |",
+        f"| 配偶 | {spouse} |",
+        f"| 房产 | 北京海淀住宅 {house_value} (购入2025年底) |" if house_value else "| 房产 | 北京海淀住宅 ¥3,200,000 (购入2025年底) |",
+        f"| 房贷商贷 | {mortgage_commercial} |",
+        f"| 房贷公积金 | {mortgage_fund} |",
+        f"| hanwei_zhongji | {hanwei_zhongji} |",
+        f"| hanwei_dingshou | {hanwei_dingshou} |",
+        f"| xueyan_zhongji | {xueyan_zhongji} |",
+    ]
+    lines.extend(family_lines)
     lines.append("")
 
-    # =========================================================
-    # 本次更新变更记录
-    # =========================================================
-    lines.append("## 本次更新变更记录")
+    # --- A8计划进度 ---
+    a8_lines = [
+        "## A8计划进度", "",
+        "| 指标 | 进度 |",
+        "|------|------|",
+        f"| 目标 | 1000万人民币 (2026-2028) |",
+        f"| 当前净资产 | **{a8_current}** ({a8_pct_str}) |",
+        f"| BTC目标 | 2.32个 (当前{btc_qty:,.8f}, 进度{btc_pct:.1f}%) |",
+        f"| CRCL自持 | {crcl_total_qty:,.1f}股 (目标占比≤20%, 当前{crcl_concentration}) |",
+        "| 策略 | MA120趋势 + 月度定投¥16,700 + 港股打新 |",
+        "| 当前状态 | 数据来自报告自动解析 |",
+    ]
+    lines.extend(a8_lines)
     lines.append("")
-    lines.append("| 变更项 | 旧值 | 新值 | 说明 |")
-    lines.append("|--------|------|------|------|")
-    for change in changes:
-        # 确保每个值最多一行，避免表格格式错乱
-        old_val = str(change[1]).replace("\n", " ")
-        new_val = str(change[2]).replace("\n", " ")
-        desc = str(change[3]).replace("\n", " ")
-        lines.append(f"| {change[0]} | {old_val} | {new_val} | {desc} |")
-    lines.append("")
+
+    # --- 变更记录 ---
+    changelog_lines = [
+        "## 本次更新变更记录", "",
+        "| 变更项 | 旧值 | 新值 | 说明 |",
+        "|--------|------|------|------|",
+    ]
+    for item in changelog:
+        changelog_lines.append(f"| {item[0]} | {item[1]} | {item[2]} | {item[3]} |")
+    lines.extend(changelog_lines)
 
     return "\n".join(lines)
 
 
 # ======================================================================
-# 主流程
+# 6. 写出归档
+# ======================================================================
+
+def write_archive(content, archive_dir):
+    os.makedirs(archive_dir, exist_ok=True)
+    filename = f"profile_{TODAY}.md"
+    path = os.path.join(archive_dir, filename)
+
+    old_content = ""
+    if os.path.isfile(path):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                old_content = f.read()
+        except:
+            pass
+
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(content)
+
+    if old_content:
+        log_info(f"更新 {filename}（覆盖旧文件）")
+    else:
+        log_info(f"新建 {filename}")
+
+
+# ======================================================================
+# 7. 主流程
 # ======================================================================
 
 def main():
-    today = date.today()
-    today_str = today.strftime("%Y-%m-%d")
-    today_compact = today.strftime("%Y%m%d")
+    log_info("=== 开始每日个人画像归档 ===")
 
-    # 1. 读取最新月度报告
-    report_path = _find_latest_report()
-    if not report_path:
-        logger.error("无法找到最新月度报告，退出")
-        sys.exit(1)
-    logger.info(f"数据源: {os.path.basename(report_path)}")
+    holdings = load_holdings(HOLDINGS_PATH)
+    if not holdings:
+        log_error("holdings 读取失败，终止")
+        return
 
-    report_data = extract_report_data(report_path)
-    if not report_data:
-        logger.error("无法解析月度报告，退出")
-        sys.exit(1)
+    report_content = load_latest_report(REPORTS_DIR)
+    career = load_career_profile(CAREER_PATH)
 
-    # 2. 读取职业发展档案
-    career_data = extract_career_data(CAREER_PATH)
-    if not career_data:
-        logger.warning("职业发展档案读取失败，使用默认值")
-        career_data = {}
+    profile_md = build_profile(holdings, report_content, career)
 
-    # 3. 读取上一天的 profile 做对比
-    # 优先从小时目录读取
-    prev_data = _parse_previous_profile(
-        _find_previous_profile(HOUR_ARCHIVE_DIR, today_compact))
-    if not prev_data:
-        prev_data = _parse_previous_profile(
-            _find_previous_profile(DAY_ARCHIVE_DIR, today_compact))
+    write_archive(profile_md, HOUR_ARCHIVE_DIR)
+    write_archive(profile_md, DAY_ARCHIVE_DIR)
 
-    # 4. 计算变更记录
-    changes = _compute_changes(prev_data, report_data, today_str, report_path)
-
-    # 5. 生成归档内容
-    profile_content = generate_profile(today, report_data, career_data, changes)
-
-    # 6. 写入两份归档
-    hour_path = os.path.join(HOUR_ARCHIVE_DIR, f"profile_{today_compact}.md")
-    day_path = os.path.join(DAY_ARCHIVE_DIR, f"profile_{today_compact}.md")
-
-    for d in [HOUR_ARCHIVE_DIR, DAY_ARCHIVE_DIR]:
-        os.makedirs(d, exist_ok=True)
-
-    for path, label in [(hour_path, "小时推送"), (day_path, "日报推送")]:
-        try:
-            with open(path, "w", encoding="utf-8") as f:
-                f.write(profile_content)
-            logger.info(f"已写入 {label} 归档: {os.path.basename(path)}")
-        except Exception as e:
-            logger.error(f"写入 {label} 归档失败 {path}: {e}")
-
-    logger.info("归档同步完成")
+    log_info("=== 归档完成 ===")
 
 
 if __name__ == "__main__":
