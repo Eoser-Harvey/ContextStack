@@ -43,7 +43,7 @@ class Translator:
             print(f"[DEBUG] 保存翻译缓存失败: {e}")
 
     def translate(self, text, tweet_id=None):
-        """翻译文本，优先使用缓存"""
+        """翻译文本，优先使用缓存，失败时自动切换备用引擎"""
         if not text or not text.strip():
             return text
 
@@ -53,13 +53,10 @@ class Translator:
             if cached and cached.strip():
                 return cached
 
-        # 在线翻译作为备选
-        if self.engine == "google":
-            result = self._translate_google(text)
-        elif self.engine == "bing":
-            result = self._translate_bing(text)
-        else:
-            result = self._translate_google(text)
+        # 在线翻译：主引擎 -> MyMemory 备用
+        result = self._translate_google(text)
+        if not result:
+            result = self._translate_mymemory(text)
 
         # 如果在线翻译成功，写入缓存
         if result and tweet_id:
@@ -69,7 +66,7 @@ class Translator:
         return result
 
     def _translate_google(self, text):
-        """Google 翻译 API (免费接口)"""
+        """Google 翻译 API (免费接口，中国网络可能受限)"""
         try:
             url = "https://translate.googleapis.com/translate_a/single"
             params = {
@@ -95,12 +92,20 @@ class Translator:
             print(f"[DEBUG] Google翻译失败: {e}")
             return None
 
-    def _translate_bing(self, text):
-        """Bing 翻译 (免费接口)"""
+    def _translate_mymemory(self, text):
+        """MyMemory 翻译 API (免费，无需API Key，中国网络可访问)"""
         try:
-            url = "https://api.cognitive.microsofttranslator.com/translate"
-            return self._translate_google(text)
-        except Exception:
+            langpair = f"{self.source_lang}|{self.target_lang}" if self.source_lang != "auto" else f"en|{self.target_lang}"
+            url = "https://api.mymemory.translated.net/get"
+            params = {"q": text, "langpair": langpair}
+            resp = requests.get(url, params=params, timeout=self.timeout)
+            if resp.status_code != 200:
+                return None
+
+            data = resp.json()
+            return data.get("responseData", {}).get("translatedText") or None
+        except Exception as e:
+            print(f"[DEBUG] MyMemory翻译失败: {e}")
             return None
 
     @staticmethod

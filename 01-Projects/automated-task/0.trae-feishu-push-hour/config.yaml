@@ -44,7 +44,7 @@ fetch:
 
 # 翻译配置 (使用免费翻译API)
 translate:
-  engine: google  # google / bing / deepl
+  engine: google  # google → MyMemory 自动降级
   source_lang: auto
   target_lang: zh-CN
 
