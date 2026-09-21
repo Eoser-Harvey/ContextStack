@@ -5,6 +5,7 @@ MS通用准备材料，不限于特定公司。
 ## 文件列表
 - [[./chuangxin-laser-interview|创鑫激光MS准备]] — 2026-09-08 创鑫激光（MAX）嵌入式岗，PID/状态机/滤波器 + DSP 王牌
 - [[./dsp-algorithm-review|DSP算法深度复习]] — FFT/闪变IIR组/工频提取/插值重采样/SHARC加速器，电能质量项目实战
+- [[./dsp-fixed-point-interview|DSP定点vs浮点面试题]] — Q格式/溢出/饱和/块浮点，通用题+结合项目题，军工航天理论面必考
 - [[./starknew-interview|斯塔克新MS准备]] — 2026-09-08 Stark Industries（天使轮机器人）MCU岗，100%匹配强项深挖
 - [[./new-energy-storage-dsp|新能源储能DSP 4概念补课]] — MPPT/PLL/电压电流环/拓扑 + 面试答题卡，SHARC→TI C2000 迁移
 - [[./narrative-training|叙事化训练计划]] — 从"知识复述"到"工程叙事"的7天训练
