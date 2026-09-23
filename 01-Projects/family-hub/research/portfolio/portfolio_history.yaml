@@ -1,7 +1,3 @@
-# 持仓历史最值 + 净资产快照
-# 自动生成: _gen_report_v2.py 每次运行自动更新
-# 手动补充: trades 交易记录
-
 holdings_history:
   btc_onchain:
     name: 比特币(链上)
@@ -127,6 +123,66 @@ holdings_history:
     all_time_high_date: '2026-07-01'
     all_time_low_price: 50.89
     all_time_low_date: '2026-08-12'
+  milady_nft:
+    name: Milady NFT(链上)
+    all_time_high_price: null
+    all_time_high_date: null
+    all_time_low_price: null
+    all_time_low_date: null
+  crcl_yan_combined:
+    name: Circle(燕币安)
+    all_time_high_price: null
+    all_time_high_date: null
+    all_time_low_price: null
+    all_time_low_date: null
+  crcl_han_combined:
+    name: Circle(韩伟币安)
+    all_time_high_price: null
+    all_time_high_date: null
+    all_time_low_price: null
+    all_time_low_date: null
+  dram_han_combined:
+    name: DRAM(韩伟币安)
+    all_time_high_price: null
+    all_time_high_date: null
+    all_time_low_price: null
+    all_time_low_date: null
+  mstr_han_combined:
+    name: MicroStrategy(韩伟币安)
+    all_time_high_price: null
+    all_time_high_date: null
+    all_time_low_price: null
+    all_time_low_date: null
+  ondo_han_combined:
+    name: ONDO(韩伟币安)
+    all_time_high_price: null
+    all_time_high_date: null
+    all_time_low_price: null
+    all_time_low_date: null
+  uni_han_combined:
+    name: Uniswap(韩伟币安)
+    all_time_high_price: null
+    all_time_high_date: null
+    all_time_low_price: null
+    all_time_low_date: null
+  soxl_han_combined:
+    name: 半导体3倍做多ETF(韩伟币安)
+    all_time_high_price: null
+    all_time_high_date: null
+    all_time_low_price: null
+    all_time_low_date: null
+  kc50_etf:
+    name: 科创50ETF(东方财富A股)
+    all_time_high_price: null
+    all_time_high_date: null
+    all_time_low_price: null
+    all_time_low_date: null
+  hk_innov_drug_etf:
+    name: HK创新药ETF(东方财富A股)
+    all_time_high_price: null
+    all_time_high_date: null
+    all_time_low_price: null
+    all_time_low_date: null
 net_worth_snapshots:
 - date: '2026-06-02'
   net_worth_cny: 1361859.46
@@ -192,6 +248,8 @@ net_worth_snapshots:
 - date: '2026-09-03'
   net_worth_cny: 1334174
   total_assets_cny: 1734174
+- date: '2026-09-23'
+  net_worth_cny: 432288.92
 external_signals:
 - date: '2026-08-23'
   crcl:
