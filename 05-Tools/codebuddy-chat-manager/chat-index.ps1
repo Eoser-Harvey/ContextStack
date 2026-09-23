@@ -19,6 +19,8 @@ $ErrorActionPreference = 'Stop'
 # 账户别名映射：UUID -> 可读名（如 Windows 用户名），方便识别账户。新增别名时 chat-index/chat-restore 两处同步。
 $AccountAlias = @{
     '2a2e1d62-de8b-4abb-87fe-af5f9a2ff441' = 'h31280'
+    '5e856652-1370-4b6e-993c-e2488f3569ed' = 'wanghaiyang'
+    '98b84c9e-5153-45c9-8ab8-c963bdddfc02' = 'cuijiawei'
 }
 
 # 兼容旧版 PowerShell 5.1：某些执行方式下 $PSScriptRoot 为空（如 cmd 直接调用/任务计划）
