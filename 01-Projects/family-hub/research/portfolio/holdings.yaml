@@ -5,7 +5,7 @@
 #   manual        = 无公开行情源的资产(TS时间代币), 需每月手动更新 manual_price_usd
 
 meta:
-  last_updated: "2026-09-03"
+  last_updated: "2026-09-23"
   usd_cny: 6.729
   hkd_cny: 0.857
 
@@ -59,15 +59,16 @@ holdings:
   # ── 韩伟币安 (原韩伟交易所+韩伟WEB3合并) ──
   # 合并前: crcl_binance 85.4@62.90 + crcl_han 334.198@67.69 = 419.598股
   # 2026-08 加仓 22.78@59.04 + 12.622@63 → 现 455股, 加权均价$66.23
+  # 2026-09-23 卖出 20股@94.80 + 40股@94.30 → 现 395股
   - id: crcl_han_combined
     symbol: CRCL
     name: Circle(韩伟币安)
-    quantity: 455
+    quantity: 395
     cost_basis_usd: 66.23
     category: us_stock_tokenized
     storage: 韩伟币安
     price_source: sina
-    note: 账户合并; 原419.598@66.71 + 加仓22.78@59.04 + 12.622@63, 总成本$30,134, 均价$66.23
+    note: 账户合并; 原419.598@66.71 + 加仓22.78@59.04 + 12.622@63, 总成本$30,134→$26,150.6, 均价$66.23; 09-23卖出60股止盈
 
   - id: dram_han_combined
     symbol: DRAM
@@ -280,8 +281,8 @@ cash:
     amount_hkd: 146060
     note: 含13W家庭内部调配, 其余为打新盈利
   - name: 币安USDT余额
-    amount_usd: 1436
-    note: 燕币安USDT $1,436; 韩伟币安USDT=0
+    amount_usd: 7104
+    note: 燕币安USDT $1,436; 韩伟币安USDT $5,668 (09-23卖出CRCL 60股入账 $1,896+$3,772)
   - name: 华盛通现金
     amount_usd: 1046
     note: 韩伟华盛通账户现金 $1,046
