@@ -1,26 +1,30 @@
+# 持仓历史最值 + 净资产快照
+# 自动生成: _gen_report_v2.py 每次运行自动更新
+# 手动补充: trades 交易记录
+
 holdings_history:
   btc_onchain:
     name: 比特币(链上)
-    all_time_high_price: 80231.1
-    all_time_high_date: '2026-08-28'
+    all_time_high_price: 84901.2
+    all_time_high_date: '2026-09-25'
     all_time_low_price: 58644.0
     all_time_low_date: '2026-07-01'
   eth_onchain:
     name: 以太坊NFT(链上)
-    all_time_high_price: 2523.32
-    all_time_high_date: '2026-08-22'
+    all_time_high_price: 2712.97
+    all_time_high_date: '2026-09-25'
     all_time_low_price: 1606.72
     all_time_low_date: '2026-07-01'
   btc_binance:
     name: 比特币(币安)
-    all_time_high_price: 80231.1
-    all_time_high_date: '2026-08-28'
+    all_time_high_price: 84735.9
+    all_time_high_date: '2026-09-25'
     all_time_low_price: 59794.2
     all_time_low_date: '2026-07-01'
   eth_binance:
     name: 以太坊(币安)
-    all_time_high_price: 2523.32
-    all_time_high_date: '2026-08-22'
+    all_time_high_price: 2712.97
+    all_time_high_date: '2026-09-25'
     all_time_low_price: 1606.72
     all_time_low_date: '2026-07-01'
   crcl_yan:
@@ -69,8 +73,8 @@ holdings_history:
     all_time_low_date: '2026-07-30'
   bitgo:
     name: BitGo(韩伟长桥)
-    all_time_high_price: 7.63
-    all_time_high_date: '2026-09-03'
+    all_time_high_price: 7.97
+    all_time_high_date: '2026-09-25'
     all_time_low_price: 4.83
     all_time_low_date: '2026-07-08'
   xiaomi_ht:
@@ -83,8 +87,8 @@ holdings_history:
     name: 优必选(港股通)
     all_time_high_price_hkd: 112.4
     all_time_high_date: '2026-07-01'
-    all_time_low_price_hkd: 77.7
-    all_time_low_date: '2026-07-30'
+    all_time_low_price_hkd: 76.7
+    all_time_low_date: '2026-09-25'
     all_time_high_price: 12.64
     all_time_low_price: 12.64
   ts_xiaoan:
@@ -131,16 +135,16 @@ holdings_history:
     all_time_low_date: null
   crcl_yan_combined:
     name: Circle(燕币安)
-    all_time_high_price: null
-    all_time_high_date: null
-    all_time_low_price: null
-    all_time_low_date: null
+    all_time_high_price: 93.0
+    all_time_high_date: '2026-09-25'
+    all_time_low_price: 91.09
+    all_time_low_date: '2026-09-25'
   crcl_han_combined:
     name: Circle(韩伟币安)
-    all_time_high_price: null
-    all_time_high_date: null
-    all_time_low_price: null
-    all_time_low_date: null
+    all_time_high_price: 93.0
+    all_time_high_date: '2026-09-25'
+    all_time_low_price: 91.09
+    all_time_low_date: '2026-09-25'
   dram_han_combined:
     name: DRAM(韩伟币安)
     all_time_high_price: null
@@ -161,10 +165,10 @@ holdings_history:
     all_time_low_date: null
   uni_han_combined:
     name: Uniswap(韩伟币安)
-    all_time_high_price: null
-    all_time_high_date: null
-    all_time_low_price: null
-    all_time_low_date: null
+    all_time_high_price: 9.88
+    all_time_high_date: '2026-09-25'
+    all_time_low_price: 9.66
+    all_time_low_date: '2026-09-25'
   soxl_han_combined:
     name: 半导体3倍做多ETF(韩伟币安)
     all_time_high_price: null
@@ -183,6 +187,30 @@ holdings_history:
     all_time_high_date: null
     all_time_low_price: null
     all_time_low_date: null
+  hood_han:
+    name: hood_han
+    all_time_high_price: 120.82
+    all_time_high_date: '2026-09-25'
+    all_time_low_price: 120.75
+    all_time_low_date: '2026-09-25'
+  bnb_han:
+    name: bnb_han
+    all_time_high_price: 780.4
+    all_time_high_date: '2026-09-25'
+    all_time_low_price: 773.3
+    all_time_low_date: '2026-09-25'
+  aave_han:
+    name: aave_han
+    all_time_high_price: 150.01
+    all_time_high_date: '2026-09-25'
+    all_time_low_price: 146.39
+    all_time_low_date: '2026-09-25'
+  crcl_hf_binance:
+    name: crcl_hf_binance
+    all_time_high_price: 93.0
+    all_time_high_date: '2026-09-25'
+    all_time_low_price: 91.09
+    all_time_low_date: '2026-09-25'
 net_worth_snapshots:
 - date: '2026-06-02'
   net_worth_cny: 1361859.46
@@ -212,6 +240,7 @@ net_worth_snapshots:
 - date: '2026-07-01'
   net_worth_cny: 998774
   total_assets_cny: 1398774
+  note: 06-24恐慌清仓BTC 0.51247个(-65%)+ETH链上1.35个，A8核心筹码归零(严重纪律违反)
 - date: '2026-07-08'
   net_worth_cny: 1001580
   total_assets_cny: 1401580
@@ -239,6 +268,7 @@ net_worth_snapshots:
 - date: '2026-08-22'
   net_worth_cny: 1244660
   total_assets_cny: 1644660
+  note: 08-15换仓：清仓MRVL，新建MSTR/ONDO/UNI/SOXL，加仓CRCL/DRAM
 - date: '2026-08-23'
   net_worth_cny: 1240871
   total_assets_cny: 1640871
@@ -249,7 +279,14 @@ net_worth_snapshots:
   net_worth_cny: 1334174
   total_assets_cny: 1734174
 - date: '2026-09-23'
-  net_worth_cny: 432288.92
+  net_worth_cny: 1323658
+  total_assets_cny: 1723658
+  note: 09-23卖出60股CRCL(均价$94.47)系形态转换; 净资产=09-25值1322656+40股CRCL两天价差(94.47-90.74)*40*6.7161≈+1002;
+    原432289为减仓后USDT未入账的中间态误录
+- date: '2026-09-25'
+  net_worth_cny: 700159
+  total_assets_cny: 1150159
+  note: 备用金48万剥离(口径)+信用卡加杠杆至净负债45万+循环锁定15万独立，均为记账口径调整非亏损
 external_signals:
 - date: '2026-08-23'
   crcl:
@@ -283,4 +320,9 @@ external_signals:
   btc:
     price: 77,334
     ma120: 68,335
+    trigger: 底部信号·当日触发
+- date: '2026-09-25'
+  btc:
+    price: 84,368
+    ma120: 68,576
     trigger: 底部信号·当日触发

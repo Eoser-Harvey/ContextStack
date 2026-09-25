@@ -137,12 +137,22 @@ def load_holdings_yaml():
             ce["manual_price"] = float(c["manual_price_usd"])
         custody.append(ce)
 
+    # 固定资产（房产/家庭备用金，不计入净资产）
+    fixed_assets = []
+    for fa in data.get("fixed_assets", []):
+        fixed_assets.append({
+            "name": fa.get("name", ""),
+            "value_cny": float(fa.get("value_cny", 0)),
+            "note": fa.get("note", ""),
+        })
+
     return {
         "meta": meta,
         "holdings": holdings,
         "cash": cash,
         "liabilities": liabilities,
         "custody": custody,
+        "fixed_assets": fixed_assets,
     }
 
 # ============================================================
@@ -251,8 +261,7 @@ def fetch_us_stock(sym):
     return None
 
 stock_prices = {}
-for label, sym in [("MRVL","mrvl"), ("CRCL","crcl"), ("BTGO","btgo"), ("DRAM","dram"),
-                   ("MSTR","mstr"), ("SOXL","soxl")]:
+for label, sym in [("CRCL","crcl"), ("BTGO","btgo"), ("HOOD","hood")]:
     try:
         val = fetch_us_stock(sym)
         if val is not None:
@@ -261,8 +270,8 @@ for label, sym in [("MRVL","mrvl"), ("CRCL","crcl"), ("BTGO","btgo"), ("DRAM","d
     except Exception as e:
         print(f"  {label} 失败: {e}")
 
-# ONDO/UNI 加密代币 (Gate.io, USDT计价→USD)
-for pair, label in [("ONDO_USDT","ONDO"), ("UNI_USDT","UNI")]:
+# 加密代币 (Gate.io, USDT计价→USD)
+for pair, label in [("UNI_USDT","UNI"), ("BNB_USDT","BNB"), ("AAVE_USDT","AAVE")]:
     try:
         r = requests.get(f"https://api.gateio.ws/api/v4/spot/tickers?currency_pair={pair}", timeout=10)
         if r.ok:
@@ -358,8 +367,9 @@ def get_price(holding, prices_dict):
         if sym == "BTC": return btc, "USD"
         if sym == "ETH": return eth, "USD"
     if ps == "gate":
-        if sym == "ONDO": return stock_prices.get("ONDO"), "USD"
         if sym == "UNI": return stock_prices.get("UNI"), "USD"
+        if sym == "BNB": return stock_prices.get("BNB"), "USD"
+        if sym == "AAVE": return stock_prices.get("AAVE"), "USD"
     # Milady NFT: 按 value_eth × ETH 计价
     if ps == "eth_value":
         v = holding.get("value_eth")
@@ -377,16 +387,10 @@ def get_price(holding, prices_dict):
     if ps == "sina":
         if "crcl" in sina_sym.lower() or sym == "CRCL":
             return stock_prices.get("CRCL"), "USD"
-        if "mrvl" in sina_sym.lower() or sym == "MRVL":
-            return stock_prices.get("MRVL"), "USD"
         if "btgo" in sina_sym.lower() or sym == "BTGO":
             return stock_prices.get("BTGO"), "USD"
-        if "dram" in sina_sym.lower() or sym == "DRAM":
-            return stock_prices.get("DRAM"), "USD"
-        if sym == "MSTR":
-            return stock_prices.get("MSTR"), "USD"
-        if sym == "SOXL":
-            return stock_prices.get("SOXL"), "USD"
+        if sym == "HOOD":
+            return stock_prices.get("HOOD"), "USD"
         if "nok" in sina_sym.lower() or sym == "NOK":
             return stock_prices.get("NOK"), "USD"
 
@@ -513,11 +517,16 @@ for h in yd["holdings"]:
 
 # 现金合计
 cash_total = 0
+usd_cash_total = 0  # USDT + 华盛通美金（待投资弹药）
 for c in yd["cash"]:
     if c["currency"] == "cny": cash_total += c["amount"]
     elif c["currency"] == "hkd": cash_total += c["amount"] * hc
-    elif c["currency"] == "usd": cash_total += c["amount"] * uc
+    elif c["currency"] == "usd":
+        cash_total += c["amount"] * uc
+        usd_cash_total += c["amount"] * uc
 
+position_total = investment_total + usd_cash_total  # 持仓市值（含USDT+华盛通美金）
+cash_only = cash_total - usd_cash_total  # 纯现金（HK打新）
 total_assets = investment_total + cash_total
 
 # 负债合计
@@ -535,7 +544,7 @@ prev_ta = None
 # 占比计算
 rows = []
 for it in items:
-    pct_inv = it["mv_cny"] / investment_total * 100 if investment_total else 0
+    pct_inv = it["mv_cny"] / position_total * 100 if position_total else 0
     rows.append(dict(it, pct_inv=f"{pct_inv:.1f}%"))
 
 # 汇总关键数据（供后续同步使用）
@@ -554,8 +563,9 @@ summary = {
     "usdt_cash": next((c["amount"] for c in yd["cash"] if c["currency"] == "usd"), 0),
     "prices": {
         "BTC": btc, "ETH": eth,
-        "CRCL": stock_prices.get("CRCL"), "MRVL": stock_prices.get("MRVL"),
-        "BTGO": stock_prices.get("BTGO"), "DRAM": stock_prices.get("DRAM"),
+        "CRCL": stock_prices.get("CRCL"), "HOOD": stock_prices.get("HOOD"),
+        "BTGO": stock_prices.get("BTGO"), "UNI": stock_prices.get("UNI"),
+        "BNB": stock_prices.get("BNB"), "AAVE": stock_prices.get("AAVE"),
         "XIAOMI": hk_prices.get("XIAOMI"), "UBT": hk_prices.get("UBT"),
     },
     "cat_sum": cat_sum,
@@ -584,18 +594,19 @@ L.append(f"> USD/CNY={uc:.4f}  HKD/CNY={hc:.4f}\n")
 
 # 一、资产总览
 L.append("## 一、资产总览\n")
-L.append("| 类别 | 金额(CNY) | 占比 |")
-L.append("|------|----------|------|")
+L.append("| 类别 | 金额(CNY) | 占比 | 说明 |")
+L.append("|------|----------|------|------|")
 for ck in sorted(cat_sum, key=lambda k: -cat_sum[k]):
     pct = cat_sum[ck] / total_assets * 100
-    L.append(f"| {cat_names.get(ck, ck)} | ¥{cat_sum[ck]:,.0f} | {pct:.1f}% |")
-cash_pct = cash_total / total_assets * 100
-L.append(f"| 现金固收 | ¥{cash_total:,.0f} | {cash_pct:.1f}% |")
-L.append(f"| **总资产** | **¥{total_assets:,.0f}** | **100%** |")
-L.append(f"| **总负债** | **¥{liab_total:,.0f}** | — |")
-L.append(f"| **净资产** | **¥{net_worth:,.0f}** | — |")
-L.append(f"| **投资总资产** | **¥{investment_total:,.0f}** | {investment_total/total_assets*100:.1f}% |")
-L.append(f"| **投资净资产** | **¥{investment_total - liab_total:,.0f}** | — |\n")
+    L.append(f"| {cat_names.get(ck, ck)} | ¥{cat_sum[ck]:,.0f} | {pct:.1f}% | |")
+cash_pct = cash_only / total_assets * 100
+L.append(f"| 现金 | ¥{cash_only:,.0f} | {cash_pct:.1f}% | |")
+L.append(f"| **投资资金总额** | **¥{total_assets:,.0f}** | **100%** | 持仓(含USDT) + 现金(HK打新) |")
+L.append(f"| **投资总负债** | **¥{liab_total:,.0f}** | — | 信用卡净投资负债 |")
+L.append(f"| **投资净资产** | **¥{net_worth:,.0f}** | — | 投资资金总额 − 信用卡负债 |")
+L.append(f"| **持仓市值** | **¥{position_total:,.0f}** | {position_total/total_assets*100:.1f}% | 所有投资标的市值总和 + USDT + 华盛通美金 |")
+L.append(f"| **持仓净值** | **¥{position_total - liab_total:,.0f}** | — | 持仓市值 − 信用卡负债 |\n")
+L.append("> 注：家庭备用金/循环锁定资金已移出至固定资产区，不计入。\n")
 
 # 二、投资明细
 L.append("## 二、投资资产明细（含盈亏）\n")
@@ -603,13 +614,14 @@ L.append("| 标的 | 数量 | 当前单价 | 市值(CNY) | 成本单价(CNY) | �
 L.append("|:-----|-----:|---------:|----------:|--------------:|--------------:|---------:|--------:|:----|")
 for r in rows:
     L.append(f"| {r['name']} | {r['qty_str']} | {r['price_str']} | ¥{r['mv_cny']:,.0f} | ¥{r['cost_unit']:.2f} | ¥{r['cost_cny']:,.0f} | {r['pnl_str']} | {r['pct_inv']} | {r['storage']} |")
-L.append(f"| **投资合计** | — | — | **¥{investment_total:,.0f}** | — | — | — | **100%** | — |\n")
+L.append(f"| USDT + 华盛通美金 | — | — | ¥{usd_cash_total:,.0f} | — | — | — | {usd_cash_total/position_total*100:.1f}% | 各币安账户/华盛通 |")
+L.append(f"| **投资合计** | — | — | **¥{position_total:,.0f}** | — | — | — | **100%** | — |\n")
 
 # 三、资产统计（按标的合并，跨账户）
 ASSET_LABEL = {
     "CRCL": "Circle(CRCL)", "BTC": "比特币", "ETH": "以太坊",
-    "DRAM": "DRAM内存ETF", "MSTR": "MicroStrategy", "ONDO": "ONDO",
-    "UNI": "Uniswap", "SOXL": "半导体3倍ETF", "BTGO": "BitGo",
+    "UNI": "Uniswap", "BTGO": "BitGo", "HOOD": "Robinhood",
+    "BNB": "BNB", "AAVE": "AAVE", "MILADY": "Milady NFT",
     "1810.HK": "小米(1810)", "9880.HK": "优必选(9880)",
     "588000": "科创50ETF", "159971": "创新药ETF",
     "XIAOAN": "小安时间", "WUFAN": "午饭时间",
@@ -688,12 +700,15 @@ for cy in yd["custody"]:
     mv_d = cy["quantity"] * p
     L.append(f"| {cy['name']} | {cy['quantity']} | ${p:,.2f} | ${mv_d:,.0f} | ¥{mv_d*uc:,.0f} | {cy['note']} |\n")
 
-# 七、房贷
-L.append("## 七、房贷与房产说明\n")
-L.append("> 以下为家庭自住相关房产及贷款，涉及工资还款，**暂未纳入投资盈亏统计**\n")
+# 七、固定资产与备用金（不计入净资产）
+L.append("## 七、固定资产与备用金说明\n")
+L.append("> 以下为家庭自住房产、贷款及生活备用金，**不计入净资产**，仅作记录\n")
 L.append("- 房贷—商贷：¥400,000")
 L.append("- 房贷—公积金：¥1,400,000")
-L.append("- 北京海淀住宅：估值¥3,200,000 购入2025年底\n")
+for fa in yd["fixed_assets"]:
+    note = fa.get("note", "")
+    L.append(f"- {fa['name']}：¥{fa['value_cny']:,.0f}" + (f"（{note}）" if note else ""))
+L.append("")
 
 # 八、关键指标 vs 上期
 L.append("## 八、关键指标 vs 上期 及历史趋势\n")
@@ -720,12 +735,12 @@ L.append(f"| 指标 | 上期 | 本期({today}) | 变动 |")
 L.append("|------|------|-------------|------|")
 ta_sign = "+" if ta_delta >= 0 else ""
 nw_sign = "+" if nw_delta >= 0 else ""
-L.append(f"| 总资产 | ¥{prev_ta:,.0f} | ¥{total_assets:,.0f} | {ta_sign}¥{ta_delta:,.0f} |")
-L.append(f"| 净资产 | ¥{prev_nw:,.0f} | ¥{net_worth:,.0f} | {nw_sign}¥{nw_delta:,.0f} |")
+L.append(f"| 投资资金总额 | ¥{prev_ta:,.0f} | ¥{total_assets:,.0f} | {ta_sign}¥{ta_delta:,.0f} |")
+L.append(f"| 投资净资产 | ¥{prev_nw:,.0f} | ¥{net_worth:,.0f} | {nw_sign}¥{nw_delta:,.0f} |")
 L.append("")
 
-L.append("**历史净资产走势：**\n")
-L.append("| 日期 | 净资产 | 环比 | 备注 |")
+L.append("**历史投资净资产走势：**\n")
+L.append("| 日期 | 投资净资产 | 环比 | 备注 |")
 L.append("|------|--------|------|------|")
 for i, s in enumerate(snaps):
     d = s["date"]
@@ -741,7 +756,12 @@ for i, s in enumerate(snaps):
     note = s.get("note", "")
     L.append(f"| {d} | ¥{n:,} | {chg} | {note} |")
 # 当前行
-L.append(f"| {today} | ¥{net_worth:,.0f} | {nw_sign}¥{nw_delta:,.0f} ({nw_sign}{nw_delta/prev_nw*100:.1f}%) | 本次更新 |\n")
+_today_note = "本次更新"
+if snaps:
+    _ts = next((s for s in snaps if s.get("date") == today), None)
+    if _ts and _ts.get("note"):
+        _today_note = _ts["note"]
+L.append(f"| {today} | ¥{net_worth:,.0f} | {nw_sign}¥{nw_delta:,.0f} ({nw_sign}{nw_delta/prev_nw*100:.1f}%) | {_today_note} |\n")
 
 # 九、本期变动（从 trade_log 读取本月交易，自动生成）
 L.append("## 九、本期持仓变动\n")
@@ -771,8 +791,9 @@ else:
 # 十、本期价格变动 — 从当前持仓动态生成，上期价格解析自上一期报告
 # symbol -> 上一期报告显示名（用于匹配上期价格）
 LEGACY_LABEL = {
-    "BTC": "BTC", "CRCL": "CRCL", "ETH": "ETH", "MRVL": "MRVL",
-    "BTGO": "BTGO", "DRAM": "DRAM", "1810.HK": "小米", "9880.HK": "优必选",
+    "BTC": "BTC", "CRCL": "CRCL", "ETH": "ETH",
+    "BTGO": "BTGO", "HOOD": "HOOD", "UNI": "UNI", "BNB": "BNB", "AAVE": "AAVE",
+    "1810.HK": "小米", "9880.HK": "优必选",
 }
 # 解析上一期报告的本期价格作为上期
 _prev_prices = {}
@@ -1035,12 +1056,12 @@ if HY_PATH.exists():
 
 # ── 5b. portfolio_history.yaml ──
 pid_map = {
-    "btc_onchain": "BTC", "btc_binance": "BTC",
-    "eth_onchain": "ETH", "eth_binance": "ETH",
-    "crcl_yan": "CRCL", "crcl_han": "CRCL", "crcl_cb": "CRCL",
-    "crcl_hst": "CRCL", "crcl_hf": "CRCL",
-    "mrvl_han": "MRVL", "bitgo": "BTGO",
-    "dram_binance": "DRAM",
+    "btc_onchain": "BTC",
+    "crcl_yan_combined": "CRCL", "crcl_han_combined": "CRCL",
+    "crcl_cb": "CRCL", "crcl_hst": "CRCL", "crcl_hf": "CRCL", "crcl_hf_binance": "CRCL",
+    "uni_han_combined": "UNI", "hood_han": "HOOD",
+    "bnb_han": "BNB", "aave_han": "AAVE",
+    "bitgo": "BTGO",
     "xiaomi_ht": "XIAOMI", "ubt_ht": "UBT",
     "ts_xiaoan": "XIAOAN", "ts_wufan": "WUFAN",
 }
@@ -1064,10 +1085,10 @@ if PH_PATH.exists():
         if pid not in hh:
             hh[pid] = {"name": pid}
         entry = hh[pid]
-        if high_key not in entry or price > entry[high_key]:
+        if high_key not in entry or entry[high_key] is None or price > entry[high_key]:
             entry[high_key] = round(price, 2)
             entry["all_time_high_date"] = today
-        if low_key not in entry or price < entry[low_key]:
+        if low_key not in entry or entry[low_key] is None or price < entry[low_key]:
             entry[low_key] = round(price, 2)
             entry["all_time_low_date"] = today
 
@@ -1120,7 +1141,7 @@ if ANNUAL_PATH.exists():
     # 5c1. 净资产走势
     snaps_sorted = sorted(snaps, key=lambda s: s["date"])
     nw_lines = ["<!-- AUTO_SYNC_START:net_worth -->",
-                "| 日期 | 净资产(CNY) | 月度环比 |",
+                "| 日期 | 投资净资产(CNY) | 月度环比 |",
                 "|------|------------|---------|"]
     pv = None
     for s in snaps_sorted:
@@ -1134,6 +1155,16 @@ if ANNUAL_PATH.exists():
             chg = f"{sg}¥{delta:,.0f} ({sg}{pct:.1f}%)"
         nw_lines.append(f"| {s['date']} | ¥{cn:,} | {chg} |")
         pv = cn
+    # 关键事件（从快照 note 自动提取）
+    events = []
+    for s in snaps_sorted:
+        note = s.get("note", "")
+        if note and note.strip():
+            events.append(f"- {s['date']} {note.strip()}")
+    if events:
+        nw_lines.append("")
+        nw_lines.append("**关键事件**：")
+        nw_lines.extend(events)
     nw_lines.append("<!-- AUTO_SYNC_END:net_worth -->")
     annual = re.sub(
         r"<!-- AUTO_SYNC_START:net_worth -->.*?<!-- AUTO_SYNC_END:net_worth -->",
@@ -1159,12 +1190,13 @@ if ANNUAL_PATH.exists():
 
     # 5c3. 价格最值
     price_holdings = [
-        ("比特币(链上)", "btc_onchain", "usd"), ("以太坊NFT(链上)", "eth_onchain", "usd"),
-        ("比特币(币安)", "btc_binance", "usd"), ("以太坊(币安)", "eth_binance", "usd"),
-        ("Circle(燕蒙古)", "crcl_yan", "usd"), ("Circle(韩伟蒙古)", "crcl_han", "usd"),
+        ("比特币(链上)", "btc_onchain", "usd"),
+        ("Circle(燕币安)", "crcl_yan_combined", "usd"), ("Circle(韩伟币安)", "crcl_han_combined", "usd"),
         ("Circle(韩伟长桥)", "crcl_cb", "usd"), ("Circle(华盛通)", "crcl_hst", "usd"),
-        ("Circle(韩芳)", "crcl_hf", "usd"), ("迈威尔(币安)", "mrvl_han", "usd"),
-        ("BitGo(韩伟长桥)", "bitgo", "usd"), ("DRAM(韩伟币安)", "dram_binance", "usd"),
+        ("Circle(韩芳证券)", "crcl_hf", "usd"), ("Circle(韩芳币安)", "crcl_hf_binance", "usd"),
+        ("Uniswap(韩伟币安)", "uni_han_combined", "usd"), ("Robinhood(韩伟币安)", "hood_han", "usd"),
+        ("BNB(韩伟币安)", "bnb_han", "usd"), ("AAVE(韩伟币安)", "aave_han", "usd"),
+        ("BitGo(韩伟长桥)", "bitgo", "usd"),
         ("小米集团(港股通)", "xiaomi_ht", "hkd"), ("优必选(港股通)", "ubt_ht", "hkd"),
         ("小安时间", "ts_xiaoan", "usd"), ("午饭老师时间", "ts_wufan", "usd"),
     ]
@@ -1206,8 +1238,8 @@ if ANNUAL_PATH.exists():
         f"- **美股(传统)**: ¥{us_val:,.0f}，占投资资产 {us_val/investment_total*100:.1f}%，占总投资 {us_val/total_assets*100:.1f}%",
         f"- **港股(小米+优必选+诺基亚)**: ¥{hk_val:,.0f}，占投资资产 {hk_val/investment_total*100:.1f}%，占总投资 {hk_val/total_assets*100:.1f}%",
         f"- **TS时间代币**: ¥{ts_val:,.0f}，占投资资产 {ts_val/investment_total*100:.1f}%，占总投资 {ts_val/total_assets*100:.1f}%",
-        f"- **现金固收**: ¥{cash_total:,.0f}，占总投资 {cash_total/total_assets*100:.1f}%",
-        f"- **杠杆率**: 投资负债¥{liab_total:,} / 净资产¥{net_worth:,.0f} = {lev_pct:.1f}%",
+        f"- **现金**: ¥{cash_only:,.0f}，占总投资 {cash_only/total_assets*100:.1f}%",
+        f"- **杠杆率**: 投资负债¥{liab_total:,} / 投资净资产¥{net_worth:,.0f} = {lev_pct:.1f}%",
         f"- **家庭总资产(含房产¥320W)**: ¥{total_house:,.0f}",
         "<!-- AUTO_SYNC_END:allocation -->",
     ]
@@ -1229,8 +1261,8 @@ if A8_PATH.exists():
         a8
     )
     a8 = re.sub(
-        r"> \*\*当前净资产\*\*：.*?\n",
-        f"> **当前净资产**：¥{round(net_worth):,} ≈ ${round(net_worth_usd):,.0f}（{today}）\n",
+        r"> \*\*当前(?:投资)?净资产\*\*：.*?\n",
+        f"> **当前投资净资产**：¥{round(net_worth):,} ≈ ${round(net_worth_usd):,.0f}（{today}）\n",
         a8
     )
 
@@ -1279,7 +1311,7 @@ if A8_PATH.exists():
         f"<!-- AUTO_SYNC:A8_PROGRESS -->\n"
         f"> 📊 **进度追踪**:\n"
         f"> - BTC: {btc_t:.3f}/{btc_target}个 ({btc_pct:.1f}%)  \n"
-        f"> - 净资产: ¥{round(net_worth):,}/¥{nw_target:,} ({nw_pct:.1f}%)  \n"
+        f"> - 投资净资产: ¥{round(net_worth):,}/¥{nw_target:,} ({nw_pct:.1f}%)  \n"
         f"> - CRCL自持: {crcl_t:.0f}股 (目标占比≤20%)\n"
     )
     if next_dca is not None:

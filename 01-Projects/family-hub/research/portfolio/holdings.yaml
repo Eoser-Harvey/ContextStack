@@ -5,9 +5,9 @@
 #   manual        = 无公开行情源的资产(TS时间代币), 需每月手动更新 manual_price_usd
 
 meta:
-  last_updated: "2026-09-23"
-  usd_cny: 6.729
-  hkd_cny: 0.857
+  last_updated: "2026-09-25"
+  usd_cny: 6.716
+  hkd_cny: 0.856
 
 # ============================================================
 # 投资持仓 (每个标的必须含: quantity, cost_basis, price_source)
@@ -49,76 +49,74 @@ holdings:
   - id: crcl_yan_combined
     symbol: CRCL
     name: Circle(燕币安)
-    quantity: 381
+    quantity: 201
     cost_basis_usd: 68.85
     category: us_stock_tokenized
     storage: 燕币安
     price_source: sina
-    note: 账户合并; 原368.22@69.13 + 加仓12.78@60.71, 总成本$26,233, 均价$68.85; 现价Sina
+    note: 2026-09-25 更新为 201股, 均价$68.85; 现价Sina
 
   # ── 韩伟币安 (原韩伟交易所+韩伟WEB3合并) ──
   # 合并前: crcl_binance 85.4@62.90 + crcl_han 334.198@67.69 = 419.598股
   # 2026-08 加仓 22.78@59.04 + 12.622@63 → 现 455股, 加权均价$66.23
-  # 2026-09-23 卖出 20股@94.80 + 40股@94.30 → 现 395股
+  # 2026-09-23 卖出 20股@94.80 + 40股@94.30; 09-25 卖出 40股@90.74 → 现 355股
   - id: crcl_han_combined
     symbol: CRCL
     name: Circle(韩伟币安)
-    quantity: 395
+    quantity: 359.5
     cost_basis_usd: 66.23
     category: us_stock_tokenized
     storage: 韩伟币安
     price_source: sina
-    note: 账户合并; 原419.598@66.71 + 加仓22.78@59.04 + 12.622@63, 总成本$30,134→$26,150.6, 均价$66.23; 09-23卖出60股止盈
+    note: 2026-09-25 重新描述为 359.5股(206.5+153两笔), 均价$66.23
 
-  - id: dram_han_combined
-    symbol: DRAM
-    name: DRAM(韩伟币安)
-    quantity: 81.2
-    cost_basis_usd: 66.00
-    category: us_stock
-    storage: 韩伟币安
-    price_source: sina
-    note: 内存美股ETF(缩写DRAM); 原57@66.85 + 加仓24.2@66, 现81.2股@66
+  # dram_han_combined 2026-09-25 清仓（金额待统计）
 
-  - id: mstr_han_combined
-    symbol: MSTR
-    name: MicroStrategy(韩伟币安)
-    quantity: 50.3
-    cost_basis_usd: 106.98
-    category: us_stock
-    storage: 韩伟币安
-    price_source: sina
-    note: 30.1股@111.66 + 20.2股@100, 加权均价$106.98, 总成本$5,381
+  # mstr_han_combined 2026-09-25 清仓（金额待统计）
 
-  - id: ondo_han_combined
-    symbol: ONDO
-    name: ONDO(韩伟币安)
-    quantity: 5893
-    cost_basis_usd: 0.341
-    category: crypto
-    storage: 韩伟币安
-    price_source: gate
-    note: 2868@0.3528 + 3030@0.33, 总成本约$2,012
+  # ondo_han_combined 2026-09-25 清仓（金额待统计）
 
   - id: uni_han_combined
     symbol: UNI
     name: Uniswap(韩伟币安)
-    quantity: 550
-    cost_basis_usd: 3.44
+    quantity: 678
+    cost_basis_usd: 9.036
     category: crypto
     storage: 韩伟币安
     price_source: gate
-    note: 304@3.29 + 220@4.057, 总成本约$1,893
+    note: 2026-09-25 更新为 678个@9.036, 总成本约$6,126
 
-  - id: soxl_han_combined
-    symbol: SOXL
-    name: 半导体3倍做多ETF(韩伟币安)
-    quantity: 7.426
-    cost_basis_usd: 135.00
+  # soxl_han_combined 2026-09-25 清仓（金额待统计）
+
+  - id: hood_han
+    symbol: HOOD
+    name: Robinhood(韩伟币安)
+    quantity: 43.88
+    cost_basis_usd: 117.5
     category: us_stock
     storage: 韩伟币安
     price_source: sina
-    note: 7.426股@135, 总成本约$1,003
+    note: 2026-09-25 新建仓 43.88股@117.5
+
+  - id: bnb_han
+    symbol: BNB
+    name: BNB(韩伟币安)
+    quantity: 3.3
+    cost_basis_usd: 789
+    category: crypto
+    storage: 韩伟币安
+    price_source: gate
+    note: 2026-09-25 新建仓 3.3个@789
+
+  - id: aave_han
+    symbol: AAVE
+    name: AAVE(韩伟币安)
+    quantity: 72.34
+    cost_basis_usd: 133
+    category: crypto
+    storage: 韩伟币安
+    price_source: gate
+    note: 2026-09-25 新建仓 72.34个@133
 
   # mrvl_han 2026-08 全部清仓 (亏损换仓至 MSTR/ONDO/UNI/SOXL)
   # mrvl_yan_binance 2026-08 全部清仓
@@ -146,13 +144,23 @@ holdings:
 
   - id: crcl_hf
     symbol: CRCL
-    name: Circle(韩芳)
+    name: Circle(韩芳证券)
     quantity: 80
     cost_basis_usd: 63.20
     category: us_stock
     storage: 韩芳证券账户
     price_source: sina
     note: 成本均价$63.20/股
+
+  - id: crcl_hf_binance
+    symbol: CRCL
+    name: Circle(韩芳币安)
+    quantity: 180
+    cost_basis_usd: 68.85
+    category: us_stock_tokenized
+    storage: 韩芳币安
+    price_source: sina
+    note: 2026-09-25 从燕币安转入180股, 均价沿用燕币安$68.85
 
   - id: bitgo
     symbol: BTGO
@@ -211,28 +219,28 @@ holdings:
   - id: ts_xiaoan
     symbol: XIAOAN
     name: 小安时间
-    quantity: 106499
+    quantity: 117221
     unit: 秒
     cost_basis_usd: 1000
     cost_is_total: true
     category: ts_time_token
     storage: TS平台
     price_source: manual
-    manual_price_usd: 0.02156
-    manual_price_date: "2026-05-31"
-    note: 100000秒社群锁定 + 6499秒可交易
+    manual_price_usd: 0.02
+    manual_price_date: "2026-09-25"
+    note: 100000秒社群锁定 + 17221秒可交易
 
   - id: ts_wufan
     symbol: WUFAN
     name: 午饭老师时间
-    quantity: 818
+    quantity: 765
     unit: 秒
     cost_basis_usd: 4.365
     category: ts_time_token
     storage: TS平台
     price_source: manual
-    manual_price_usd: 2.91
-    manual_price_date: "2026-05-31"
+    manual_price_usd: 2.32
+    manual_price_date: "2026-09-25"
     note: 全部可交易
 
 # ============================================================
@@ -261,9 +269,9 @@ liabilities:
     category: mortgage
 
   - name: 信用卡循环(投资WEB3)
-    amount_cny: 400000
+    amount_cny: 450000
     category: credit_card
-    note: 循环刷卡用于WEB3投资
+    note: 净投资负债45万(0账单循环锁定15万已独立至固定资产)
 
   - name: 币安BTC质押借贷
     amount_usd: 0
@@ -275,17 +283,19 @@ liabilities:
 # 现金及固收
 # ============================================================
 cash:
-  - name: 家庭备用金(活期/货基)
-    amount_cny: 630808
   - name: HK打新资金
     amount_hkd: 146060
     note: 含13W家庭内部调配, 其余为打新盈利
-  - name: 币安USDT余额
-    amount_usd: 7104
-    note: 燕币安USDT $1,436; 韩伟币安USDT $5,668 (09-23卖出CRCL 60股入账 $1,896+$3,772)
+  - name: 韩伟币安U
+    amount_usd: 16682
+    note: 1049+13760+1050+665+158 五笔合并(币安套利活动分散)
+  - name: 燕币安U
+    amount_usd: 1096
+  - name: 韩芳币安U
+    amount_usd: 1095
   - name: 华盛通现金
-    amount_usd: 1046
-    note: 韩伟华盛通账户现金 $1,046
+    amount_usd: 973
+    note: 韩伟华盛通账户现金
 
 # ============================================================
 # 固定资产
@@ -294,3 +304,9 @@ fixed_assets:
   - name: 北京海淀住宅
     value_cny: 3200000
     note: 购入2025年底
+  - name: 家庭备用金(生活保障金)
+    value_cny: 480808
+    note: 不计入净资产, 仅记录
+  - name: 信用卡循环锁定资金(0账单发动机)
+    value_cny: 150000
+    note: 被0账单循环锁定, 不计入净资产(抽走即断流)
