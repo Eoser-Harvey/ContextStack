@@ -8,6 +8,15 @@
 
 ## P0（本周必须做）
 
+### ❤️ 家庭体检高优（2026-09-27 起，最高优先级）
+
+> 疾病的发生无法控制，但筛查可以。全员体检按"最高优先级"执行，不再是"有空再说"。
+> 完整项目清单 → [家庭体检指南](01-Projects/family-hub/family-health/family-health-checkup-guide.md)
+
+- [ ] **韩伟+薛燕 2026 年度体检排期**：35岁+详细化（LDL/Lp(a)、肠镜35岁基线、基因高风险项年度必查）
+- [ ] **爸妈体检（心血管专项）**：颈动脉彩超 + 心电图 + 血脂血压/LDL，必要时冠脉CT
+- [ ] **健康指标追踪表建表**（含 LDL 趋势列，为 2026-10 蓝医保补买做准备，见下方 Life OS 小节）
+
 ### 🏢 燕知行公司（本周）
 
 > 完整上下文 → [待办与风险管控](01-Projects/family-hub/company-setup/beijing-company-backlog-and-risks.md) ｜ 操作步骤 → [运营手册](01-Projects/family-hub/company-setup/1-beijing-company-ops-manual.md) ｜ 资金账 → [会计账簿](01-Projects/family-hub/company-setup/2-beijing-company-accounting-ledger.md)
